@@ -36,7 +36,7 @@ spec:
             steps {
                 container('node') {
                     git url: 'https://github.com/overture-stack/lectern.git', branch: 'master'
-                    sh "cd ./server && npm ci"
+                    sh "npm ci %% npm run build"
                 }
             }
         }
