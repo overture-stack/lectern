@@ -40,5 +40,23 @@ spec:
                 }
             }
         }
+       // publish the edge tag
+        stage('Publish Develop') {
+            when {
+                branch "develop"
+            }
+            steps {
+                container('docker') {
+                    withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                    }
+
+                    // the network=host needed to download dependencies using the host network (since we are inside 'docker'
+                    // container)
+                    sh "docker  build --network=host -f Dockerfile -t overture/lectern:edge"
+                    sh "docker push overture/lectern:edge"
+               }
+            }
+
     }
 }
