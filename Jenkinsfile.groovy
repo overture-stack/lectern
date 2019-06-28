@@ -58,5 +58,20 @@ spec:
                }
             }
         }
+
+        stage('Release') {
+          when {
+            branch "master"
+          }
+          steps {
+              container('docker') {
+                    withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                    }
+                    sh "docker  build --network=host -f Dockerfile . -t overture/lectern:latest"
+                    sh "docker push overture/lectern:latest"
+             }
+          }
+        }
     }
 }
