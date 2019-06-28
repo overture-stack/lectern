@@ -53,7 +53,7 @@ spec:
 
                     // the network=host needed to download dependencies using the host network (since we are inside 'docker'
                     // container)
-                    sh "docker  build --network=host -f Dockerfile -t overture/lectern:edge"
+                    sh "docker build --network=host -f Dockerfile . -t overture/lectern:edge"
                     sh "docker push overture/lectern:edge"
                }
             }
