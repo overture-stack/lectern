@@ -57,6 +57,6 @@ spec:
                     sh "docker push overture/lectern:edge"
                }
             }
-
+        }
     }
 }
