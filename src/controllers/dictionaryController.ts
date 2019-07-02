@@ -13,11 +13,9 @@ export const getDictionary = (req: Request, res: Response) => {
     res.status(200);
 };
 
-export const createDictionary = async (req: Request, res: Response, next: NextFunction) => {
-    dictionaryService.create(req.body)
-        .then(() => {
-            res.status(200);
-            res.send({"message": "saved"});
-        })
-        .catch(err => next(err));
+export const createDictionary = (req: Request, res: Response, next: NextFunction) => {
+    dictionaryService.create(req.body).then(() => {
+        res.status(200);
+        res.send({"message": "saved"});
+    }).catch(next);
 };
