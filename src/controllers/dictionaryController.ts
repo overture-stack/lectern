@@ -1,59 +1,23 @@
 
-import { Request, Response } from "express";
-import { Dictionary, DictionaryDocument } from "../models/Dictionary";
+import { Request, Response, NextFunction } from "express";
+import * as dictionaryService from "../services/dictionaryService";
 
-export const listDictionaries = (req: Request, res: Response) => {
-    Dictionary.find({}, "name version", (err, docs) => {
-        if (err) {
-            res.send("Could not save document");
-            res.status(500);
-            return;
-        }
-
-        res.send(docs);
-        res.status(200);
-    });
-};
-
-export const getDictionary = (req: Request, res: Response) => {
-    res.send("okay");
+export const listDictionaries = async (req: Request, res: Response) => {
+    const dicts = await dictionaryService.listAll();
+    res.send(dicts);
     res.status(200);
 };
 
-export const createDictionary = (req: Request, res: Response) => {
-    const reqBody = req.body;
+export const getDictionary = (req: Request, res: Response) => {
+    res.send({"message": "okay"});
+    res.status(200);
+};
 
-    Dictionary.findOne({
-        "name": reqBody.name,
-        "version": reqBody.version
-    }, (err, dictionary) => {
-        if (err) {
-            res.send("Could not save document");
-            res.status(500);
-            return;
-        }
-
-        if (dictionary) {
-            res.send("A dictionary of that version already exists.");
-            res.status(400);
-            return;
-        }
-
-        const newDict = new Dictionary({
-            name: reqBody.name,
-            version: reqBody.version,
-            files: reqBody.files
-        });
-
-        newDict.save((err) => {
-            if (err) {
-                res.send("Could not save document");
-                res.status(500);
-            }
-        });
-
-        res.send("Saved");
-        res.status(200);
-    });
-
+export const createDictionary = async (req: Request, res: Response, next: NextFunction) => {
+    dictionaryService.create(req.body)
+        .then(() => {
+            res.status(200);
+            res.send({"message": "saved"});
+        })
+        .catch(err => next(err));
 };

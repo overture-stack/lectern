@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import * as dictionaryController from "./controllers/dictionaryController";
+import { errorHandler } from "./utils/errors"
 
 // Create Express server
 const app = express();
@@ -20,6 +21,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(errorHandler)
 
 app.get("/", (req, res) => res.send("Hello World!"));
 app.get("/dictionaries", dictionaryController.listDictionaries);
