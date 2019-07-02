@@ -22,6 +22,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.get("/", (req, res) => res.send("Hello World!"));
+app.get("/dictionaries", dictionaryController.listDictionaries);
 app.post("/dictionaries", dictionaryController.createDictionary);
 
 export default app;
