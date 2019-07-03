@@ -38,7 +38,7 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
             res.status(500);
             break;
     }
-    res.send({ error: err });
+    res.send({ error: err.name, message: err.message });
 };
 
 

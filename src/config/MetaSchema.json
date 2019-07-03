@@ -1,0 +1,280 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "ARGO File Meta Schema",
+    "definitions": {
+        "stringMeta": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "boolean",
+                    "enum": [
+                        true
+                    ]
+                },
+                "default": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "object",
+                    "required": ["default"],
+                    "properties": {
+                        "default": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "maxProperties": 1,
+            "additionalProperties": false
+        },
+        "stringRestrictions": {
+            "type": "object",
+            "properties": {
+                "codeList": {
+                    "type": "array",
+                    "minItems": 2,
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "script": {
+                    "type": "string"
+                },
+                "foreignKey": {
+                    "type": "object",
+                    "required": [
+                        "entityName",
+                        "fieldName"
+                    ],
+                    "properties": {
+                        "entityName": {
+                            "type": "string"
+                        },
+                        "fieldName": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "unique": {
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "integerMeta": {
+            "type": "object",
+            "properties": {
+                "default": {
+                    "type": "integer"
+                },
+                "required": {
+                    "type": "object",
+                    "required": ["default"],
+                    "properties": {
+                        "default": {
+                            "type": "integer"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "maxProperties": 1,
+            "additionalProperties": false
+        },
+        "integerRestrictions": {
+            "type": "object",
+            "properties": {
+                "script": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        },
+        "numberMeta": {
+            "type": "object",
+            "properties": {
+                "default": {
+                    "type": "number"
+                },
+                "required": {
+                    "type": "object",
+                    "required": ["default"],
+                    "properties": {
+                        "default": {
+                            "type": "number"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "maxProperties": 1,
+            "additionalProperties": false
+        },
+        "numberRestrictions": {
+            "type": "object",
+            "properties": {
+                "script": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        },
+        "booleanMeta": {
+            "type": "object",
+            "properties": {
+                "default": {
+                    "type": "boolean"
+                },
+                "required": {
+                    "type": "object",
+                    "required": ["default"],
+                    "properties": {
+                        "default": {
+                            "type": "boolean"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "maxProperties": 1,
+            "additionalProperties": false
+        },
+        "booleanRestrictions": {
+            "type": "object",
+            "properties": {
+                "script": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        },
+        "field": {
+            "type": "object",
+            "required": [
+                "name",
+                "description",
+                "valueType"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "valueType": {
+                    "type": "string",
+                    "enum": [
+                        "string",
+                        "integer",
+                        "number",
+                        "boolean"
+                    ]
+                },
+                "meta": {
+                    "$ref": "#/definitions/stringMeta"
+                },
+                "restrictions": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/stringRestrictions"
+                        },
+                        {
+                            "$ref": "#/definitions/integerRestrictions"
+                        },
+                        {
+                            "$ref": "#/definitions/numberRestrictions"
+                        },
+                        {
+                            "$ref": "#/definitions/booleanRestrictions"
+                        }
+                    ]
+                }
+            },
+            "oneOf": [
+                {
+                    "properties": {
+                        "valueType": {
+                            "const": "string"
+                        },
+                        "restrictions": {
+                            "$ref": "#/definitions/stringRestrictions"
+                        }
+                    }
+                }
+            ],
+            "anyOf": [
+                {
+                    "properties": {
+                        "valueType": {
+                            "const": "string"
+                        },
+                        "restrictions": {
+                            "$ref": "#/definitions/stringRestrictions"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "valueType": {
+                            "const": "integer"
+                        },
+                        "restrictions": {
+                            "$ref": "#/definitions/integerRestrictions"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "valueType": {
+                            "const": "number"
+                        },
+                        "restrictions": {
+                            "$ref": "#/definitions/numberRestrictions"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "valueType": {
+                            "const": "boolean"
+                        },
+                        "restrictions": {
+                            "$ref": "#/definitions/booleanRestrictions"
+                        }
+                    }
+                }
+            ],
+            "additionalProperties": false
+        }
+    },
+    "required": [
+        "name",
+        "description",
+        "key",
+        "fields"
+    ],
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "key": {
+            "type": "string"
+        },
+        "fields": {
+            "type": "array",
+            "minItems": 3,
+            "uniqueItems": true,
+            "items": {
+                "$ref": "#/definitions/field"
+            }
+        }
+    },
+    "additionalProperties": false
+}

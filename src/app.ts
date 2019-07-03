@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import * as dictionaryController from "./controllers/dictionaryController";
-import { errorHandler } from "./utils/errors"
+import { errorHandler } from "./utils/errors";
 
 // Create Express server
 const app = express();
