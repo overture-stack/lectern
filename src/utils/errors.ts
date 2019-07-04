@@ -15,6 +15,13 @@ export class BadRequestError extends Error {
     }
 }
 
+export class MalformedVersionError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "MalformedVersion";
+    }
+}
+
 export class InternalServerError extends Error {
     constructor(message: string) {
         super(message);
@@ -32,6 +39,9 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
             res.status(409);
             break;
         case "BadRequest":
+            res.status(400);
+            break;
+        case "MalformedVersion":
             res.status(400);
             break;
         default:

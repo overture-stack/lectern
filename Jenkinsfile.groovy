@@ -35,7 +35,7 @@ spec:
         stage('Test') {
             steps {
                 container('node') {
-                    sh "npm ci %% npm run build"
+                    sh "npm ci %% npm run test %% npm run build"
                 }
             }
         }
