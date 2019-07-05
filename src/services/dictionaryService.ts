@@ -1,33 +1,32 @@
 import { Dictionary, DictionaryDocument } from "../models/Dictionary";
 import { ConflictError, InternalServerError, BadRequestError } from "../utils/errors";
 import { validate } from "../services/schemaService";
+import { incrementMajor, incrementMinor } from "../utils/version";
 
 /**
  * Return a single dictionary
  * @param name Name of the Dictionary
  * @param version Version of the dictionary
  */
-export const findOne = (name: string, version: string): DictionaryDocument => {
-    return undefined;
+export const findOne = async (name: string, version: string): Promise<DictionaryDocument> => {
+    const dict = await Dictionary.findOne({"name": name, "version": version});
+    return dict;
 };
 
 /**
  * Return array of dictionaries.
  */
 export const listAll = async (): Promise<DictionaryDocument[]> => {
-    const dicts = await Dictionary.find({}, "name version", (err, docs) => {
-        return docs;
-    });
+    const dicts = await Dictionary.find({}, "name version");
     return dicts;
 };
 
 /**
- * Creates a new data dictionary version with included files, verifying version doesn't exist 
+ * Creates a new data dictionary version with included files, verifying version doesn't exist
  * and that the file dictionaries are valid against the meta schema.
  * @param newDict The new data dictionary containing all of the file dictionaries
  */
-export const create = async (newDict: {name: string, version: string, files: any[]}): Promise<void> => {
-
+export const create = async (newDict: {name: string, version: string, files: any[]}): Promise<DictionaryDocument> => {
     // Verify files match dictionary
     newDict.files.forEach(e => {
         const result = validate(e);
@@ -47,7 +46,76 @@ export const create = async (newDict: {name: string, version: string, files: any
         version: newDict.version,
         files: newDict.files
     });
-    await dict.save((err) => {
-        if (err) throw new InternalServerError("Could not save dictionary.");
+    const saved = await dict.save();
+    return saved;
+};
+
+/**
+ * Adds a new file dictionary to the specified model. File Dictionary must not already exist.
+ * @param name Name of dictionary model
+ * @param version Version of dictionary
+ * @param file new file dictionary to add
+ */
+export const addFile = async (name: string, version: string, file: any): Promise<DictionaryDocument> => {
+    const result = validate(file);
+    if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
+
+    // Verify that this dictionary version doesn't already exist.
+    const doc = await Dictionary.findOne({
+        "name": name,
+        "version": version
+    }).exec();
+
+    const entities = doc.files.map(f => f["name"]);
+    if (entities.includes(file["name"])) throw new ConflictError("This file already exists.");
+
+    const files = doc.files;
+    files.push(file);
+    // Save new dictionary version
+    const dict = new Dictionary({
+        name: name,
+        version: incrementMajor(doc.version),
+        files: files
     });
+    const saved = await dict.save();
+    return saved;
+};
+
+/**
+ * Updates a single file dictionary ensuring it's existence first and then updating the version of the model dictionary
+ * @param name Name of dictionary model
+ * @param version Version of dictionary
+ * @param file file dictionary to add update
+ * @param major true if major version to be incremented, false if minor version to be incremented
+ */
+export const updateFile = async (name: string, version: string, file: any, major: boolean): Promise<DictionaryDocument> => {
+    const result = validate(file);
+    if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
+
+    // Verify that this dictionary version doesn't already exist.
+    const doc = await Dictionary.findOne({
+        "name": name,
+        "version": version
+    }).exec();
+
+    // Ensure it exists
+    const entities = doc.files.map(f => f["name"]);
+    if (!entities.includes(file["name"])) throw new BadRequestError("Cannot update file dictionary that does not exist.");
+
+    // Filter out one to update
+    const files = doc.files.filter( f => !(f["name"] === file["name"]));
+    files.push(file);
+
+    // Increment Version
+    const nextVersion = major ? incrementMajor(version) : incrementMinor(version);
+
+    // Save new dictionary version
+    const dict = new Dictionary({
+        name: name,
+        version: nextVersion,
+        files: files
+    });
+
+    const saved = await dict.save();
+    return saved;
 };

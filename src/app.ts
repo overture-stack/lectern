@@ -25,6 +25,8 @@ app.use(bodyParser.urlencoded({
 app.get("/", (req, res) => res.send("Lectern"));
 app.get("/dictionaries", dictionaryController.listDictionaries);
 app.post("/dictionaries", dictionaryController.createDictionary);
+app.post("/dictionaries/files", dictionaryController.addFile);
+app.put("/dictionaries/files", dictionaryController.updateFile);
 
 app.use(errorHandler);
 
