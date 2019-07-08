@@ -38,4 +38,3 @@ export const updateFile = (req: Request, res: Response, next: NextFunction) => {
         res.send(dict.toObject());
     }).catch(next);
 };
-
