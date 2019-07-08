@@ -1,5 +1,16 @@
 
 import app from "./app";
+import mongoose from "mongoose";
+import { constructMongoUri } from "./config/mongo";
+
+
+mongoose.connect(constructMongoUri(), { useNewUrlParser: true }).then(
+  () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
+).catch( (err: Error) => {
+  console.log("MongoDB connection error. Please make sure MongoDB is running. " + err);
+  process.exit();
+});
+
 
 /**
  * Start Express server.

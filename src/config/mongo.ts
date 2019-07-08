@@ -1,5 +1,4 @@
-import { mongoDb, mongoHost, mongoPass, mongoUser } from "./serverConfig";
-import mongoose from "mongoose";
+import { mongoDb, mongoHost, mongoPort, mongoPass, mongoUser } from "./serverConfig";
 
 export const getMongoCredentials = () => {
     // Add Vault integration here later
@@ -12,5 +11,9 @@ export const constructMongoUri = ({ includeDb = true } = {}) => {
         user && pass
             ? `${encodeURIComponent(user)}:${encodeURIComponent(pass)}@`
             : ""
-        }${mongoHost}${includeDb ? `/${mongoDb}` : ``}`;
+        }${mongoHost}:${mongoPort}${includeDb ? `/${mongoDb}` : ``}`;
+};
+
+export const constructTestUri = (mongoHost: string, mongoPort: string): string => {
+    return `mongodb://${mongoHost}:${mongoPort}/${mongoDb}`;
 };
