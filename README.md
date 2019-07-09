@@ -19,6 +19,7 @@ The indended use of the data dictionaries is to describe the structure and valid
 
 ### Technology
 - Node.js 8.10+
+- Typescript 3.5
 - Express
 - Mongoose
 - Mocha
