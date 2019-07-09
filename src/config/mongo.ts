@@ -11,7 +11,7 @@ export const constructMongoUri = ({ includeDb = true } = {}) => {
         user && pass
             ? `${encodeURIComponent(user)}:${encodeURIComponent(pass)}@`
             : ""
-        }${mongoHost}:${mongoPort}${includeDb ? `/${mongoDb}` : ``}`;
+        }${mongoHost}:${mongoPort}${includeDb ? `/${mongoDb}` : ``}${user && pass ? "?authSource=admin" : ""}`;
 };
 
 export const constructTestUri = (mongoHost: string, mongoPort: string): string => {
