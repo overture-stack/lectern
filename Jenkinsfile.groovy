@@ -12,6 +12,16 @@ spec:
   - name: node
     image: node:8.16.0-jessie
     tty: true
+    env: 
+      - name: DOCKER_HOST 
+        value: tcp://localhost:2375 
+  - name: dind-daemon 
+    image: docker:18.06-dind
+    securityContext: 
+        privileged: true 
+    volumeMounts: 
+      - name: docker-graph-storage 
+        mountPath: /var/lib/docker 
   - name: helm
     image: alpine/helm:2.12.3
     tty: true
@@ -28,6 +38,8 @@ spec:
     hostPath:
       path: /var/run/docker.sock
       type: File
+  - name: docker-graph-storage 
+    emptyDir: {}
 """
         }
     }
