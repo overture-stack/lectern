@@ -10,7 +10,7 @@ kind: Pod
 spec:
   containers:
   - name: node
-    image: mhart/alpine-node:latest
+    image: node:8.16.0-jessie
     tty: true
   - name: helm
     image: alpine/helm:2.12.3
@@ -35,7 +35,16 @@ spec:
         stage('Test') {
             steps {
                 container('node') {
-                    sh "npm ci %% npm run test %% npm run build"
+                    sh "npm ci"
+                    sh "npm run test"
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                container('node') {
+                    sh "npm ci"
+                    sh "npm run build"
                 }
             }
         }
