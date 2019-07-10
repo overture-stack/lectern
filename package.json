@@ -7,7 +7,7 @@
     "build": "npm run build-ts && npm run tslint",
     "serve": "node dist/server.js",
     "watch-node": "nodemon dist/server.js",
-    "test": "mocha --timeout 15000 --exit -r ts-node/register test/**/*.ts",
+    "test": "mocha --timeout 35000 --exit -r ts-node/register test/**/*.ts",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
