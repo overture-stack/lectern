@@ -18,6 +18,14 @@ export const listDictionaries = async (req: Request, res: Response) => {
     }
 };
 
+export const getDictionary = async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.dictId;
+    dictionaryService.getOne(id).then((dict: DictionaryDocument) => {
+        res.status(200);
+        res.send(dict.toObject());
+    }).catch(next);
+};
+
 export const createDictionary = (req: Request, res: Response, next: NextFunction) => {
     dictionaryService.create(req.body).then((dict: DictionaryDocument) => {
         res.status(200);
@@ -26,14 +34,14 @@ export const createDictionary = (req: Request, res: Response, next: NextFunction
 };
 
 export const addFile = (req: Request, res: Response, next: NextFunction) => {
-    dictionaryService.addFile(req.query.name, req.query.version, req.body).then((dict: DictionaryDocument) => {
+    dictionaryService.addFile(req.params.dictId, req.body).then((dict: DictionaryDocument) => {
         res.status(200);
         res.send(dict.toObject());
     }).catch(next);
 };
 
 export const updateFile = (req: Request, res: Response, next: NextFunction) => {
-    dictionaryService.updateFile(req.query.name, req.query.version, req.body, req.query.major == true).then((dict: DictionaryDocument) => {
+    dictionaryService.updateFile(req.params.dictId, req.body, req.query.major == true).then((dict: DictionaryDocument) => {
         res.status(200);
         res.send(dict.toObject());
     }).catch(next);

@@ -29,12 +29,22 @@ export class InternalServerError extends Error {
     }
 }
 
+export class NotFoundError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "NotFound";
+    }
+}
+
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction): any => {
     if (res.headersSent) {
         return next(err);
     }
 
     switch (err.name) {
+        case "NotFound":
+            res.status(404);
+            break;
         case "Conflict":
             res.status(409);
             break;

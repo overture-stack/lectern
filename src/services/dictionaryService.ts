@@ -1,5 +1,5 @@
 import { Dictionary, DictionaryDocument } from "../models/Dictionary";
-import { ConflictError, InternalServerError, BadRequestError } from "../utils/errors";
+import { ConflictError, InternalServerError, BadRequestError, NotFoundError } from "../utils/errors";
 import { validate } from "../services/schemaService";
 import { incrementMajor, incrementMinor } from "../utils/version";
 
@@ -10,6 +10,18 @@ import { incrementMajor, incrementMinor } from "../utils/version";
  */
 export const findOne = async (name: string, version: string): Promise<DictionaryDocument> => {
     const dict = await Dictionary.findOne({"name": name, "version": version});
+    return dict;
+};
+
+/**
+ * Return a single dictionary by id
+ * @param id id of the Dictionary
+ */
+export const getOne = async (id: string): Promise<DictionaryDocument> => {
+    const dict = await Dictionary.findOne({"_id": id });
+    if (dict == undefined) {
+        throw new NotFoundError("Cannot find dictionary with id " + id);
+    }
     return dict;
 };
 
@@ -56,14 +68,13 @@ export const create = async (newDict: {name: string, version: string, files: any
  * @param version Version of dictionary
  * @param file new file dictionary to add
  */
-export const addFile = async (name: string, version: string, file: any): Promise<DictionaryDocument> => {
+export const addFile = async (id: string, file: any): Promise<DictionaryDocument> => {
     const result = validate(file);
     if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
     // Verify that this dictionary version doesn't already exist.
     const doc = await Dictionary.findOne({
-        "name": name,
-        "version": version
+        "_id": id,
     }).exec();
 
     const entities = doc.files.map(f => f["name"]);
@@ -88,14 +99,13 @@ export const addFile = async (name: string, version: string, file: any): Promise
  * @param file file dictionary to add update
  * @param major true if major version to be incremented, false if minor version to be incremented
  */
-export const updateFile = async (name: string, version: string, file: any, major: boolean): Promise<DictionaryDocument> => {
+export const updateFile = async (id: string, file: any, major: boolean): Promise<DictionaryDocument> => {
     const result = validate(file);
     if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
     // Verify that this dictionary version doesn't already exist.
     const doc = await Dictionary.findOne({
-        "name": name,
-        "version": version
+        "_id": id
     }).exec();
 
     // Ensure it exists
@@ -107,7 +117,7 @@ export const updateFile = async (name: string, version: string, file: any, major
     files.push(file);
 
     // Increment Version
-    const nextVersion = major ? incrementMajor(version) : incrementMinor(version);
+    const nextVersion = major ? incrementMajor(doc.version) : incrementMinor(doc.version);
 
     // Save new dictionary version
     const dict = new Dictionary({
