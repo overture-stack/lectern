@@ -84,7 +84,7 @@ export const addFile = async (id: string, file: any): Promise<DictionaryDocument
     files.push(file);
     // Save new dictionary version
     const dict = new Dictionary({
-        name: name,
+        name: doc.name,
         version: incrementMajor(doc.version),
         files: files
     });
@@ -121,7 +121,7 @@ export const updateFile = async (id: string, file: any, major: boolean): Promise
 
     // Save new dictionary version
     const dict = new Dictionary({
-        name: name,
+        name: doc.name,
         version: nextVersion,
         files: files
     });
