@@ -1,6 +1,6 @@
 import "chai-http";
 import "mocha";
-const chai = require("chai");
+import chai, { expect } from "chai";
 import app from "../../src/app";
 import { GenericContainer } from "testcontainers";
 import { constructTestUri } from "../../src/config/mongo";
@@ -13,18 +13,16 @@ let container: StartedTestContainer;
 
 chai.use(require("chai-http"));
 
-const expect: Chai.ExpectStatic = chai.expect;
-
 describe("Basic CRUD", () => {
 
     before(async () => {
         container = await new GenericContainer("mongo", "xenial").withExposedPorts(27017).start();
         mongoose.connect(constructTestUri(container.getContainerIpAddress(), container.getMappedPort(27017).toString()), { useNewUrlParser: true }).then(
             () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
-          ).catch( (err: Error) => {
+        ).catch((err: Error) => {
             console.log("MongoDB connection error. Please make sure MongoDB is running. " + err);
             process.exit();
-          });
+        });
     });
 
     describe("Create", () => {
@@ -57,7 +55,7 @@ describe("Basic CRUD", () => {
         // STATE!
         let id: string;
 
-        before( (done: Mocha.Done) => {
+        before((done: Mocha.Done) => {
             const dictRequest = require("./fixtures/createDictionary.json");
             dictRequest.version = testVersion;
             chai.request(app)
@@ -100,7 +98,7 @@ describe("Basic CRUD", () => {
         let id: string;
         let nextId: string;
 
-        before( (done: Mocha.Done) => {
+        before((done: Mocha.Done) => {
             const dictRequest = require("./fixtures/createDictionary.json");
             dictRequest.version = testVersion;
             chai.request(app)
@@ -143,10 +141,10 @@ describe("Basic CRUD", () => {
 
     describe("Delete", () => {
         // Place Holder
-        it("Should do nothing as we do not delete", () => {});
+        it("Should do nothing as we do not delete", () => { });
     });
 
-    after( async () => {
+    after(async () => {
         await container.stop();
         await mongoose.connection.close();
     });
