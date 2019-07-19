@@ -1,0 +1,246 @@
+{
+  "basePath": "/",
+  "swagger": "2.0",
+  "info": {
+    "title": "Lectern",
+    "version": "1.0.0"
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/dictionaries": {
+      "get": {
+        "summary": "Get dictionaries stored in lectern",
+        "description": "Returns list of dictionaries",
+        "parameters": [
+          {
+            "name": "name",
+            "description": "name of dictionary",
+            "type": "string",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "version",
+            "description": "version of dictionary",
+            "type": "string",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/DictionaryListResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "Dictionaries"
+        ]
+      },
+      "post": {
+        "summary": "Create a new dictionary in lectern",
+        "description": "Saves the provided dictionary in lectern. Must not conflict with a previous dictionary name and version business key",
+        "parameters": [
+          {
+            "name": "Dictionary",
+            "in": "body",
+            "description": "The dictionary to be saved",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateDictionary"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Dictionary"
+            }
+          }
+        },
+        "tags": [
+          "Dictionaries"
+        ]
+      }
+    },
+    "/dictionaries/{_id}": {
+      "get": {
+        "summary": "Get a single dictionary",
+        "description": "Get single dictionary stored in lectern by mongo id",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Dictionary"
+            }
+          }
+        },
+        "tags": [
+          "Dictionaries"
+        ]
+      }
+    },
+    "/dictionaries/{_id}/files": {
+      "post": {
+        "summary": "Update a dictionary by adding a new file schema",
+        "description": "Update a dictionary to the next major version number by adding a new file schema that passes validation against the meta schema. ",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "file schema",
+            "in": "body",
+            "description": "file schema",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Dictionary"
+            }
+          }
+        },
+        "tags": [
+          "Dictionaries"
+        ]
+      },
+      "put": {
+        "summary": "Update an existing file schema that exists in a dictionary",
+        "description": "Updates an existing file schema in a dictionary and updates the version",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "majorVersion",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "file schema",
+            "in": "body",
+            "description": "file schema",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Dictionary"
+            }
+          }
+        },
+        "tags": [
+          "Dictionaries"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "Dictionary": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the parameter"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the dictionary"
+        },
+        "files": {
+          "type": "array",
+          "description": "Set of file dictionaries describing the files for this dictionary version",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "CreateDictionary": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the parameter"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the dictionary"
+        },
+        "files": {
+          "type": "array",
+          "description": "Set of file dictionaries describing the files for this dictionary version",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "DictionaryListEntry": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "mongo generated object id"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the parameter"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the dictionary"
+        }
+      }
+    },
+    "DictionaryListResponse": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/DictionaryListEntry"
+      }
+    }
+  }
+}
