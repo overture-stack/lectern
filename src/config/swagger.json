@@ -6,6 +6,7 @@
     "version": "1.0.0"
   },
   "schemes": [
+    "http",
     "https"
   ],
   "consumes": [
@@ -176,6 +177,43 @@
           "Dictionaries"
         ]
       }
+    },
+    "/diff": {
+      "get": {
+        "summary": "Compare differences between dictionaries",
+        "description": "Computes the difference between dictionaries at the field level",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "left",
+            "in": "query",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "right",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The computed diff",
+            "schema": {
+              "$ref": "#/definitions/DiffResponse"
+            }
+          }
+        },
+        "tags": [
+          "Dictionaries"
+        ]
+      }
     }
   },
   "definitions": {
@@ -240,6 +278,26 @@
       "type": "array",
       "items": {
         "$ref": "#/definitions/DictionaryListEntry"
+      }
+    },
+    "DiffItem": {
+      "type": "object",
+      "properties": {
+        "left": {
+          "type": "object"
+        },
+        "right": {
+          "type": "object"
+        },
+        "diff": {
+          "type": "object"
+        }
+      }
+    },
+    "DiffResponse": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/DiffItem"
       }
     }
   }
