@@ -15,7 +15,7 @@
                         "key": true
                     },
                     "restrictions": {
-                        "regex": "."
+                        "script": "THIS WAS UPDATED"
                     }
                 },
                 {
@@ -55,12 +55,6 @@
                             "Other"
                         ]
                     }
-                },
-                {
-                    "name": "cause_of_death",
-                    "valueType": "string",
-                    "description": "Cause of Donor Death",
-                    "restrictions": {}
                 }
             ]
         },

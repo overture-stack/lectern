@@ -24,6 +24,7 @@ app.post("/dictionaries", dictionaryController.createDictionary);
 app.get("/dictionaries/:dictId", dictionaryController.getDictionary);
 app.post("/dictionaries/:dictId/files", dictionaryController.addFile);
 app.put("/dictionaries/:dictId/files", dictionaryController.updateFile);
+app.get("/diff/", dictionaryController.diffDictionaries);
 
 app.use(errorHandler);
 
