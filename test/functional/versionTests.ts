@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { isValidVersion, incrementMinor, incrementMajor } from "../src/utils/version";
+import { isValidVersion, incrementMinor, incrementMajor } from "../../src/utils/version";
 
 describe("Verifying version strings", () => {
 

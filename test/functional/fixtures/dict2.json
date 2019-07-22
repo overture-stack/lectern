@@ -1,0 +1,90 @@
+{
+    "name": "ARGO Dictionary",
+    "version": "1.3",
+    "files": [
+        {
+            "name": "donor",
+            "description": "Donor Entity",
+            "key": "donor_submitter_id",
+            "fields": [
+                {
+                    "name": "donor_submitter_id",
+                    "valueType": "string",
+                    "description": "Unique identifier for donor; assigned by data provider",
+                    "meta": {
+                        "key": true
+                    },
+                    "restrictions": {
+                        "regex": "."
+                    }
+                },
+                {
+                    "name": "gender",
+                    "valueType": "string",
+                    "description": "Donor Biological Sex",
+                    "restrictions": {
+                        "codeList": [
+                            "Male",
+                            "Female",
+                            "Other"
+                        ]
+                    }
+                },
+                {
+                    "name": "ethnicity",
+                    "valueType": "string",
+                    "description": "Self described",
+                    "meta": {
+                        "default": "Foo"
+                    },
+                    "restrictions": {}
+                },
+                {
+                    "name": "vital_status",
+                    "valueType": "string",
+                    "description": "Donor's last known vital status",
+                    "meta": {
+                        "required": {
+                            "default": "Other"
+                        }
+                    },
+                    "restrictions": {
+                        "codeList": [
+                            "Alive",
+                            "Deceased",
+                            "Other"
+                        ]
+                    }
+                },
+                {
+                    "name": "cause_of_death",
+                    "valueType": "string",
+                    "description": "Cause of Donor Death",
+                    "restrictions": {}
+                }
+            ]
+        },
+        {
+            "name": "testNewFile",
+            "description": "testNewFile",
+            "key": "testNewFile",
+            "fields": [
+                {
+                    "name": "testNewFile1",
+                    "valueType": "string",
+                    "description": "Unique identifier for donor; assigned by data provider"
+                },
+                {
+                    "name": "testNewFile2",
+                    "valueType": "string",
+                    "description": "Unique identifier for donor; assigned by data provider"
+                },
+                {
+                    "name": "testNewFile3",
+                    "valueType": "string",
+                    "description": "Unique identifier for donor; assigned by data provider"
+                }
+            ]
+        }
+    ]
+}

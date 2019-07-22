@@ -8,6 +8,7 @@
     "serve": "node dist/server.js",
     "watch-node": "nodemon dist/server.js",
     "test": "mocha --timeout 35000 --exit -r ts-node/register test/**/*.ts",
+    "watch-test": "mocha --watch --timeout 35000 --exit -r ts-node/register test/**/*.ts",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
