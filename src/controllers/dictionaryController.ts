@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import * as dictionaryService from "../services/dictionaryService";
 import { BadRequestError } from "../utils/errors";
 import { diff as diffUtil } from "../diff/DictionaryDiff";
@@ -37,7 +37,7 @@ export const updateFile = async (req: Request, res: Response) => {
     res.status(200).send(dict.toObject());
 };
 
-export const diffDictionaries = async (req: Request, res: Response, next: NextFunction) => {
+export const diffDictionaries = async (req: Request, res: Response) => {
     const name = req.query.name;
     const leftVersion = req.query.left;
     const rightVersion = req.query.right;
@@ -48,6 +48,6 @@ export const diffDictionaries = async (req: Request, res: Response, next: NextFu
         const diff = diffUtil(dict1.toObject(), dict2.toObject());
         res.status(200).send(Array.from(diff.entries()));
     } else {
-        next(new BadRequestError("name and left and right versions must be set"));
+        throw new BadRequestError("name and left and right versions must be set");
     }
 };
