@@ -15,3 +15,24 @@ export const incrementMajor = (version: string): string => {
     const parts = version.split(".");
     return (parseInt(parts[0]) + 1).toString() + "." + parts[1];
 };
+
+export const isGreater = (v1: string, v2: string): boolean => {
+    if (!isValidVersion(v1) || !isValidVersion(v2)) {
+        new MalformedVersionError(`Cannot compare versions: ${v1} , ${v2}`);
+    }
+
+    const v1Parts = v1.split(".");
+    const v2Parts = v2.split(".");
+
+    if (parseInt(v1Parts[0]) > parseInt(v2Parts[0])) {
+        return true;
+    } else if (parseInt(v1Parts[0]) < parseInt(v2Parts[0])) {
+        return false;
+    } else {
+        if (parseInt(v1Parts[1]) > parseInt(v2Parts[1])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+};

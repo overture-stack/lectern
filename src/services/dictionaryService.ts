@@ -1,7 +1,7 @@
 import { Dictionary, DictionaryDocument } from "../models/Dictionary";
 import { ConflictError, InternalServerError, BadRequestError, NotFoundError } from "../utils/errors";
 import { validate } from "../services/schemaService";
-import { incrementMajor, incrementMinor } from "../utils/version";
+import { incrementMajor, incrementMinor, isValidVersion, isGreater } from "../utils/version";
 
 /**
  * Return a single dictionary
@@ -39,6 +39,17 @@ export const listAll = async (): Promise<DictionaryDocument[]> => {
  * @param newDict The new data dictionary containing all of the file dictionaries
  */
 export const create = async (newDict: {name: string, version: string, files: any[]}): Promise<DictionaryDocument> => {
+    // Verify version is correct format
+    if (!isValidVersion(newDict.version)) {
+        throw new BadRequestError("Invalid version format");
+    }
+
+    const latest = await getLatestVersion(newDict.name);
+
+    if (!isGreater(newDict.version, latest)) {
+        throw new BadRequestError(`New version for ${newDict.name} is not greater than latest existing version`);
+    }
+
     // Verify files match dictionary
     newDict.files.forEach(e => {
         const result = validate(e);
@@ -128,4 +139,17 @@ export const updateFile = async (id: string, file: any, major: boolean): Promise
 
     const saved = await dict.save();
     return saved;
+};
+
+export const getLatestVersion = async (name: string): Promise<string> => {
+    const dicts = await Dictionary.find({"name": name});
+    let latest = "0.0";
+    if (dicts != undefined) {
+        dicts.forEach( dict => {
+            if (isGreater(dict.version, latest)) {
+                latest = dict.version;
+            }
+        });
+    }
+    return latest;
 };

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { isValidVersion, incrementMinor, incrementMajor } from "../../src/utils/version";
+import { isValidVersion, incrementMinor, incrementMajor, isGreater } from "../../src/utils/version";
 
 describe("Verifying version strings", () => {
 
@@ -41,6 +41,26 @@ describe("Incrementing version strings", () => {
 
     it("Should increment major version with increase in digits", () => {
         expect(incrementMajor("9.9")).to.equal("10.9");
+    });
+
+});
+
+describe("Comparing version strings", () => {
+
+    it("Expect 1.0 to be greater than 0.11", () => {
+        expect(isGreater("1.0", "0.1")).to.be.true;
+    });
+
+    it("Expect 19.0 to be greater than 2.5", () => {
+        expect(isGreater("19.0", "2.5")).to.be.true;
+    });
+
+    it("Expect 1.0 to be less than 1.01", () => {
+        expect(isGreater("1.0", "1.01")).to.be.false;
+    });
+
+    it("Expect 1.0 to not be greater than 1.0", () => {
+        expect(isGreater("1.0", "1.0")).to.be.false;
     });
 
 });

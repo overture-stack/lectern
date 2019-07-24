@@ -37,15 +37,29 @@ describe("Basic CRUD", () => {
                 });
         });
 
-        it("Should 409 on creating same dictionary", (done: Mocha.Done) => {
+        it("Should 400 on creating same dictionary due to same version number", (done: Mocha.Done) => {
+            const dictRequest = require("./fixtures/createDictionary.json");
             chai.request(app)
                 .post("/dictionaries")
-                .send(require("./fixtures/createDictionary.json"))
+                .send(dictRequest)
                 .end((err: Error, res: Response) => {
                     expect(err).to.be.null;
-                    expect(res).to.have.status(409);
+                    expect(res).to.have.status(400);
                     setImmediate(done);
                 });
+        });
+
+        it("Should 400 new dictionary of lower version number", (done: Mocha.Done) => {
+            const dictRequest = require("./fixtures/createDictionary.json");
+            dictRequest.version = "0.1";
+            chai.request(app)
+            .post("/dictionaries")
+            .send(dictRequest)
+            .end((err: Error, res: Response) => {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                setImmediate(done);
+            });
         });
     });
 
@@ -100,6 +114,7 @@ describe("Basic CRUD", () => {
 
         before((done: Mocha.Done) => {
             const dictRequest = require("./fixtures/createDictionary.json");
+            dictRequest.name = "updateTest";
             dictRequest.version = testVersion;
             chai.request(app)
                 .post("/dictionaries/")
