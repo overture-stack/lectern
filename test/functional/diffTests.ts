@@ -10,7 +10,7 @@ describe("Compute diff report between dictionary versions", () => {
     it("Should compute the field map correctly", () => {
         const mockDocument = {
             name: "foo",
-            files: [
+            schemas: [
                 {
                     "name": "bar",
                     "fields": [
@@ -33,7 +33,7 @@ describe("Compute diff report between dictionary versions", () => {
     it("Should compute the diff, with one file added (3 fields), and 3 updated on existing file", () => {
         const diffReport = diff(dict1, dict2);
         expect(diffReport).is.not.undefined;
-        expect(diffReport.size).to.be.equal(6);
+        expect(diffReport.size).to.be.equal(7);
     });
 
 });

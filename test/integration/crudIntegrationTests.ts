@@ -128,7 +128,7 @@ describe("Basic CRUD", () => {
         it("Should successfully add a file to a dictionary and increment to next major version", (done: Mocha.Done) => {
             const newFile = require("./fixtures/newFile.json");
             chai.request(app)
-                .post(`/dictionaries/${id}/files`)
+                .post(`/dictionaries/${id}/schemas`)
                 .send(newFile)
                 .end((err: Error, res: Response) => {
                     expect(err).to.be.null;
@@ -142,7 +142,7 @@ describe("Basic CRUD", () => {
         it("Should successfully update a file in a dictionary and increment to next minor version", (done: Mocha.Done) => {
             const newFile = require("./fixtures/updateNewFile.json");
             chai.request(app)
-                .put(`/dictionaries/${nextId}/files`)
+                .put(`/dictionaries/${nextId}/schemas`)
                 .send(newFile)
                 .end((err: Error, res: Response) => {
                     expect(err).to.be.null;

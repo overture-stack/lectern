@@ -35,8 +35,8 @@ app.get("/", (_, res) => res.send("Lectern"));
 app.get("/dictionaries", wrapAsync(dictionaryController.listDictionaries));
 app.post("/dictionaries", wrapAsync(dictionaryController.createDictionary));
 app.get("/dictionaries/:dictId", wrapAsync(dictionaryController.getDictionary));
-app.post("/dictionaries/:dictId/files", wrapAsync(dictionaryController.addFile));
-app.put("/dictionaries/:dictId/files", wrapAsync(dictionaryController.updateFile));
+app.post("/dictionaries/:dictId/schemas", wrapAsync(dictionaryController.addSchema));
+app.put("/dictionaries/:dictId/schemas", wrapAsync(dictionaryController.updateSchema));
 app.get("/diff/", wrapAsync(dictionaryController.diffDictionaries));
 
 app.use(errorHandler);

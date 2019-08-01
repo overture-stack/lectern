@@ -1,7 +1,7 @@
 {
     "name": "ARGO Dictionary",
     "version": "1.3",
-    "files": [
+    "schemas": [
         {
             "name": "donor",
             "description": "Donor Entity",
@@ -41,6 +41,7 @@
                 },
                 {
                     "name": "vital_status",
+                    "displayName": "Donor Vital Status",
                     "valueType": "string",
                     "description": "Donor's last known vital status",
                     "meta": {

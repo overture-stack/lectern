@@ -3,13 +3,13 @@ import mongoose from "mongoose";
 export type DictionaryDocument = mongoose.Document & {
     name: string;
     version: string;
-    files: any[];
+    schemas: any[];
 };
 
 const DictionarySchema = new mongoose.Schema({
     name: String,
     version: String,
-    files: Array
+    schemas: Array
 }, { timestamps: true });
 
 

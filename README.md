@@ -11,7 +11,7 @@
 </p>
 
 ## Introduction
-Lectern is a web service for storing and managing data dictionaries that describe TSV files. The service is responsible for maintaining different versions of a dictionary as well as computing the diff between different versions.
+Lectern is a web service for storing and managing data dictionaries/schemas that describe TSV files. The service is responsible for maintaining different versions of a dictionary as well as computing the diff between different versions.
 
 The indended use of the data dictionaries is to describe the structure and validations of different TSV files of interest and to be consumed downstream by a submission system that will use the validation rules against submitted files.
 
@@ -24,7 +24,7 @@ The indended use of the data dictionaries is to describe the structure and valid
 - Mongoose
 - Mocha
 - Chai
-    - Chai-HTTP
+  - Chai-HTTP
 - Testcontainers
 
 ### Build & Run

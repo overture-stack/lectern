@@ -106,7 +106,7 @@
         ]
       }
     },
-    "/dictionaries/{_id}/files": {
+    "/dictionaries/{_id}/schemas": {
       "post": {
         "summary": "Update a dictionary by adding a new file schema",
         "description": "Update a dictionary to the next major version number by adding a new file schema that passes validation against the meta schema. ",
@@ -228,9 +228,9 @@
           "type": "string",
           "description": "Version of the dictionary"
         },
-        "files": {
+        "schemas": {
           "type": "array",
-          "description": "Set of file dictionaries describing the files for this dictionary version",
+          "description": "Set of file dictionaries describing the schemas for this dictionary version",
           "items": {
             "type": "object"
           }
@@ -248,9 +248,9 @@
           "type": "string",
           "description": "Version of the dictionary"
         },
-        "files": {
+        "schemas": {
           "type": "array",
-          "description": "Set of file dictionaries describing the files for this dictionary version",
+          "description": "Set of file dictionaries describing the schemas for this dictionary version",
           "items": {
             "type": "object"
           }

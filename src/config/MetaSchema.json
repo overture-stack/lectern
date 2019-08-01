@@ -13,19 +13,8 @@
                 },
                 "default": {
                     "type": "string"
-                },
-                "required": {
-                    "type": "object",
-                    "required": ["default"],
-                    "properties": {
-                        "default": {
-                            "type": "string"
-                        }
-                    },
-                    "additionalProperties": false
                 }
             },
-            "maxProperties": 1,
             "additionalProperties": false
         },
         "stringRestrictions": {
@@ -39,27 +28,14 @@
                         "type": "string"
                     }
                 },
+                "required": {
+                    "type": "boolean"
+                },
                 "script": {
                     "type": "string"
                 },
-                "foreignKey": {
-                    "type": "object",
-                    "required": [
-                        "entityName",
-                        "fieldName"
-                    ],
-                    "properties": {
-                        "entityName": {
-                            "type": "string"
-                        },
-                        "fieldName": {
-                            "type": "string"
-                        }
-                    },
-                    "additionalProperties": false
-                },
-                "unique": {
-                    "type": "boolean"
+                "regex": {
+                    "type": "string"
                 }
             },
             "additionalProperties": false
@@ -67,26 +43,32 @@
         "integerMeta": {
             "type": "object",
             "properties": {
+                "key": {
+                    "type": "boolean",
+                    "enum": [
+                        true
+                    ]
+                },
                 "default": {
                     "type": "integer"
-                },
-                "required": {
-                    "type": "object",
-                    "required": ["default"],
-                    "properties": {
-                        "default": {
-                            "type": "integer"
-                        }
-                    },
-                    "additionalProperties": false
                 }
             },
-            "maxProperties": 1,
             "additionalProperties": false
         },
         "integerRestrictions": {
             "type": "object",
             "properties": {
+                "required": {
+                    "type": "boolean"
+                },
+                "codeList": {
+                    "type": "array",
+                    "minItems": 2,
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "script": {
                     "type": "string"
                 }
@@ -98,16 +80,6 @@
             "properties": {
                 "default": {
                     "type": "number"
-                },
-                "required": {
-                    "type": "object",
-                    "required": ["default"],
-                    "properties": {
-                        "default": {
-                            "type": "number"
-                        }
-                    },
-                    "additionalProperties": false
                 }
             },
             "maxProperties": 1,
@@ -116,6 +88,17 @@
         "numberRestrictions": {
             "type": "object",
             "properties": {
+                "required": {
+                    "type": "boolean"
+                },
+                "codeList": {
+                    "type": "array",
+                    "minItems": 2,
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "number"
+                    }
+                },
                 "script": {
                     "type": "string"
                 }
@@ -127,16 +110,6 @@
             "properties": {
                 "default": {
                     "type": "boolean"
-                },
-                "required": {
-                    "type": "object",
-                    "required": ["default"],
-                    "properties": {
-                        "default": {
-                            "type": "boolean"
-                        }
-                    },
-                    "additionalProperties": false
                 }
             },
             "maxProperties": 1,
@@ -145,6 +118,9 @@
         "booleanRestrictions": {
             "type": "object",
             "properties": {
+                "required": {
+                    "type": "boolean"
+                },
                 "script": {
                     "type": "string"
                 }
@@ -160,6 +136,9 @@
             ],
             "properties": {
                 "name": {
+                    "type": "string"
+                },
+                "displayName": {
                     "type": "string"
                 },
                 "description": {
