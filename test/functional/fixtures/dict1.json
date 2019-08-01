@@ -1,7 +1,7 @@
 {
     "name": "ARGO Dictionary",
     "version": "1.2",
-    "files": [
+    "schemas": [
         {
             "name": "donor",
             "description": "Donor Entity",

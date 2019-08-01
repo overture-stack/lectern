@@ -10,7 +10,7 @@ describe("Compute diff report between dictionary versions", () => {
     it("Should compute the field map correctly", () => {
         const mockDocument = {
             name: "foo",
-            files: [
+            schemas: [
                 {
                     "name": "bar",
                     "fields": [

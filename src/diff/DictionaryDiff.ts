@@ -71,8 +71,8 @@ export const diffJson = (object: any, base: any) => {
  * @param dict input dictionary
  */
 export const getFieldMap = (dict: DictionaryDocument): Map<string, any> => {
-    const files = dict.files;
-    return files.map(file => {
+    const schemas = dict.schemas;
+    return schemas.map(file => {
         return file.fields.reduce( (acc: Map<string, any>, field: any) => {
             return acc.set(`${file.name}.${field.name}`, field);
         }, new Map<string, any>() );

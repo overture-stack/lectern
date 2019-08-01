@@ -34,11 +34,11 @@ export const listAll = async (): Promise<DictionaryDocument[]> => {
 };
 
 /**
- * Creates a new data dictionary version with included files, verifying version doesn't exist
- * and that the file dictionaries are valid against the meta schema.
- * @param newDict The new data dictionary containing all of the file dictionaries
+ * Creates a new data dictionary version with included schemas, verifying version doesn't exist
+ * and that the schemas are valid against the meta schema.
+ * @param newDict The new data dictionary containing all of the schemas
  */
-export const create = async (newDict: {name: string, version: string, files: any[]}): Promise<DictionaryDocument> => {
+export const create = async (newDict: {name: string, version: string, schemas: any[]}): Promise<DictionaryDocument> => {
     // Verify version is correct format
     if (!isValidVersion(newDict.version)) {
         throw new BadRequestError("Invalid version format");
@@ -50,8 +50,8 @@ export const create = async (newDict: {name: string, version: string, files: any
         throw new BadRequestError(`New version for ${newDict.name} is not greater than latest existing version`);
     }
 
-    // Verify files match dictionary
-    newDict.files.forEach(e => {
+    // Verify schemas match dictionary
+    newDict.schemas.forEach(e => {
         const result = validate(e);
         if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
     });
@@ -67,20 +67,20 @@ export const create = async (newDict: {name: string, version: string, files: any
     const dict = new Dictionary({
         name: newDict.name,
         version: newDict.version,
-        files: newDict.files
+        schemas: newDict.schemas
     });
     const saved = await dict.save();
     return saved;
 };
 
 /**
- * Adds a new file dictionary to the specified model. File Dictionary must not already exist.
+ * Adds a new schemas to the specified model. Schema must not already exist.
  * @param name Name of dictionary model
  * @param version Version of dictionary
- * @param file new file dictionary to add
+ * @param schema new schema to add
  */
-export const addFile = async (id: string, file: any): Promise<DictionaryDocument> => {
-    const result = validate(file);
+export const addSchema = async (id: string, schema: any): Promise<DictionaryDocument> => {
+    const result = validate(schema);
     if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
     // Verify that this dictionary version doesn't already exist.
@@ -88,30 +88,30 @@ export const addFile = async (id: string, file: any): Promise<DictionaryDocument
         "_id": id,
     }).exec();
 
-    const entities = doc.files.map(f => f["name"]);
-    if (entities.includes(file["name"])) throw new ConflictError("This file already exists.");
+    const entities = doc.schemas.map(s => s["name"]);
+    if (entities.includes(schema["name"])) throw new ConflictError("This schema already exists.");
 
-    const files = doc.files;
-    files.push(file);
+    const schemas = doc.schemas;
+    schemas.push(schema);
     // Save new dictionary version
     const dict = new Dictionary({
         name: doc.name,
         version: incrementMajor(doc.version),
-        files: files
+        schemas: schemas
     });
     const saved = await dict.save();
     return saved;
 };
 
 /**
- * Updates a single file dictionary ensuring it's existence first and then updating the version of the model dictionary
- * @param name Name of dictionary model
+ * Updates a single schema ensuring it's existence first and then updating the version of the model dictionary
+ * @param name Name of dictionary
  * @param version Version of dictionary
- * @param file file dictionary to add update
+ * @param schema schema to add update
  * @param major true if major version to be incremented, false if minor version to be incremented
  */
-export const updateFile = async (id: string, file: any, major: boolean): Promise<DictionaryDocument> => {
-    const result = validate(file);
+export const updateSchema = async (id: string, schema: any, major: boolean): Promise<DictionaryDocument> => {
+    const result = validate(schema);
     if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
     // Verify that this dictionary version doesn't already exist.
@@ -120,12 +120,12 @@ export const updateFile = async (id: string, file: any, major: boolean): Promise
     }).exec();
 
     // Ensure it exists
-    const entities = doc.files.map(f => f["name"]);
-    if (!entities.includes(file["name"])) throw new BadRequestError("Cannot update file dictionary that does not exist.");
+    const entities = doc.schemas.map(s => s["name"]);
+    if (!entities.includes(schema["name"])) throw new BadRequestError("Cannot update schema that does not exist.");
 
     // Filter out one to update
-    const files = doc.files.filter( f => !(f["name"] === file["name"]));
-    files.push(file);
+    const schemas = doc.schemas.filter( s => !(s["name"] === schema["name"]));
+    schemas.push(schema);
 
     // Increment Version
     const nextVersion = major ? incrementMajor(doc.version) : incrementMinor(doc.version);
@@ -134,7 +134,7 @@ export const updateFile = async (id: string, file: any, major: boolean): Promise
     const dict = new Dictionary({
         name: doc.name,
         version: nextVersion,
-        files: files
+        schemas: schemas
     });
 
     const saved = await dict.save();

@@ -27,13 +27,13 @@ export const createDictionary = async (req: Request, res: Response) => {
     res.status(200).send(dict.toObject());
 };
 
-export const addFile = async (req: Request, res: Response) => {
-    const dict = await dictionaryService.addFile(req.params.dictId, req.body);
+export const addSchema = async (req: Request, res: Response) => {
+    const dict = await dictionaryService.addSchema(req.params.dictId, req.body);
     res.status(200).send(dict.toObject());
 };
 
-export const updateFile = async (req: Request, res: Response) => {
-    const dict = await dictionaryService.updateFile(req.params.dictId, req.body, req.query.major == true);
+export const updateSchema = async (req: Request, res: Response) => {
+    const dict = await dictionaryService.updateSchema(req.params.dictId, req.body, req.query.major == true);
     res.status(200).send(dict.toObject());
 };
 
