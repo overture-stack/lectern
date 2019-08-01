@@ -41,6 +41,7 @@
                 },
                 {
                     "name": "vital_status",
+                    "displayName": "Donor Vital Status",
                     "valueType": "string",
                     "description": "Donor's last known vital status",
                     "meta": {

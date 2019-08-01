@@ -9,6 +9,7 @@
             "fields": [
                 {
                     "name": "donor_submitter_id",
+                    "displayName": "Submitter Donor ID",
                     "valueType": "string",
                     "description": "Unique identifier for donor; assigned by data provider",
                     "meta": {
@@ -41,6 +42,7 @@
                 },
                 {
                     "name": "vital_status",
+                    "displayName": "Vital Status",
                     "valueType": "string",
                     "description": "Donor's last known vital status",
                     "meta": {
