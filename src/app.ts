@@ -5,6 +5,7 @@ import * as dictionaryController from "./controllers/dictionaryController";
 import { errorHandler } from "./utils/errors";
 import * as swaggerUi from "swagger-ui-express";
 import * as sagger from "./config/swagger.json";
+import ego from "./services/egoTokenService";
 
 
 /**
@@ -18,6 +19,11 @@ export const wrapAsync = (fn: RequestHandler): RequestHandler => {
       }
   };
 };
+
+/**
+ * Auth Decorator
+ */
+const egoDecorator = ego();
 
 // Create Express server with mongoConfig
 const app = express();
@@ -33,10 +39,10 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(sagger));
 
 app.get("/", (_, res) => res.send("Lectern"));
 app.get("/dictionaries", wrapAsync(dictionaryController.listDictionaries));
-app.post("/dictionaries", wrapAsync(dictionaryController.createDictionary));
+app.post("/dictionaries", egoDecorator(dictionaryController.createDictionary));
 app.get("/dictionaries/:dictId", wrapAsync(dictionaryController.getDictionary));
-app.post("/dictionaries/:dictId/schemas", wrapAsync(dictionaryController.addSchema));
-app.put("/dictionaries/:dictId/schemas", wrapAsync(dictionaryController.updateSchema));
+app.post("/dictionaries/:dictId/schemas", egoDecorator(dictionaryController.addSchema));
+app.put("/dictionaries/:dictId/schemas", egoDecorator(dictionaryController.updateSchema));
 app.get("/diff/", wrapAsync(dictionaryController.diffDictionaries));
 
 app.use(errorHandler);
