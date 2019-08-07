@@ -45,6 +45,7 @@ export default function (egoURL: string = process.env.EGO_API, scope: string = p
             try {
                 valid = !!(bearerToken && (await verifyEgoToken(bearerToken, egoURL)));
             } catch (e) {
+                console.error(e);
                 valid = false;
             }
 
@@ -63,6 +64,7 @@ export default function (egoURL: string = process.env.EGO_API, scope: string = p
                         next(new ForbiddenError("Forbidden"));
                     }
                 } catch (e) {
+                    console.error(e);
                     next(new ForbiddenError("Forbidden"));
                 }
             }
