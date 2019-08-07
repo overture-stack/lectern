@@ -1,4 +1,4 @@
-import urlJoin from "url-join";
+
 import memoize from "memoizee";
 import axios from "axios";
 import jwt from "jsonwebtoken";
@@ -8,7 +8,7 @@ import { ForbiddenError, UnauthorizedError } from "../utils/errors";
 
 const getKey = memoize(
     async (egoURL: string) => {
-        const response = await axios.get(urlJoin(egoURL, "oauth/token/public_key"));
+        const response = await axios.get(egoURL);
         return response.data;
     },
     {

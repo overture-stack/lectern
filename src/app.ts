@@ -23,7 +23,7 @@ export const wrapAsync = (fn: RequestHandler): RequestHandler => {
 /**
  * Auth Decorator
  */
-const egoDecorator = ego();
+const egoDecorator = process.env.AUTH_ENABLED == "true" ? ego() : wrapAsync ;
 
 // Create Express server with mongoConfig
 const app = express();
