@@ -4,7 +4,7 @@ import { serverPort } from "./config/serverConfig";
 import * as dictionaryController from "./controllers/dictionaryController";
 import { errorHandler } from "./utils/errors";
 import * as swaggerUi from "swagger-ui-express";
-import * as sagger from "./config/swagger.json";
+import * as swagger from "./config/swagger.json";
 import ego from "./services/egoTokenService";
 
 
@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(sagger));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swagger));
 
 app.get("/", (_, res) => res.send("Lectern"));
 app.get("/dictionaries", wrapAsync(dictionaryController.listDictionaries));

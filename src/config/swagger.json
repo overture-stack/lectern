@@ -1,27 +1,9 @@
 {
-  "basePath": "/",
-  "swagger": "2.0",
+  "openapi": "3.0.0",
   "info": {
     "title": "Lectern",
     "version": "1.0.0"
   },
-  "schemes": [
-    "http",
-    "https"
-  ],
-  "securityDefinitions": {
-    "Bearer": {
-      "type": "apiKey",
-      "name": "Authorization",
-      "in": "header"
-    }
-  },
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
   "paths": {
     "/dictionaries": {
       "get": {
@@ -31,23 +13,31 @@
           {
             "name": "name",
             "description": "name of dictionary",
-            "type": "string",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "version",
             "description": "version of dictionary",
-            "type": "string",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "",
-            "schema": {
-              "$ref": "#/definitions/DictionaryListResponse"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DictionaryListResponse"
+                }
+              }
             }
           },
           "400": {
@@ -64,17 +54,17 @@
       "post": {
         "summary": "Create a new dictionary in lectern",
         "description": "Saves the provided dictionary in lectern. Must not conflict with a previous dictionary name and version business key",
-        "parameters": [
-          {
-            "name": "Dictionary",
-            "in": "body",
-            "description": "The dictionary to be saved",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/CreateDictionary"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDictionary"
+              }
             }
-          }
-        ],
+          },
+          "description": "The dictionary to be saved",
+          "required": true
+        },
         "security": [
           {
             "Bearer": []
@@ -83,8 +73,12 @@
         "responses": {
           "200": {
             "description": "",
-            "schema": {
-              "$ref": "#/definitions/Dictionary"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dictionary"
+                }
+              }
             }
           }
         },
@@ -101,15 +95,21 @@
           {
             "name": "_id",
             "in": "path",
-            "type": "string",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "",
-            "schema": {
-              "$ref": "#/definitions/Dictionary"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dictionary"
+                }
+              }
             }
           }
         },
@@ -126,19 +126,15 @@
           {
             "name": "_id",
             "in": "path",
-            "type": "string",
-            "required": true
-          },
-          {
-            "name": "file schema",
-            "in": "body",
-            "description": "file schema",
             "required": true,
             "schema": {
-              "type": "object"
+              "type": "string"
             }
           }
         ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/FileSchema"
+        },
         "security": [
           {
             "Bearer": []
@@ -147,8 +143,12 @@
         "responses": {
           "200": {
             "description": "",
-            "schema": {
-              "$ref": "#/definitions/Dictionary"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dictionary"
+                }
+              }
             }
           }
         },
@@ -163,25 +163,23 @@
           {
             "name": "_id",
             "in": "path",
-            "type": "string",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "majorVersion",
             "in": "query",
-            "type": "boolean",
-            "required": false
-          },
-          {
-            "name": "file schema",
-            "in": "body",
-            "description": "file schema",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "object"
+              "type": "boolean"
             }
           }
         ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/FileSchema"
+        },
         "security": [
           {
             "Bearer": []
@@ -190,8 +188,12 @@
         "responses": {
           "200": {
             "description": "",
-            "schema": {
-              "$ref": "#/definitions/Dictionary"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dictionary"
+                }
+              }
             }
           }
         },
@@ -208,27 +210,37 @@
           {
             "name": "name",
             "in": "query",
-            "type": "string",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "left",
             "in": "query",
-            "type": "string",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "right",
             "in": "query",
-            "type": "string",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "The computed diff",
-            "schema": {
-              "$ref": "#/definitions/DiffResponse"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiffResponse"
+                }
+              }
             }
           }
         },
@@ -238,88 +250,115 @@
       }
     }
   },
-  "definitions": {
-    "Dictionary": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name of the parameter"
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "components": {
+    "requestBodies": {
+      "FileSchema": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object"
+            }
+          }
         },
-        "version": {
-          "type": "string",
-          "description": "Version of the dictionary"
-        },
-        "schemas": {
-          "type": "array",
-          "description": "Set of file dictionaries describing the schemas for this dictionary version",
-          "items": {
+        "description": "file schema",
+        "required": true
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "Dictionary": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the parameter"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the dictionary"
+          },
+          "schemas": {
+            "type": "array",
+            "description": "Set of file dictionaries describing the schemas for this dictionary version",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "CreateDictionary": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the parameter"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the dictionary"
+          },
+          "schemas": {
+            "type": "array",
+            "description": "Set of file dictionaries describing the schemas for this dictionary version",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "DictionaryListEntry": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "mongo generated object id"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the parameter"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the dictionary"
+          }
+        }
+      },
+      "DictionaryListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/DictionaryListEntry"
+        }
+      },
+      "DiffItem": {
+        "type": "object",
+        "properties": {
+          "left": {
+            "type": "object"
+          },
+          "right": {
+            "type": "object"
+          },
+          "diff": {
             "type": "object"
           }
         }
-      }
-    },
-    "CreateDictionary": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name of the parameter"
-        },
-        "version": {
-          "type": "string",
-          "description": "Version of the dictionary"
-        },
-        "schemas": {
-          "type": "array",
-          "description": "Set of file dictionaries describing the schemas for this dictionary version",
-          "items": {
-            "type": "object"
-          }
+      },
+      "DiffResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/DiffItem"
         }
-      }
-    },
-    "DictionaryListEntry": {
-      "type": "object",
-      "properties": {
-        "_id": {
-          "type": "string",
-          "description": "mongo generated object id"
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the parameter"
-        },
-        "version": {
-          "type": "string",
-          "description": "Version of the dictionary"
-        }
-      }
-    },
-    "DictionaryListResponse": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/DictionaryListEntry"
-      }
-    },
-    "DiffItem": {
-      "type": "object",
-      "properties": {
-        "left": {
-          "type": "object"
-        },
-        "right": {
-          "type": "object"
-        },
-        "diff": {
-          "type": "object"
-        }
-      }
-    },
-    "DiffResponse": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/DiffItem"
       }
     }
   }
