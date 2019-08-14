@@ -13,7 +13,7 @@ export const incrementMinor = (version: string): string => {
 export const incrementMajor = (version: string): string => {
     if (!isValidVersion(version)) throw new MalformedVersionError("Version string is malformed: " + version);
     const parts = version.split(".");
-    return (parseInt(parts[0]) + 1).toString() + "." + parts[1];
+    return (parseInt(parts[0]) + 1).toString() + "." + "0";
 };
 
 export const isGreater = (v1: string, v2: string): boolean => {

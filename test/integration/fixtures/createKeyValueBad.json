@@ -1,0 +1,159 @@
+{
+    "name": "Key Value Meta",
+    "version": "1.1",
+    "schemas": [
+        {
+            "name": "key_value_test",
+            "description": "key_value_test",
+            "key": "kv_id",
+            "fields": [
+                {
+                    "name": "kv_id",
+                    "valueType": "string",
+                    "description": "kv_id",
+                    "meta": {
+                        "key": true,
+                        "displayName": "KEY VALUE ID",
+                        "noArrays": ["lol", "sorry", "no_arrays", "please"]
+                    },
+                    "restrictions": {
+                        "required": true,
+                        "regex": "^[A-Z1-9][-_A-Z1-9]{2,7}(-[A-Z][A-Z])$"
+                    }
+                },
+                {
+                    "name": "foo",
+                    "valueType": "string",
+                    "description": "foo",
+                    "meta": {
+                        "displayName": "FOOOOO",
+                        "default": "blabla"
+                    },
+                    "restrictions": {
+                        "required": true,
+                        "regex": "^(?!(DO|do)).+"
+                    }
+                },
+                {
+                    "name": "bar",
+                    "valueType": "string",
+                    "description": "The gender of the patient",
+                    "meta": {
+                        "funny": false,
+                        "test": true,
+                        "adkadfaskljd": 2109312983
+                    },
+                    "restrictions": {
+                        "required": true,
+                        "codeList": [
+                            "foo",
+                            "bar",
+                            "biz"
+                        ]
+                    }
+                },
+                {
+                    "name": "baz",
+                    "valueType": "string",
+                    "description": "baz",
+                    "meta": {
+                        "displayName": "wololo",
+                        "key": true,
+                        "double": 0.12
+                    },
+                    "restrictions": {
+                        "required": true,
+                        "regex": "^(?!(SP|sp)).+"
+                    }
+                },
+                {
+                    "name": "specimen_type",
+                    "valueType": "string",
+                    "description": "Indicate the tissue source of the biospecimen",
+                    "meta": {
+                        "displayName": "Specimen Typo",
+                        "units": "mg",
+                        "tags" : "blabla",
+                        "default": "Other"
+                    },
+                    "restrictions": {
+                        "required": true,
+                        "codeList": [
+                            "Blood derived",
+                            "Blood derived - bone marrow",
+                            "Blood derived - peripheral blood",
+                            "Bone marrow",
+                            "Buccal cell",
+                            "Lymph node",
+                            "Solid tissue",
+                            "Plasma",
+                            "Serum",
+                            "Urine",
+                            "Cerebrospinal fluid",
+                            "Sputum",
+                            "NOS (Not otherwise specified)",
+                            "Other",
+                            "FFPE",
+                            "Pleural effusion",
+                            "Mononuclear cells from bone marrow",
+                            "Saliva",
+                            "Skin"
+                        ]
+                    }
+                },
+                {
+                    "name": "tumour_normal_designation",
+                    "valueType": "string",
+                    "description": "Indicate whether specimen is tumour or normal type",
+                    "restrictions": {
+                        "required": true,
+                        "codeList": [
+                            "Normal",
+                            "Normal - tissue adjacent to primary tumour",
+                            "Primary tumour",
+                            "Primary tumour - adjacent to normal",
+                            "Primary tumour - additional new primary",
+                            "Recurrent tumour",
+                            "Metastatic tumour",
+                            "Metastatic tumour - metastasis local to lymph node",
+                            "Metastatic tumour - metastasis to distant location",
+                            "Metastatic tumour - additional metastatic",
+                            "Xenograft - derived from primary tumour",
+                            "Xenograft - derived from tumour cell line",
+                            "Cell line - derived from xenograft tissue",
+                            "Cell line - derived from tumour",
+                            "Cell line - derived from normal"
+                        ]
+                    }
+                },
+                {
+                    "name": "sample_submitter_id",
+                    "valueType": "string",
+                    "description": "Submitter assigned sample id",
+                    "restrictions": {
+                        "required": true,
+                        "regex": "^(?!(SA|sa)).+"
+                    }
+                },
+                {
+                    "name": "sample_type",
+                    "valueType": "string",
+                    "description": "Specimen Type",
+                    "restrictions": {
+                        "required": true,
+                        "codeList": [
+                            "Total DNA",
+                            "Amplified DNA",
+                            "ctDNA",
+                            "other DNA enrichments",
+                            "Total RNA",
+                            "Ribo-Zero RNA",
+                            "polyA+ RNA",
+                            "other RNA fractions"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -33,6 +33,7 @@ export const addSchema = async (req: Request, res: Response) => {
 };
 
 export const updateSchema = async (req: Request, res: Response) => {
+    if (req.params.dictId === undefined) throw new BadRequestError("Must specify valid dictId");
     const dict = await dictionaryService.updateSchema(req.params.dictId, req.body, req.query.major == true);
     res.status(200).send(dict.toObject());
 };

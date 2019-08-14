@@ -9,7 +9,7 @@ import { incrementMajor, incrementMinor, isValidVersion, isGreater } from "../ut
  * @param version Version of the dictionary
  */
 export const findOne = async (name: string, version: string): Promise<DictionaryDocument> => {
-    const dict = await Dictionary.findOne({"name": name, "version": version});
+    const dict = await Dictionary.findOne({ "name": name, "version": version });
     return dict;
 };
 
@@ -18,7 +18,7 @@ export const findOne = async (name: string, version: string): Promise<Dictionary
  * @param id id of the Dictionary
  */
 export const getOne = async (id: string): Promise<DictionaryDocument> => {
-    const dict = await Dictionary.findOne({"_id": id });
+    const dict = await Dictionary.findOne({ "_id": id });
     if (dict == undefined) {
         throw new NotFoundError("Cannot find dictionary with id " + id);
     }
@@ -38,7 +38,7 @@ export const listAll = async (): Promise<DictionaryDocument[]> => {
  * and that the schemas are valid against the meta schema.
  * @param newDict The new data dictionary containing all of the schemas
  */
-export const create = async (newDict: {name: string, version: string, schemas: any[]}): Promise<DictionaryDocument> => {
+export const create = async (newDict: { name: string, version: string, schemas: any[] }): Promise<DictionaryDocument> => {
     // Verify version is correct format
     if (!isValidVersion(newDict.version)) {
         throw new BadRequestError("Invalid version format");
@@ -119,12 +119,16 @@ export const updateSchema = async (id: string, schema: any, major: boolean): Pro
         "_id": id
     }).exec();
 
+    if (doc === undefined) {
+        throw new NotFoundError("Cannot update dictionary that does not exist.");
+    }
+
     // Ensure it exists
     const entities = doc.schemas.map(s => s["name"]);
     if (!entities.includes(schema["name"])) throw new BadRequestError("Cannot update schema that does not exist.");
 
     // Filter out one to update
-    const schemas = doc.schemas.filter( s => !(s["name"] === schema["name"]));
+    const schemas = doc.schemas.filter(s => !(s["name"] === schema["name"]));
     schemas.push(schema);
 
     // Increment Version
@@ -142,10 +146,10 @@ export const updateSchema = async (id: string, schema: any, major: boolean): Pro
 };
 
 export const getLatestVersion = async (name: string): Promise<string> => {
-    const dicts = await Dictionary.find({"name": name});
+    const dicts = await Dictionary.find({ "name": name });
     let latest = "0.0";
     if (dicts != undefined) {
-        dicts.forEach( dict => {
+        dicts.forEach(dict => {
             if (isGreater(dict.version, latest)) {
                 latest = dict.version;
             }
