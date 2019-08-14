@@ -94,11 +94,11 @@ spec:
           }
         }
 
-        stage('Deploy') {
-            steps {
-                when {
+        stage('Deploy to Overture QA') {
+            when {
                   branch "develop"
-                }
+            }
+            steps {
                 container('helm') {
                     withCredentials([file(credentialsId:'4ed1e45c-b552-466b-8f86-729402993e3b', variable: 'KUBECONFIG')]) {
                         sh 'env'
@@ -113,7 +113,6 @@ spec:
                 }
             }
         }
-
         
     }
 }
