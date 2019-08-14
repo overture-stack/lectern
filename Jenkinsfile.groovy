@@ -107,7 +107,7 @@ spec:
                         sh "helm repo add overture https://overture-stack.github.io/charts-server/"
                         sh """
                             helm upgrade --kubeconfig $KUBECONFIG --install --namespace=overture-qa lectern-overture-qa \\
-                            overture/lectern --reuse-values $argsLine
+                            overture/lectern --reuse-values 
                            """
                     }
                 }
