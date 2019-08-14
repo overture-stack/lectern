@@ -74,6 +74,9 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
         case "MalformedVersion":
             res.status(400);
             break;
+        case "CastError":
+            res.status(400);
+            break;
         default:
             res.status(500);
             break;

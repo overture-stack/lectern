@@ -36,11 +36,11 @@ describe("Incrementing version strings", () => {
     });
 
     it("Should increment major version", () => {
-        expect(incrementMajor("1.9")).to.equal("2.9");
+        expect(incrementMajor("1.9")).to.equal("2.0");
     });
 
     it("Should increment major version with increase in digits", () => {
-        expect(incrementMajor("9.9")).to.equal("10.9");
+        expect(incrementMajor("9.9")).to.equal("10.0");
     });
 
 });

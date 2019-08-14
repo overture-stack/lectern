@@ -4,18 +4,15 @@
     "definitions": {
         "stringMeta": {
             "type": "object",
-            "properties": {
-                "key": {
-                    "type": "boolean",
-                    "enum": [
-                        true
-                    ]
-                },
-                "default": {
-                    "type": "string"
-                }
-            },
-            "additionalProperties": false
+            "properties": {},
+            "additionalProperties": {
+                "anyOf": [
+                    {"type": "string"},
+                    {"type": "number"},
+                    {"type": "integer"},
+                    {"type": "boolean"}
+                ]
+            }
         },
         "stringRestrictions": {
             "type": "object",
@@ -42,18 +39,15 @@
         },
         "integerMeta": {
             "type": "object",
-            "properties": {
-                "key": {
-                    "type": "boolean",
-                    "enum": [
-                        true
-                    ]
-                },
-                "default": {
-                    "type": "integer"
-                }
-            },
-            "additionalProperties": false
+            "properties": {},
+            "additionalProperties": {
+                "anyOf": [
+                    {"type": "string"},
+                    {"type": "number"},
+                    {"type": "integer"},
+                    {"type": "boolean"}
+                ]
+            }
         },
         "integerRestrictions": {
             "type": "object",
@@ -77,13 +71,15 @@
         },
         "numberMeta": {
             "type": "object",
-            "properties": {
-                "default": {
-                    "type": "number"
-                }
-            },
-            "maxProperties": 1,
-            "additionalProperties": false
+            "properties": {},
+            "additionalProperties": {
+                "anyOf": [
+                    {"type": "string"},
+                    {"type": "number"},
+                    {"type": "integer"},
+                    {"type": "boolean"}
+                ]
+            }
         },
         "numberRestrictions": {
             "type": "object",
@@ -107,13 +103,15 @@
         },
         "booleanMeta": {
             "type": "object",
-            "properties": {
-                "default": {
-                    "type": "boolean"
-                }
-            },
-            "maxProperties": 1,
-            "additionalProperties": false
+            "properties": {},
+            "additionalProperties": {
+                "anyOf": [
+                    {"type": "string"},
+                    {"type": "number"},
+                    {"type": "integer"},
+                    {"type": "boolean"}
+                ]
+            }
         },
         "booleanRestrictions": {
             "type": "object",
@@ -136,9 +134,6 @@
             ],
             "properties": {
                 "name": {
-                    "type": "string"
-                },
-                "displayName": {
                     "type": "string"
                 },
                 "description": {

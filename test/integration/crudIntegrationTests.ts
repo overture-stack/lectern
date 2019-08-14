@@ -61,6 +61,30 @@ describe("Basic CRUD", () => {
                 setImmediate(done);
             });
         });
+
+        it("Should create a new dictionary with lots of Key/Value meta fields", (done: Mocha.Done) => {
+            chai.request(app)
+                .post("/dictionaries")
+                .send(require("./fixtures/createKeyValue.json"))
+                .end((err: Error, res: Response) => {
+                    expect(err).to.be.null;
+                    expect(res).to.have.status(200);
+                    setImmediate(done);
+                });
+        });
+
+        it("Should 400 with meta fields that are not string/boolean/integer/number", (done: Mocha.Done) => {
+            const dictRequest = require("./fixtures/createKeyValueBad.json");
+            chai.request(app)
+            .post("/dictionaries")
+            .send(dictRequest)
+            .end((err: Error, res: Response) => {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                setImmediate(done);
+            });
+        });
+
     });
 
     describe("Read", () => {
@@ -88,6 +112,16 @@ describe("Basic CRUD", () => {
                     expect(err).to.be.null;
                     expect(res).to.have.status(200);
                     expect(res.body.version).to.equal(testVersion);
+                    setImmediate(done);
+                });
+        });
+
+        it("Should 400 with a badly formed dictionary id", (done: Mocha.Done) => {
+            chai.request(app)
+                .get("/dictionaries/aslkjfdabhskjlfhsdalkjfhsadfklsja")
+                .end((err: Error, res: Response) => {
+                    expect(err).to.be.null;
+                    expect(res).to.have.status(400);
                     setImmediate(done);
                 });
         });
@@ -133,7 +167,7 @@ describe("Basic CRUD", () => {
                 .end((err: Error, res: Response) => {
                     expect(err).to.be.null;
                     expect(res).to.have.status(200);
-                    expect(res.body.version).to.equal("11.10");
+                    expect(res.body.version).to.equal("11.0");
                     nextId = res.body._id;
                     setImmediate(done);
                 });
@@ -147,11 +181,22 @@ describe("Basic CRUD", () => {
                 .end((err: Error, res: Response) => {
                     expect(err).to.be.null;
                     expect(res).to.have.status(200);
-                    expect(res.body.version).to.equal("11.11");
+                    expect(res.body.version).to.equal("11.1");
                     setImmediate(done);
                 });
         });
 
+        it("Should respond with bad request on poorly formatted dicitonary_id", (done: Mocha.Done) => {
+            const newFile = require("./fixtures/updateNewFile.json");
+            chai.request(app)
+                .put(`/dictionaries/kljadsbflsdafsdakljsdfkp/schemas`)
+                .send(newFile)
+                .end((err: Error, res: Response) => {
+                    expect(err).to.be.null;
+                    expect(res).to.have.status(400);
+                    setImmediate(done);
+                });
+        });
     });
 
     describe("Delete", () => {
