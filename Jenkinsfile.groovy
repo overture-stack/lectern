@@ -44,6 +44,16 @@ spec:
         }
     }
     stages {
+        stage('Prepare') {
+            steps {
+                script {
+                    commit = sh(returnStdout: true, script: 'git describe --always').trim()
+                }
+                script {
+                    version = sh(returnStdout: true, script: 'cat package.json | grep version | cut -d \':\' -f2 | sed -e \'s/"//\' -e \'s/",//\'').trim()
+                }
+            }
+        }
         stage('Test') {
             steps {
                 container('node') {
@@ -79,34 +89,24 @@ spec:
             }
         }
 
-        stage('Publish Master (latest)') {
+        stage('Release & tag') {
           when {
             branch "master"
           }
           steps {
               container('docker') {
-                    withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh 'docker login -u $USERNAME -p $PASSWORD'
-                    }
-                    sh "docker  build --network=host -f Dockerfile . -t overture/lectern:latest"
-                    sh "docker push overture/lectern:latest"
+                  withCredentials([usernamePassword(credentialsId: 'OvertureBioGithub', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                      sh "git tag ${version}"
+                      sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/overture-stack/lectern --tags"
+                  }
+                  withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                      sh 'docker login -u $USERNAME -p $PASSWORD'
+                  }
+                  sh "docker  build --network=host -f Dockerfile . -t overture/lectern:latest -t overture/lectern:${version}"
+                  sh "docker push overture/lectern:${version}"
+                  sh "docker push overture/lectern:latest"
              }
           }
-        }
-
-        stage('Publish new release tag') {
-            when { 
-                tag "release-*" 
-            }
-            steps {
-                container('docker') {
-                    withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh 'docker login -u $USERNAME -p $PASSWORD'
-                    }
-                    sh "docker  build --network=host -f Dockerfile . -t overture/lectern:$env.TAG_NAME"
-                    sh "docker push overture/lectern:$env.TAG_NAME"
-                }
-            }
         }
 
         stage('Deploy to Overture QA') {
