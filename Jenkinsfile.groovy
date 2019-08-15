@@ -61,7 +61,7 @@ spec:
             }
         }
        // publish the edge tag
-        stage('Publish Develop') {
+        stage('Publish Develop (edge)') {
             when {
                 branch "develop"
             }
@@ -79,7 +79,7 @@ spec:
             }
         }
 
-        stage('Release') {
+        stage('Publish Master (latest)') {
           when {
             branch "master"
           }
@@ -92,6 +92,21 @@ spec:
                     sh "docker push overture/lectern:latest"
              }
           }
+        }
+
+        stage('Publish new release tag') {
+            expression {
+                when { tag "release-*" }
+            }
+            steps {
+                container('docker') {
+                    withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                    }
+                    sh "docker  build --network=host -f Dockerfile . -t overture/lectern:$env.TAG_NAME"
+                    sh "docker push overture/lectern:$env.TAG_NAME"
+                }
+            }
         }
 
         stage('Deploy to Overture QA') {
