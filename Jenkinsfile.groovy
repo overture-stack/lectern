@@ -95,8 +95,8 @@ spec:
         }
 
         stage('Publish new release tag') {
-            expression {
-                when { tag "release-*" }
+            when { 
+                tag "release-*" 
             }
             steps {
                 container('docker') {
