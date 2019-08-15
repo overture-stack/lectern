@@ -1,0 +1,365 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Lectern",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/dictionaries": {
+      "get": {
+        "summary": "Get dictionaries stored in lectern",
+        "description": "Returns list of dictionaries",
+        "parameters": [
+          {
+            "name": "name",
+            "description": "name of dictionary",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "description": "version of dictionary",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DictionaryListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "Dictionaries"
+        ]
+      },
+      "post": {
+        "summary": "Create a new dictionary in lectern",
+        "description": "Saves the provided dictionary in lectern. Must not conflict with a previous dictionary name and version business key",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDictionary"
+              }
+            }
+          },
+          "description": "The dictionary to be saved",
+          "required": true
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dictionary"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Dictionaries"
+        ]
+      }
+    },
+    "/dictionaries/{_id}": {
+      "get": {
+        "summary": "Get a single dictionary",
+        "description": "Get single dictionary stored in lectern by mongo id",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dictionary"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Dictionaries"
+        ]
+      }
+    },
+    "/dictionaries/{_id}/schemas": {
+      "post": {
+        "summary": "Update a dictionary by adding a new file schema",
+        "description": "Update a dictionary to the next major version number by adding a new file schema that passes validation against the meta schema. ",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/FileSchema"
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dictionary"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Dictionaries"
+        ]
+      },
+      "put": {
+        "summary": "Update an existing file schema that exists in a dictionary",
+        "description": "Updates an existing file schema in a dictionary and updates the version",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "majorVersion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/FileSchema"
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dictionary"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Dictionaries"
+        ]
+      }
+    },
+    "/diff": {
+      "get": {
+        "summary": "Compare differences between dictionaries",
+        "description": "Computes the difference between dictionaries at the field level",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "left",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "right",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The computed diff",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiffResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Dictionaries"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "components": {
+    "requestBodies": {
+      "FileSchema": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "description": "file schema",
+        "required": true
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "Dictionary": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the parameter"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the dictionary"
+          },
+          "schemas": {
+            "type": "array",
+            "description": "Set of file dictionaries describing the schemas for this dictionary version",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "CreateDictionary": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the parameter"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the dictionary"
+          },
+          "schemas": {
+            "type": "array",
+            "description": "Set of file dictionaries describing the schemas for this dictionary version",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "DictionaryListEntry": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "mongo generated object id"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the parameter"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the dictionary"
+          }
+        }
+      },
+      "DictionaryListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/DictionaryListEntry"
+        }
+      },
+      "DiffItem": {
+        "type": "object",
+        "properties": {
+          "left": {
+            "type": "object"
+          },
+          "right": {
+            "type": "object"
+          },
+          "diff": {
+            "type": "object"
+          }
+        }
+      },
+      "DiffResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/DiffItem"
+        }
+      }
+    }
+  }
+}

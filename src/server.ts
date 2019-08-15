@@ -1,11 +1,16 @@
-import errorHandler from "errorhandler";
 
 import app from "./app";
+import mongoose from "mongoose";
+import { constructMongoUri } from "./config/mongo";
 
-/**
- * Error Handler. Provides full stack - remove for production
- */
-app.use(errorHandler());
+
+mongoose.connect(constructMongoUri(), { useNewUrlParser: true }).then(
+  () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
+).catch( (err: Error) => {
+  console.log("MongoDB connection error. Please make sure MongoDB is running. " + err);
+  process.exit();
+});
+
 
 /**
  * Start Express server.
