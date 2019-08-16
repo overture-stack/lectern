@@ -37,7 +37,16 @@ app.use(bodyParser.urlencoded({
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swagger));
 
-app.get("/", (_, res) => res.send("Lectern"));
+app.get("/", (_, res) => {
+  const details = {
+    "app": "Lectern",
+    "version": process.env.npm_package_version,
+    "commit": process.env.COMMIT_SHA
+  };
+  res.send(details);
+});
+
+
 app.get("/dictionaries", wrapAsync(dictionaryController.listDictionaries));
 app.post("/dictionaries", egoDecorator(dictionaryController.createDictionary));
 app.get("/dictionaries/:dictId", wrapAsync(dictionaryController.getDictionary));
