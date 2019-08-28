@@ -6,7 +6,7 @@
     <a href="https://github.com/overture-stack/lectern">
         <img alt="Under Development" 
             title="Under Development" 
-            src="http://www.overture.bio/img/progress-horizontal-UD.svg" width="320" />
+            src="http://www.overture.bio/img/progress-horizontal-RC.svg" width="320" />
     </a>
 </p>
 
