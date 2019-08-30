@@ -168,18 +168,6 @@
                     ]
                 }
             },
-            "oneOf": [
-                {
-                    "properties": {
-                        "valueType": {
-                            "const": "string"
-                        },
-                        "restrictions": {
-                            "$ref": "#/definitions/stringRestrictions"
-                        }
-                    }
-                }
-            ],
             "anyOf": [
                 {
                     "properties": {
