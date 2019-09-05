@@ -1,7 +1,6 @@
 {
     "name": "testNewFile",
     "description": "testNewFile",
-    "key": "testNewFile",
     "fields": [
         {
             "name": "testNewFile1",

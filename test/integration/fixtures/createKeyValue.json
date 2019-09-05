@@ -5,7 +5,6 @@
         {
             "name": "key_value_test",
             "description": "key_value_test",
-            "key": "kv_id",
             "fields": [
                 {
                     "name": "kv_id",
