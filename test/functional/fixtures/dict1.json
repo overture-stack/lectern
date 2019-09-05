@@ -5,7 +5,6 @@
         {
             "name": "donor",
             "description": "Donor Entity",
-            "key": "donor_submitter_id",
             "fields": [
                 {
                     "name": "donor_submitter_id",

@@ -5,7 +5,6 @@
         {
             "name": "registration",
             "description": "TSV for Registration of Donor-Specimen-Sample",
-            "key": "donor_submitter_id",
             "fields": [
                 {
                     "name": "program_id",
