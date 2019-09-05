@@ -216,7 +216,6 @@
     "required": [
         "name",
         "description",
-        "key",
         "fields"
     ],
     "properties": {
@@ -224,9 +223,6 @@
             "type": "string"
         },
         "description": {
-            "type": "string"
-        },
-        "key": {
             "type": "string"
         },
         "fields": {
