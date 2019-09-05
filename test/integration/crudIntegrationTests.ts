@@ -13,7 +13,7 @@ let container: StartedTestContainer;
 
 chai.use(require("chai-http"));
 
-describe("Basic CRUD", () => {
+describe("CRUD", () => {
 
     before(async () => {
         container = await new GenericContainer("mongo", "xenial").withExposedPorts(27017).start();
@@ -202,6 +202,53 @@ describe("Basic CRUD", () => {
     describe("Delete", () => {
         // Place Holder
         it("Should do nothing as we do not delete", () => { });
+    });
+
+    describe("Dictionary Update version edge cases", () => {
+        const firstVersion = "12.02";
+        const secondVersion = "13.0";
+
+        // STATE!
+        let id: string;
+        let nextId: string;
+
+        before((done: Mocha.Done) => {
+            const dictRequest = require("./fixtures/createDictionary.json");
+            dictRequest.name = "updateTest";
+            dictRequest.version = firstVersion;
+            const firstPromise = chai.request(app)
+                .post("/dictionaries/")
+                .send(dictRequest)
+                .then((res: Response) => {
+                    id = res.body._id;
+                });
+            firstPromise.then( () => {
+                const sameDict = require("./fixtures/createDictionary.json");
+                sameDict.name = "updateTest";
+                sameDict.version = secondVersion;
+                chai.request(app)
+                .post("/dictionaries/")
+                .send(dictRequest)
+                .end((err: Error, res: Response) => {
+                    nextId = res.body._id;
+                    done();
+                });
+            });
+        });
+
+        it("Should fail to update file as it is not for latest dictionary version", (done: Mocha.Done) => {
+            const newFile = require("./fixtures/newFile.json");
+            chai.request(app)
+                .post(`/dictionaries/${id}/schemas`)
+                .send(newFile)
+                .end((err: Error, res: Response) => {
+                    expect(err).to.be.null;
+                    expect(res).to.have.status(400);
+                    expect(res.body["message"]).to.equal("Dictionary that you are trying to update is not the latest version.");
+                    setImmediate(done);
+                });
+        });
+
     });
 
     after(async () => {

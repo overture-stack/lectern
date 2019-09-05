@@ -83,10 +83,10 @@ export const addSchema = async (id: string, schema: any): Promise<DictionaryDocu
     const result = validate(schema);
     if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
-    // Verify that this dictionary version doesn't already exist.
     const doc = await Dictionary.findOne({
         "_id": id,
     }).exec();
+    await checkLatest(doc);
 
     const entities = doc.schemas.map(s => s["name"]);
     if (entities.includes(schema["name"])) throw new ConflictError("This schema already exists.");
@@ -114,14 +114,10 @@ export const updateSchema = async (id: string, schema: any, major: boolean): Pro
     const result = validate(schema);
     if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
-    // Verify that this dictionary version doesn't already exist.
     const doc = await Dictionary.findOne({
         "_id": id
     }).exec();
-
-    if (doc === undefined) {
-        throw new NotFoundError("Cannot update dictionary that does not exist.");
-    }
+    await checkLatest(doc);
 
     // Ensure it exists
     const entities = doc.schemas.map(s => s["name"]);
@@ -145,7 +141,7 @@ export const updateSchema = async (id: string, schema: any, major: boolean): Pro
     return saved;
 };
 
-export const getLatestVersion = async (name: string): Promise<string> => {
+const getLatestVersion = async (name: string): Promise<string> => {
     const dicts = await Dictionary.find({ "name": name });
     let latest = "0.0";
     if (dicts != undefined) {
@@ -156,4 +152,14 @@ export const getLatestVersion = async (name: string): Promise<string> => {
         });
     }
     return latest;
+};
+
+const checkLatest = async (doc: DictionaryDocument): Promise<void> => {
+    if (doc === undefined) {
+        throw new NotFoundError("Cannot update dictionary that does not exist.");
+    }
+    const latestVersion = await getLatestVersion(doc.name);
+    if (latestVersion != doc.version) {
+        throw new BadRequestError("Dictionary that you are trying to update is not the latest version.");
+    }
 };
