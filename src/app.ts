@@ -35,6 +35,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+swagger["info"]["version"] = process.env.npm_package_version;
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swagger));
 
 app.get("/", (_, res) => {
