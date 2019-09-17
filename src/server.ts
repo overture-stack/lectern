@@ -38,7 +38,7 @@ mongoose.connect(constructMongoUri(), {
 }).then(
   () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
 ).catch( (err: Error) => {
-  logger.info("MongoDB connection error. Please make sure MongoDB is running. " + err);
+  logger.error("MongoDB connection error. Please make sure MongoDB is running. " + err);
   process.exit();
 });
 
