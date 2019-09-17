@@ -2,7 +2,7 @@ import { Dictionary, DictionaryDocument } from "../models/Dictionary";
 import { ConflictError, InternalServerError, BadRequestError, NotFoundError } from "../utils/errors";
 import { validate } from "../services/schemaService";
 import { incrementMajor, incrementMinor, isValidVersion, isGreater } from "../utils/version";
-
+import logger from "../config/logger";
 
 const getLatestVersion = async (name: string): Promise<string> => {
     const dicts = await Dictionary.find({ "name": name });
@@ -33,6 +33,7 @@ const checkLatest = async (doc: DictionaryDocument): Promise<void> => {
  * @param version Version of the dictionary
  */
 export const findOne = async (name: string, version: string): Promise<DictionaryDocument> => {
+    logger.info(`Find one for ${name} ${version}`);
     const dict = await Dictionary.findOne({ "name": name, "version": version });
     return dict;
 };
@@ -42,6 +43,7 @@ export const findOne = async (name: string, version: string): Promise<Dictionary
  * @param id id of the Dictionary
  */
 export const getOne = async (id: string): Promise<DictionaryDocument> => {
+    logger.info(`Get ${id}`);
     const dict = await Dictionary.findOne({ "_id": id });
     if (dict == undefined) {
         throw new NotFoundError("Cannot find dictionary with id " + id);
@@ -53,6 +55,7 @@ export const getOne = async (id: string): Promise<DictionaryDocument> => {
  * Return array of dictionaries.
  */
 export const listAll = async (): Promise<DictionaryDocument[]> => {
+    logger.info("List all");
     const dicts = await Dictionary.find({}, "name version");
     return dicts;
 };
@@ -63,6 +66,8 @@ export const listAll = async (): Promise<DictionaryDocument[]> => {
  * @param newDict The new data dictionary containing all of the schemas
  */
 export const create = async (newDict: { name: string, version: string, schemas: any[] }): Promise<DictionaryDocument> => {
+    logger.info(`Creating new dictionary ${newDict.name} ${newDict.version}`);
+    
     // Verify version is correct format
     if (!isValidVersion(newDict.version)) {
         throw new BadRequestError("Invalid version format");
@@ -71,6 +76,7 @@ export const create = async (newDict: { name: string, version: string, schemas: 
     const latest = await getLatestVersion(newDict.name);
 
     if (!isGreater(newDict.version, latest)) {
+        logger.warn(`Rejected ${newDict.name} due to version ${newDict.version} being lower than latest: ${latest}`);
         throw new BadRequestError(`New version for ${newDict.name} is not greater than latest existing version`);
     }
 
@@ -104,6 +110,8 @@ export const create = async (newDict: { name: string, version: string, schemas: 
  * @param schema new schema to add
  */
 export const addSchema = async (id: string, schema: any): Promise<DictionaryDocument> => {
+    logger.info(`Adding schema to ${id}`);
+
     const result = validate(schema);
     if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
@@ -135,6 +143,8 @@ export const addSchema = async (id: string, schema: any): Promise<DictionaryDocu
  * @param major true if major version to be incremented, false if minor version to be incremented
  */
 export const updateSchema = async (id: string, schema: any, major: boolean): Promise<DictionaryDocument> => {
+    logger.info(`Updating schema on ${id}`);
+
     const result = validate(schema);
     if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 

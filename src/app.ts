@@ -6,6 +6,7 @@ import { errorHandler } from "./utils/errors";
 import * as swaggerUi from "swagger-ui-express";
 import * as swagger from "./config/swagger.json";
 import ego from "./services/egoTokenService";
+import logger from "./config/logger";
 
 
 /**
@@ -37,6 +38,8 @@ app.use(bodyParser.urlencoded({
 
 swagger["info"]["version"] = process.env.npm_package_version;
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swagger));
+
+logger.info("Swagger setup... done");
 
 app.get("/", (_, res) => {
   const details = {

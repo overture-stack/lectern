@@ -1,5 +1,6 @@
 
 import { Request, Response, NextFunction } from "express";
+import logger from "../config/logger";
 
 export class ConflictError extends Error {
     constructor(message: string) {
@@ -78,6 +79,10 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
             res.status(400);
             break;
         default:
+            logger.error("Internal Server Error");
+            logger.error(err.name);
+            logger.error(err.message);
+            logger.error(err.stack);
             res.status(500);
             break;
     }
