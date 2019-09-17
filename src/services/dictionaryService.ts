@@ -67,7 +67,7 @@ export const listAll = async (): Promise<DictionaryDocument[]> => {
  */
 export const create = async (newDict: { name: string, version: string, schemas: any[] }): Promise<DictionaryDocument> => {
     logger.info(`Creating new dictionary ${newDict.name} ${newDict.version}`);
-    
+
     // Verify version is correct format
     if (!isValidVersion(newDict.version)) {
         throw new BadRequestError("Invalid version format");
