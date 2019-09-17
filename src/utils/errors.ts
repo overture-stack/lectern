@@ -79,10 +79,7 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
             res.status(400);
             break;
         default:
-            logger.error("Internal Server Error");
-            logger.error(err.name);
-            logger.error(err.message);
-            logger.error(err.stack);
+            logger.error(`Internal Server Error\n${err.name}\n${err.message}\n${err.stack}`);
             res.status(500);
             break;
     }

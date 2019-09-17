@@ -1,6 +1,6 @@
 import express, { RequestHandler } from "express";
 import bodyParser from "body-parser";
-import { serverPort } from "./config/serverConfig";
+import { serverPort, openApiPath } from "./config/serverConfig";
 import * as dictionaryController from "./controllers/dictionaryController";
 import { errorHandler } from "./utils/errors";
 import * as swaggerUi from "swagger-ui-express";
@@ -37,9 +37,9 @@ app.use(bodyParser.urlencoded({
 }));
 
 swagger["info"]["version"] = process.env.npm_package_version;
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swagger));
+app.use(openApiPath, swaggerUi.serve, swaggerUi.setup(swagger));
 
-logger.info("Swagger setup... done");
+logger.info(`OpenAPI setup... done: http://localhost:${serverPort}${openApiPath}`);
 
 app.get("/", (_, res) => {
   const details = {
