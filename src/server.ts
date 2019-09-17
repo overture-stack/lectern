@@ -2,12 +2,43 @@
 import app from "./app";
 import mongoose from "mongoose";
 import { constructMongoUri } from "./config/mongo";
+import logger from "./config/logger";
 
+/** Mongoose setup */
+mongoose.connection.on("connecting", () => {
+  logger.info("Connecting to MongoDB...");
+});
+mongoose.connection.on("connected", () => {
+  logger.info("...Connection Established to MongoDB");
+});
+mongoose.connection.on("reconnected", () => {
+  logger.info("Connection Reestablished");
+});
+mongoose.connection.on("disconnected", () => {
+  logger.warn("Connection Disconnected");
+});
+mongoose.connection.on("close", () => {
+  logger.warn("Connection Closed");
+});
+mongoose.connection.on("error", error => {
+  logger.error("MongoDB Connection Error:" + error);
+});
+mongoose.connection.on("reconnectFailed", () => {
+  logger.error("Ran out of reconnect attempts, abandoning...");
+});
 
-mongoose.connect(constructMongoUri(), { useNewUrlParser: true }).then(
+mongoose.connect(constructMongoUri(), {
+  autoReconnect: true,
+  socketTimeoutMS: 10000,
+  connectTimeoutMS: 30000,
+  keepAlive: true,
+  reconnectTries: 10,
+  reconnectInterval: 3000,
+  useNewUrlParser: true,
+}).then(
   () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
 ).catch( (err: Error) => {
-  console.log("MongoDB connection error. Please make sure MongoDB is running. " + err);
+  logger.error("MongoDB connection error. Please make sure MongoDB is running. " + err);
   process.exit();
 });
 
@@ -16,12 +47,10 @@ mongoose.connect(constructMongoUri(), { useNewUrlParser: true }).then(
  * Start Express server.
  */
 const server = app.listen(app.get("port"), () => {
-  console.log(
-    "  App is running at http://localhost:%d in %s mode",
-    app.get("port"),
-    app.get("env")
+  logger.info(
+    `App is running at http://localhost:${app.get("port")} in ${app.get("env")} mode`
   );
-  console.log("  Press CTRL-C to stop\n");
+  logger.info("Press CTRL-C to stop");
 });
 
 export default server;
