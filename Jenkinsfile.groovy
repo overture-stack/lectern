@@ -83,7 +83,8 @@ spec:
 
                     // the network=host needed to download dependencies using the host network (since we are inside 'docker'
                     // container)
-                    sh "docker build --build-arg=COMMIT=${commit} --network=host -f Dockerfile . -t overture/lectern:edge"
+                    sh "docker build --build-arg=COMMIT=${commit} --network=host -f Dockerfile . -t overture/lectern:edge -t overture/lectern:${commit}""
+                    sh "docker push overture/lectern:${commit}"
                     sh "docker push overture/lectern:edge"
                }
             }
