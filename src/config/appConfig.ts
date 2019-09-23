@@ -26,15 +26,13 @@ const buildBootstrapContext = async () => {
         throw new Error("Path to secrets not specified but vault is enabled");
       }
       try {
-        const secretsData = await vault.loadSecret(process.env.VAULT_SECRETS_PATH);
-        secrets = JSON.parse(secretsData.content);
+        secrets = await vault.loadSecret(process.env.VAULT_SECRETS_PATH);
       } catch (err) {
         console.error(err);
         throw new Error("failed to load secrets from vault.");
       }
     }
   }
-
   return secrets;
 };
 
@@ -49,23 +47,23 @@ const buildAppContext = async (secrets: any): Promise<AppConfig> => {
     },
 
     mongoHost(): string {
-      return process.env.MONGO_HOST || "localhost";
+      return secrets.MONGO_HOST || process.env.MONGO_HOST || "localhost";
     },
 
     mongoPort(): string {
-      return process.env.MONGO_PORT || "27017";
+      return secrets.MONGO_PORT || process.env.MONGO_PORT || "27017";
     },
 
     mongoUser(): string {
-      return process.env.MONGO_USER;
+      return secrets.MONGO_USER || process.env.MONGO_USER;
     },
 
     mongoPassword(): string {
-      return process.env.MONGO_PASS;
+      return secrets.MONGO_PASS || process.env.MONGO_PASS;
     },
 
     mongoDb(): string {
-      return process.env.MONGO_DB || "lectern";
+      return secrets.MONGO_DB || process.env.MONGO_DB || "lectern";
     }
   };
   return config;
@@ -73,5 +71,5 @@ const buildAppContext = async (secrets: any): Promise<AppConfig> => {
 
 export const getAppConfig = async (): Promise<AppConfig> => {
   const secrets = await buildBootstrapContext();
-  return buildAppContext({});
+  return buildAppContext(secrets);
 };

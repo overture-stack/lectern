@@ -50,5 +50,5 @@ export async function loadSecret(key: string) {
 
   const result = await vaultClient.read(key);
   console.log(`loaded Secret ${key}`);
-  return result.data.data;
+  return result.data;
 }
