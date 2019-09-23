@@ -169,7 +169,7 @@
             }
           },
           {
-            "name": "majorVersion",
+            "name": "major",
             "in": "query",
             "required": false,
             "schema": {

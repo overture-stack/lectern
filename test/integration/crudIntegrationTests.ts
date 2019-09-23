@@ -214,6 +214,22 @@ describe("CRUD", () => {
                     expect(err).to.be.null;
                     expect(res).to.have.status(200);
                     expect(res.body.version).to.equal("11.1");
+                    nextId = res.body._id;
+                    setImmediate(done);
+                });
+        });
+
+        it("Should successfully update a file in a dictionary and increment to next major version", (done: Mocha.Done) => {
+            const newFile = require("./fixtures/updateNewFile.json");
+            chai.request(app)
+                .put(`/dictionaries/${nextId}/schemas`)
+                .query({"major": true})
+                .send(newFile)
+                .end((err: Error, res: Response) => {
+                    expect(err).to.be.null;
+                    expect(res).to.have.status(200);
+                    expect(res.body.version).to.equal("12.0");
+                    nextId = res.body._id;
                     setImmediate(done);
                 });
         });
