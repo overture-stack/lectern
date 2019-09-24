@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import * as dictionaryService from "../services/dictionaryService";
 import { BadRequestError } from "../utils/errors";
 import { diff as diffUtil } from "../diff/DictionaryDiff";
+import logger from "../config/logger";
 
 export const listDictionaries = async (req: Request, res: Response) => {
     const name = req.query.name;
@@ -33,8 +34,9 @@ export const addSchema = async (req: Request, res: Response) => {
 };
 
 export const updateSchema = async (req: Request, res: Response) => {
+    const major = (req.query.major && req.query.major == "true") ? true : false;
     if (req.params.dictId === undefined) throw new BadRequestError("Must specify valid dictId");
-    const dict = await dictionaryService.updateSchema(req.params.dictId, req.body, req.query.major == true);
+    const dict = await dictionaryService.updateSchema(req.params.dictId, req.body, major);
     res.status(200).send(dict.toObject());
 };
 

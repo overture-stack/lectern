@@ -1,14 +1,46 @@
 import "chai-http";
 import "mocha";
 import chai, { expect } from "chai";
-import app from "../../src/app";
+import App from "../../src/app";
 import { GenericContainer } from "testcontainers";
-import { constructTestUri } from "../../src/config/mongo";
+import { constructTestUri } from "../../src/utils/mongo";
 import { StartedTestContainer } from "testcontainers/dist/test-container";
 import mongoose from "mongoose";
 import { Response } from "superagent";
+import { AppConfig } from "../../src/config/appConfig";
 
 
+const testConfig: AppConfig = {
+    serverPort(): string {
+        return process.env.PORT || "3000";
+    },
+
+    openApiPath(): string {
+        return process.env.OPENAPI_PATH || "/api-docs";
+    },
+
+    mongoHost(): string {
+        return process.env.MONGO_HOST || "localhost";
+    },
+
+    mongoPort(): string {
+        return process.env.MONGO_PORT || "27017";
+    },
+
+    mongoUser(): string {
+        return process.env.MONGO_USER;
+    },
+
+    mongoPassword(): string {
+        return process.env.MONGO_PASS;
+    },
+
+    mongoDb(): string {
+        return process.env.MONGO_DB || "lectern";
+    }
+};
+
+const app = App(testConfig);
 let container: StartedTestContainer;
 
 chai.use(require("chai-http"));
@@ -53,13 +85,13 @@ describe("CRUD", () => {
             const dictRequest = require("./fixtures/createDictionary.json");
             dictRequest.version = "0.1";
             chai.request(app)
-            .post("/dictionaries")
-            .send(dictRequest)
-            .end((err: Error, res: Response) => {
-                expect(err).to.be.null;
-                expect(res).to.have.status(400);
-                setImmediate(done);
-            });
+                .post("/dictionaries")
+                .send(dictRequest)
+                .end((err: Error, res: Response) => {
+                    expect(err).to.be.null;
+                    expect(res).to.have.status(400);
+                    setImmediate(done);
+                });
         });
 
         it("Should create a new dictionary with lots of Key/Value meta fields", (done: Mocha.Done) => {
@@ -76,13 +108,13 @@ describe("CRUD", () => {
         it("Should 400 with meta fields that are not string/boolean/integer/number", (done: Mocha.Done) => {
             const dictRequest = require("./fixtures/createKeyValueBad.json");
             chai.request(app)
-            .post("/dictionaries")
-            .send(dictRequest)
-            .end((err: Error, res: Response) => {
-                expect(err).to.be.null;
-                expect(res).to.have.status(400);
-                setImmediate(done);
-            });
+                .post("/dictionaries")
+                .send(dictRequest)
+                .end((err: Error, res: Response) => {
+                    expect(err).to.be.null;
+                    expect(res).to.have.status(400);
+                    setImmediate(done);
+                });
         });
 
     });
@@ -182,6 +214,22 @@ describe("CRUD", () => {
                     expect(err).to.be.null;
                     expect(res).to.have.status(200);
                     expect(res.body.version).to.equal("11.1");
+                    nextId = res.body._id;
+                    setImmediate(done);
+                });
+        });
+
+        it("Should successfully update a file in a dictionary and increment to next major version", (done: Mocha.Done) => {
+            const newFile = require("./fixtures/updateNewFile.json");
+            chai.request(app)
+                .put(`/dictionaries/${nextId}/schemas`)
+                .query({"major": true})
+                .send(newFile)
+                .end((err: Error, res: Response) => {
+                    expect(err).to.be.null;
+                    expect(res).to.have.status(200);
+                    expect(res.body.version).to.equal("12.0");
+                    nextId = res.body._id;
                     setImmediate(done);
                 });
         });
@@ -222,17 +270,17 @@ describe("CRUD", () => {
                 .then((res: Response) => {
                     id = res.body._id;
                 });
-            firstPromise.then( () => {
+            firstPromise.then(() => {
                 const sameDict = require("./fixtures/createDictionary.json");
                 sameDict.name = "updateTest";
                 sameDict.version = secondVersion;
                 chai.request(app)
-                .post("/dictionaries/")
-                .send(dictRequest)
-                .end((err: Error, res: Response) => {
-                    nextId = res.body._id;
-                    done();
-                });
+                    .post("/dictionaries/")
+                    .send(dictRequest)
+                    .end((err: Error, res: Response) => {
+                        nextId = res.body._id;
+                        done();
+                    });
             });
         });
 
