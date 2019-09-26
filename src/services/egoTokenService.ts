@@ -54,7 +54,7 @@ export default function (egoURL: string = process.env.EGO_API, scope: string = p
             } else {
                 const authToken = jwt.decode(bearerToken) as ({ [key: string]: any });
                 try {
-                    const scopes = authToken["scope"] as Array<string>;
+                    const scopes = authToken["context"]["scope"] as Array<string>;
                     if (scopes.includes(scope)) {
                         const routePromise = fn(req, res, next);
                         if (routePromise.catch) {
