@@ -68,24 +68,48 @@
                 }, 
                 "range": {
                     "type": "object",
-                    "anyOf": [
-                        { 
+                    "oneOf": [
+                        {
                             "required": [
                                 "min"
                             ]
                         },
-                        { 
-                            "required": [
-                                "max"
-                            ]
-                        },
-                        { 
+                        {
                             "required": [
                                 "exclusiveMin"
                             ]
                         },
-                        { 
+                        {
                             "required": [
+                                "max"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "exclusiveMax"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "min", 
+                                "max"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "min",
+                                "exclusiveMax"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "exclusiveMin",
+                                "max"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "exclusiveMin",
                                 "exclusiveMax"
                             ]
                         }
@@ -139,24 +163,48 @@
                 }, 
                 "range": {
                     "type": "object",
-                    "anyOf": [
-                        { 
+                    "oneOf": [
+                        {
                             "required": [
                                 "min"
                             ]
                         },
-                        { 
-                            "required": [
-                                "max"
-                            ]
-                        },
-                        { 
+                        {
                             "required": [
                                 "exclusiveMin"
                             ]
                         },
-                        { 
+                        {
                             "required": [
+                                "max"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "exclusiveMax"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "min", 
+                                "max"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "min",
+                                "exclusiveMax"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "exclusiveMin",
+                                "max"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "exclusiveMin",
                                 "exclusiveMax"
                             ]
                         }
