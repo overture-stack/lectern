@@ -30,8 +30,38 @@
               "units": "days"
             },
             "restrictions": {
-              "script": "validateWithMagic(check dependece on another field)"
+              "script": "validateWithMagic(check dependece on another field)",
+              "range": {
+                  "min": 0,
+                  "max": 99999
+              }
             }
-          }
+        },
+        {
+            "name": "survival_time2",
+            "valueType": "number",
+            "description": "Description of how long the donor has survived since primary diagnosis, in days.",
+            "meta": {
+              "units": "days"
+            },
+            "restrictions": {
+              "range": {
+                  "max": 99999
+              }
+            }
+        },
+        {
+            "name": "survival_time3",
+            "valueType": "number",
+            "description": "Description of how long the donor has survived since primary diagnosis, in days.",
+            "meta": {
+              "units": "days"
+            },
+            "restrictions": {
+              "range": {
+                  "exclusiveMin": 0
+              }
+            }
+        }
     ]
 }

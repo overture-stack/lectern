@@ -65,6 +65,45 @@
                 },
                 "script": {
                     "type": "string"
+                }, 
+                "range": {
+                    "type": "object",
+                    "anyOf": [
+                        { 
+                            "required": [
+                                "min"
+                            ]
+                        },
+                        { 
+                            "required": [
+                                "max"
+                            ]
+                        },
+                        { 
+                            "required": [
+                                "exclusiveMin"
+                            ]
+                        },
+                        { 
+                            "required": [
+                                "exclusiveMax"
+                            ]
+                        }
+                    ],
+                    "properties": {
+                        "min": {
+                            "type": "integer"
+                        },
+                        "exclusiveMin": {
+                            "type": "integer"
+                        },
+                        "max": {
+                            "type": "integer"
+                        },
+                        "exclusiveMax": {
+                            "type": "integer"
+                        }
+                    }
                 }
             },
             "additionalProperties": false
@@ -97,6 +136,45 @@
                 },
                 "script": {
                     "type": "string"
+                }, 
+                "range": {
+                    "type": "object",
+                    "anyOf": [
+                        { 
+                            "required": [
+                                "min"
+                            ]
+                        },
+                        { 
+                            "required": [
+                                "max"
+                            ]
+                        },
+                        { 
+                            "required": [
+                                "exclusiveMin"
+                            ]
+                        },
+                        { 
+                            "required": [
+                                "exclusiveMax"
+                            ]
+                        }
+                    ],
+                    "properties": {
+                        "min": {
+                            "type": "number"
+                        },
+                        "exclusiveMin": {
+                            "type": "number"
+                        },
+                        "max": {
+                            "type": "number"
+                        },
+                        "exclusiveMax": {
+                            "type": "number"
+                        }
+                    }
                 }
             },
             "additionalProperties": false
