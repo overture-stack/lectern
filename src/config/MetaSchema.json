@@ -92,15 +92,6 @@
                             "properties": {
                                 "min": {
                                     "type": "integer"
-                                },
-                                "exclusiveMin": {
-                                    "not": {}
-                                },
-                                "max": {
-                                    "not": {}
-                                },
-                                "exclusiveMax": {
-                                    "not": {}
                                 }
                             },
                             "additionalProperties": false
@@ -110,17 +101,8 @@
                                 "exclusiveMin"
                             ],
                             "properties": {
-                                "min": {
-                                    "not": {}
-                                },
                                 "exclusiveMin": {
                                     "type": "integer"
-                                },
-                                "max": {
-                                    "not": {}
-                                },
-                                "exclusiveMax": {
-                                    "not": {}
                                 }
                             },
                             "additionalProperties": false
@@ -130,17 +112,8 @@
                                 "max"
                             ],
                             "properties": {
-                                "min": {
-                                    "not": {}
-                                },
-                                "exclusiveMin": {
-                                    "not": {}
-                                },
                                 "max": {
                                     "type": "integer"
-                                },
-                                "exclusiveMax": {
-                                    "not": {}
                                 }
                             },
                             "additionalProperties": false
@@ -150,15 +123,6 @@
                                 "exclusiveMax"
                             ],
                             "properties": {
-                                "min": {
-                                    "not": {}
-                                },
-                                "exclusiveMin": {
-                                    "not": {}
-                                },
-                                "max": {
-                                    "not": {}
-                                },
                                 "exclusiveMax": {
                                     "type": "integer"
                                 }
@@ -174,14 +138,8 @@
                                 "min": {
                                     "type": "integer"
                                 },
-                                "exclusiveMin": {
-                                    "not": {}
-                                },
                                 "max": {
                                     "type": "integer"
-                                },
-                                "exclusiveMax": {
-                                    "not": {}
                                 }
                             },
                             "additionalProperties": false
@@ -192,14 +150,8 @@
                                 "exclusiveMax"
                             ],
                             "properties": {
-                                "min": {
-                                    "not": {}
-                                },
                                 "exclusiveMin": {
                                     "type": "integer"
-                                },
-                                "max": {
-                                    "not": {}
                                 },
                                 "exclusiveMax": {
                                     "type": "integer"
@@ -216,12 +168,6 @@
                                 "min": {
                                     "type": "integer"
                                 },
-                                "exclusiveMin": {
-                                    "not": {}
-                                },
-                                "max": {
-                                    "not": {}
-                                },
                                 "exclusiveMax": {
                                     "type": "integer"
                                 }
@@ -231,20 +177,14 @@
                         {
                             "required": [
                                 "exclusiveMin",
-                                "exclusiveMax"
+                                "max"
                             ],
                             "properties": {
-                                "min": {
-                                    "not": {}
-                                },
                                 "exclusiveMin": {
                                     "type": "integer"
                                 },
                                 "max": {
                                     "type": "integer"
-                                },
-                                "exclusiveMax": {
-                                    "not": {}
                                 }
                             },
                             "additionalProperties": false
@@ -300,15 +240,6 @@
                             "properties": {
                                 "min": {
                                     "type": "number"
-                                },
-                                "exclusiveMin": {
-                                    "not": {}
-                                },
-                                "max": {
-                                    "not": {}
-                                },
-                                "exclusiveMax": {
-                                    "not": {}
                                 }
                             },
                             "additionalProperties": false
@@ -318,17 +249,8 @@
                                 "exclusiveMin"
                             ],
                             "properties": {
-                                "min": {
-                                    "not": {}
-                                },
                                 "exclusiveMin": {
                                     "type": "number"
-                                },
-                                "max": {
-                                    "not": {}
-                                },
-                                "exclusiveMax": {
-                                    "not": {}
                                 }
                             },
                             "additionalProperties": false
@@ -338,17 +260,8 @@
                                 "max"
                             ],
                             "properties": {
-                                "min": {
-                                    "not": {}
-                                },
-                                "exclusiveMin": {
-                                    "not": {}
-                                },
                                 "max": {
                                     "type": "number"
-                                },
-                                "exclusiveMax": {
-                                    "not": {}
                                 }
                             },
                             "additionalProperties": false
@@ -358,15 +271,6 @@
                                 "exclusiveMax"
                             ],
                             "properties": {
-                                "min": {
-                                    "not": {}
-                                },
-                                "exclusiveMin": {
-                                    "not": {}
-                                },
-                                "max": {
-                                    "not": {}
-                                },
                                 "exclusiveMax": {
                                     "type": "number"
                                 }
@@ -382,14 +286,8 @@
                                 "min": {
                                     "type": "number"
                                 },
-                                "exclusiveMin": {
-                                    "not": {}
-                                },
                                 "max": {
                                     "type": "number"
-                                },
-                                "exclusiveMax": {
-                                    "not": {}
                                 }
                             },
                             "additionalProperties": false
@@ -400,14 +298,8 @@
                                 "exclusiveMax"
                             ],
                             "properties": {
-                                "min": {
-                                    "not": {}
-                                },
                                 "exclusiveMin": {
                                     "type": "number"
-                                },
-                                "max": {
-                                    "not": {}
                                 },
                                 "exclusiveMax": {
                                     "type": "number"
@@ -424,12 +316,6 @@
                                 "min": {
                                     "type": "number"
                                 },
-                                "exclusiveMin": {
-                                    "not": {}
-                                },
-                                "max": {
-                                    "not": {}
-                                },
                                 "exclusiveMax": {
                                     "type": "number"
                                 }
@@ -439,20 +325,14 @@
                         {
                             "required": [
                                 "exclusiveMin",
-                                "exclusiveMax"
+                                "max"
                             ],
                             "properties": {
-                                "min": {
-                                    "not": {}
-                                },
                                 "exclusiveMin": {
                                     "type": "number"
                                 },
                                 "max": {
                                     "type": "number"
-                                },
-                                "exclusiveMax": {
-                                    "not": {}
                                 }
                             },
                             "additionalProperties": false
