@@ -7,10 +7,18 @@
             "properties": {},
             "additionalProperties": {
                 "anyOf": [
-                    {"type": "string"},
-                    {"type": "number"},
-                    {"type": "integer"},
-                    {"type": "boolean"}
+                    {
+                        "type": "string"
+                    },
+                    {
+                        "type": "number"
+                    },
+                    {
+                        "type": "integer"
+                    },
+                    {
+                        "type": "boolean"
+                    }
                 ]
             }
         },
@@ -42,10 +50,18 @@
             "properties": {},
             "additionalProperties": {
                 "anyOf": [
-                    {"type": "string"},
-                    {"type": "number"},
-                    {"type": "integer"},
-                    {"type": "boolean"}
+                    {
+                        "type": "string"
+                    },
+                    {
+                        "type": "number"
+                    },
+                    {
+                        "type": "integer"
+                    },
+                    {
+                        "type": "boolean"
+                    }
                 ]
             }
         },
@@ -65,82 +81,195 @@
                 },
                 "script": {
                     "type": "string"
-                }, 
+                },
                 "range": {
                     "type": "object",
                     "oneOf": [
                         {
                             "required": [
                                 "min"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "type": "integer"
+                                },
+                                "exclusiveMin": {
+                                    "not": {}
+                                },
+                                "max": {
+                                    "not": {}
+                                },
+                                "exclusiveMax": {
+                                    "not": {}
+                                }
+                            },
+                            "additionalProperties": false
                         },
                         {
                             "required": [
                                 "exclusiveMin"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "not": {}
+                                },
+                                "exclusiveMin": {
+                                    "type": "integer"
+                                },
+                                "max": {
+                                    "not": {}
+                                },
+                                "exclusiveMax": {
+                                    "not": {}
+                                }
+                            },
+                            "additionalProperties": false
                         },
                         {
                             "required": [
                                 "max"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "not": {}
+                                },
+                                "exclusiveMin": {
+                                    "not": {}
+                                },
+                                "max": {
+                                    "type": "integer"
+                                },
+                                "exclusiveMax": {
+                                    "not": {}
+                                }
+                            },
+                            "additionalProperties": false
                         },
                         {
                             "required": [
                                 "exclusiveMax"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "not": {}
+                                },
+                                "exclusiveMin": {
+                                    "not": {}
+                                },
+                                "max": {
+                                    "not": {}
+                                },
+                                "exclusiveMax": {
+                                    "type": "integer"
+                                }
+                            },
+                            "additionalProperties": false
                         },
                         {
                             "required": [
-                                "min", 
+                                "min",
                                 "max"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "type": "integer"
+                                },
+                                "exclusiveMin": {
+                                    "not": {}
+                                },
+                                "max": {
+                                    "type": "integer"
+                                },
+                                "exclusiveMax": {
+                                    "not": {}
+                                }
+                            },
+                            "additionalProperties": false
+                        },
+                        {
+                            "required": [
+                                "exclusiveMin",
+                                "exclusiveMax"
+                            ],
+                            "properties": {
+                                "min": {
+                                    "not": {}
+                                },
+                                "exclusiveMin": {
+                                    "type": "integer"
+                                },
+                                "max": {
+                                    "not": {}
+                                },
+                                "exclusiveMax": {
+                                    "type": "integer"
+                                }
+                            },
+                            "additionalProperties": false
                         },
                         {
                             "required": [
                                 "min",
                                 "exclusiveMax"
-                            ]
-                        },
-                        {
-                            "required": [
-                                "exclusiveMin",
-                                "max"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "type": "integer"
+                                },
+                                "exclusiveMin": {
+                                    "not": {}
+                                },
+                                "max": {
+                                    "not": {}
+                                },
+                                "exclusiveMax": {
+                                    "type": "integer"
+                                }
+                            },
+                            "additionalProperties": false
                         },
                         {
                             "required": [
                                 "exclusiveMin",
                                 "exclusiveMax"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "not": {}
+                                },
+                                "exclusiveMin": {
+                                    "type": "integer"
+                                },
+                                "max": {
+                                    "type": "integer"
+                                },
+                                "exclusiveMax": {
+                                    "not": {}
+                                }
+                            },
+                            "additionalProperties": false
                         }
-                    ],
-                    "properties": {
-                        "min": {
-                            "type": "integer"
-                        },
-                        "exclusiveMin": {
-                            "type": "integer"
-                        },
-                        "max": {
-                            "type": "integer"
-                        },
-                        "exclusiveMax": {
-                            "type": "integer"
-                        }
-                    }
+                    ]
                 }
-            },
-            "additionalProperties": false
+            }
         },
         "numberMeta": {
             "type": "object",
             "properties": {},
             "additionalProperties": {
                 "anyOf": [
-                    {"type": "string"},
-                    {"type": "number"},
-                    {"type": "integer"},
-                    {"type": "boolean"}
+                    {
+                        "type": "string"
+                    },
+                    {
+                        "type": "number"
+                    },
+                    {
+                        "type": "integer"
+                    },
+                    {
+                        "type": "boolean"
+                    }
                 ]
             }
         },
@@ -160,69 +289,175 @@
                 },
                 "script": {
                     "type": "string"
-                }, 
+                },
                 "range": {
                     "type": "object",
                     "oneOf": [
                         {
                             "required": [
                                 "min"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "type": "number"
+                                },
+                                "exclusiveMin": {
+                                    "not": {}
+                                },
+                                "max": {
+                                    "not": {}
+                                },
+                                "exclusiveMax": {
+                                    "not": {}
+                                }
+                            },
+                            "additionalProperties": false
                         },
                         {
                             "required": [
                                 "exclusiveMin"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "not": {}
+                                },
+                                "exclusiveMin": {
+                                    "type": "number"
+                                },
+                                "max": {
+                                    "not": {}
+                                },
+                                "exclusiveMax": {
+                                    "not": {}
+                                }
+                            },
+                            "additionalProperties": false
                         },
                         {
                             "required": [
                                 "max"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "not": {}
+                                },
+                                "exclusiveMin": {
+                                    "not": {}
+                                },
+                                "max": {
+                                    "type": "number"
+                                },
+                                "exclusiveMax": {
+                                    "not": {}
+                                }
+                            },
+                            "additionalProperties": false
                         },
                         {
                             "required": [
                                 "exclusiveMax"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "not": {}
+                                },
+                                "exclusiveMin": {
+                                    "not": {}
+                                },
+                                "max": {
+                                    "not": {}
+                                },
+                                "exclusiveMax": {
+                                    "type": "number"
+                                }
+                            },
+                            "additionalProperties": false
                         },
                         {
                             "required": [
-                                "min", 
+                                "min",
                                 "max"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "type": "number"
+                                },
+                                "exclusiveMin": {
+                                    "not": {}
+                                },
+                                "max": {
+                                    "type": "number"
+                                },
+                                "exclusiveMax": {
+                                    "not": {}
+                                }
+                            },
+                            "additionalProperties": false
+                        },
+                        {
+                            "required": [
+                                "exclusiveMin",
+                                "exclusiveMax"
+                            ],
+                            "properties": {
+                                "min": {
+                                    "not": {}
+                                },
+                                "exclusiveMin": {
+                                    "type": "number"
+                                },
+                                "max": {
+                                    "not": {}
+                                },
+                                "exclusiveMax": {
+                                    "type": "number"
+                                }
+                            },
+                            "additionalProperties": false
                         },
                         {
                             "required": [
                                 "min",
                                 "exclusiveMax"
-                            ]
-                        },
-                        {
-                            "required": [
-                                "exclusiveMin",
-                                "max"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "type": "number"
+                                },
+                                "exclusiveMin": {
+                                    "not": {}
+                                },
+                                "max": {
+                                    "not": {}
+                                },
+                                "exclusiveMax": {
+                                    "type": "number"
+                                }
+                            },
+                            "additionalProperties": false
                         },
                         {
                             "required": [
                                 "exclusiveMin",
                                 "exclusiveMax"
-                            ]
+                            ],
+                            "properties": {
+                                "min": {
+                                    "not": {}
+                                },
+                                "exclusiveMin": {
+                                    "type": "number"
+                                },
+                                "max": {
+                                    "type": "number"
+                                },
+                                "exclusiveMax": {
+                                    "not": {}
+                                }
+                            },
+                            "additionalProperties": false
                         }
-                    ],
-                    "properties": {
-                        "min": {
-                            "type": "number"
-                        },
-                        "exclusiveMin": {
-                            "type": "number"
-                        },
-                        "max": {
-                            "type": "number"
-                        },
-                        "exclusiveMax": {
-                            "type": "number"
-                        }
-                    }
+                    ]
                 }
             },
             "additionalProperties": false
@@ -232,10 +467,18 @@
             "properties": {},
             "additionalProperties": {
                 "anyOf": [
-                    {"type": "string"},
-                    {"type": "number"},
-                    {"type": "integer"},
-                    {"type": "boolean"}
+                    {
+                        "type": "string"
+                    },
+                    {
+                        "type": "number"
+                    },
+                    {
+                        "type": "integer"
+                    },
+                    {
+                        "type": "boolean"
+                    }
                 ]
             }
         },

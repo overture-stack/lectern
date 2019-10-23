@@ -46,7 +46,7 @@
             },
             "restrictions": {
               "range": {
-                  "max": 99999
+                  "max": 99999.99
               }
             }
         },
