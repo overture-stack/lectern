@@ -33,6 +33,19 @@ describe("Compute diff report between dictionary versions", () => {
     it("Should compute the diff, with one file added (3 fields), and 3 updated on existing file", () => {
         const diffReport = diff(dict1, dict2);
         expect(diffReport).is.not.undefined;
+        expect(diffReport.get("donor.donor_submitter_id")).to.not.be.undefined;
+        expect(diffReport.get("donor.donor_submitter_id").diff).to.deep.eq({
+            displayName: {
+                type: "deleted",
+                data: "Submitter Donor ID"
+            },
+            restrictions: {
+                script: {
+                    type: "updated",
+                    data: "THIS WAS UPDATED"
+                }
+            }
+        });
         expect(diffReport.size).to.be.equal(7);
     });
 

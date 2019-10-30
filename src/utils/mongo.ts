@@ -4,6 +4,9 @@ import { AppConfig } from "../config/appConfig";
  * Mongo Helper functions
  */
 export const constructMongoUri = (appConfig: AppConfig, { includeDb = true } = {}) => {
+    if (appConfig.mongoUrl()) {
+        return appConfig.mongoUrl();
+    }
     const user = appConfig.mongoUser();
     const pass = appConfig.mongoPassword();
     const mongoHost = appConfig.mongoHost();
