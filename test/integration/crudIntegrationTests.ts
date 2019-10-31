@@ -37,6 +37,10 @@ const testConfig: AppConfig = {
 
     mongoDb(): string {
         return process.env.MONGO_DB || "lectern";
+    },
+
+    mongoUrl(): string {
+        return undefined;
     }
 };
 

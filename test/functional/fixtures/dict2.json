@@ -25,7 +25,7 @@
                         "codeList": [
                             "Male",
                             "Female",
-                            "Other"
+                            "Undeclared"
                         ]
                     }
                 },
@@ -48,13 +48,7 @@
                             "default": "Other"
                         }
                     },
-                    "restrictions": {
-                        "codeList": [
-                            "Alive",
-                            "Deceased",
-                            "Other"
-                        ]
-                    }
+                    "restrictions": {}
                 }
             ]
         },

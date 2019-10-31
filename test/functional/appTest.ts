@@ -25,6 +25,9 @@ describe("Test injection of config into Express App", () => {
             },
             mongoDb(): string {
                 return "lectern";
+            },
+            mongoUrl(): string {
+                return undefined;
             }
         };
 
