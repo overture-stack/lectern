@@ -46,7 +46,41 @@ describe("Compute diff report between dictionary versions", () => {
                 }
             }
         });
-        expect(diffReport.size).to.be.equal(7);
+
+        expect(diffReport.get("donor.gender").diff).to.deep.eq({
+            restrictions: {
+                codeList: {
+                  "type": "updated",
+                  "data": {
+                    "added": [
+                      "Undeclared"
+                    ],
+                    "deleted": [
+                      "Other"
+                    ]
+                  }
+                }
+              }
+        });
+
+        expect(diffReport.get("donor.vital_status").diff).to.deep.eq({
+            "displayName": {
+                "type": "updated",
+                "data": "Donor Vital Status"
+              },
+              "restrictions": {
+                "codeList": {
+                  "type": "deleted",
+                  "data": [
+                    "Alive",
+                    "Deceased",
+                    "Other"
+                  ]
+                }
+              }
+        });
+
+        expect(diffReport.size).to.be.equal(8);
     });
 
 });
