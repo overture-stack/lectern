@@ -1,6 +1,6 @@
 {
   "name": "lectern",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Data Dictionary Management",
   "scripts": {
     "start": "npm run serve",
@@ -14,7 +14,7 @@
     "tslint": "tslint -c tslint.json -p tsconfig.json",
     "debug": "npm run build && npm run watch-debug",
     "serve-debug": "nodemon --inspect dist/server.js",
-    "watch-debug": "concurrently -k -p \"[{name}]\" -n \"Sass,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run serve-debug\"",
+    "watch-debug": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec node --inspect-brk -r ts-node/register ./src/server.ts",
     "gitmoji-config": "gitmoji -g",
     "commit": "gitmoji -c"
   },
@@ -67,7 +67,7 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "memoizee": "^0.4.14",
-    "mongoose": "^5.6.2",
+    "mongoose": "^5.7.5",
     "ms": "^2.1.2",
     "node-vault": "^0.9.11",
     "swagger-ui-express": "^4.0.7",

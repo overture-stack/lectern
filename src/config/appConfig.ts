@@ -12,6 +12,7 @@ export interface AppConfig {
   mongoUser(): string;
   mongoPassword(): string;
   mongoDb(): string;
+  mongoUrl(): string; // allow overriding all the url
 }
 
 const buildBootstrapContext = async () => {
@@ -64,7 +65,11 @@ const buildAppContext = async (secrets: any): Promise<AppConfig> => {
 
     mongoDb(): string {
       return secrets.MONGO_DB || process.env.MONGO_DB || "lectern";
+    },
+    mongoUrl(): string {
+      return secrets.MONGO_URL || process.env.MONGO_URL;
     }
+
   };
   return config;
 };

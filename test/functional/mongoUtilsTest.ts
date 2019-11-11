@@ -26,6 +26,9 @@ describe("Test mongo URI construction", () => {
             },
             mongoDb(): string {
                 return "lectern";
+            },
+            mongoUrl(): string {
+                return undefined;
             }
         };
         const uri = constructMongoUri(testConfig);
@@ -54,6 +57,9 @@ describe("Test mongo URI construction", () => {
             },
             mongoDb(): string {
                 return "lectern";
+            },
+            mongoUrl(): string {
+                return undefined;
             }
         };
         const uri = constructMongoUri(testConfig);
