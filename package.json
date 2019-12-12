@@ -72,5 +72,10 @@
     "node-vault": "^0.9.11",
     "swagger-ui-express": "^4.0.7",
     "winston": "^3.2.1"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "trailingComma": "all",
+    "singleQuote": true
   }
 }
