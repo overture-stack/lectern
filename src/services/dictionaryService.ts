@@ -101,13 +101,6 @@ export const create = async (newDict: {
     if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
   });
 
-  // Verify that this dictionary version doesn't already exist.
-  const doc = await Dictionary.findOne({
-    name: newDict.name,
-    version: newDict.version,
-  }).exec();
-  if (doc) throw new ConflictError('This dictionary version already exists.');
-
   // Save new dictionary version
   const dict = new Dictionary({
     name: newDict.name,
