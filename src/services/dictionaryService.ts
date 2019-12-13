@@ -8,7 +8,7 @@ import {
 import { validate } from '../services/schemaService';
 import { incrementMajor, incrementMinor, isValidVersion, isGreater } from '../utils/version';
 import logger from '../config/logger';
-import { get, omit } from 'lodash';
+import { get, omit, cloneDeep } from 'lodash';
 
 const getLatestVersion = async (name: string): Promise<string> => {
   const dicts = await Dictionary.find({ name: name });
@@ -99,7 +99,7 @@ export const create = async (newDict: {
 
   // Verify schemas match dictionary
   newDict.schemas.forEach(e => {
-    const result = validate(e);
+    const result = validate(e, newDict.references || {});
     if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
   });
 
@@ -108,7 +108,7 @@ export const create = async (newDict: {
     name: newDict.name,
     version: newDict.version,
     schemas: newDict.schemas,
-    references: newDict.references,
+    references: newDict.references || {},
   });
   const saved = await dict.save();
   return saved;
@@ -123,13 +123,15 @@ export const create = async (newDict: {
 export const addSchema = async (id: string, schema: any): Promise<DictionaryDocument> => {
   logger.info(`Adding schema to ${id}`);
 
-  const result = validate(schema);
-  if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
-
   const doc = await Dictionary.findOne({
     _id: id,
   }).exec();
   await checkLatest(doc);
+
+  const references = doc.references || {};
+
+  const result = validate(schema, references);
+  if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
   const entities = doc.schemas.map(s => s['name']);
   if (entities.includes(schema['name'])) throw new ConflictError('This schema already exists.');
@@ -140,7 +142,8 @@ export const addSchema = async (id: string, schema: any): Promise<DictionaryDocu
   const dict = new Dictionary({
     name: doc.name,
     version: incrementMajor(doc.version),
-    schemas: schemas,
+    schemas,
+    references,
   });
   const saved = await dict.save();
   return saved;
@@ -160,13 +163,15 @@ export const updateSchema = async (
 ): Promise<DictionaryDocument> => {
   logger.info(`Updating schema on ${id}`);
 
-  const result = validate(schema);
-  if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
-
   const doc = await Dictionary.findOne({
     _id: id,
   }).exec();
   await checkLatest(doc);
+
+  const references = doc.references || {};
+
+  const result = validate(schema, references);
+  if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
   // Ensure it exists
   const entities = doc.schemas.map(s => s['name']);
@@ -184,7 +189,8 @@ export const updateSchema = async (
   const dict = new Dictionary({
     name: doc.name,
     version: nextVersion,
-    schemas: schemas,
+    schemas,
+    references,
   });
 
   const saved = await dict.save();
@@ -192,7 +198,6 @@ export const updateSchema = async (
 };
 
 /**
- * Note: This is an in place operation (it will effect the original Dictionary)
  *
  * @param dictionary Dictionary object, matching the mongoose documents
  * @returns Dictionary with replacements made
@@ -200,36 +205,50 @@ export const updateSchema = async (
 export const replaceReferences = (dictionary: DictionaryDocument) => {
   const { schemas, references } = dictionary;
 
+  const updatedSchemas = schemas.map(schema => replaceSchemaReferences(schema, references));
+  const clone = cloneDeep(dictionary);
+  clone.schemas = updatedSchemas;
+  // Remove references property
+  return omit(clone, 'references');
+};
+
+/**
+ * @param schema
+ * @param references
+ */
+export const replaceSchemaReferences = (schema: any, references: any) => {
   const isReferenceValue = (value: string) => {
     const regex = new RegExp('^#(/[-_A-Za-z0-9]+)+$');
     return regex.test(value);
   };
 
-  schemas.map(schema => {
-    schema.fields.forEach((field: any) => {
-      for (const key in field.restrictions) {
-        const value = field.restrictions[key];
+  const referenceToObjectPath = (value: string) => {
+    return value
+      .split('/')
+      .slice(1)
+      .join('.');
+  };
 
-        if (isReferenceValue(value)) {
-          const reference = value
-            .split('/')
-            .slice(1)
-            .join('.');
+  const clone = cloneDeep(schema);
+  clone.fields.forEach((field: any) => {
+    for (const key in field.restrictions) {
+      const value = field.restrictions[key];
 
-          const replaceValue = get(references, reference, undefined);
+      if (isReferenceValue(value)) {
+        const reference = referenceToObjectPath(value);
 
-          // Ensure we found a value, otherwise throw error for invalid reference
-          if (!replaceValue) {
-            throw new InternalServerError(
-              `Unknown reference found - Schema: ${schema.name} Field: ${field.name} Reference: ${reference}`,
-            );
-          }
+        const replaceValue = get(references, reference, undefined);
 
-          field.restrictions[key] = replaceValue;
+        // Ensure we found a value, otherwise throw error for invalid reference
+        if (!replaceValue) {
+          throw new InternalServerError(
+            `Unknown reference found - Schema: ${clone.name} Field: ${field.name} Reference: ${reference}`,
+          );
         }
+
+        field.restrictions[key] = replaceValue;
       }
-    });
+    }
   });
-  // Remove references property
-  return omit(dictionary, 'references');
+  return clone;
 };
