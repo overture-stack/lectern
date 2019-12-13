@@ -1,7 +1,7 @@
 import { Dictionary, DictionaryDocument } from '../models/Dictionary';
 import {
   ConflictError,
-  InternalServerError,
+  InvalidReferenceError,
   BadRequestError,
   NotFoundError,
 } from '../utils/errors';
@@ -241,7 +241,7 @@ export const replaceSchemaReferences = (schema: any, references: any) => {
 
         // Ensure we found a value, otherwise throw error for invalid reference
         if (!replaceValue) {
-          throw new InternalServerError(
+          throw new InvalidReferenceError(
             `Unknown reference found - Schema: ${clone.name} Field: ${field.name} Reference: ${reference}`,
           );
         }

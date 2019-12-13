@@ -50,6 +50,13 @@ export class ForbiddenError extends Error {
   }
 }
 
+export class InvalidReferenceError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'InvalidReference';
+  }
+}
+
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction): any => {
   if (res.headersSent) {
     return next(err);
@@ -75,6 +82,9 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
       res.status(400);
       break;
     case 'CastError':
+      res.status(400);
+      break;
+    case 'InvalidReference':
       res.status(400);
       break;
     default:
