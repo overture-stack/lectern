@@ -7,20 +7,30 @@ import logger from '../config/logger';
 export const listDictionaries = async (req: Request, res: Response) => {
   const name = req.query.name;
   const version = req.query.version;
+  const showReferences = req.query.references || false;
 
   if (name && version) {
     const dict = await dictionaryService.findOne(name, version);
-    res.status(200).send([dict]);
+    const response = showReferences
+      ? dict.toObject()
+      : dictionaryService.replaceReferences(dict.toObject());
+    res.status(200).send([response]);
   } else {
     const dicts = await dictionaryService.listAll();
-    res.status(200).send(dicts);
+    const response = name !== undefined ? dicts.filter(dict => dict.name === name) : dicts;
+    res.status(200).send(response);
   }
 };
 
 export const getDictionary = async (req: Request, res: Response) => {
+  const showReferences = (req.query.references = false);
   const id = req.params.dictId;
+
   const dict = await dictionaryService.getOne(id);
-  res.status(200).send(dict.toObject());
+  const response = showReferences
+    ? dict.toObject()
+    : dictionaryService.replaceReferences(dict.toObject());
+  res.status(200).send(dict);
 };
 
 export const createDictionary = async (req: Request, res: Response) => {
@@ -41,14 +51,21 @@ export const updateSchema = async (req: Request, res: Response) => {
 };
 
 export const diffDictionaries = async (req: Request, res: Response) => {
+  const showReferences = req.query.references || false;
   const name = req.query.name;
   const leftVersion = req.query.left;
   const rightVersion = req.query.right;
 
   if (name && leftVersion && rightVersion) {
-    const dict1 = await dictionaryService.findOne(name, leftVersion);
-    const dict2 = await dictionaryService.findOne(name, rightVersion);
-    const diff = diffUtil(dict1.toObject(), dict2.toObject());
+    const dict1Doc = await dictionaryService.findOne(name, leftVersion);
+    const dict2Doc = await dictionaryService.findOne(name, rightVersion);
+    const dict1 = showReferences
+      ? dict1Doc.toObject()
+      : dictionaryService.replaceReferences(dict1Doc.toObject());
+    const dict2 = showReferences
+      ? dict2Doc.toObject()
+      : dictionaryService.replaceReferences(dict2Doc.toObject());
+    const diff = diffUtil(dict1, dict2);
     res.status(200).send(Array.from(diff.entries()));
   } else {
     throw new BadRequestError('name and left and right versions must be set');

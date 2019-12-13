@@ -8,6 +8,7 @@ import {
 import { validate } from '../services/schemaService';
 import { incrementMajor, incrementMinor, isValidVersion, isGreater } from '../utils/version';
 import logger from '../config/logger';
+import { get, omit } from 'lodash';
 
 const getLatestVersion = async (name: string): Promise<string> => {
   const dicts = await Dictionary.find({ name: name });
@@ -76,6 +77,7 @@ export const create = async (newDict: {
   name: string;
   version: string;
   schemas: any[];
+  references: any;
 }): Promise<DictionaryDocument> => {
   logger.info(`Creating new dictionary ${newDict.name} ${newDict.version}`);
 
@@ -106,6 +108,7 @@ export const create = async (newDict: {
     name: newDict.name,
     version: newDict.version,
     schemas: newDict.schemas,
+    references: newDict.references,
   });
   const saved = await dict.save();
   return saved;
@@ -186,4 +189,47 @@ export const updateSchema = async (
 
   const saved = await dict.save();
   return saved;
+};
+
+/**
+ * Note: This is an in place operation (it will effect the original Dictionary)
+ *
+ * @param dictionary Dictionary object, matching the mongoose documents
+ * @returns Dictionary with replacements made
+ */
+export const replaceReferences = (dictionary: DictionaryDocument) => {
+  const { schemas, references } = dictionary;
+
+  const isReferenceValue = (value: string) => {
+    const regex = new RegExp('^#(/[-_A-Za-z0-9]+)+$');
+    return regex.test(value);
+  };
+
+  schemas.map(schema => {
+    schema.fields.forEach((field: any) => {
+      for (const key in field.restrictions) {
+        const value = field.restrictions[key];
+
+        if (isReferenceValue(value)) {
+          const reference = value
+            .split('/')
+            .slice(1)
+            .join('.');
+
+          const replaceValue = get(references, reference, undefined);
+
+          // Ensure we found a value, otherwise throw error for invalid reference
+          if (!replaceValue) {
+            throw new InternalServerError(
+              `Unknown reference found - Schema: ${schema.name} Field: ${field.name} Reference: ${reference}`,
+            );
+          }
+
+          field.restrictions[key] = replaceValue;
+        }
+      }
+    });
+  });
+  // Remove references property
+  return omit(dictionary, 'references');
 };
