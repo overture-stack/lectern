@@ -132,6 +132,45 @@ describe('CRUD', () => {
           setImmediate(done);
         });
     });
+
+    it('Should 400 with a codeList reference that is not properly formatted', (done: Mocha.Done) => {
+      const dictRequest = require('./fixtures/createKeyValueBadReferenceFormat.json');
+      chai
+        .request(app)
+        .post('/dictionaries')
+        .send(dictRequest)
+        .end((err: Error, res: Response) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(400);
+          setImmediate(done);
+        });
+    });
+
+    it('Should 400 with a reference that is unknown', (done: Mocha.Done) => {
+      const dictRequest = require('./fixtures/createKeyValueBadUnknownReference.json');
+      chai
+        .request(app)
+        .post('/dictionaries')
+        .send(dictRequest)
+        .end((err: Error, res: Response) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(400);
+          setImmediate(done);
+        });
+    });
+
+    it('Should 400 with a reference that provides an illegal value', (done: Mocha.Done) => {
+      const dictRequest = require('./fixtures/createKeyValueBadReferenceValueType.json');
+      chai
+        .request(app)
+        .post('/dictionaries')
+        .send(dictRequest)
+        .end((err: Error, res: Response) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(400);
+          setImmediate(done);
+        });
+    });
   });
 
   describe('Read', () => {
