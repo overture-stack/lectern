@@ -26,12 +26,17 @@
       "type": "object",
       "properties": {
         "codeList": {
-          "type": "array",
-          "minItems": 2,
-          "uniqueItems": true,
-          "items": {
-            "type": "string"
-          }
+          "anyOf": [
+            {
+              "type": "array",
+              "minItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            { "type": "string", "pattern": "^#(\\/[-_A-Za-z0-9]+)+$" }
+          ]
         },
         "required": {
           "type": "boolean"
