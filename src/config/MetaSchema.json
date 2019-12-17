@@ -424,6 +424,9 @@
       "items": {
         "$ref": "#/definitions/field"
       }
+    },
+    "meta": {
+      "$ref": "#/definitions/stringMeta"
     }
   },
   "additionalProperties": false
