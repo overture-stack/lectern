@@ -2,8 +2,8 @@
   "name": "Key Value Meta",
   "version": "1.0",
   "references": {
-    "enums": {
-      "test": ["foo", "bar", "biz"]
+    "scripts": {
+      "test": "someMethod()"
     }
   },
   "schemas": [
@@ -48,7 +48,7 @@
           },
           "restrictions": {
             "required": true,
-            "codeList": "#/enums/test"
+            "codeList": "#/scripts/test"
           }
         },
         {

@@ -24,7 +24,7 @@ const App = (config: AppConfig): Express => {
   /**
    * Auth Decorator
    */
-  const egoDecorator = process.env.AUTH_ENABLED == 'true' ? ego() : wrapAsync;
+  const egoDecorator = process.env.AUTH_ENABLED === 'true' ? ego() : wrapAsync;
 
   // Create Express server with mongoConfig
   const app = express();

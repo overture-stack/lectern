@@ -132,6 +132,45 @@ describe('CRUD', () => {
           setImmediate(done);
         });
     });
+
+    it('Should 400 with a codeList reference that is not properly formatted', (done: Mocha.Done) => {
+      const dictRequest = require('./fixtures/createKeyValueBadReferenceFormat.json');
+      chai
+        .request(app)
+        .post('/dictionaries')
+        .send(dictRequest)
+        .end((err: Error, res: Response) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(400);
+          setImmediate(done);
+        });
+    });
+
+    it('Should 400 with a reference that is unknown', (done: Mocha.Done) => {
+      const dictRequest = require('./fixtures/createKeyValueBadUnknownReference.json');
+      chai
+        .request(app)
+        .post('/dictionaries')
+        .send(dictRequest)
+        .end((err: Error, res: Response) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(400);
+          setImmediate(done);
+        });
+    });
+
+    it('Should 400 with a reference that provides an illegal value', (done: Mocha.Done) => {
+      const dictRequest = require('./fixtures/createKeyValueBadReferenceValueType.json');
+      chai
+        .request(app)
+        .post('/dictionaries')
+        .send(dictRequest)
+        .end((err: Error, res: Response) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(400);
+          setImmediate(done);
+        });
+    });
   });
 
   describe('Read', () => {
@@ -161,6 +200,44 @@ describe('CRUD', () => {
           expect(err).to.be.null;
           expect(res).to.have.status(200);
           expect(res.body.version).to.equal(testVersion);
+          setImmediate(done);
+        });
+    });
+
+    it('Should get a dictionary with references hidden by default', (done: Mocha.Done) => {
+      chai
+        .request(app)
+        .get('/dictionaries/' + id)
+        .end((err: Error, res: Response) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(200);
+          expect(res.body.references).to.not.exist;
+          const schemaWithReference = res.body.schemas.find(
+            (schema: any) => schema.name === 'registration',
+          );
+          const fieldWithReference = schemaWithReference.fields.find(
+            (field: any) => field.name === 'gender',
+          );
+          expect(fieldWithReference.restrictions.codeList).to.be.an('array');
+          setImmediate(done);
+        });
+    });
+
+    it('Should get a dictionary with references shown when requested', (done: Mocha.Done) => {
+      chai
+        .request(app)
+        .get(`/dictionaries/${id}?references=true`)
+        .end((err: Error, res: Response) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(200);
+          expect(res.body.references).to.exist;
+          const schemaWithReference = res.body.schemas.find(
+            (schema: any) => schema.name === 'registration',
+          );
+          const fieldWithReference = schemaWithReference.fields.find(
+            (field: any) => field.name === 'gender',
+          );
+          expect(fieldWithReference.restrictions.codeList).to.be.a('string');
           setImmediate(done);
         });
     });

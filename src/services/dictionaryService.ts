@@ -1,10 +1,5 @@
 import { Dictionary, DictionaryDocument } from '../models/Dictionary';
-import {
-  ConflictError,
-  InternalServerError,
-  BadRequestError,
-  NotFoundError,
-} from '../utils/errors';
+import { ConflictError, BadRequestError, NotFoundError } from '../utils/errors';
 import { validate } from '../services/schemaService';
 import { incrementMajor, incrementMinor, isValidVersion, isGreater } from '../utils/version';
 import logger from '../config/logger';
@@ -76,6 +71,7 @@ export const create = async (newDict: {
   name: string;
   version: string;
   schemas: any[];
+  references: any;
 }): Promise<DictionaryDocument> => {
   logger.info(`Creating new dictionary ${newDict.name} ${newDict.version}`);
 
@@ -97,22 +93,16 @@ export const create = async (newDict: {
 
   // Verify schemas match dictionary
   newDict.schemas.forEach(e => {
-    const result = validate(e);
+    const result = validate(e, newDict.references || {});
     if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
   });
-
-  // Verify that this dictionary version doesn't already exist.
-  const doc = await Dictionary.findOne({
-    name: newDict.name,
-    version: newDict.version,
-  }).exec();
-  if (doc) throw new ConflictError('This dictionary version already exists.');
 
   // Save new dictionary version
   const dict = new Dictionary({
     name: newDict.name,
     version: newDict.version,
     schemas: newDict.schemas,
+    references: newDict.references || {},
   });
   const saved = await dict.save();
   return saved;
@@ -127,13 +117,15 @@ export const create = async (newDict: {
 export const addSchema = async (id: string, schema: any): Promise<DictionaryDocument> => {
   logger.info(`Adding schema to ${id}`);
 
-  const result = validate(schema);
-  if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
-
   const doc = await Dictionary.findOne({
     _id: id,
   }).exec();
   await checkLatest(doc);
+
+  const references = doc.references || {};
+
+  const result = validate(schema, references);
+  if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
   const entities = doc.schemas.map(s => s['name']);
   if (entities.includes(schema['name'])) throw new ConflictError('This schema already exists.');
@@ -144,7 +136,8 @@ export const addSchema = async (id: string, schema: any): Promise<DictionaryDocu
   const dict = new Dictionary({
     name: doc.name,
     version: incrementMajor(doc.version),
-    schemas: schemas,
+    schemas,
+    references,
   });
   const saved = await dict.save();
   return saved;
@@ -164,13 +157,15 @@ export const updateSchema = async (
 ): Promise<DictionaryDocument> => {
   logger.info(`Updating schema on ${id}`);
 
-  const result = validate(schema);
-  if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
-
   const doc = await Dictionary.findOne({
     _id: id,
   }).exec();
   await checkLatest(doc);
+
+  const references = doc.references || {};
+
+  const result = validate(schema, references);
+  if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
   // Ensure it exists
   const entities = doc.schemas.map(s => s['name']);
@@ -188,7 +183,8 @@ export const updateSchema = async (
   const dict = new Dictionary({
     name: doc.name,
     version: nextVersion,
-    schemas: schemas,
+    schemas,
+    references,
   });
 
   const saved = await dict.save();

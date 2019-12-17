@@ -1,11 +1,17 @@
 import MetaSchema from '../config/MetaSchema.json';
 import Ajv from 'ajv';
+import { replaceSchemaReferences } from '../utils/references';
 
-export function validate(dictionary: any) {
+export function validate(schema: any, references: any) {
+  const schemaWithReplacements = replaceSchemaReferences(schema, references);
+
+  // Validate vs MetaSchema
   const ajv = new Ajv({
     allErrors: true,
     jsonPointers: true,
   });
   const validate = ajv.compile(MetaSchema);
-  return { valid: validate(dictionary), errors: validate.errors };
+  const metaSchemaValid = validate(schemaWithReplacements);
+
+  return { valid: validate(schemaWithReplacements), errors: validate.errors };
 }

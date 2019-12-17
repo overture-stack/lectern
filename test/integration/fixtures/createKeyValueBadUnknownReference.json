@@ -48,7 +48,7 @@
           },
           "restrictions": {
             "required": true,
-            "codeList": "#/enums/test"
+            "codeList": "#/enums/tests"
           }
         },
         {

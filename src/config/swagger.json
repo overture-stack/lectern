@@ -27,7 +27,8 @@
             "schema": {
               "type": "string"
             }
-          }
+          },
+          { "$ref": "#/components/parameters/ShowReferences" }
         ],
         "responses": {
           "200": {
@@ -95,7 +96,8 @@
             "schema": {
               "type": "string"
             }
-          }
+          },
+          { "$ref": "#/components/parameters/ShowReferences" }
         ],
         "responses": {
           "200": {
@@ -220,7 +222,8 @@
             "schema": {
               "type": "string"
             }
-          }
+          },
+          { "$ref": "#/components/parameters/ShowReferences" }
         ],
         "responses": {
           "200": {
@@ -244,6 +247,18 @@
     }
   ],
   "components": {
+    "parameters": {
+      "ShowReferences": {
+        "name": "references",
+        "summary": "show references in schema response",
+        "description": "If true, the schema references will be left in the response. By default, all references are replaced with their referenced values.",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
     "requestBodies": {
       "FileSchema": {
         "content": {
