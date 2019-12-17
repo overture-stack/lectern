@@ -204,7 +204,7 @@ describe('CRUD', () => {
         });
     });
 
-    it.only('Should get a dictionary with references hidden by default', (done: Mocha.Done) => {
+    it('Should get a dictionary with references hidden by default', (done: Mocha.Done) => {
       chai
         .request(app)
         .get('/dictionaries/' + id)
@@ -223,7 +223,7 @@ describe('CRUD', () => {
         });
     });
 
-    it.only('Should get a dictionary with references shown when requested', (done: Mocha.Done) => {
+    it('Should get a dictionary with references shown when requested', (done: Mocha.Done) => {
       chai
         .request(app)
         .get(`/dictionaries/${id}?references=true`)
