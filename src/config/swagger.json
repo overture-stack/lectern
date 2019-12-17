@@ -47,9 +47,7 @@
             "description": "Internal server error"
           }
         },
-        "tags": [
-          "Dictionaries"
-        ]
+        "tags": ["Dictionaries"]
       },
       "post": {
         "summary": "Create a new dictionary in lectern",
@@ -82,9 +80,7 @@
             }
           }
         },
-        "tags": [
-          "Dictionaries"
-        ]
+        "tags": ["Dictionaries"]
       }
     },
     "/dictionaries/{_id}": {
@@ -113,9 +109,7 @@
             }
           }
         },
-        "tags": [
-          "Dictionaries"
-        ]
+        "tags": ["Dictionaries"]
       }
     },
     "/dictionaries/{_id}/schemas": {
@@ -152,9 +146,7 @@
             }
           }
         },
-        "tags": [
-          "Dictionaries"
-        ]
+        "tags": ["Dictionaries"]
       },
       "put": {
         "summary": "Update an existing file schema that exists in a dictionary",
@@ -197,9 +189,7 @@
             }
           }
         },
-        "tags": [
-          "Dictionaries"
-        ]
+        "tags": ["Dictionaries"]
       }
     },
     "/diff": {
@@ -244,9 +234,7 @@
             }
           }
         },
-        "tags": [
-          "Dictionaries"
-        ]
+        "tags": ["Dictionaries"]
       }
     }
   },
