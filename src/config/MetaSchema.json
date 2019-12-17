@@ -84,9 +84,6 @@
             "type": "integer"
           }
         },
-        "script": {
-          "type": "string"
-        },
         "range": {
           "type": "object",
           "oneOf": [
@@ -212,9 +209,6 @@
             "type": "number"
           }
         },
-        "script": {
-          "type": "string"
-        },
         "range": {
           "type": "object",
           "oneOf": [
@@ -332,9 +326,6 @@
       "properties": {
         "required": {
           "type": "boolean"
-        },
-        "script": {
-          "type": "string"
         }
       },
       "additionalProperties": false

@@ -23,14 +23,14 @@ export const listDictionaries = async (req: Request, res: Response) => {
 };
 
 export const getDictionary = async (req: Request, res: Response) => {
-  const showReferences = (req.query.references = false);
+  const showReferences = req.query.references || false;
   const id = req.params.dictId;
 
   const dict = await dictionaryService.getOne(id);
   const response = showReferences
     ? dict.toObject()
     : dictionaryService.replaceReferences(dict.toObject());
-  res.status(200).send(dict);
+  res.status(200).send(response);
 };
 
 export const createDictionary = async (req: Request, res: Response) => {
