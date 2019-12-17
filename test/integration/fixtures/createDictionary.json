@@ -36,7 +36,7 @@
           "description": "The gender of the patient",
           "restrictions": {
             "required": true,
-            "codeList": ["Male", "Female", "Other"]
+            "codeList": "#/enums/gender"
           }
         },
         {
@@ -137,5 +137,6 @@
         }
       ]
     }
-  ]
+  ],
+  "references": { "enums": { "gender": ["Male", "Female", "Other"] } }
 }

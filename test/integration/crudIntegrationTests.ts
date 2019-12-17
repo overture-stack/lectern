@@ -204,6 +204,44 @@ describe('CRUD', () => {
         });
     });
 
+    it.only('Should get a dictionary with references hidden by default', (done: Mocha.Done) => {
+      chai
+        .request(app)
+        .get('/dictionaries/' + id)
+        .end((err: Error, res: Response) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(200);
+          expect(res.body.references).to.not.exist;
+          const schemaWithReference = res.body.schemas.find(
+            (schema: any) => schema.name === 'registration',
+          );
+          const fieldWithReference = schemaWithReference.fields.find(
+            (field: any) => field.name === 'gender',
+          );
+          expect(fieldWithReference.restrictions.codeList).to.be.an('array');
+          setImmediate(done);
+        });
+    });
+
+    it.only('Should get a dictionary with references shown when requested', (done: Mocha.Done) => {
+      chai
+        .request(app)
+        .get(`/dictionaries/${id}?references=true`)
+        .end((err: Error, res: Response) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(200);
+          expect(res.body.references).to.exist;
+          const schemaWithReference = res.body.schemas.find(
+            (schema: any) => schema.name === 'registration',
+          );
+          const fieldWithReference = schemaWithReference.fields.find(
+            (field: any) => field.name === 'gender',
+          );
+          expect(fieldWithReference.restrictions.codeList).to.be.a('string');
+          setImmediate(done);
+        });
+    });
+
     it('Should 400 with a badly formed dictionary id', (done: Mocha.Done) => {
       chai
         .request(app)
