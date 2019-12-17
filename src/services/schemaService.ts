@@ -1,6 +1,6 @@
 import MetaSchema from '../config/MetaSchema.json';
 import Ajv from 'ajv';
-import { replaceSchemaReferences } from './dictionaryService';
+import { replaceSchemaReferences } from '../utils/references';
 
 export function validate(schema: any, references: any) {
   const schemaWithReplacements = replaceSchemaReferences(schema, references);
