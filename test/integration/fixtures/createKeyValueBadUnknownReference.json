@@ -1,6 +1,11 @@
 {
   "name": "Key Value Meta",
-  "version": "1.1",
+  "version": "1.0",
+  "references": {
+    "enums": {
+      "test": ["foo", "bar", "biz"]
+    }
+  },
   "schemas": [
     {
       "name": "key_value_test",
@@ -12,8 +17,7 @@
           "description": "kv_id",
           "meta": {
             "key": true,
-            "displayName": "KEY VALUE ID",
-            "noArrays": ["lol", "sorry", "no_arrays", "please"]
+            "displayName": "KEY VALUE ID"
           },
           "restrictions": {
             "required": true,
@@ -44,7 +48,7 @@
           },
           "restrictions": {
             "required": true,
-            "codeList": ["foo", "bar", "biz"]
+            "codeList": "#/enums/tests"
           }
         },
         {

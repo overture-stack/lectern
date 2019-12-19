@@ -27,7 +27,8 @@
             "schema": {
               "type": "string"
             }
-          }
+          },
+          { "$ref": "#/components/parameters/ShowReferences" }
         ],
         "responses": {
           "200": {
@@ -47,9 +48,7 @@
             "description": "Internal server error"
           }
         },
-        "tags": [
-          "Dictionaries"
-        ]
+        "tags": ["Dictionaries"]
       },
       "post": {
         "summary": "Create a new dictionary in lectern",
@@ -82,9 +81,7 @@
             }
           }
         },
-        "tags": [
-          "Dictionaries"
-        ]
+        "tags": ["Dictionaries"]
       }
     },
     "/dictionaries/{_id}": {
@@ -99,7 +96,8 @@
             "schema": {
               "type": "string"
             }
-          }
+          },
+          { "$ref": "#/components/parameters/ShowReferences" }
         ],
         "responses": {
           "200": {
@@ -113,9 +111,7 @@
             }
           }
         },
-        "tags": [
-          "Dictionaries"
-        ]
+        "tags": ["Dictionaries"]
       }
     },
     "/dictionaries/{_id}/schemas": {
@@ -152,9 +148,7 @@
             }
           }
         },
-        "tags": [
-          "Dictionaries"
-        ]
+        "tags": ["Dictionaries"]
       },
       "put": {
         "summary": "Update an existing file schema that exists in a dictionary",
@@ -197,9 +191,7 @@
             }
           }
         },
-        "tags": [
-          "Dictionaries"
-        ]
+        "tags": ["Dictionaries"]
       }
     },
     "/diff": {
@@ -230,7 +222,8 @@
             "schema": {
               "type": "string"
             }
-          }
+          },
+          { "$ref": "#/components/parameters/ShowReferences" }
         ],
         "responses": {
           "200": {
@@ -244,9 +237,7 @@
             }
           }
         },
-        "tags": [
-          "Dictionaries"
-        ]
+        "tags": ["Dictionaries"]
       }
     }
   },
@@ -256,6 +247,18 @@
     }
   ],
   "components": {
+    "parameters": {
+      "ShowReferences": {
+        "name": "references",
+        "summary": "show references in schema response",
+        "description": "If true, the schema references will be left in the response. By default, all references are replaced with their referenced values.",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
     "requestBodies": {
       "FileSchema": {
         "content": {
