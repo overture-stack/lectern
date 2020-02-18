@@ -1,8 +1,14 @@
-FROM node:12.5.0-alpine
+FROM node:12.5.0
 
 ARG COMMIT=""
 
-# Create app directory
+ENV APP_UID=9999
+ENV APP_GID=9999
+RUN groupmod -g $APP_GID node 
+RUN usermod -u $APP_UID -g $APP_GID node
+RUN mkdir -p /usr/src/app
+RUN chown -R node /usr/src/app
+USER node
 WORKDIR /usr/src/app
 
 COPY . ./
