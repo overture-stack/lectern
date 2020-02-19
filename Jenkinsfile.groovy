@@ -68,6 +68,9 @@ spec:
                     sh "npm ci"
                     sh "npm run build"
                 }
+                container('docker') {
+                    sh "docker build --build-arg=COMMIT=${commit} --network=host -f Dockerfile . -t overture/lectern:${commit}"
+                }
             }
         }
        // publish the edge tag
@@ -80,10 +83,9 @@ spec:
                     withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh 'docker login -u $USERNAME -p $PASSWORD'
                     }
-
                     // the network=host needed to download dependencies using the host network (since we are inside 'docker'
                     // container)
-                    sh "docker build --build-arg=COMMIT=${commit} --network=host -f Dockerfile . -t overture/lectern:edge -t overture/lectern:${commit}"
+                    sh "docker tag overture/lectern:${commit} overture/lectern:edge"
                     sh "docker push overture/lectern:${commit}"
                     sh "docker push overture/lectern:edge"
                }
@@ -103,7 +105,7 @@ spec:
                   withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                       sh 'docker login -u $USERNAME -p $PASSWORD'
                   }
-                  sh "docker build --build-arg=COMMIT=${commit} --network=host -f Dockerfile . -t overture/lectern:latest -t overture/lectern:${version}"
+                  sh "docker tag overture/lectern:${commit} overture/lectern:${version}"
                   sh "docker push overture/lectern:${version}"
                   sh "docker push overture/lectern:latest"
              }
