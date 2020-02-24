@@ -33,7 +33,7 @@ const App = (config: AppConfig): Express => {
 
   app.set('port', serverPort);
 
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({limit: '10mb'}));
   app.use(
     bodyParser.urlencoded({
       extended: true,
