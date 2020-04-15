@@ -372,6 +372,10 @@
               "$ref": "#/definitions/booleanRestrictions"
             }
           ]
+        },
+        "isArray": {
+          "type": "boolean",
+          "default": false
         }
       },
       "anyOf": [
