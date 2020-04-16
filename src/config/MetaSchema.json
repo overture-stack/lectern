@@ -336,6 +336,9 @@
       "properties": {
         "required": {
           "type": "boolean"
+        },
+        "isArray": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false
