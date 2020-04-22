@@ -105,7 +105,7 @@ spec:
                   withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                       sh 'docker login -u $USERNAME -p $PASSWORD'
                   }
-                  sh "docker tag overture/lectern:${commit} overture/lectern:${version}"
+                  sh "docker tag overture/lectern:${commit} overture/lectern:${version} overture/lectern:latest"
                   sh "docker push overture/lectern:${version}"
                   sh "docker push overture/lectern:latest"
              }
