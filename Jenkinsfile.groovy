@@ -126,7 +126,7 @@ spec:
                         sh "helm repo add overture https://overture-stack.github.io/charts-server/"
                         sh """
                             helm upgrade --kubeconfig $KUBECONFIG --install --namespace=overture-qa lectern-overture-qa \\
-                            overture/lectern --reuse-values --recreate-pods --set-string image.tag=${commit}
+                            overture/lectern --recreate-pods --set-string image.tag=${commit}
                            """
                     }
                 }
@@ -146,7 +146,7 @@ spec:
                         sh "helm repo add overture https://overture-stack.github.io/charts-server/"
                         sh """
                             helm upgrade --kubeconfig $KUBECONFIG --install --namespace=overture-staging lectern-overture-staging \\
-                            overture/lectern --reuse-values --recreate-pods --set-string image.tag=${version}
+                            overture/lectern --recreate-pods --set-string image.tag=${version}
                            """
                     }
                 }
