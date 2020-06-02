@@ -36,27 +36,32 @@ export const replaceSchemaReferences = (schema: any, references: any) => {
   };
 
   const clone = cloneDeep(schema);
+
+  const referenceSections = ['restrictions', 'meta'];
+
   clone.fields.forEach((field: any) => {
-    for (const key in field.restrictions) {
-      const value = field.restrictions[key];
+    referenceSections.forEach(section => {
+      for (const key in field[section]) {
+        const value = field[section][key];
 
-      if (isReferenceValue(value)) {
-        const reference = referenceToObjectPath(value);
+        if (isReferenceValue(value)) {
+          const reference = referenceToObjectPath(value);
 
-        const replaceValue = get(references, reference, undefined);
+          const replaceValue = get(references, reference, undefined);
 
-        // Ensure we found a value, otherwise throw error for invalid reference
-        if (!replaceValue) {
-          throw new InvalidReferenceError(
-            `Unknown reference found - Schema: ${clone.name} Field: ${
-              field.name
-            } Reference: ${reference}`,
-          );
+          // Ensure we found a value, otherwise throw error for invalid reference
+          if (!replaceValue) {
+            throw new InvalidReferenceError(
+              `Unknown reference found - Schema: ${clone.name} Field: ${
+                field.name
+              } - Path: ${section}.${key} - Reference: ${reference} `,
+            );
+          }
+
+          field[section][key] = replaceValue;
         }
-
-        field.restrictions[key] = replaceValue;
       }
-    }
+    });
   });
   return clone;
 };
