@@ -12,6 +12,11 @@ export const listDictionaries = async (req: Request, res: Response) => {
 
   if (name && version) {
     const dict = await dictionaryService.findOne(name, version);
+    if (dict == undefined) {
+      logger.info(`Failed to find dictionary ${name} ${version}`);
+      res.status(404).send(`Dictionary Not Found: ${name} ${version}`);
+      return;
+    }
     const response = showReferences ? dict.toObject() : replaceReferences(dict.toObject());
     res.status(200).send([response]);
   } else {
