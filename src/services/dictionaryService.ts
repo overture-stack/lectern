@@ -35,7 +35,7 @@ const checkLatest = async (doc: DictionaryDocument): Promise<void> => {
  * @param version Version of the dictionary
  */
 export const findOne = async (name: string, version: string): Promise<DictionaryDocument> => {
-  logger.info(`Find one for ${name} ${version}`);
+  logger.info(`Fetching dictionary: ${name} ${version}`);
   const dict = await Dictionary.findOne({ name: name, version: version });
   return dict;
 };
