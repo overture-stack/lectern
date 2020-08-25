@@ -4,6 +4,7 @@ import { constructMongoUri } from './utils/mongo';
 import logger from './config/logger';
 import { Server } from 'http';
 import { getAppConfig } from './config/appConfig';
+import { setDBStatus, Status } from './app-health';
 
 let server: Server;
 
@@ -13,24 +14,31 @@ let server: Server;
   /** Mongoose setup */
   mongoose.connection.on('connecting', () => {
     logger.info('Connecting to MongoDB...');
+    setDBStatus(Status.OK);
   });
   mongoose.connection.on('connected', () => {
     logger.info('...Connection Established to MongoDB');
+    setDBStatus(Status.OK);
   });
   mongoose.connection.on('reconnected', () => {
     logger.info('Connection Reestablished');
+    setDBStatus(Status.OK);
   });
   mongoose.connection.on('disconnected', () => {
     logger.warn('Connection Disconnected');
+    setDBStatus(Status.ERROR);
   });
   mongoose.connection.on('close', () => {
     logger.warn('Connection Closed');
+    setDBStatus(Status.ERROR);
   });
   mongoose.connection.on('error', error => {
     logger.error('MongoDB Connection Error:' + error);
+    setDBStatus(Status.ERROR);
   });
   mongoose.connection.on('reconnectFailed', () => {
     logger.error('Ran out of reconnect attempts, abandoning...');
+    setDBStatus(Status.ERROR);
   });
 
   mongoose
