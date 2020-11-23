@@ -69,11 +69,9 @@ spec:
                     sh "npm run build"
                 }
                 container('docker') {
+                    // the network=host needed to download dependencies using the host network (since we are inside 'docker'
+                    // container)
                     sh "docker build --build-arg=COMMIT=${commit} --network=host -f Dockerfile . -t overture/lectern:${commit} -t ${githubContainerRepo}/lectern:${commit}"
-                    withCredentials([usernamePassword(credentialsId:'OvertureBioGithub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
-                    }
-                    sh "docker push ${githubContainerRepo}/lectern:${commit}"
                 }
                 
             }
@@ -88,8 +86,6 @@ spec:
                     withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh 'docker login -u $USERNAME -p $PASSWORD'
                     }
-                    // the network=host needed to download dependencies using the host network (since we are inside 'docker'
-                    // container)
                     sh "docker tag overture/lectern:${commit} overture/lectern:edge"
                     sh "docker push overture/lectern:${commit}"
                     sh "docker push overture/lectern:edge"
@@ -98,8 +94,6 @@ spec:
                     withCredentials([usernamePassword(credentialsId:'OvertureBioGithub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
                     }
-                    // the network=host needed to download dependencies using the host network (since we are inside 'docker'
-                    // container)
                     sh "docker tag ${githubContainerRepo}/lectern:${commit} ${githubContainerRepo}/lectern:edge"
                     sh "docker push ${githubContainerRepo}/lectern:${commit}"
                     sh "docker push ${githubContainerRepo}/lectern:edge"
