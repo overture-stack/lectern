@@ -70,7 +70,12 @@ spec:
                 }
                 container('docker') {
                     sh "docker build --build-arg=COMMIT=${commit} --network=host -f Dockerfile . -t overture/lectern:${commit} -t ${githubContainerRepo}/lectern:${commit}"
+                    withCredentials([usernamePassword(credentialsId:'OvertureBioGithub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
+                    }
+                    sh "docker push ${githubContainerRepo}/lectern:${commit}"
                 }
+                
             }
         }
        // publish the edge tag
