@@ -1,5 +1,5 @@
 def commit = "UNKNOWN"
-
+def githubContainerRepo = "ghcr.io/overture-stack" 
 pipeline {
     agent {
         kubernetes {
@@ -69,8 +69,11 @@ spec:
                     sh "npm run build"
                 }
                 container('docker') {
-                    sh "docker build --build-arg=COMMIT=${commit} --network=host -f Dockerfile . -t overture/lectern:${commit}"
+                    // the network=host needed to download dependencies using the host network (since we are inside 'docker'
+                    // container)
+                    sh "docker build --build-arg=COMMIT=${commit} --network=host -f Dockerfile . -t overture/lectern:${commit} -t ${githubContainerRepo}/lectern:${commit}"
                 }
+                
             }
         }
        // publish the edge tag
@@ -83,11 +86,17 @@ spec:
                     withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh 'docker login -u $USERNAME -p $PASSWORD'
                     }
-                    // the network=host needed to download dependencies using the host network (since we are inside 'docker'
-                    // container)
                     sh "docker tag overture/lectern:${commit} overture/lectern:edge"
                     sh "docker push overture/lectern:${commit}"
                     sh "docker push overture/lectern:edge"
+               }
+               container('docker') {
+                    withCredentials([usernamePassword(credentialsId:'OvertureBioGithub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
+                    }
+                    sh "docker tag ${githubContainerRepo}/lectern:${commit} ${githubContainerRepo}/lectern:edge"
+                    sh "docker push ${githubContainerRepo}/lectern:${commit}"
+                    sh "docker push ${githubContainerRepo}/lectern:edge"
                }
             }
         }
@@ -109,6 +118,15 @@ spec:
                   sh "docker tag overture/lectern:${commit} overture/lectern:latest"
                   sh "docker push overture/lectern:${version}"
                   sh "docker push overture/lectern:latest"
+             }
+             container('docker') {
+                  withCredentials([usernamePassword(credentialsId:'OvertureBioGithub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                      sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
+                  }
+                  sh "docker tag ${githubContainerRepo}/lectern:${commit} ${githubContainerRepo}/lectern:${version}"
+                  sh "docker tag ${githubContainerRepo}/lectern:${commit} ${githubContainerRepo}/lectern:latest"
+                  sh "docker push ${githubContainerRepo}/lectern:${version}"
+                  sh "docker push ${githubContainerRepo}/lectern:latest"
              }
           }
         }
