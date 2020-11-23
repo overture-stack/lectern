@@ -1,5 +1,5 @@
 def commit = "UNKNOWN"
-def githubContainerRepo = "ghcr.io/overture-stack" 
+def dockerRepo = "ghcr.io/overture-stack" 
 pipeline {
     agent {
         kubernetes {
@@ -71,7 +71,7 @@ spec:
                 container('docker') {
                     // the network=host needed to download dependencies using the host network (since we are inside 'docker'
                     // container)
-                    sh "docker build --build-arg=COMMIT=${commit} --network=host -f Dockerfile . -t overture/lectern:${commit} -t ${githubContainerRepo}/lectern:${commit}"
+                    sh "docker build --build-arg=COMMIT=${commit} --network=host -f Dockerfile . -t overture/lectern:${commit} -t ${dockerRepo}/lectern:${commit}"
                 }
                 
             }
@@ -94,9 +94,9 @@ spec:
                     withCredentials([usernamePassword(credentialsId:'OvertureBioGithub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
                     }
-                    sh "docker tag ${githubContainerRepo}/lectern:${commit} ${githubContainerRepo}/lectern:edge"
-                    sh "docker push ${githubContainerRepo}/lectern:${commit}"
-                    sh "docker push ${githubContainerRepo}/lectern:edge"
+                    sh "docker tag ${dockerRepo}/lectern:${commit} ${dockerRepo}/lectern:edge"
+                    sh "docker push ${dockerRepo}/lectern:${commit}"
+                    sh "docker push ${dockerRepo}/lectern:edge"
                }
             }
         }
@@ -123,10 +123,10 @@ spec:
                   withCredentials([usernamePassword(credentialsId:'OvertureBioGithub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                       sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
                   }
-                  sh "docker tag ${githubContainerRepo}/lectern:${commit} ${githubContainerRepo}/lectern:${version}"
-                  sh "docker tag ${githubContainerRepo}/lectern:${commit} ${githubContainerRepo}/lectern:latest"
-                  sh "docker push ${githubContainerRepo}/lectern:${version}"
-                  sh "docker push ${githubContainerRepo}/lectern:latest"
+                  sh "docker tag ${dockerRepo}/lectern:${commit} ${dockerRepo}/lectern:${version}"
+                  sh "docker tag ${dockerRepo}/lectern:${commit} ${dockerRepo}/lectern:latest"
+                  sh "docker push ${dockerRepo}/lectern:${version}"
+                  sh "docker push ${dockerRepo}/lectern:latest"
              }
           }
         }
