@@ -4,8 +4,8 @@
 
 <p align="center">
     <a href="https://github.com/overture-stack/lectern">
-        <img alt="Under Development" 
-            title="Under Development" 
+        <img alt="Under Development"
+            title="Under Development"
             src="http://www.overture.bio/img/progress-horizontal-RC.svg" width="320" />
     </a>
 </p>
@@ -18,7 +18,7 @@ The intended use of the data dictionaries is to describe the structure and valid
 ## Development
 
 ### Technology
-- Node.js 8.10+
+- Node.js 13.14+
 - Typescript 3.5
 - Express
 - Mongoose
@@ -42,4 +42,3 @@ To run after it is built:
 ```node
 npm start
 ```
-
