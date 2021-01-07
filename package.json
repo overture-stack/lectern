@@ -1,6 +1,6 @@
 {
   "name": "lectern",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "Data Dictionary Management",
   "scripts": {
     "start": "npm run serve",
@@ -47,11 +47,11 @@
     "@types/winston": "^2.4.4",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
-    "concurrently": "^4.1.1",
-    "gitmoji-cli": "^2.0.0",
+    "concurrently": "^5.3.0",
+    "gitmoji-cli": "^3.2.18",
     "husky": "^3.0.5",
     "mocha": "^6.2.3",
-    "nodemon": "^1.19.4",
+    "nodemon": "^2.0.7",
     "prettier": "1.17.0",
     "testcontainers": "^1.1.19",
     "ts-node": "^8.3.0",
@@ -60,7 +60,7 @@
   },
   "dependencies": {
     "ajv": "^6.10.2",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "dotenv": "^8.0.0",
     "errorhandler": "^1.5.1",
