@@ -30,7 +30,6 @@ export function validate(schema: any, references: any) {
     jsonPointers: true,
   });
   const validate = ajv.compile(MetaSchema);
-  const metaSchemaValid = validate(schemaWithReplacements);
 
   return { valid: validate(schemaWithReplacements), errors: validate.errors };
 }

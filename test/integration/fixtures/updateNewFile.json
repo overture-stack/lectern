@@ -30,7 +30,7 @@
         "units": "days"
       },
       "restrictions": {
-        "script": "validateWithMagic(check dependece on another field)",
+        "script": ["validateWithMagic(check dependece on another field)"],
         "range": {
           "min": 0,
           "max": 99999
