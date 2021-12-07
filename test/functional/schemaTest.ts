@@ -17,36 +17,23 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import MetaSchema from '../config/MetaSchema.json';
-import Ajv from 'ajv';
-import { replaceSchemaReferences } from '../utils/references';
+import App from '../../src/app';
+import { expect } from 'chai';
+import { AppConfig, getAppConfig } from '../../src/config/appConfig';
+import { DictionaryDocument } from '../../src/models/Dictionary';
+import { normalizeSchema } from '../../src/services/schemaService';
 
-export function validate(schema: any, references: any) {
-  const schemaWithReplacements = replaceSchemaReferences(schema, references);
+const input1 = require('./fixtures/linebreak/input1.json') as DictionaryDocument;
+const input2 = require('./fixtures/linebreak/input2.json') as DictionaryDocument;
+const output = require('./fixtures/linebreak/output.json') as DictionaryDocument;
 
-  // Validate vs MetaSchema
-  const ajv = new Ajv({
-    allErrors: true,
-    jsonPointers: true,
+describe('Verify different EOL are normalized', () => {
+  it('Should not alter already formatted files', () => {
+    const normalizedSchema = normalizeSchema(input1.schemas[0]);
+    expect(normalizedSchema).to.deep.eq(output.schemas[0]);
   });
-  const validate = ajv.compile(MetaSchema);
-
-  return { valid: validate(schemaWithReplacements), errors: validate.errors };
-}
-
-export function normalizeSchema(schema: any) {
-  return {
-    ...schema,
-    fields: schema.fields.map((field: any) => {
-      return field.restrictions && field.restrictions.script
-        ? {
-            ...field,
-            restrictions: {
-              ...field.restrictions,
-              script: field.restrictions.script.replaceAll('\r\n', '\n'),
-            },
-          }
-        : field;
-    }),
-  };
-}
+  it('Should output consistent script property', () => {
+    const normalizedSchema = normalizeSchema(input2.schemas[0]);
+    expect(normalizedSchema).to.deep.eq(output.schemas[0]);
+  });
+});
