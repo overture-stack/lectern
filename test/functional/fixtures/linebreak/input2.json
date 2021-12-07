@@ -10,7 +10,9 @@
           "name": "cause_of_death",
           "valueType": "string",
           "description": "Cause of Donor Death",
-          "script": "(function(){\r\nreturn true;\r\n\r\n\r\n\r\n}())"
+          "restrictions": {
+            "script": "(function(){\r\nreturn true;\r\n\r\n\r\n\r\n}())"
+          }
         }
       ]
     }
