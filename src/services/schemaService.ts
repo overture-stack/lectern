@@ -43,7 +43,7 @@ export function normalizeSchema(schema: any) {
             ...field,
             restrictions: {
               ...field.restrictions,
-              script: field.restrictions.script.replaceAll('\r\n', '\n'),
+              script: field.restrictions.script.toString().replaceAll('\r\n', '\n'),
             },
           }
         : field;
