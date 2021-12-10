@@ -34,19 +34,31 @@ export function validate(schema: any, references: any) {
   return { valid: validate(schemaWithReplacements), errors: validate.errors };
 }
 
+function normalizeScript(script: string | string[]) {
+  if (typeof script === 'string') {
+    return script.replace(/\r\n/g, '\n');
+  } else if (Array.isArray(script)) {
+    return script.map((s: string) => s.replace(/\r\n/g, '\n'));
+  } else {
+    return script;
+  }
+}
+
 export function normalizeSchema(schema: any) {
+  if (!schema.fields) return schema;
   return {
     ...schema,
     fields: schema.fields.map((field: any) => {
-      return field.restrictions && field.restrictions.script
-        ? {
-            ...field,
-            restrictions: {
-              ...field.restrictions,
-              script: field.restrictions.script.toString().replaceAll('\r\n', '\n'),
-            },
-          }
-        : field;
+      if (field.restrictions && field.restrictions.script) {
+        return {
+          ...field,
+          restrictions: {
+            ...field.restrictions,
+            script: normalizeScript(field.restrictions.script),
+          },
+        };
+      }
+      return field;
     }),
   };
 }
