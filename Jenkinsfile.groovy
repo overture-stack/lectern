@@ -13,26 +13,27 @@ spec:
     image: node:8.16.0-jessie
     tty: true
     env: 
-      - name: DOCKER_HOST 
-        value: tcp://localhost:2375 
+    - name: DOCKER_HOST 
+      value: tcp://localhost:2375
   - name: dind-daemon 
     image: docker:18.06-dind
     securityContext: 
         privileged: true 
+        runAsUser: 0
     volumeMounts: 
       - name: docker-graph-storage 
         mountPath: /var/lib/docker 
   - name: docker
     image: docker:18-git
     tty: true
-    volumeMounts:
-    - mountPath: /var/run/docker.sock
-      name: docker-sock
+    env: 
+    - name: DOCKER_HOST 
+      value: tcp://localhost:2375
+    - name: HOME
+      value: /home/jenkins/agent
+  securityContext:
+    runAsUser: 1000
   volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
-      type: File
   - name: docker-graph-storage 
     emptyDir: {}
 """
@@ -125,40 +126,6 @@ spec:
              }
           }
         }
-
-		stage('Deploy to Overture QA') {
-			when {
-				branch "develop"
-			}
-			steps {
-				build(job: "/Overture.bio/provision/helm", parameters: [
-						[$class: 'StringParameterValue', name: 'OVERTURE_ENV', value: 'qa' ],
-						[$class: 'StringParameterValue', name: 'OVERTURE_CHART_NAME', value: 'lectern'],
-						[$class: 'StringParameterValue', name: 'OVERTURE_RELEASE_NAME', value: 'lectern'],
-						[$class: 'StringParameterValue', name: 'OVERTURE_HELM_CHART_VERSION', value: ''], // use latest
-						[$class: 'StringParameterValue', name: 'OVERTURE_HELM_REPO_URL', value: "https://overture-stack.github.io/charts-server/"],
-						[$class: 'StringParameterValue', name: 'OVERTURE_HELM_REUSE_VALUES', value: "false" ],
-						[$class: 'StringParameterValue', name: 'OVERTURE_ARGS_LINE', value: "--set-string image.tag=${commit}" ]
-				])
-			}
-		}
-
-		stage('Deploy to Overture Staging') {
-			when {
-				branch "master"
-			}
-			steps {
-				build(job: "/Overture.bio/provision/helm", parameters: [
-						[$class: 'StringParameterValue', name: 'OVERTURE_ENV', value: 'staging' ],
-						[$class: 'StringParameterValue', name: 'OVERTURE_CHART_NAME', value: 'lectern'],
-						[$class: 'StringParameterValue', name: 'OVERTURE_RELEASE_NAME', value: 'lectern'],
-						[$class: 'StringParameterValue', name: 'OVERTURE_HELM_CHART_VERSION', value: ''], // use latest
-						[$class: 'StringParameterValue', name: 'OVERTURE_HELM_REPO_URL', value: "https://overture-stack.github.io/charts-server/"],
-						[$class: 'StringParameterValue', name: 'OVERTURE_HELM_REUSE_VALUES', value: "false" ],
-						[$class: 'StringParameterValue', name: 'OVERTURE_ARGS_LINE', value: "--set-string --set-string image.tag=${version}" ]
-				])
-			}
-		}
-        
+        // TBD: auto deploy to qa/staging
     }
 }

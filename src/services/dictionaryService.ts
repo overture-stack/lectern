@@ -19,7 +19,7 @@
 
 import { Dictionary, DictionaryDocument } from '../models/Dictionary';
 import { ConflictError, BadRequestError, NotFoundError } from '../utils/errors';
-import { validate } from '../services/schemaService';
+import { normalizeSchema, validate } from '../services/schemaService';
 import { incrementMajor, incrementMinor, isValidVersion, isGreater } from '../utils/version';
 import logger from '../config/logger';
 
@@ -103,7 +103,9 @@ export const create = async (newDict: {
 
   if (!isGreater(newDict.version, latest)) {
     logger.warn(
-      `Rejected ${newDict.name} due to version ${newDict.version} being lower than latest: ${latest}`,
+      `Rejected ${newDict.name} due to version ${
+        newDict.version
+      } being lower than latest: ${latest}`,
     );
     throw new BadRequestError(
       `New version for ${newDict.name} is not greater than latest existing version`,
@@ -116,11 +118,13 @@ export const create = async (newDict: {
     if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
   });
 
+  const normalizedSchemas = newDict.schemas.map(schema => normalizeSchema(schema));
+
   // Save new dictionary version
   const dict = new Dictionary({
     name: newDict.name,
     version: newDict.version,
-    schemas: newDict.schemas,
+    schemas: normalizedSchemas,
     references: newDict.references || {},
   });
   const saved = await dict.save();
@@ -149,8 +153,10 @@ export const addSchema = async (id: string, schema: any): Promise<DictionaryDocu
   const entities = doc.schemas.map(s => s['name']);
   if (entities.includes(schema['name'])) throw new ConflictError('This schema already exists.');
 
+  const normalizedSchema = normalizeSchema(schema);
+
   const schemas = doc.schemas;
-  schemas.push(schema);
+  schemas.push(normalizedSchema);
   // Save new dictionary version
   const dict = new Dictionary({
     name: doc.name,
@@ -193,7 +199,10 @@ export const updateSchema = async (
 
   // Filter out one to update
   const schemas = doc.schemas.filter(s => !(s['name'] === schema['name']));
-  schemas.push(schema);
+
+  const normalizedSchema = normalizeSchema(schema);
+
+  schemas.push(normalizedSchema);
 
   // Increment Version
   const nextVersion = major ? incrementMajor(doc.version) : incrementMinor(doc.version);
