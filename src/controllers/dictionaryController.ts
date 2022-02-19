@@ -73,9 +73,9 @@ export const updateSchema = async (req: Request, res: Response) => {
 
 export const diffDictionaries = async (req: Request, res: Response) => {
   const showReferences = req.query.references || false;
-  const name = req.query.name;
-  const leftVersion = req.query.left;
-  const rightVersion = req.query.right;
+  const name = req.query.name.toString();
+  const leftVersion = req.query.left.toString()
+  const rightVersion = req.query.right.toString();
 
   if (name && leftVersion && rightVersion) {
     const dict1Doc = await dictionaryService.findOne(name, leftVersion);
