@@ -33,7 +33,7 @@ import { dbHealth, Status } from './app-health';
  */
 const wrapAsync = (fn: RequestHandler): RequestHandler => {
   return (req, res, next) => {
-    const routePromise = fn(req, res, next);
+    const routePromise:any = fn(req, res, next);
     if (routePromise.catch) {
       routePromise.catch(next);
     }
