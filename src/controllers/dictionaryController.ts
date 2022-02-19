@@ -25,8 +25,8 @@ import { diff as diffUtil } from '../diff/DictionaryDiff';
 import logger from '../config/logger';
 
 export const listDictionaries = async (req: Request, res: Response) => {
-  const name = req.query.name;
-  const version = req.query.version;
+  const name = req.query.name.toString();
+  const version = req.query.version.toString();
   const showReferences = req.query.references || false;
 
   if (name && version) {
