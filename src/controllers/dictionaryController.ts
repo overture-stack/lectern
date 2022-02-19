@@ -23,6 +23,7 @@ import { BadRequestError } from '../utils/errors';
 import { replaceReferences } from '../utils/references';
 import { diff as diffUtil } from '../diff/DictionaryDiff';
 import logger from '../config/logger';
+import { DictionaryDocument } from '../models/Dictionary';
 
 export const listDictionaries = async (req: Request, res: Response) => {
   const name = req.query.name.toString();
@@ -36,7 +37,7 @@ export const listDictionaries = async (req: Request, res: Response) => {
       res.status(404).send(`Dictionary Not Found: ${name} ${version}`);
       return;
     }
-    const response = showReferences ? dict.toObject() : replaceReferences(dict.toObject());
+    const response = showReferences ? dict.toObject() : replaceReferences(dict.toObject() as DictionaryDocument);
     res.status(200).send([response]);
   } else {
     const dicts = await dictionaryService.listAll();
@@ -50,7 +51,7 @@ export const getDictionary = async (req: Request, res: Response) => {
   const id = req.params.dictId;
 
   const dict = await dictionaryService.getOne(id);
-  const response = showReferences ? dict.toObject() : replaceReferences(dict.toObject());
+  const response = showReferences ? dict.toObject() : replaceReferences(dict.toObject() as DictionaryDocument);
   res.status(200).send(response);
 };
 
@@ -80,8 +81,8 @@ export const diffDictionaries = async (req: Request, res: Response) => {
   if (name && leftVersion && rightVersion) {
     const dict1Doc = await dictionaryService.findOne(name, leftVersion);
     const dict2Doc = await dictionaryService.findOne(name, rightVersion);
-    const dict1 = showReferences ? dict1Doc.toObject() : replaceReferences(dict1Doc.toObject());
-    const dict2 = showReferences ? dict2Doc.toObject() : replaceReferences(dict2Doc.toObject());
+    const dict1 = (showReferences ? dict1Doc.toObject() : replaceReferences(dict1Doc.toObject() as DictionaryDocument)) as DictionaryDocument;
+    const dict2 = (showReferences ? dict2Doc.toObject() : replaceReferences(dict2Doc.toObject() as DictionaryDocument)) as DictionaryDocument;
     const diff = diffUtil(dict1, dict2);
     res.status(200).send(Array.from(diff.entries()));
   } else {
