@@ -25,9 +25,12 @@ import { diff as diffUtil } from '../diff/DictionaryDiff';
 import logger from '../config/logger';
 import { DictionaryDocument } from '../models/Dictionary';
 
-export const listDictionaries = async (req: Request, res: Response) => {
-  const name = req.query.name.toString();
-  const version = req.query.version.toString();
+export const listDictionaries = async (
+  req: Request<{}, {}, {}, { name: string; version: string; references: boolean }>,
+  res: Response,
+) => {
+  const name = req.query.name as string;
+  const version = req.query.version;
   const showReferences = req.query.references || false;
 
   if (name && version) {
@@ -37,11 +40,13 @@ export const listDictionaries = async (req: Request, res: Response) => {
       res.status(404).send(`Dictionary Not Found: ${name} ${version}`);
       return;
     }
-    const response = showReferences ? dict.toObject() : replaceReferences(dict.toObject() as DictionaryDocument);
+    const response = showReferences
+      ? dict.toObject()
+      : replaceReferences(dict.toObject() as DictionaryDocument);
     res.status(200).send([response]);
   } else {
     const dicts = await dictionaryService.listAll();
-    const response = name !== undefined ? dicts.filter(dict => dict.name === name) : dicts;
+    const response = name !== undefined ? dicts.filter((dict) => dict.name === name) : dicts;
     res.status(200).send(response);
   }
 };
@@ -51,7 +56,9 @@ export const getDictionary = async (req: Request, res: Response) => {
   const id = req.params.dictId;
 
   const dict = await dictionaryService.getOne(id);
-  const response = showReferences ? dict.toObject() : replaceReferences(dict.toObject() as DictionaryDocument);
+  const response = showReferences
+    ? dict.toObject()
+    : replaceReferences(dict.toObject() as DictionaryDocument);
   res.status(200).send(response);
 };
 
@@ -72,17 +79,28 @@ export const updateSchema = async (req: Request, res: Response) => {
   res.status(200).send(dict.toObject());
 };
 
-export const diffDictionaries = async (req: Request, res: Response) => {
+export const diffDictionaries = async (
+  req: Request<{}, {}, {}, { name: string; left: string; right: string; references: boolean }>,
+  res: Response,
+) => {
   const showReferences = req.query.references || false;
-  const name = req.query.name.toString();
-  const leftVersion = req.query.left.toString()
-  const rightVersion = req.query.right.toString();
+  const name = req.query.name;
+  const leftVersion = req.query.left;
+  const rightVersion = req.query.right;
 
   if (name && leftVersion && rightVersion) {
     const dict1Doc = await dictionaryService.findOne(name, leftVersion);
     const dict2Doc = await dictionaryService.findOne(name, rightVersion);
-    const dict1 = (showReferences ? dict1Doc.toObject() : replaceReferences(dict1Doc.toObject() as DictionaryDocument)) as DictionaryDocument;
-    const dict2 = (showReferences ? dict2Doc.toObject() : replaceReferences(dict2Doc.toObject() as DictionaryDocument)) as DictionaryDocument;
+    const dict1 = (
+      showReferences
+        ? dict1Doc.toObject()
+        : replaceReferences(dict1Doc.toObject() as DictionaryDocument)
+    ) as DictionaryDocument;
+    const dict2 = (
+      showReferences
+        ? dict2Doc.toObject()
+        : replaceReferences(dict2Doc.toObject() as DictionaryDocument)
+    ) as DictionaryDocument;
     const diff = diffUtil(dict1, dict2);
     res.status(200).send(Array.from(diff.entries()));
   } else {
