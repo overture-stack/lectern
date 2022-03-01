@@ -31,7 +31,7 @@ import { dbHealth, Status } from './app-health';
 /**
  * Decorator to handle errors from async express route handlers
  */
-const wrapAsync = (fn: RequestHandler): RequestHandler => {
+const wrapAsync = (fn: RequestHandler<any, any, any, any>): RequestHandler => {
   return (req, res, next) => {
     const routePromise: any = fn(req, res, next);
     if (routePromise.catch) {
@@ -53,7 +53,7 @@ const App = (config: AppConfig): Express => {
 
   app.set('port', serverPort);
 
-  app.use(bodyParser.json({limit: '10mb'}));
+  app.use(bodyParser.json({ limit: '10mb' }));
   app.use(
     bodyParser.urlencoded({
       extended: true,
@@ -75,7 +75,7 @@ const App = (config: AppConfig): Express => {
     } else {
       const resBody = {
         appStatus: 'Error/Unknown',
-        dbStatus: dbHealth.status
+        dbStatus: dbHealth.status,
       };
       return res.status(500).send(resBody);
     }
