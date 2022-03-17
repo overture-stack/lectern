@@ -21,7 +21,7 @@ import vault from 'node-vault';
 import { promises } from 'fs';
 import logger from '../config/logger';
 
-let vaultClient: vault.Client;
+let vaultClient: vault.client;
 
 async function login() {
   logger.info('Creating vault client');
