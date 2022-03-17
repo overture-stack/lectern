@@ -80,7 +80,12 @@ export const updateSchema = async (req: Request, res: Response) => {
 };
 
 export const diffDictionaries = async (
-  req: Request<{}, {}, {}, { name: string; left: string; right: string; references: boolean }>,
+  req: Request<
+    {},
+    {},
+    {},
+    Partial<{ name: string; left: string; right: string; references: boolean }>
+  >,
   res: Response,
 ) => {
   const showReferences = req.query.references || false;
