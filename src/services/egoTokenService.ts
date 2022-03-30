@@ -73,7 +73,7 @@ export default function(egoURL: string = process.env.EGO_API, scope: string = pr
         try {
           const scopes = authToken['context']['scope'] as Array<string>;
           if (scopes.includes(scope)) {
-            const routePromise = fn(req, res, next);
+            const routePromise: any = fn(req, res, next);
             if (routePromise.catch) {
               routePromise.catch(next);
             }
