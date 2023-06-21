@@ -46,11 +46,11 @@ const testConfig: AppConfig = {
   },
 
   mongoUser(): string {
-    return process.env.MONGO_USER;
+    return process.env.MONGO_USER || 'admin';
   },
 
   mongoPassword(): string {
-    return process.env.MONGO_PASS;
+    return process.env.MONGO_PASS || 'password';
   },
 
   mongoDb(): string {
@@ -58,7 +58,7 @@ const testConfig: AppConfig = {
   },
 
   mongoUrl(): string {
-    return undefined;
+    return 'http://example.com';
   },
 };
 
@@ -71,13 +71,7 @@ describe('CRUD', () => {
   before(async () => {
     container = await new GenericContainer('mongo', 'xenial').withExposedPorts(27017).start();
     mongoose
-      .connect(
-        constructTestUri(
-          container.getContainerIpAddress(),
-          container.getMappedPort(27017).toString(),
-        ),
-        { useNewUrlParser: true },
-      )
+      .connect(constructTestUri(container.getContainerIpAddress(), container.getMappedPort(27017).toString()))
       .then(() => {
         /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
       })
@@ -231,12 +225,8 @@ describe('CRUD', () => {
           expect(err).to.be.null;
           expect(res).to.have.status(200);
           expect(res.body.references).to.not.exist;
-          const schemaWithReference = res.body.schemas.find(
-            (schema: any) => schema.name === 'registration',
-          );
-          const fieldWithReference = schemaWithReference.fields.find(
-            (field: any) => field.name === 'gender',
-          );
+          const schemaWithReference = res.body.schemas.find((schema: any) => schema.name === 'registration');
+          const fieldWithReference = schemaWithReference.fields.find((field: any) => field.name === 'gender');
           expect(fieldWithReference.restrictions.codeList).to.be.an('array');
           setImmediate(done);
         });
@@ -250,12 +240,8 @@ describe('CRUD', () => {
           expect(err).to.be.null;
           expect(res).to.have.status(200);
           expect(res.body.references).to.exist;
-          const schemaWithReference = res.body.schemas.find(
-            (schema: any) => schema.name === 'registration',
-          );
-          const fieldWithReference = schemaWithReference.fields.find(
-            (field: any) => field.name === 'gender',
-          );
+          const schemaWithReference = res.body.schemas.find((schema: any) => schema.name === 'registration');
+          const fieldWithReference = schemaWithReference.fields.find((field: any) => field.name === 'gender');
           expect(fieldWithReference.restrictions.codeList).to.be.a('string');
           setImmediate(done);
         });
@@ -415,9 +401,7 @@ describe('CRUD', () => {
         .end((err: Error, res: Response) => {
           expect(err).to.be.null;
           expect(res).to.have.status(400);
-          expect(res.body['message']).to.equal(
-            'Dictionary that you are trying to update is not the latest version.',
-          );
+          expect(res.body['message']).to.equal('Dictionary that you are trying to update is not the latest version.');
           setImmediate(done);
         });
     });
