@@ -1,4 +1,4 @@
-FROM node:13.14.0
+FROM node:18-slim
 
 ARG COMMIT=""
 
