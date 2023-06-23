@@ -28,54 +28,54 @@ import { setDBStatus, Status } from './app-health';
 let server: Server;
 
 (async () => {
-  const appConfig = await getAppConfig();
+	const appConfig = await getAppConfig();
 
-  /** Mongoose setup */
-  mongoose.connection.on('connecting', () => {
-    logger.info('Connecting to MongoDB...');
-    setDBStatus(Status.OK);
-  });
-  mongoose.connection.on('connected', () => {
-    logger.info('...Connection Established to MongoDB');
-    setDBStatus(Status.OK);
-  });
-  mongoose.connection.on('reconnected', () => {
-    logger.info('Connection Reestablished');
-    setDBStatus(Status.OK);
-  });
-  mongoose.connection.on('disconnected', () => {
-    logger.warn('Connection Disconnected');
-    setDBStatus(Status.ERROR);
-  });
-  mongoose.connection.on('close', () => {
-    logger.warn('Connection Closed');
-    setDBStatus(Status.ERROR);
-  });
-  mongoose.connection.on('error', (error) => {
-    logger.error('MongoDB Connection Error:' + error);
-    setDBStatus(Status.ERROR);
-  });
-  mongoose.connection.on('reconnectFailed', () => {
-    logger.error('Ran out of reconnect attempts, abandoning...');
-    setDBStatus(Status.ERROR);
-  });
+	/** Mongoose setup */
+	mongoose.connection.on('connecting', () => {
+		logger.info('Connecting to MongoDB...');
+		setDBStatus(Status.OK);
+	});
+	mongoose.connection.on('connected', () => {
+		logger.info('...Connection Established to MongoDB');
+		setDBStatus(Status.OK);
+	});
+	mongoose.connection.on('reconnected', () => {
+		logger.info('Connection Reestablished');
+		setDBStatus(Status.OK);
+	});
+	mongoose.connection.on('disconnected', () => {
+		logger.warn('Connection Disconnected');
+		setDBStatus(Status.ERROR);
+	});
+	mongoose.connection.on('close', () => {
+		logger.warn('Connection Closed');
+		setDBStatus(Status.ERROR);
+	});
+	mongoose.connection.on('error', (error) => {
+		logger.error('MongoDB Connection Error:' + error);
+		setDBStatus(Status.ERROR);
+	});
+	mongoose.connection.on('reconnectFailed', () => {
+		logger.error('Ran out of reconnect attempts, abandoning...');
+		setDBStatus(Status.ERROR);
+	});
 
-  mongoose
-    .connect(constructMongoUri(appConfig), { user: appConfig.mongoUser(), pass: appConfig.mongoPassword() })
-    .then(() => {
-      /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
-    })
-    .catch((err: Error) => {
-      logger.error('MongoDB connection error. Please make sure MongoDB is running. ' + err);
-      process.exit();
-    });
+	mongoose
+		.connect(constructMongoUri(appConfig), { user: appConfig.mongoUser(), pass: appConfig.mongoPassword() })
+		.then(() => {
+			/** ready to use. The `mongoose.connect()` promise resolves to undefined. */
+		})
+		.catch((err: Error) => {
+			logger.error('MongoDB connection error. Please make sure MongoDB is running. ' + err);
+			process.exit();
+		});
 
-  /**
-   * Start Express server.
-   */
-  const app = App(appConfig);
-  server = app.listen(app.get('port'), () => {
-    logger.info(`App is running at http://localhost:${app.get('port')} in ${app.get('env')} mode`);
-    logger.info('Press CTRL-C to stop');
-  });
+	/**
+	 * Start Express server.
+	 */
+	const app = App(appConfig);
+	server = app.listen(app.get('port'), () => {
+		logger.info(`App is running at http://localhost:${app.get('port')} in ${app.get('env')} mode`);
+		logger.info('Press CTRL-C to stop');
+	});
 })();

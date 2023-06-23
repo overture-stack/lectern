@@ -26,89 +26,76 @@ import logger from '../config/logger';
 import { DictionaryDocument } from '../models/Dictionary';
 
 export const listDictionaries = async (
-  req: Request<{}, {}, {}, { name: string; version: string; references: boolean }>,
-  res: Response,
+	req: Request<{}, {}, {}, { name: string; version: string; references: boolean }>,
+	res: Response,
 ) => {
-  const name = req.query.name as string;
-  const version = req.query.version;
-  const showReferences = req.query.references || false;
+	const name = req.query.name as string;
+	const version = req.query.version;
+	const showReferences = req.query.references || false;
 
-  if (name && version) {
-    const dict = await dictionaryService.findOne(name, version);
-    if (dict == undefined) {
-      logger.info(`Failed to find dictionary ${name} ${version}`);
-      res.status(404).send(`Dictionary Not Found: ${name} ${version}`);
-      return;
-    }
-    const response = showReferences
-      ? dict.toObject()
-      : replaceReferences(dict.toObject() as DictionaryDocument);
-    res.status(200).send([response]);
-  } else {
-    const dicts = await dictionaryService.listAll();
-    const response = name !== undefined ? dicts.filter((dict) => dict.name === name) : dicts;
-    res.status(200).send(response);
-  }
+	if (name && version) {
+		const dict = await dictionaryService.findOne(name, version);
+		if (dict == undefined) {
+			logger.info(`Failed to find dictionary ${name} ${version}`);
+			res.status(404).send(`Dictionary Not Found: ${name} ${version}`);
+			return;
+		}
+		const response = showReferences ? dict.toObject() : replaceReferences(dict.toObject() as DictionaryDocument);
+		res.status(200).send([response]);
+	} else {
+		const dicts = await dictionaryService.listAll();
+		const response = name !== undefined ? dicts.filter((dict) => dict.name === name) : dicts;
+		res.status(200).send(response);
+	}
 };
 
 export const getDictionary = async (req: Request, res: Response) => {
-  const showReferences = req.query.references || false;
-  const id = req.params.dictId;
+	const showReferences = req.query.references || false;
+	const id = req.params.dictId;
 
-  const dict = await dictionaryService.getOne(id);
-  const response = showReferences
-    ? dict.toObject()
-    : replaceReferences(dict.toObject() as DictionaryDocument);
-  res.status(200).send(response);
+	const dict = await dictionaryService.getOne(id);
+	const response = showReferences ? dict.toObject() : replaceReferences(dict.toObject() as DictionaryDocument);
+	res.status(200).send(response);
 };
 
 export const createDictionary = async (req: Request, res: Response) => {
-  const dict = await dictionaryService.create(req.body);
-  res.status(200).send(dict.toObject());
+	const dict = await dictionaryService.create(req.body);
+	res.status(200).send(dict.toObject());
 };
 
 export const addSchema = async (req: Request, res: Response) => {
-  const dict = await dictionaryService.addSchema(req.params.dictId, req.body);
-  res.status(200).send(dict.toObject());
+	const dict = await dictionaryService.addSchema(req.params.dictId, req.body);
+	res.status(200).send(dict.toObject());
 };
 
 export const updateSchema = async (req: Request, res: Response) => {
-  const major = req.query.major && req.query.major == 'true' ? true : false;
-  if (req.params.dictId === undefined) throw new BadRequestError('Must specify valid dictId');
-  const dict = await dictionaryService.updateSchema(req.params.dictId, req.body, major);
-  res.status(200).send(dict.toObject());
+	const major = req.query.major && req.query.major == 'true' ? true : false;
+	if (req.params.dictId === undefined) throw new BadRequestError('Must specify valid dictId');
+	const dict = await dictionaryService.updateSchema(req.params.dictId, req.body, major);
+	res.status(200).send(dict.toObject());
 };
 
 export const diffDictionaries = async (
-  req: Request<
-    {},
-    {},
-    {},
-    Partial<{ name: string; left: string; right: string; references: boolean }>
-  >,
-  res: Response,
+	req: Request<{}, {}, {}, Partial<{ name: string; left: string; right: string; references: boolean }>>,
+	res: Response,
 ) => {
-  const showReferences = req.query.references || false;
-  const name = req.query.name;
-  const leftVersion = req.query.left;
-  const rightVersion = req.query.right;
+	const showReferences = req.query.references || false;
+	const name = req.query.name;
+	const leftVersion = req.query.left;
+	const rightVersion = req.query.right;
 
-  if (name && leftVersion && rightVersion) {
-    const dict1Doc = await dictionaryService.findOne(name, leftVersion);
-    const dict2Doc = await dictionaryService.findOne(name, rightVersion);
-    const dict1 = (
-      showReferences
-        ? dict1Doc.toObject()
-        : replaceReferences(dict1Doc.toObject() as DictionaryDocument)
-    ) as DictionaryDocument;
-    const dict2 = (
-      showReferences
-        ? dict2Doc.toObject()
-        : replaceReferences(dict2Doc.toObject() as DictionaryDocument)
-    ) as DictionaryDocument;
-    const diff = diffUtil(dict1, dict2);
-    res.status(200).send(Array.from(diff.entries()));
-  } else {
-    throw new BadRequestError('name and left and right versions must be set');
-  }
+	if (name && leftVersion && rightVersion) {
+		const dict1Doc = await dictionaryService.findOne(name, leftVersion);
+		const dict2Doc = await dictionaryService.findOne(name, rightVersion);
+		const dict1 = (
+			showReferences ? dict1Doc.toObject() : replaceReferences(dict1Doc.toObject() as DictionaryDocument)
+		) as DictionaryDocument;
+		const dict2 = (
+			showReferences ? dict2Doc.toObject() : replaceReferences(dict2Doc.toObject() as DictionaryDocument)
+		) as DictionaryDocument;
+		const diff = diffUtil(dict1, dict2);
+		res.status(200).send(Array.from(diff.entries()));
+	} else {
+		throw new BadRequestError('name and left and right versions must be set');
+	}
 };

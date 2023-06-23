@@ -22,42 +22,42 @@ import Ajv from 'ajv';
 import { replaceSchemaReferences } from '../utils/references';
 
 export function validate(schema: any, references: any) {
-  const schemaWithReplacements = replaceSchemaReferences(schema, references);
+	const schemaWithReplacements = replaceSchemaReferences(schema, references);
 
-  // Validate vs MetaSchema
-  const ajv = new Ajv({
-    allErrors: true,
-  });
-  const validate = ajv.compile(MetaSchema);
+	// Validate vs MetaSchema
+	const ajv = new Ajv({
+		allErrors: true,
+	});
+	const validate = ajv.compile(MetaSchema);
 
-  return { valid: validate(schemaWithReplacements), errors: validate.errors };
+	return { valid: validate(schemaWithReplacements), errors: validate.errors };
 }
 
 function normalizeScript(script: string | string[]) {
-  if (typeof script === 'string') {
-    return script.replace(/\r\n/g, '\n');
-  } else if (Array.isArray(script)) {
-    return script.map((s: string) => s.replace(/\r\n/g, '\n'));
-  } else {
-    return script;
-  }
+	if (typeof script === 'string') {
+		return script.replace(/\r\n/g, '\n');
+	} else if (Array.isArray(script)) {
+		return script.map((s: string) => s.replace(/\r\n/g, '\n'));
+	} else {
+		return script;
+	}
 }
 
 export function normalizeSchema(schema: any) {
-  if (!schema.fields) return schema;
-  return {
-    ...schema,
-    fields: schema.fields.map((field: any) => {
-      if (field.restrictions && field.restrictions.script) {
-        return {
-          ...field,
-          restrictions: {
-            ...field.restrictions,
-            script: normalizeScript(field.restrictions.script),
-          },
-        };
-      }
-      return field;
-    }),
-  };
+	if (!schema.fields) return schema;
+	return {
+		...schema,
+		fields: schema.fields.map((field: any) => {
+			if (field.restrictions && field.restrictions.script) {
+				return {
+					...field,
+					restrictions: {
+						...field.restrictions,
+						script: normalizeScript(field.restrictions.script),
+					},
+				};
+			}
+			return field;
+		}),
+	};
 }
