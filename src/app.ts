@@ -43,8 +43,6 @@ const App = (config: AppConfig): Express => {
 		}),
 	);
 
-	swagger['info']['version'] = process.env.npm_package_version;
-
 	// Root Handler:
 	app.get('/', (_, res) => {
 		const details = {
@@ -56,9 +54,14 @@ const App = (config: AppConfig): Express => {
 	app.use('/health', healthRouter);
 	app.use('/dictionaries', dictionaryRouter);
 
+	/**
+	 * Swagger Setup
+	 */
+	swagger.info.version = process.env.npm_package_version;
 	app.use(openApiPath, swaggerUi.serve, swaggerUi.setup(swagger));
-	logger.info(`OpenAPI setup... done: http://localhost:${serverPort}${openApiPath}`);
+	logger.info(`Access swagger docs: http://localhost:${serverPort}${openApiPath}`);
 
+	// Error handler must be added last to capture all thrown errors.
 	app.use(errorHandler);
 
 	return app;
