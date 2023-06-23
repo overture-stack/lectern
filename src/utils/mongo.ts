@@ -32,11 +32,7 @@ export const constructMongoUri = (appConfig: AppConfig, { includeDb = true } = {
   const mongoPort = appConfig.mongoPort();
   const mongoDb = appConfig.mongoDb();
 
-  return `mongodb://${
-    user && pass ? `${encodeURIComponent(user)}:${encodeURIComponent(pass)}@` : ''
-  }${mongoHost}:${mongoPort}${includeDb ? `/${mongoDb}` : ``}${
-    user && pass ? '?authSource=admin' : ''
-  }`;
+  return `mongodb://${mongoHost}:${mongoPort}${includeDb ? `/${mongoDb}` : ``}`;
 };
 
 export const constructTestUri = (mongoHost: string, mongoPort: string): string => {

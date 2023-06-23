@@ -37,16 +37,16 @@ describe('Test injection of config into Express App', () => {
         return '27017';
       },
       mongoUser(): string {
-        return undefined;
+        return 'admin';
       },
       mongoPassword(): string {
-        return undefined;
+        return 'password';
       },
       mongoDb(): string {
         return 'lectern';
       },
       mongoUrl(): string {
-        return undefined;
+        return 'localhost:27017';
       },
     };
 

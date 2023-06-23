@@ -51,7 +51,7 @@ let server: Server;
     logger.warn('Connection Closed');
     setDBStatus(Status.ERROR);
   });
-  mongoose.connection.on('error', error => {
+  mongoose.connection.on('error', (error) => {
     logger.error('MongoDB Connection Error:' + error);
     setDBStatus(Status.ERROR);
   });
@@ -61,15 +61,7 @@ let server: Server;
   });
 
   mongoose
-    .connect(constructMongoUri(appConfig), {
-      autoReconnect: true,
-      socketTimeoutMS: 10000,
-      connectTimeoutMS: 30000,
-      keepAlive: true,
-      reconnectTries: 10,
-      reconnectInterval: 3000,
-      useNewUrlParser: true,
-    })
+    .connect(constructMongoUri(appConfig), { user: appConfig.mongoUser(), pass: appConfig.mongoPassword() })
     .then(() => {
       /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
     })

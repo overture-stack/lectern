@@ -27,7 +27,6 @@ export function validate(schema: any, references: any) {
   // Validate vs MetaSchema
   const ajv = new Ajv({
     allErrors: true,
-    jsonPointers: true,
   });
   const validate = ajv.compile(MetaSchema);
 
