@@ -22,34 +22,34 @@ import { constructMongoUri } from '../../src/utils/mongo';
 import { AppConfig } from '../../src/config/appConfig';
 
 describe('Test mongo URI construction', () => {
-  it('Should construct valid mongo connection URI', () => {
-    const testConfig: AppConfig = {
-      serverPort(): string {
-        throw new Error('Not Implemented');
-      },
-      openApiPath(): string {
-        throw new Error('Not Implemented');
-      },
-      mongoHost(): string {
-        return 'localhost';
-      },
-      mongoPort(): string {
-        return '27017';
-      },
-      mongoUser(): string {
-        return 'admin';
-      },
-      mongoPassword(): string {
-        return 'password';
-      },
-      mongoDb(): string {
-        return 'lectern';
-      },
-      mongoUrl(): string {
-        return '';
-      },
-    };
-    const uri = constructMongoUri(testConfig);
-    expect(uri).to.equal('mongodb://localhost:27017/lectern');
-  });
+	it('Should construct valid mongo connection URI', () => {
+		const testConfig: AppConfig = {
+			serverPort(): string {
+				throw new Error('Not Implemented');
+			},
+			openApiPath(): string {
+				throw new Error('Not Implemented');
+			},
+			mongoHost(): string {
+				return 'localhost';
+			},
+			mongoPort(): string {
+				return '27017';
+			},
+			mongoUser(): string {
+				return 'admin';
+			},
+			mongoPassword(): string {
+				return 'password';
+			},
+			mongoDb(): string {
+				return 'lectern';
+			},
+			mongoUrl(): string {
+				return '';
+			},
+		};
+		const uri = constructMongoUri(testConfig);
+		expect(uri).to.equal('mongodb://localhost:27017/lectern');
+	});
 });

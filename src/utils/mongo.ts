@@ -23,18 +23,18 @@ import { AppConfig } from '../config/appConfig';
  * Mongo Helper functions
  */
 export const constructMongoUri = (appConfig: AppConfig, { includeDb = true } = {}) => {
-  if (appConfig.mongoUrl()) {
-    return appConfig.mongoUrl();
-  }
-  const user = appConfig.mongoUser();
-  const pass = appConfig.mongoPassword();
-  const mongoHost = appConfig.mongoHost();
-  const mongoPort = appConfig.mongoPort();
-  const mongoDb = appConfig.mongoDb();
+	if (appConfig.mongoUrl()) {
+		return appConfig.mongoUrl();
+	}
+	const user = appConfig.mongoUser();
+	const pass = appConfig.mongoPassword();
+	const mongoHost = appConfig.mongoHost();
+	const mongoPort = appConfig.mongoPort();
+	const mongoDb = appConfig.mongoDb();
 
-  return `mongodb://${mongoHost}:${mongoPort}${includeDb ? `/${mongoDb}` : ``}`;
+	return `mongodb://${mongoHost}:${mongoPort}${includeDb ? `/${mongoDb}` : ``}`;
 };
 
 export const constructTestUri = (mongoHost: string, mongoPort: string): string => {
-  return `mongodb://${mongoHost}:${mongoPort}/lectern`;
+	return `mongodb://${mongoHost}:${mongoPort}/lectern`;
 };
