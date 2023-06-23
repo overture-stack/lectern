@@ -18,7 +18,7 @@
  */
 
 import * as dotenv from 'dotenv';
-import * as vault from '../vault';
+import * as vault from '../external/vault';
 
 export interface AppConfig {
 	// Express

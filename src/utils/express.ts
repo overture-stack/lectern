@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import ego from '../services/egoTokenService';
+import egoRequestWrapper from '../external/ego';
 
 /**
  * Decorator to handle errors from async express route handlers
@@ -15,4 +15,4 @@ export const wrapAsync = <PathParams, ResponseBody, RequestBody, Query, Locals>(
 	};
 };
 
-export const wrapAsyncAuth = process.env.AUTH_ENABLED === 'true' ? ego() : wrapAsync;
+export const wrapAsyncAuth = process.env.AUTH_ENABLED === 'true' ? egoRequestWrapper() : wrapAsync;
