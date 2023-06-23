@@ -17,35 +17,18 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import express, { RequestHandler, Express } from 'express';
 import bodyParser from 'body-parser';
-import { AppConfig } from './config/appConfig';
-import * as dictionaryController from './controllers/dictionaryController';
-import { errorHandler } from './utils/errors';
+import express, { RequestHandler, Express } from 'express';
 import * as swaggerUi from 'swagger-ui-express';
-import * as swagger from './config/swagger.json';
-import ego from './services/egoTokenService';
-import logger from './config/logger';
-import healthRouter from './routers/healthRouter';
 
-/**
- * Decorator to handle errors from async express route handlers
- */
-const wrapAsync = (fn: RequestHandler<any, any, any, any>): RequestHandler => {
-	return (req, res, next) => {
-		const routePromise: any = fn(req, res, next);
-		if (routePromise.catch) {
-			routePromise.catch(next);
-		}
-	};
-};
+import { AppConfig } from './config/appConfig';
+import logger from './config/logger';
+import * as swagger from './config/swagger.json';
+import healthRouter from './routers/healthRouter';
+import dictionaryRouter from './routers/dictionaryRouter';
+import { errorHandler } from './utils/errors';
 
 const App = (config: AppConfig): Express => {
-	/**
-	 * Auth Decorator
-	 */
-	const egoDecorator = process.env.AUTH_ENABLED === 'true' ? ego() : wrapAsync;
-
 	// Create Express server with mongoConfig
 	const app = express();
 	const serverPort = config.serverPort();
@@ -62,8 +45,7 @@ const App = (config: AppConfig): Express => {
 
 	swagger['info']['version'] = process.env.npm_package_version;
 
-	app.get('/health', healthRouter);
-
+	// Root Handler:
 	app.get('/', (_, res) => {
 		const details = {
 			version: process.env.npm_package_version,
@@ -71,13 +53,8 @@ const App = (config: AppConfig): Express => {
 		};
 		res.send(details);
 	});
-
-	app.get('/dictionaries', wrapAsync(dictionaryController.listDictionaries));
-	app.post('/dictionaries', egoDecorator(dictionaryController.createDictionary));
-	app.get('/dictionaries/:dictId', wrapAsync(dictionaryController.getDictionary));
-	app.post('/dictionaries/:dictId/schemas', egoDecorator(dictionaryController.addSchema));
-	app.put('/dictionaries/:dictId/schemas', egoDecorator(dictionaryController.updateSchema));
-	app.get('/diff/', wrapAsync(dictionaryController.diffDictionaries));
+	app.use('/health', healthRouter);
+	app.use('/dictionaries', dictionaryRouter);
 
 	app.use(openApiPath, swaggerUi.serve, swaggerUi.setup(swagger));
 	logger.info(`OpenAPI setup... done: http://localhost:${serverPort}${openApiPath}`);
