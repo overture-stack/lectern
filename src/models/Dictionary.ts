@@ -19,7 +19,7 @@
 
 import mongoose from 'mongoose';
 
-export type DictionaryDocument = mongoose.Document & {
+export type DictionaryDocument = {
 	name: string;
 	version: string;
 	schemas: any[];

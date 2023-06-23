@@ -18,7 +18,7 @@
  */
 
 import bodyParser from 'body-parser';
-import express, { RequestHandler, Express } from 'express';
+import express, { Express } from 'express';
 import * as swaggerUi from 'swagger-ui-express';
 
 import { AppConfig } from './config/appConfig';
@@ -57,7 +57,8 @@ const App = (config: AppConfig): Express => {
 	/**
 	 * Swagger Setup
 	 */
-	swagger.info.version = process.env.npm_package_version;
+	swagger.info.version = process.env.npm_package_version || '';
+
 	app.use(openApiPath, swaggerUi.serve, swaggerUi.setup(swagger));
 	logger.info(`Access swagger docs: http://localhost:${serverPort}${openApiPath}`);
 

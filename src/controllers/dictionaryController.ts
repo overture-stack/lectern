@@ -40,7 +40,7 @@ export const listDictionaries = async (
 			res.status(404).send(`Dictionary Not Found: ${name} ${version}`);
 			return;
 		}
-		const response = showReferences ? dict.toObject() : replaceReferences(dict.toObject() as DictionaryDocument);
+		const response = showReferences ? dict : replaceReferences(dict as DictionaryDocument);
 		res.status(200).send([response]);
 	} else {
 		const dicts = await dictionaryService.listAll();
@@ -54,25 +54,25 @@ export const getDictionary = async (req: Request, res: Response) => {
 	const id = req.params.dictId;
 
 	const dict = await dictionaryService.getOne(id);
-	const response = showReferences ? dict.toObject() : replaceReferences(dict.toObject() as DictionaryDocument);
+	const response = showReferences ? dict : replaceReferences(dict as DictionaryDocument);
 	res.status(200).send(response);
 };
 
 export const createDictionary = async (req: Request, res: Response) => {
 	const dict = await dictionaryService.create(req.body);
-	res.status(200).send(dict.toObject());
+	res.status(200).send(dict);
 };
 
 export const addSchema = async (req: Request, res: Response) => {
 	const dict = await dictionaryService.addSchema(req.params.dictId, req.body);
-	res.status(200).send(dict.toObject());
+	res.status(200).send(dict);
 };
 
 export const updateSchema = async (req: Request, res: Response) => {
 	const major = req.query.major && req.query.major == 'true' ? true : false;
 	if (req.params.dictId === undefined) throw new BadRequestError('Must specify valid dictId');
 	const dict = await dictionaryService.updateSchema(req.params.dictId, req.body, major);
-	res.status(200).send(dict.toObject());
+	res.status(200).send(dict);
 };
 
 type DiffRequestQueryParams = Partial<{ name: string; left: string; right: string; references: boolean }>;
@@ -85,12 +85,8 @@ export const diffDictionaries: RequestHandler<{}, {}, {}, DiffRequestQueryParams
 	if (name && leftVersion && rightVersion) {
 		const dict1Doc = await dictionaryService.findOne(name, leftVersion);
 		const dict2Doc = await dictionaryService.findOne(name, rightVersion);
-		const dict1 = (
-			showReferences ? dict1Doc.toObject() : replaceReferences(dict1Doc.toObject() as DictionaryDocument)
-		) as DictionaryDocument;
-		const dict2 = (
-			showReferences ? dict2Doc.toObject() : replaceReferences(dict2Doc.toObject() as DictionaryDocument)
-		) as DictionaryDocument;
+		const dict1 = (showReferences ? dict1Doc : replaceReferences(dict1Doc as DictionaryDocument)) as DictionaryDocument;
+		const dict2 = (showReferences ? dict2Doc : replaceReferences(dict2Doc as DictionaryDocument)) as DictionaryDocument;
 		const diff = diffUtil(dict1, dict2);
 		res.status(200).send(Array.from(diff.entries()));
 	} else {
