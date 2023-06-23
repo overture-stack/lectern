@@ -52,18 +52,23 @@ const checkLatest = async (doc: DictionaryDocument): Promise<void> => {
  * @param version Version of the dictionary
  */
 export const findOne = async (name: string, version: string): Promise<DictionaryDocument> => {
-	logger.info(`Fetching dictionary: ${name} ${version}`);
-	const dict = await Dictionary.findOne({ name: name, version: version });
+	logger.debug(`Fetching dictionary: ${name} ${version}`);
+	const dict = await Dictionary.findOne({ name: name, version: version }).lean(true);
+	if (dict == undefined) {
+		throw new NotFoundError(`Cannot find dictionary with name '${name}' `);
+	}
 	return dict;
 };
 
 /**
  * Return a single dictionary by id
  * @param id id of the Dictionary
+ * @returns Dictionary matching the provided ID
+ * @throws NotFoundError if ID is not found
  */
 export const getOne = async (id: string): Promise<DictionaryDocument> => {
-	logger.info(`Get ${id}`);
-	const dict = await Dictionary.findOne({ _id: id });
+	logger.debug(`Get ${id}`);
+	const dict = await Dictionary.findOne({ _id: id }).lean(true);
 	if (dict == undefined) {
 		throw new NotFoundError('Cannot find dictionary with id ' + id);
 	}
@@ -128,13 +133,12 @@ export const create = async (newDict: {
  * @param name Name of dictionary model
  * @param version Version of dictionary
  * @param schema new schema to add
+ * @throws NotFoundError if ID is not found
  */
 export const addSchema = async (id: string, schema: any): Promise<DictionaryDocument> => {
 	logger.info(`Adding schema to ${id}`);
 
-	const doc = await Dictionary.findOne({
-		_id: id,
-	}).exec();
+	const doc = await getOne(id);
 	await checkLatest(doc);
 
 	const references = doc.references || {};
@@ -170,9 +174,8 @@ export const addSchema = async (id: string, schema: any): Promise<DictionaryDocu
 export const updateSchema = async (id: string, schema: any, major: boolean): Promise<DictionaryDocument> => {
 	logger.info(`Updating schema on ${id}`);
 
-	const doc = await Dictionary.findOne({
-		_id: id,
-	}).exec();
+	const doc = await getOne(id);
+
 	await checkLatest(doc);
 
 	const references = doc.references || {};

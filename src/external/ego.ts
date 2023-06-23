@@ -40,9 +40,15 @@ const verifyEgoToken = async (token: string, egoURL: string) => {
 	return jwt.verify(token, key);
 };
 
-export default function (egoURL: string = process.env.EGO_API, scope: string = process.env.SCOPE) {
+export default function (
+	egoURL: string | undefined = process.env.EGO_API,
+	scope: string | undefined = process.env.SCOPE,
+) {
 	if (!egoURL) {
-		throw new Error('must provide ego url with either the `EGO_API` env variable or egoURL argument');
+		throw new Error('Cannot perform user Authentication, application requires `EGO_API` env variable');
+	}
+	if (!scope) {
+		throw new Error('Cannot perform user Authentication, application requires `SCOPE` env variable');
 	}
 
 	/**
