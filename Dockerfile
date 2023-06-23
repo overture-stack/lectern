@@ -1,17 +1,18 @@
-FROM node:18-slim
-
+FROM node:16-alpine
 ARG COMMIT=""
 
+ENV APP_USER=lectern
 ENV APP_UID=9999
 ENV APP_GID=9999
-RUN groupmod -g $APP_GID node
-RUN usermod -u $APP_UID -g $APP_GID node
-RUN mkdir -p /usr/src/app
-RUN chown -R node /usr/src/app
+RUN addgroup -S -g $APP_GID $APP_USER \
+	&& adduser -S -u $APP_UID -g $APP_GID $APP_USER \
+	&& mkdir -p /usr/src/app \
+	&& chown -R $APP_USER /usr/src/app
+USER $APP_UID
+
 WORKDIR /usr/src/app
 
 COPY . ./
-USER node
 RUN npm ci
 RUN npm run build
 
