@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Request, Response } from 'express';
+import { Request, RequestHandler, Response } from 'express';
 import * as dictionaryService from '../services/dictionaryService';
 import { BadRequestError } from '../utils/errors';
 import { replaceReferences } from '../utils/references';
@@ -75,10 +75,8 @@ export const updateSchema = async (req: Request, res: Response) => {
 	res.status(200).send(dict.toObject());
 };
 
-export const diffDictionaries = async (
-	req: Request<{}, {}, {}, Partial<{ name: string; left: string; right: string; references: boolean }>>,
-	res: Response,
-) => {
+type DiffRequestQueryParams = Partial<{ name: string; left: string; right: string; references: boolean }>;
+export const diffDictionaries: RequestHandler<{}, {}, {}, DiffRequestQueryParams, {}> = async (req, res) => {
 	const showReferences = req.query.references || false;
 	const name = req.query.name;
 	const leftVersion = req.query.left;
