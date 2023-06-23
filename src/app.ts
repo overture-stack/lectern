@@ -26,7 +26,7 @@ import * as swaggerUi from 'swagger-ui-express';
 import * as swagger from './config/swagger.json';
 import ego from './services/egoTokenService';
 import logger from './config/logger';
-import { dbHealth, Status } from './app-health';
+import healthRouter from './routers/healthRouter';
 
 /**
  * Decorator to handle errors from async express route handlers
@@ -61,29 +61,11 @@ const App = (config: AppConfig): Express => {
 	);
 
 	swagger['info']['version'] = process.env.npm_package_version;
-	app.use(openApiPath, swaggerUi.serve, swaggerUi.setup(swagger));
 
-	logger.info(`OpenAPI setup... done: http://localhost:${serverPort}${openApiPath}`);
-
-	app.get('/health', (req, res) => {
-		if (dbHealth.status == Status.OK) {
-			const resBody = {
-				appStatus: 'Up',
-				dbStatus: dbHealth.status,
-			};
-			return res.status(200).send(resBody);
-		} else {
-			const resBody = {
-				appStatus: 'Error/Unknown',
-				dbStatus: dbHealth.status,
-			};
-			return res.status(500).send(resBody);
-		}
-	});
+	app.get('/health', healthRouter);
 
 	app.get('/', (_, res) => {
 		const details = {
-			app: 'Lectern',
 			version: process.env.npm_package_version,
 			commit: process.env.COMMIT_SHA,
 		};
@@ -96,6 +78,9 @@ const App = (config: AppConfig): Express => {
 	app.post('/dictionaries/:dictId/schemas', egoDecorator(dictionaryController.addSchema));
 	app.put('/dictionaries/:dictId/schemas', egoDecorator(dictionaryController.updateSchema));
 	app.get('/diff/', wrapAsync(dictionaryController.diffDictionaries));
+
+	app.use(openApiPath, swaggerUi.serve, swaggerUi.setup(swagger));
+	logger.info(`OpenAPI setup... done: http://localhost:${serverPort}${openApiPath}`);
 
 	app.use(errorHandler);
 
