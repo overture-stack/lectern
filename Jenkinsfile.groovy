@@ -10,7 +10,7 @@ kind: Pod
 spec:
   containers:
   - name: node
-    image: node:16-alpine
+    image: node:lts-alpine
     tty: true
     env: 
     - name: DOCKER_HOST 
