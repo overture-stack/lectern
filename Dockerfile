@@ -9,10 +9,10 @@ RUN usermod -u $APP_UID -g $APP_GID node
 RUN mkdir -p /usr/src/app
 RUN chown -R node /usr/src/app
 
+USER node
 WORKDIR /usr/src/app
 
 COPY . ./
-USER node
 RUN npm ci
 RUN npm run build
 
