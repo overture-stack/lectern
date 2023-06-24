@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2023 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,47 +17,47 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import MetaSchema from '../config/MetaSchema.json';
-import Ajv from 'ajv';
+import * as immer from 'immer';
+import { ZodError } from 'zod';
+import { References, Schema } from '../types/dictionaryTypes';
 import { replaceSchemaReferences } from '../utils/references';
 
-export function validate(schema: any, references: any) {
+export function validate(schema: Schema, references: References): { valid: boolean; errors?: ZodError } {
 	const schemaWithReplacements = replaceSchemaReferences(schema, references);
 
-	// Validate vs MetaSchema
-	const ajv = new Ajv({
-		allErrors: true,
-	});
-	const validate = ajv.compile(MetaSchema);
+	// Ensure schema is still valid after reference replacement
+	// TODO: errors originating here should contain better messaging about failure after reference replacement
+	const parseResult = Schema.safeParse(schemaWithReplacements);
 
-	return { valid: validate(schemaWithReplacements), errors: validate.errors };
+	return parseResult.success ? { valid: true } : { valid: false, errors: parseResult.error };
 }
 
-function normalizeScript(script: string | string[]) {
-	if (typeof script === 'string') {
-		return script.replace(/\r\n/g, '\n');
-	} else if (Array.isArray(script)) {
-		return script.map((s: string) => s.replace(/\r\n/g, '\n'));
+/**
+ * String formatting of values provided as scripts. This will normalize the formatting of newline characters,
+ * All instances of `/r/n` will be converted to `/n`
+ * @param script
+ * @returns
+ */
+function normalizeScript(input: string | string[]) {
+	const normalize = (script: string) => script.replace(/\r\n/g, '\n');
+
+	if (typeof input === 'string') {
+		return normalize(input);
 	} else {
-		return script;
+		return input.map(normalize);
 	}
 }
 
-export function normalizeSchema(schema: any) {
-	if (!schema.fields) return schema;
-	return {
-		...schema,
-		fields: schema.fields.map((field: any) => {
-			if (field.restrictions && field.restrictions.script) {
-				return {
-					...field,
-					restrictions: {
-						...field.restrictions,
-						script: normalizeScript(field.restrictions.script),
-					},
-				};
+export function normalizeSchema(schema: Schema): Schema {
+	const normalizedFields = schema.fields.map((baseField) =>
+		immer.produce(baseField, (field) => {
+			if (field.valueType !== 'boolean' && field.restrictions !== undefined && field.restrictions.script) {
+				field.restrictions.script = normalizeScript(field.restrictions.script);
 			}
-			return field;
 		}),
-	};
+	);
+
+	return immer.produce(schema, (draft) => {
+		draft.fields = normalizedFields;
+	});
 }
