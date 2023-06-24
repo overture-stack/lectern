@@ -1,0 +1,16 @@
+{
+	"name": "Simple",
+	"version": "1.0",
+	"schemas": [
+		{
+			"name": "primatives",
+			"description": "Includes one field of each primative type without any restrictions. No Frills.",
+			"fields": [
+				{ "name": "boolean_field", "valueType": "boolean" },
+				{ "name": "integer_field", "valueType": "integer" },
+				{ "name": "number_field", "valueType": "number" },
+				{ "name": "string_field", "valueType": "string" }
+			]
+		}
+	]
+}
