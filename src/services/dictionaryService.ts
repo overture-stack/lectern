@@ -22,7 +22,7 @@ import { DictionaryModel } from '../db/dictionaryModel';
 import { normalizeSchema, validate } from '../services/schemaService';
 import { Dictionary, Schema } from '../types/dictionaryTypes';
 import { BadRequestError, ConflictError, NotFoundError } from '../utils/errors';
-import { incrementMajor, incrementMinor, isGreater, isValidVersion } from '../utils/version';
+import { incrementMajor, incrementMinor, isGreater } from '../utils/version';
 
 const getLatestVersion = async (name: string): Promise<string> => {
 	const dicts = await DictionaryModel.find({ name: name });
