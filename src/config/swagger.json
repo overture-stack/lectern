@@ -194,7 +194,7 @@
 				"tags": ["Dictionaries"]
 			}
 		},
-		"/dictionaries/diff": {
+		"/diff": {
 			"get": {
 				"summary": "Compare differences between dictionaries",
 				"description": "Computes the difference between dictionaries at the field level",
