@@ -18,9 +18,9 @@
  */
 
 import * as immer from 'immer';
+import { cloneDeep, get, omit } from 'lodash';
 import { Dictionary, References, Schema } from '../types/dictionaryTypes';
 import { InvalidReferenceError } from '../utils/errors';
-import { get, omit, cloneDeep } from 'lodash';
 
 /**
  * Iterate through dictionary replacing all references.

@@ -17,9 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import _ from 'lodash';
-import allUnique from '../utils/allUnique';
 import { z as zod } from 'zod';
+import allUnique from '../utils/allUnique';
 
 export const NameString = zod
 	.string()

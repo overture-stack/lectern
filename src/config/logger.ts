@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { createLogger, LoggerOptions, transports, format } from 'winston';
+import { LoggerOptions, createLogger, format, transports } from 'winston';
 
 const { combine, timestamp, colorize, prettyPrint, json, printf } = format;
 const options: LoggerOptions = {

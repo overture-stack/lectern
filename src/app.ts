@@ -24,9 +24,9 @@ import * as swaggerUi from 'swagger-ui-express';
 import { AppConfig } from './config/appConfig';
 import logger from './config/logger';
 import * as swagger from './config/swagger.json';
-import healthRouter from './routers/healthRouter';
 import dictionaryRouter from './routers/dictionaryRouter';
 import diffRouter from './routers/diffRouter';
+import healthRouter from './routers/healthRouter';
 import { errorHandler } from './utils/errors';
 
 const App = (config: AppConfig): Express => {

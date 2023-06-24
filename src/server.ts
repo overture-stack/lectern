@@ -17,13 +17,13 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import App from './app';
-import mongoose from 'mongoose';
-import { constructMongoUri } from './utils/mongo';
-import logger from './config/logger';
 import { Server } from 'http';
-import { getAppConfig } from './config/appConfig';
+import mongoose from 'mongoose';
+import App from './app';
 import { setDBStatus, Status } from './app-health';
+import { getAppConfig } from './config/appConfig';
+import logger from './config/logger';
+import { constructMongoUri } from './utils/mongo';
 
 let server: Server;
 

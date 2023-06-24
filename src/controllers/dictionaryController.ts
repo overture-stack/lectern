@@ -17,12 +17,11 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Request, RequestHandler, Response } from 'express';
+import { Request, Response } from 'express';
 import * as dictionaryService from '../services/dictionaryService';
 import { BadRequestError } from '../utils/errors';
 import { replaceReferences } from '../utils/references';
 
-import logger from '../config/logger';
 import { Dictionary, Schema } from '../types/dictionaryTypes';
 
 export const listDictionaries = async (

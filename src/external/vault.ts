@@ -17,8 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import vault from 'node-vault';
 import { promises } from 'fs';
+import vault from 'node-vault';
 import logger from '../config/logger';
 
 let vaultClient: vault.client;

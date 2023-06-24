@@ -17,11 +17,11 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import memoize from 'memoizee';
 import axios from 'axios';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import memoize from 'memoizee';
 import ms from 'ms';
-import { NextFunction, Request, Response, RequestHandler } from 'express';
 import { ForbiddenError, UnauthorizedError } from '../utils/errors';
 
 const getKey = memoize(
