@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2023 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -18,22 +18,19 @@
  */
 
 import mongoose from 'mongoose';
+import { Dictionary } from '../types/dictionaryTypes';
 
-export type DictionaryDocument = {
-	name: string;
-	version: string;
-	schemas: any[];
-	references: any;
-};
-
-const DictionarySchema = new mongoose.Schema(
-	{
-		name: String,
-		version: String,
-		schemas: Array,
-		references: Object,
-	},
-	{ timestamps: true },
+export const DictionaryModel = mongoose.model(
+	'Dictionary',
+	new mongoose.Schema<Dictionary>(
+		{
+			name: { type: String, index: true },
+			version: String,
+			description: String,
+			meta: Object,
+			references: Object,
+			schemas: Array,
+		},
+		{ timestamps: true },
+	),
 );
-
-export const Dictionary = mongoose.model<DictionaryDocument>('Dictionary', DictionarySchema);
