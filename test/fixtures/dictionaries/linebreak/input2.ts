@@ -17,19 +17,26 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { expect } from 'chai';
-import { normalizeSchema } from '../../src/services/schemaService';
-import input1 from '../fixtures/dictionaries/linebreak/input1';
-import input2 from '../fixtures/dictionaries/linebreak/input2';
-import output from '../fixtures/dictionaries/linebreak/input1';
+import { Dictionary } from '../../../../src/types/dictionaryTypes';
 
-describe('Verify different EOL are normalized', () => {
-	it('Should not alter already formatted files', () => {
-		const normalizedSchema = normalizeSchema(input1.schemas[0]);
-		expect(normalizedSchema).to.deep.eq(output.schemas[0]);
-	});
-	it('Should output consistent script property', () => {
-		const normalizedSchema = normalizeSchema(input2.schemas[0]);
-		expect(normalizedSchema).to.deep.eq(output.schemas[0]);
-	});
-});
+const output: Dictionary = {
+	name: 'ARGO Dictionary',
+	version: '1.2',
+	schemas: [
+		{
+			name: 'donor',
+			description: 'Donor Entity',
+			fields: [
+				{
+					name: 'cause_of_death',
+					valueType: 'string',
+					description: 'Cause of Donor Death',
+					restrictions: {
+						script: '(function(){\r\nreturn true;\r\n\r\n\r\n\r\n}())',
+					},
+				},
+			],
+		},
+	],
+};
+export default output;

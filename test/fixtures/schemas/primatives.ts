@@ -17,19 +17,15 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { expect } from 'chai';
-import { normalizeSchema } from '../../src/services/schemaService';
-import input1 from '../fixtures/dictionaries/linebreak/input1';
-import input2 from '../fixtures/dictionaries/linebreak/input2';
-import output from '../fixtures/dictionaries/linebreak/input1';
+import { Schema } from '../../../src/types/dictionaryTypes';
 
-describe('Verify different EOL are normalized', () => {
-	it('Should not alter already formatted files', () => {
-		const normalizedSchema = normalizeSchema(input1.schemas[0]);
-		expect(normalizedSchema).to.deep.eq(output.schemas[0]);
-	});
-	it('Should output consistent script property', () => {
-		const normalizedSchema = normalizeSchema(input2.schemas[0]);
-		expect(normalizedSchema).to.deep.eq(output.schemas[0]);
-	});
-});
+export default {
+	name: 'primatives',
+	description: 'Includes one field of each primative type without any restrictions. No Frills.',
+	fields: [
+		{ name: 'boolean_field', valueType: 'boolean' },
+		{ name: 'integer_field', valueType: 'integer' },
+		{ name: 'number_field', valueType: 'number' },
+		{ name: 'string_field', valueType: 'string' },
+	],
+} satisfies Schema;

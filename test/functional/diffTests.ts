@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2023 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -18,49 +18,29 @@
  */
 
 import { expect } from 'chai';
-import { DictionaryDocument } from '../../src/models/Dictionary';
-import { diff, getFieldMap } from '../../src/diff/DictionaryDiff';
+import { diff, getFieldMap } from '../../src/services/diffService';
+import SIMPLE_DICTIONARY from '../fixtures/dictionaries/simple';
+import DIFF_DICTIONARY_INITIAL from '../fixtures/dictionaries/diff/initial';
+import DIFF_DICTIONARY_UPDATED from '../fixtures/dictionaries/diff/updated';
 
 describe('Compute diff report between dictionary versions', () => {
-	const dict1 = require('./fixtures/dict1.json') as DictionaryDocument;
-	const dict2 = require('./fixtures/dict2.json') as DictionaryDocument;
-
 	it('Should compute the field map correctly', () => {
-		const mockDocument = {
-			name: 'foo',
-			schemas: [
-				{
-					name: 'bar',
-					fields: [
-						{
-							name: 'baz',
-						},
-						{
-							name: 'qux',
-						},
-					],
-				},
-			],
-		};
+		const fieldMap = getFieldMap(SIMPLE_DICTIONARY);
 
-		const fieldMap = getFieldMap(mockDocument as DictionaryDocument);
-		expect(fieldMap.size).to.be.equal(2);
-		expect(fieldMap.get('bar.baz')).to.be.not.undefined;
+		expect(fieldMap.size).to.be.equal(4);
+		expect(fieldMap.get('primatives.boolean_field')).to.be.not.undefined;
 	});
 
 	it('Should compute the diff, with one file added (3 fields), and 3 updated on existing file', () => {
-		const diffReport = diff(dict1, dict2);
+		const diffReport = diff(DIFF_DICTIONARY_INITIAL, DIFF_DICTIONARY_UPDATED);
 		expect(diffReport).is.not.undefined;
 		expect(diffReport.get('donor.donor_submitter_id')).to.not.be.undefined;
 		expect(diffReport.get('donor.donor_submitter_id')?.diff).to.deep.eq({
-			displayName: {
-				type: 'deleted',
-				data: 'Submitter Donor ID',
-			},
+			meta: { displayName: { type: 'deleted', data: 'Submitter Donor ID' } },
 			restrictions: {
 				script: {
 					type: 'updated',
-					data: 'THIS WAS UPDATED',
+					data: { added: ['(field)=>field.length > 6'], deleted: ['(field)=>field.length > 5'] },
 				},
 			},
 		});
@@ -78,9 +58,11 @@ describe('Compute diff report between dictionary versions', () => {
 		});
 
 		expect(diffReport.get('donor.vital_status')?.diff).to.deep.eq({
-			displayName: {
-				type: 'updated',
-				data: 'Donor Vital Status',
+			meta: {
+				displayName: {
+					type: 'updated',
+					data: 'Donor Vital Status',
+				},
 			},
 			restrictions: {
 				codeList: {

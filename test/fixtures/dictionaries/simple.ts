@@ -17,19 +17,10 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { expect } from 'chai';
-import { normalizeSchema } from '../../src/services/schemaService';
-import input1 from '../fixtures/dictionaries/linebreak/input1';
-import input2 from '../fixtures/dictionaries/linebreak/input2';
-import output from '../fixtures/dictionaries/linebreak/input1';
-
-describe('Verify different EOL are normalized', () => {
-	it('Should not alter already formatted files', () => {
-		const normalizedSchema = normalizeSchema(input1.schemas[0]);
-		expect(normalizedSchema).to.deep.eq(output.schemas[0]);
-	});
-	it('Should output consistent script property', () => {
-		const normalizedSchema = normalizeSchema(input2.schemas[0]);
-		expect(normalizedSchema).to.deep.eq(output.schemas[0]);
-	});
-});
+import { Dictionary } from '../../../src/types/dictionaryTypes';
+import primativesSchema from '../schemas/primatives';
+export default {
+	name: 'Simple Dictionary',
+	version: '1.0',
+	schemas: [primativesSchema],
+} satisfies Dictionary;
