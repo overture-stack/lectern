@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2023 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,18 +17,14 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { DictionaryDocument } from '../models/Dictionary';
 import * as _ from 'lodash';
+import { Dictionary, SchemaField } from '../types/dictionaryTypes';
 
-interface Field {
-	name: string;
-}
-
-interface FieldDiff {
-	left?: Field | any;
-	right?: Field | any;
-	diff: any;
-}
+export type FieldDiff = {
+	left?: SchemaField;
+	right?: SchemaField;
+	diff: any; //TODO: Define diff format
+};
 
 const deepDiffMapper = (function () {
 	return {
@@ -125,16 +121,16 @@ const deepDiffMapper = (function () {
 			return this.VALUE_UPDATED;
 		},
 		isFunction: function (x: any) {
-			return Object.prototype.toString.call(x) === '[object Function]';
+			return _.isFunction(x);
 		},
 		isArray: function (x: any) {
-			return Object.prototype.toString.call(x) === '[object Array]';
+			return _.isArray(x);
 		},
 		isDate: function (x: any) {
-			return Object.prototype.toString.call(x) === '[object Date]';
+			return _.isDate(x);
 		},
 		isObject: function (x: any) {
-			return Object.prototype.toString.call(x) === '[object Object]';
+			return _.isObject(x);
 		},
 		isValue: function (x: any) {
 			return !this.isObject(x) && !this.isArray(x);
@@ -147,7 +143,7 @@ const deepDiffMapper = (function () {
  * @param dict1 The first dictionary in the comparison.
  * @param dict2 The second dictionary in the comparison.
  */
-export const diff = (dict1: DictionaryDocument, dict2: DictionaryDocument): Map<string, FieldDiff> => {
+export const diff = (dict1: Dictionary, dict2: Dictionary): Map<string, FieldDiff> => {
 	/*
 	 * Compute the field diffs.
 	 */
@@ -236,18 +232,18 @@ const removeUnchanged = (diffObj: any) => {
  * Returns a Map<string, any> where the key is the field path and the value is the field itself.
  * @param dict input dictionary
  */
-export const getFieldMap = (dict: DictionaryDocument): Map<string, any> => {
+export const getFieldMap = (dict: Dictionary) => {
 	const schemas = dict.schemas;
 	return schemas
-		.map((file) => {
-			return file.fields.reduce((acc: Map<string, any>, field: any) => {
-				return acc.set(`${file.name}.${field.name}`, field);
-			}, new Map<string, any>());
+		.map((schema) => {
+			return schema.fields.reduce((acc, field) => {
+				return acc.set(`${schema.name}.${field.name}`, field);
+			}, new Map<string, SchemaField>());
 		})
-		.reduce((acc: Map<string, any>, fileMap: Map<string, any>) => {
+		.reduce((acc, fileMap) => {
 			for (const entry of fileMap.entries()) {
 				acc.set(entry[0], entry[1]);
 			}
 			return acc;
-		}, new Map<string, any>());
+		}, new Map<string, SchemaField>());
 };
