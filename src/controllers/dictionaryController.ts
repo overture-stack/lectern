@@ -21,7 +21,7 @@ import { Request, RequestHandler, Response } from 'express';
 import * as dictionaryService from '../services/dictionaryService';
 import { BadRequestError } from '../utils/errors';
 import { replaceReferences } from '../utils/references';
-import { diff as diffUtil } from '../services/diffService';
+
 import logger from '../config/logger';
 import { Dictionary, Schema } from '../types/dictionaryTypes';
 
@@ -86,29 +86,4 @@ export const updateSchema = async (req: Request, res: Response) => {
 	const major = req.query.major && req.query.major == 'true' ? true : false;
 	const dict = await dictionaryService.updateSchema(dictId, requestSchema, major);
 	res.status(200).send(dict);
-};
-
-type DiffRequestQueryParams = Partial<{ name: string; left: string; right: string; references: boolean }>;
-export const diffDictionaries: RequestHandler<{}, {}, {}, DiffRequestQueryParams, {}> = async (req, res) => {
-	const showReferences = req.query.references || false;
-	const name = req.query.name;
-	if (!name) {
-		throw new BadRequestError('Request is missing `name` parameter.');
-	}
-	const leftVersion = req.query.left;
-	if (!leftVersion) {
-		throw new BadRequestError('Request is missing `leftVersion` parameter.');
-	}
-	const rightVersion = req.query.right;
-	if (!rightVersion) {
-		throw new BadRequestError('Request is missing `rightVersion` parameter.');
-	}
-
-	// These will throw error if the dictionary is not found, must be handled by router (through express wrapper)
-	const dict1Doc = await dictionaryService.findOne(name, leftVersion);
-	const dict2Doc = await dictionaryService.findOne(name, rightVersion);
-	const dict1 = showReferences ? dict1Doc : replaceReferences(dict1Doc);
-	const dict2 = showReferences ? dict2Doc : replaceReferences(dict2Doc);
-	const diff = diffUtil(dict1, dict2);
-	res.status(200).send(Array.from(diff.entries()));
 };

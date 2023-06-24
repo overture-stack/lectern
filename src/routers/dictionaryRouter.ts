@@ -23,12 +23,6 @@ import * as dictionaryController from '../controllers/dictionaryController';
 const router = Router();
 
 /**
- * Get Diff between dictionary versions
- */
-// Must go before /:id
-router.get('/diff', wrapAsync(dictionaryController.diffDictionaries));
-
-/**
  * List Dictionaries
  */
 router.get('', wrapAsync(dictionaryController.listDictionaries));

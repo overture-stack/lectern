@@ -26,6 +26,7 @@ import logger from './config/logger';
 import * as swagger from './config/swagger.json';
 import healthRouter from './routers/healthRouter';
 import dictionaryRouter from './routers/dictionaryRouter';
+import diffRouter from './routers/diffRouter';
 import { errorHandler } from './utils/errors';
 
 const App = (config: AppConfig): Express => {
@@ -53,6 +54,7 @@ const App = (config: AppConfig): Express => {
 	});
 	app.use('/health', healthRouter);
 	app.use('/dictionaries', dictionaryRouter);
+	app.use('/diff', diffRouter);
 
 	/**
 	 * Swagger Setup
