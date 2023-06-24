@@ -57,7 +57,7 @@ export default function (
 	return (fn: RequestHandler): RequestHandler => {
 		return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 			const { authorization: authorizationHeader } = req.headers;
-			const { authorization: authorizationBody }: any = req.body || {};
+			const { authorization: authorizationBody } = req.body || {};
 
 			const authorization = authorizationHeader || authorizationBody;
 			const bearerToken: string = authorization ? authorization.split(' ')[1] : req.query.key;

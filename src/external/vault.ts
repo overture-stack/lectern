@@ -55,8 +55,8 @@ async function login() {
 		jwt: k8sToken,
 	});
 
-	const clientToken = response.auth.client_token as string;
-	console.log(`login successful, token length: ${clientToken.length}`);
+	const clientToken = response.auth.client_token;
+	console.log(`login successful, token length: ${clientToken?.length}`);
 }
 
 export async function loadSecret(key: string) {
