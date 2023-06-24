@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2023 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,14 +17,15 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary, DictionaryDocument } from '../models/Dictionary';
-import { ConflictError, BadRequestError, NotFoundError } from '../utils/errors';
-import { normalizeSchema, validate } from '../services/schemaService';
-import { incrementMajor, incrementMinor, isValidVersion, isGreater } from '../utils/version';
 import logger from '../config/logger';
+import { DictionaryModel } from '../db/dictionaryModel';
+import { normalizeSchema, validate } from '../services/schemaService';
+import { Dictionary, Schema } from '../types/dictionaryTypes';
+import { BadRequestError, ConflictError, NotFoundError } from '../utils/errors';
+import { incrementMajor, incrementMinor, isGreater, isValidVersion } from '../utils/version';
 
 const getLatestVersion = async (name: string): Promise<string> => {
-	const dicts = await Dictionary.find({ name: name });
+	const dicts = await DictionaryModel.find({ name: name });
 	let latest = '0.0';
 	if (dicts != undefined) {
 		dicts.forEach((dict) => {
@@ -36,7 +37,7 @@ const getLatestVersion = async (name: string): Promise<string> => {
 	return latest;
 };
 
-const checkLatest = async (doc: DictionaryDocument): Promise<void> => {
+const checkLatest = async (doc: Dictionary): Promise<void> => {
 	if (doc === undefined) {
 		throw new NotFoundError('Cannot update dictionary that does not exist.');
 	}
@@ -50,12 +51,13 @@ const checkLatest = async (doc: DictionaryDocument): Promise<void> => {
  * Return a single dictionary
  * @param name Name of the Dictionary
  * @param version Version of the dictionary
+ * @throws NotFoundError when the dictionary is not found
  */
-export const findOne = async (name: string, version: string): Promise<DictionaryDocument> => {
+export const findOne = async (name: string, version: string): Promise<Dictionary> => {
 	logger.debug(`Fetching dictionary: ${name} ${version}`);
-	const dict = await Dictionary.findOne({ name: name, version: version }).lean(true);
+	const dict = await DictionaryModel.findOne({ name: name, version: version }).lean(true);
 	if (dict == undefined) {
-		throw new NotFoundError(`Cannot find dictionary with name '${name}' `);
+		throw new NotFoundError(`Cannot find dictionary with name '${name}' and version '${version}.`);
 	}
 	return dict;
 };
@@ -66,9 +68,9 @@ export const findOne = async (name: string, version: string): Promise<Dictionary
  * @returns Dictionary matching the provided ID
  * @throws NotFoundError if ID is not found
  */
-export const getOne = async (id: string): Promise<DictionaryDocument> => {
+export const getOne = async (id: string): Promise<Dictionary> => {
 	logger.debug(`Get ${id}`);
-	const dict = await Dictionary.findOne({ _id: id }).lean(true);
+	const dict = await DictionaryModel.findOne({ _id: id }).lean(true);
 	if (dict == undefined) {
 		throw new NotFoundError('Cannot find dictionary with id ' + id);
 	}
@@ -78,9 +80,8 @@ export const getOne = async (id: string): Promise<DictionaryDocument> => {
 /**
  * Return array of dictionaries.
  */
-export const listAll = async (): Promise<DictionaryDocument[]> => {
-	logger.info('List all');
-	const dicts = await Dictionary.find({}, 'name version');
+export const listAll = async (): Promise<Pick<Dictionary, 'name' | 'version'>[]> => {
+	const dicts = await DictionaryModel.find({}, 'name version').lean();
 	return dicts;
 };
 
@@ -89,18 +90,8 @@ export const listAll = async (): Promise<DictionaryDocument[]> => {
  * and that the schemas are valid against the meta schema.
  * @param newDict The new data dictionary containing all of the schemas
  */
-export const create = async (newDict: {
-	name: string;
-	version: string;
-	schemas: any[];
-	references: any;
-}): Promise<DictionaryDocument> => {
+export const create = async (newDict: Dictionary): Promise<Dictionary> => {
 	logger.info(`Creating new dictionary ${newDict.name} ${newDict.version}`);
-
-	// Verify version is correct format
-	if (!isValidVersion(newDict.version)) {
-		throw new BadRequestError('Invalid version format');
-	}
 
 	const latest = await getLatestVersion(newDict.name);
 
@@ -118,7 +109,7 @@ export const create = async (newDict: {
 	const normalizedSchemas = newDict.schemas.map((schema) => normalizeSchema(schema));
 
 	// Save new dictionary version
-	const dict = new Dictionary({
+	const dict = new DictionaryModel({
 		name: newDict.name,
 		version: newDict.version,
 		schemas: normalizedSchemas,
@@ -135,8 +126,8 @@ export const create = async (newDict: {
  * @param schema new schema to add
  * @throws NotFoundError if ID is not found
  */
-export const addSchema = async (id: string, schema: any): Promise<DictionaryDocument> => {
-	logger.info(`Adding schema to ${id}`);
+export const addSchema = async (id: string, schema: Schema): Promise<Dictionary> => {
+	logger.info(`Adding schema '${schema.name}' to ${id}`);
 
 	const doc = await getOne(id);
 	await checkLatest(doc);
@@ -147,14 +138,14 @@ export const addSchema = async (id: string, schema: any): Promise<DictionaryDocu
 	if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
 	const entities = doc.schemas.map((s) => s['name']);
-	if (entities.includes(schema['name'])) throw new ConflictError('This schema already exists.');
+	if (doc.schemas.some((s) => s.name === schema.name)) throw new ConflictError('Schema with this name already exists.');
 
 	const normalizedSchema = normalizeSchema(schema);
 
 	const schemas = doc.schemas;
 	schemas.push(normalizedSchema);
 	// Save new dictionary version
-	const dict = new Dictionary({
+	const dict = new DictionaryModel({
 		name: doc.name,
 		version: incrementMajor(doc.version),
 		schemas,
@@ -171,8 +162,8 @@ export const addSchema = async (id: string, schema: any): Promise<DictionaryDocu
  * @param schema schema to add update
  * @param major true if major version to be incremented, false if minor version to be incremented
  */
-export const updateSchema = async (id: string, schema: any, major: boolean): Promise<DictionaryDocument> => {
-	logger.info(`Updating schema on ${id}`);
+export const updateSchema = async (id: string, schema: Schema, major: boolean): Promise<Dictionary> => {
+	logger.info(`Updating schema '${schema.name} on ${id}`);
 
 	const doc = await getOne(id);
 
@@ -198,7 +189,7 @@ export const updateSchema = async (id: string, schema: any, major: boolean): Pro
 	const nextVersion = major ? incrementMajor(doc.version) : incrementMinor(doc.version);
 
 	// Save new dictionary version
-	const dict = new Dictionary({
+	const dict = new DictionaryModel({
 		name: doc.name,
 		version: nextVersion,
 		schemas,
