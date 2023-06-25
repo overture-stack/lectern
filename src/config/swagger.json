@@ -196,8 +196,8 @@
 		},
 		"/dictionaries/{dictionaryId}/schemas/{schemaName}": {
 			"get": {
-				"summary": "Get a single dictionary",
-				"description": "Get single dictionary stored in lectern by mongo id",
+				"summary": "Get a single schema",
+				"description": "Get all details of a schema from a specific dictionary. Results will have references replaced.",
 				"parameters": [
 					{
 						"name": "dictionaryId",
@@ -233,8 +233,8 @@
 		},
 		"/dictionaries/{dictionaryId}/schemas/{schemaName}/fields/{fieldName}": {
 			"get": {
-				"summary": "Get a single dictionary",
-				"description": "Get single dictionary stored in lectern by mongo id",
+				"summary": "Get a single field",
+				"description": "Get all details of a field, found in a named schema from a specific dictionary. Results will have references replaced.",
 				"parameters": [
 					{
 						"name": "dictionaryId",
