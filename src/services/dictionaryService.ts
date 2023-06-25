@@ -53,7 +53,7 @@ const checkLatest = async (doc: Dictionary): Promise<void> => {
  * @param version Version of the dictionary
  * @throws NotFoundError when the dictionary is not found
  */
-export const findOne = async (name: string, version: string): Promise<Dictionary> => {
+export const getOneByNameAndVersion = async (name: string, version: string): Promise<Dictionary> => {
 	logger.debug(`Fetching dictionary: ${name} ${version}`);
 	const dict = await DictionaryModel.findOne({ name: name, version: version }).lean(true);
 	if (dict == undefined) {
@@ -68,13 +68,24 @@ export const findOne = async (name: string, version: string): Promise<Dictionary
  * @returns Dictionary matching the provided ID
  * @throws NotFoundError if ID is not found
  */
-export const getOne = async (id: string): Promise<Dictionary> => {
-	logger.debug(`Get ${id}`);
-	const dict = await DictionaryModel.findOne({ _id: id }).lean(true);
-	if (dict == undefined) {
-		throw new NotFoundError('Cannot find dictionary with id ' + id);
+export const getOneById = async (id: string): Promise<Dictionary> => {
+	logger.debug(`Finding dictionary by ID: ${id}`);
+	try {
+		const dict = await DictionaryModel.findOne({ _id: id }).lean(true);
+		if (dict == undefined) {
+			logger.debug(`Unable to find dictionary by ID: ${id}`);
+			throw new NotFoundError(`Cannot find dictionary with id ${id}`);
+		}
+		return dict;
+	} catch (e) {
+		if (e instanceof Error && e.name === 'CastError') {
+			// Handle case where provided id is not matching the mongoDB _id format
+			logger.error(`Mongoose CastError thrown while searching for Dictionary by ID: ${id}`, e);
+			throw new BadRequestError(`Dictionary ID '${id}' does not match expected format`);
+		}
+		// Something unknown occurred, throw as usual:
+		throw e;
 	}
-	return dict;
 };
 
 /**
@@ -129,7 +140,7 @@ export const create = async (newDict: Dictionary): Promise<Dictionary> => {
 export const addSchema = async (id: string, schema: Schema): Promise<Dictionary> => {
 	logger.info(`Adding schema '${schema.name}' to ${id}`);
 
-	const doc = await getOne(id);
+	const doc = await getOneById(id);
 	await checkLatest(doc);
 
 	const references = doc.references || {};
@@ -165,7 +176,7 @@ export const addSchema = async (id: string, schema: Schema): Promise<Dictionary>
 export const updateSchema = async (id: string, schema: Schema, major: boolean): Promise<Dictionary> => {
 	logger.info(`Updating schema '${schema.name} on ${id}`);
 
-	const doc = await getOne(id);
+	const doc = await getOneById(id);
 
 	await checkLatest(doc);
 

@@ -47,8 +47,8 @@ router.get(
 		}
 
 		// These will throw error if the dictionary is not found, must be handled by router (through express wrapper)
-		const dict1Doc = await dictionaryService.findOne(name, leftVersion);
-		const dict2Doc = await dictionaryService.findOne(name, rightVersion);
+		const dict1Doc = await dictionaryService.getOneByNameAndVersion(name, leftVersion);
+		const dict2Doc = await dictionaryService.getOneByNameAndVersion(name, rightVersion);
 		const dict1 = showReferences ? dict1Doc : replaceReferences(dict1Doc);
 		const dict2 = showReferences ? dict2Doc : replaceReferences(dict2Doc);
 		const diff = diffUtil(dict1, dict2);
