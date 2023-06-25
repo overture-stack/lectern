@@ -107,7 +107,7 @@ export const getSchema = async (req: Request<{ dictId: string; schemaName: strin
 
 	if (!schema) {
 		throw new NotFoundError(
-			`Dictionary ${dictionary.name} ${dictionary.version} does not have a schema named ${schemaName}`,
+			`Dictionary '${dictionary.name} ${dictionary.version}' does not have a schema named '${schemaName}'`,
 		);
 	}
 	res.send(schema);
@@ -135,14 +135,14 @@ export const getSchemaField = async (
 
 	if (!schema) {
 		throw new NotFoundError(
-			`Dictionary ${dictionary.name} ${dictionary.version} does not have a schema named ${schemaName}`,
+			`Dictionary '${dictionary.name} ${dictionary.version}' does not have a schema named '${schemaName}'`,
 		);
 	}
 
 	const field = schema.fields.find((field) => field.name === fieldName);
-	if (!schema) {
+	if (!field) {
 		throw new NotFoundError(
-			`Schema ${schemaName} from Dictionary ${dictionary.name} ${dictionary.version} does not have a field named ${fieldName}`,
+			`Schema '${schemaName}' from Dictionary '${dictionary.name} ${dictionary.version}' does not have a field named '${fieldName}'`,
 		);
 	}
 	res.send(field);
