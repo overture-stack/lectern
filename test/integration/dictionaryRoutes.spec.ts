@@ -67,7 +67,7 @@ let container: StartedTestContainer;
 
 chai.use(require('chai-http'));
 
-describe('CRUD', () => {
+describe('Dictionary Routes', () => {
 	before(async () => {
 		container = await new GenericContainer('mongo', 'xenial').withExposedPorts(27017).start();
 		mongoose
@@ -94,6 +94,9 @@ describe('CRUD', () => {
 				});
 		});
 
+		// TODO: This test only passes when run in sequence after the previous test creates a Dictionary.
+		// It cannot be tested individually, and this is likely true of several tests in this section.
+		// Tests should be independent (units) and not have side-effects that could impact other tests.
 		it('Should 400 on creating same dictionary due to same version number', (done: Mocha.Done) => {
 			const dictRequest = require('./fixtures/createDictionary.json');
 			chai
@@ -247,13 +250,13 @@ describe('CRUD', () => {
 				});
 		});
 
-		it('Should 400 with a badly formed dictionary id', (done: Mocha.Done) => {
+		it('Should 404 with a badly formed dictionary id', (done: Mocha.Done) => {
 			chai
 				.request(app)
 				.get('/dictionaries/aslkjfdabhskjlfhsdalkjfhsadfklsja')
 				.end((err: Error, res: Response) => {
 					expect(err).to.be.null;
-					expect(res).to.have.status(400);
+					expect(res).to.have.status(404);
 					setImmediate(done);
 				});
 		});
@@ -293,7 +296,7 @@ describe('CRUD', () => {
 				});
 		});
 
-		it('Should successfully add a file to a dictionary and increment to next major version', (done: Mocha.Done) => {
+		it('Should successfully add a schema to a dictionary and increment to next major version', (done: Mocha.Done) => {
 			const newFile = require('./fixtures/newFile.json');
 			chai
 				.request(app)
@@ -339,7 +342,7 @@ describe('CRUD', () => {
 				});
 		});
 
-		it('Should respond with bad request on poorly formatted dicitonary_id', (done: Mocha.Done) => {
+		it('Should respond with 404 on poorly formatted dicitonary_id', (done: Mocha.Done) => {
 			const newFile = require('./fixtures/updateNewFile.json');
 			chai
 				.request(app)
@@ -347,15 +350,10 @@ describe('CRUD', () => {
 				.send(newFile)
 				.end((err: Error, res: Response) => {
 					expect(err).to.be.null;
-					expect(res).to.have.status(400);
+					expect(res).to.have.status(404);
 					setImmediate(done);
 				});
 		});
-	});
-
-	describe('Delete', () => {
-		// Place Holder
-		it('Should do nothing as we do not delete', () => {});
 	});
 
 	describe('Dictionary Update version edge cases', () => {
@@ -408,7 +406,7 @@ describe('CRUD', () => {
 	});
 
 	after(async () => {
-		await container.stop();
 		await mongoose.connection.close();
+		await container.stop();
 	});
 });

@@ -19,17 +19,17 @@
 
 import { expect } from 'chai';
 import { normalizeSchema } from '../../src/services/schemaService';
-import input1 from '../fixtures/dictionaries/linebreak/input1';
-import input2 from '../fixtures/dictionaries/linebreak/input2';
-import output from '../fixtures/dictionaries/linebreak/output';
+import DICTIONARY_RN_LINEBREAKS from '../fixtures/dictionaries/linebreak/rnLinebreaks';
+import DICTIONARY_N_LINEBREAKS from '../fixtures/dictionaries/linebreak/nLinebreaks';
+import DICTIONARY_NORMALIZED_LINEBREAKS from '../fixtures/dictionaries/linebreak/normalizedLinebreaks';
 
-describe('noarmalizeSchema', () => {
-	it('Should not alter already formatted files', () => {
-		const normalizedSchema = normalizeSchema(input1.schemas[0]);
-		expect(normalizedSchema).to.deep.eq(output.schemas[0]);
+describe('New Line symbol normalization', () => {
+	it('Should convert \\r\\n to \\n in scripts', () => {
+		const normalizedSchema = normalizeSchema(DICTIONARY_N_LINEBREAKS.schemas[0]);
+		expect(normalizedSchema).to.deep.eq(DICTIONARY_NORMALIZED_LINEBREAKS.schemas[0]);
 	});
-	it('Should output consistent script property', () => {
-		const normalizedSchema = normalizeSchema(input2.schemas[0]);
-		expect(normalizedSchema).to.deep.eq(output.schemas[0]);
+	it('Should not alter already formatted files', () => {
+		const normalizedSchema = normalizeSchema(DICTIONARY_RN_LINEBREAKS.schemas[0]);
+		expect(normalizedSchema).to.deep.eq(DICTIONARY_NORMALIZED_LINEBREAKS.schemas[0]);
 	});
 });

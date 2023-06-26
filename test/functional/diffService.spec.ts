@@ -19,7 +19,7 @@
 
 import { expect } from 'chai';
 import { diff, getFieldMap } from '../../src/services/diffService';
-import SIMPLE_DICTIONARY from '../fixtures/dictionaries/simple';
+import SIMPLE_DICTIONARY from '../fixtures/dictionaries/1_base';
 import DIFF_DICTIONARY_INITIAL from '../fixtures/dictionaries/diff/initial';
 import DIFF_DICTIONARY_UPDATED from '../fixtures/dictionaries/diff/updated';
 
