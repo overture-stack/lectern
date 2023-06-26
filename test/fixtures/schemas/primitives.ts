@@ -19,8 +19,10 @@
 
 import { Schema } from '../../../src/types/dictionaryTypes';
 
+// Just a simple schema with no frills.
+
 export default {
-	name: 'primatives',
+	name: 'primitives',
 	description: 'Includes one field of each primative type without any restrictions. No Frills.',
 	fields: [
 		{ name: 'boolean_field', valueType: 'boolean' },

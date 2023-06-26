@@ -28,7 +28,7 @@ describe('Compute diff report between dictionary versions', () => {
 		const fieldMap = getFieldMap(SIMPLE_DICTIONARY);
 
 		expect(fieldMap.size).to.be.equal(4);
-		expect(fieldMap.get('primatives.boolean_field')).to.be.not.undefined;
+		expect(fieldMap.get('primitives.boolean_field')).to.be.not.undefined;
 	});
 
 	it('Should compute the diff, with one file added (3 fields), and 3 updated on existing file', () => {

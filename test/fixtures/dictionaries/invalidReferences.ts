@@ -17,25 +17,12 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary } from '../../../../src/types/dictionaryTypes';
-
-const output: Dictionary = {
-	name: 'Line Breaks',
+import { Dictionary } from '../../../src/types/dictionaryTypes';
+import referencesSchema, { references } from '../schemas/references';
+const dictionary: Dictionary = {
+	name: 'Invalid References Dictionary',
 	version: '1.0',
-	schemas: [
-		{
-			name: 'sample',
-			description: 'Sample to test repeated RN line breaks',
-			fields: [
-				{
-					name: 'field',
-					valueType: 'string',
-					restrictions: {
-						script: '(function(){\r\nreturn true;\r\n\r\n\r\n\r\n}())',
-					},
-				},
-			],
-		},
-	],
+	schemas: [referencesSchema],
+	references: {}, // uh oh! no references!
 };
-export default output;
+export default dictionary;

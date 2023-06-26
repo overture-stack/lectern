@@ -17,25 +17,15 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary } from '../../../../src/types/dictionaryTypes';
+import { Schema } from '../../../src/types/dictionaryTypes';
 
-const output: Dictionary = {
-	name: 'Line Breaks',
-	version: '1.0',
-	schemas: [
-		{
-			name: 'sample',
-			description: 'Sample to test repeated RN line breaks',
-			fields: [
-				{
-					name: 'field',
-					valueType: 'string',
-					restrictions: {
-						script: '(function(){\r\nreturn true;\r\n\r\n\r\n\r\n}())',
-					},
-				},
-			],
-		},
+export default {
+	name: 'schema_tests',
+	description: 'Used to test adding a schema. Version 2.',
+	fields: [
+		{ name: 'static_field', valueType: 'integer' },
+		{ name: 'updated_field', valueType: 'boolean', restrictions: { required: true } },
+		{ name: 'added_field', valueType: 'string' }, // new
+		// removed_field is gone
 	],
-};
-export default output;
+} satisfies Schema;

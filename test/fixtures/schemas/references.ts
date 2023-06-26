@@ -17,25 +17,30 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary } from '../../../../src/types/dictionaryTypes';
+import { Schema } from '../../../src/types/dictionaryTypes';
 
-const output: Dictionary = {
-	name: 'Line Breaks',
-	version: '1.0',
-	schemas: [
+export const references = {
+	listA: ['a', 'b', 'c'],
+	scriptA: ["(function validate(inputs) {const {$row, $name, $field} = inputs; return {valid: true, message: 'Ok';}"],
+};
+
+export default {
+	name: 'with_references',
+	description: 'Schema with references',
+	fields: [
 		{
-			name: 'sample',
-			description: 'Sample to test repeated RN line breaks',
-			fields: [
-				{
-					name: 'field',
-					valueType: 'string',
-					restrictions: {
-						script: '(function(){\r\nreturn true;\r\n\r\n\r\n\r\n}())',
-					},
-				},
-			],
+			name: 'code_list_as_reference',
+			valueType: 'string',
+			restrictions: {
+				codeList: '#/listA',
+			},
+		},
+		{
+			name: 'script_as_reference',
+			valueType: 'number',
+			restrictions: {
+				script: '#/scriptA',
+			},
 		},
 	],
-};
-export default output;
+} satisfies Schema;

@@ -20,17 +20,16 @@
 import { Dictionary } from '../../../../src/types/dictionaryTypes';
 
 const output: Dictionary = {
-	name: 'Test Dictionary',
-	version: '1.2',
+	name: 'Line Breaks',
+	version: '1.0',
 	schemas: [
 		{
-			name: 'donor',
-			description: 'Donor Entity',
+			name: 'sample',
+			description: 'Sample to test repeated RN line breaks',
 			fields: [
 				{
-					name: 'cause_of_death',
+					name: 'field',
 					valueType: 'string',
-					description: 'Cause of Donor Death',
 					restrictions: {
 						script: '(function(){\nreturn true;\n\n\n\n}())',
 					},
