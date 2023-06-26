@@ -20,9 +20,11 @@
 import mongoose from 'mongoose';
 import { Dictionary } from '../types/dictionaryTypes';
 
+export type DictionaryDocument = Dictionary & { _id: string };
+
 export const DictionaryModel = mongoose.model(
 	'Dictionary',
-	new mongoose.Schema<Dictionary>(
+	new mongoose.Schema<DictionaryDocument>(
 		{
 			name: { type: String, index: true }, // Index to allow quick lookup by name
 			version: String,
@@ -41,7 +43,7 @@ export const DictionaryModel = mongoose.model(
  * @param id
  * @returns
  */
-export const findById = async (id: string): Promise<Dictionary | null> => {
+export const findById = async (id: string): Promise<DictionaryDocument | null> => {
 	return await DictionaryModel.findOne({ _id: id }).lean(true);
 };
 
@@ -50,7 +52,7 @@ export const findById = async (id: string): Promise<Dictionary | null> => {
  * @param id
  * @returns
  */
-export const findByNameAndVersion = async (name: string, version: string): Promise<Dictionary | null> => {
+export const findByNameAndVersion = async (name: string, version: string): Promise<DictionaryDocument | null> => {
 	return await DictionaryModel.findOne({ name: name, version: version }).lean(true);
 };
 
@@ -58,7 +60,7 @@ export const findByNameAndVersion = async (name: string, version: string): Promi
  * Fetch all DBs, returning only the name, version, and description of each Dictionary
  * @returns
  */
-export const listAll = async (): Promise<Pick<Dictionary, 'name' | 'version' | 'description'>[]> => {
+export const listAll = async (): Promise<Pick<DictionaryDocument, 'name' | 'version' | 'description' | '_id'>[]> => {
 	return DictionaryModel.find({}, 'name version description').lean(true);
 };
 
@@ -67,7 +69,7 @@ export const listAll = async (): Promise<Pick<Dictionary, 'name' | 'version' | '
  * @param name
  * @returns
  */
-export const listByName = async (name: string): Promise<Dictionary[]> => {
+export const listByName = async (name: string): Promise<DictionaryDocument[]> => {
 	return DictionaryModel.find({ name }).lean(true);
 };
 
@@ -77,7 +79,7 @@ export const listByName = async (name: string): Promise<Dictionary[]> => {
  * @param dictionary
  * @returns
  */
-export const addDictionary = async (dictionary: Dictionary): Promise<Dictionary> => {
+export const addDictionary = async (dictionary: Dictionary): Promise<DictionaryDocument> => {
 	const dict = new DictionaryModel(dictionary);
 	const saved = await dict.save();
 	return saved.toObject();

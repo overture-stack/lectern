@@ -17,16 +17,23 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import * as immer from 'immer';
 import logger from '../config/logger';
-import { DictionaryModel } from '../db/dictionaryModel';
+import * as DictionaryRepo from '../db/dictionary';
 import { normalizeSchema, validate } from '../services/schemaService';
 import { Dictionary, Schema } from '../types/dictionaryTypes';
 import { BadRequestError, ConflictError, NotFoundError } from '../utils/errors';
 import { incrementMajor, incrementMinor, isGreater } from '../utils/version';
+import _ from 'lodash';
 
-const getLatestVersion = async (name: string): Promise<string> => {
-	const dicts = await DictionaryModel.find({ name: name });
-	let latest = '0.0';
+/**
+ * Get latest version for all dictionaries with the provided name
+ * @param name
+ * @returns latest version of the dictionary, or `0.0` if no dictionary exists with that name
+ */
+export const getLatestVersion = async (name: string): Promise<string> => {
+	const dicts = await DictionaryRepo.listByName(name);
+	let latest: string = '0.0';
 	if (dicts != undefined) {
 		dicts.forEach((dict) => {
 			if (isGreater(dict.version, latest)) {
@@ -37,29 +44,14 @@ const getLatestVersion = async (name: string): Promise<string> => {
 	return latest;
 };
 
-const checkLatest = async (doc: Dictionary): Promise<void> => {
-	if (doc === undefined) {
-		throw new NotFoundError('Cannot update dictionary that does not exist.');
-	}
-	const latestVersion = await getLatestVersion(doc.name);
-	if (latestVersion != doc.version) {
-		throw new BadRequestError('Dictionary that you are trying to update is not the latest version.');
-	}
-};
-
 /**
- * Return a single dictionary
- * @param name Name of the Dictionary
- * @param version Version of the dictionary
- * @throws NotFoundError when the dictionary is not found
+ *
+ * @param doc
+ * @returns
  */
-export const getOneByNameAndVersion = async (name: string, version: string): Promise<Dictionary> => {
-	logger.debug(`Fetching dictionary: ${name} ${version}`);
-	const dict = await DictionaryModel.findOne({ name: name, version: version }).lean(true);
-	if (dict == undefined) {
-		throw new NotFoundError(`Cannot find dictionary with name '${name}' and version '${version}.`);
-	}
-	return dict;
+export const checkLatest = async (doc: Dictionary): Promise<boolean> => {
+	const latestVersion = await getLatestVersion(doc.name);
+	return latestVersion === doc.version;
 };
 
 /**
@@ -68,10 +60,10 @@ export const getOneByNameAndVersion = async (name: string, version: string): Pro
  * @returns Dictionary matching the provided ID
  * @throws NotFoundError if ID is not found
  */
-export const getOneById = async (id: string): Promise<Dictionary> => {
+export const getOneById = async (id: string): Promise<DictionaryRepo.DictionaryDocument> => {
 	logger.debug(`Finding dictionary by ID: ${id}`);
 	try {
-		const dict = await DictionaryModel.findOne({ _id: id }).lean(true);
+		const dict = await DictionaryRepo.findById(id);
 		if (dict == undefined) {
 			logger.debug(`Unable to find dictionary by ID: ${id}`);
 			throw new NotFoundError(`Cannot find dictionary with id ${id}`);
@@ -81,7 +73,7 @@ export const getOneById = async (id: string): Promise<Dictionary> => {
 		if (e instanceof Error && e.name === 'CastError') {
 			// Handle case where provided id is not matching the mongoDB _id format
 			logger.error(`Mongoose CastError thrown while searching for Dictionary by ID: ${id}`, e);
-			throw new BadRequestError(`Dictionary ID '${id}' does not match expected format`);
+			throw new NotFoundError(`Cannot find dictionary with id ${id}`);
 		}
 		// Something unknown occurred, throw as usual:
 		throw e;
@@ -89,11 +81,27 @@ export const getOneById = async (id: string): Promise<Dictionary> => {
 };
 
 /**
+ * Return a single dictionary matching name and version
+ * @param name Name of the Dictionary
+ * @param version Version of the dictionary
+ * @throws NotFoundError when the dictionary is not found
+ */
+export const getOneByNameAndVersion = async (name: string, version: string): Promise<Dictionary> => {
+	logger.debug(`Fetching dictionary: ${name} ${version}`);
+	const dict = await DictionaryRepo.findByNameAndVersion(name, version);
+	if (dict == undefined) {
+		logger.debug(`Unable to find dictionary with name '${name}' and version '${version}'.`);
+		throw new NotFoundError(`Cannot find dictionary with name '${name}' and version '${version}'.`);
+	}
+	return dict;
+};
+
+/**
  * Return array of dictionaries.
  */
-export const listAll = async (): Promise<Pick<Dictionary, 'name' | 'version'>[]> => {
-	const dicts = await DictionaryModel.find({}, 'name version').lean();
-	return dicts;
+export const listAll = async (): Promise<Pick<Dictionary, 'name' | 'description' | 'version'>[]> => {
+	logger.debug(`Retrieving all Dictionaries.`);
+	return await DictionaryRepo.listAll();
 };
 
 /**
@@ -104,10 +112,10 @@ export const listAll = async (): Promise<Pick<Dictionary, 'name' | 'version'>[]>
 export const create = async (newDict: Dictionary): Promise<Dictionary> => {
 	logger.info(`Creating new dictionary ${newDict.name} ${newDict.version}`);
 
-	const latest = await getLatestVersion(newDict.name);
+	const latestVersion = await getLatestVersion(newDict.name);
 
-	if (!isGreater(newDict.version, latest)) {
-		logger.warn(`Rejected ${newDict.name} due to version ${newDict.version} being lower than latest: ${latest}`);
+	if (!isGreater(newDict.version, latestVersion)) {
+		logger.warn(`Rejected ${newDict.name} due to version ${newDict.version} being lower than latest: ${latestVersion}`);
 		throw new BadRequestError(`New version for ${newDict.name} is not greater than latest existing version`);
 	}
 
@@ -120,14 +128,13 @@ export const create = async (newDict: Dictionary): Promise<Dictionary> => {
 	const normalizedSchemas = newDict.schemas.map((schema) => normalizeSchema(schema));
 
 	// Save new dictionary version
-	const dict = new DictionaryModel({
+	const result = await DictionaryRepo.addDictionary({
 		name: newDict.name,
 		version: newDict.version,
 		schemas: normalizedSchemas,
 		references: newDict.references || {},
 	});
-	const saved = await dict.save();
-	return saved;
+	return result;
 };
 
 /**
@@ -140,30 +147,29 @@ export const create = async (newDict: Dictionary): Promise<Dictionary> => {
 export const addSchema = async (id: string, schema: Schema): Promise<Dictionary> => {
 	logger.info(`Adding schema '${schema.name}' to ${id}`);
 
-	const doc = await getOneById(id);
-	await checkLatest(doc);
+	const existingDictionary = await getOneById(id);
+	console.log('existingDictionary', existingDictionary);
+	const isLatest = await checkLatest(existingDictionary);
+	if (!isLatest) {
+		throw new BadRequestError('Dictionary that you are trying to update is not the latest version.');
+	}
 
-	const references = doc.references || {};
-
-	const result = validate(schema, references);
+	const result = validate(schema, existingDictionary.references || {});
 	if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
-	const entities = doc.schemas.map((s) => s['name']);
-	if (doc.schemas.some((s) => s.name === schema.name)) throw new ConflictError('Schema with this name already exists.');
+	if (existingDictionary.schemas.some((s) => s.name === schema.name)) {
+		throw new ConflictError('Schema with this name already exists.');
+	}
 
 	const normalizedSchema = normalizeSchema(schema);
 
-	const schemas = doc.schemas;
-	schemas.push(normalizedSchema);
-	// Save new dictionary version
-	const dict = new DictionaryModel({
-		name: doc.name,
-		version: incrementMajor(doc.version),
-		schemas,
-		references,
+	const updatedDictionary = immer.produce(existingDictionary, (draft) => {
+		draft.version = incrementMajor(draft.version);
+		draft.schemas = [...draft.schemas, normalizedSchema];
 	});
-	const saved = await dict.save();
-	return saved;
+
+	// Save new dictionary version
+	return await DictionaryRepo.addDictionary(_.omit(updatedDictionary, '_id'));
 };
 
 /**
@@ -176,37 +182,33 @@ export const addSchema = async (id: string, schema: Schema): Promise<Dictionary>
 export const updateSchema = async (id: string, schema: Schema, major: boolean): Promise<Dictionary> => {
 	logger.info(`Updating schema '${schema.name} on ${id}`);
 
-	const doc = await getOneById(id);
+	const existingDictionary = await getOneById(id);
 
-	await checkLatest(doc);
+	await checkLatest(existingDictionary);
 
-	const references = doc.references || {};
-
-	const result = validate(schema, references);
+	const result = validate(schema, existingDictionary.references || {});
 	if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 
 	// Ensure it exists
-	const entities = doc.schemas.map((s) => s['name']);
-	if (!entities.includes(schema['name'])) throw new BadRequestError('Cannot update schema that does not exist.');
+	if (!existingDictionary.schemas.some((s) => s.name === schema.name)) {
+		throw new NotFoundError(`Cannot update schema - Dictionary ${id} does not have a schema with name ${schema.name}.`);
+	}
 
 	// Filter out one to update
-	const schemas = doc.schemas.filter((s) => !(s['name'] === schema['name']));
+	const schemas = existingDictionary.schemas.filter((s) => !(s['name'] === schema['name']));
 
 	const normalizedSchema = normalizeSchema(schema);
 
 	schemas.push(normalizedSchema);
 
 	// Increment Version
-	const nextVersion = major ? incrementMajor(doc.version) : incrementMinor(doc.version);
-
-	// Save new dictionary version
-	const dict = new DictionaryModel({
-		name: doc.name,
-		version: nextVersion,
-		schemas,
-		references,
+	const nextVersion = major ? incrementMajor(existingDictionary.version) : incrementMinor(existingDictionary.version);
+	const updatedDictionary = immer.produce(existingDictionary, (draft) => {
+		const filteredSchemas = draft.schemas.filter((s) => !(s['name'] === schema['name']));
+		draft.schemas = [...filteredSchemas, normalizedSchema];
+		draft.version = nextVersion;
 	});
 
-	const saved = await dict.save();
-	return saved;
+	// Save new dictionary version
+	return await DictionaryRepo.addDictionary(_.omit(updatedDictionary, '_id'));
 };
