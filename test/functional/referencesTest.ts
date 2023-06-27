@@ -14,13 +14,14 @@ const referencesWithinReferencesInput = require('./fixtures/references/reference
 const referencesWithinReferencesOutput = require('./fixtures/references/references_within_references/output.json') as DictionaryDocument;
 const nonExistingReferencesInput = require('./fixtures/references/non_existing_references/input.json') as DictionaryDocument;
 const cyclicReferencesInput = require('./fixtures/references/cyclic_references/input.json') as DictionaryDocument;
+const selfReferencesInput = require('./fixtures/references/self_references/input.json') as DictionaryDocument;
 
 describe('Replace references in the schemas of a dictionary', () => {
-    it('Should return the same original schema if dictionaty does not contain a references section', () => {
+    it('Should return the same original schema if dictionary does not contain a references section', () => {
         const replacedDictionary = replaceReferences(noReferencesSectionInput);
         expect(replacedDictionary).to.deep.eq(noReferencesSectionOutput);
     });
-    it('Should return the same original schema if dictionaty contains an empty references section', () => {
+    it('Should return the same original schema if dictionary contains an empty references section', () => {
         const replacedDictionary = replaceReferences(emptyReferencesInput);
         expect(replacedDictionary).to.deep.eq(emptyReferencesOutput);
     });
@@ -45,5 +46,10 @@ describe('Replace references in the schemas of a dictionary', () => {
         expect(function () {
             replaceReferences(cyclicReferencesInput);
         }).to.throw('Cyclical references found - Reference: OTHER. Schema: donor Field: gender - Path: restrictions.codeList');
+    });
+    it('Should throw exception if self references are found', () => {
+        expect(function () {
+            replaceReferences(selfReferencesInput);
+        }).to.throw('Cyclical references found - Reference: SELF_REFERENCE. Schema: donor Field: gender - Path: restrictions.codeList');
     });
 });

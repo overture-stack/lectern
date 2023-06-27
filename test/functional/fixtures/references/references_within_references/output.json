@@ -23,7 +23,7 @@
 					"valueType": "string",
 					"description": "Donor Biological Sex",
 					"restrictions": {
-						"codeList": ["Male", "Female", "Other"]
+						"codeList": ["Male", "Female", "Unknown", "No answer", "Other"]
 					}
 				},
 				{

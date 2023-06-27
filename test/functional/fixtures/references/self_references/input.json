@@ -23,7 +23,7 @@
 					"valueType": "string",
 					"description": "Donor Biological Sex",
 					"restrictions": {
-						"codeList": ["#/SEX", "Other"]
+						"codeList": ["#/SEX", "Other", "#/SELF_REFERENCE"]
 					}
 				},
 				{
@@ -42,7 +42,7 @@
 		"ID_REG_EXP": "^[\\w\\s\\W]{5,}$",
 		"MALE": "Male",
 		"FEMALE": "Female",
-		"UNKNOWN": ["Unknown", "No answer"],
-		"SEX": ["#/MALE", "#/FEMALE", "#/UNKNOWN"]
+		"SELF_REFERENCE": "#/SELF_REFERENCE",
+		"SEX": ["#/MALE", "#/FEMALE"]
 	}
 }
