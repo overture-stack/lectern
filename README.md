@@ -21,11 +21,7 @@ The intended use of the data dictionaries is to describe the structure and valid
 - Node.js 13.14+
 - Typescript 3.5
 - Express
-- Mongoose
-- Mocha
-- Chai
-  - Chai-HTTP
-- Testcontainers
+- MongoDB
 
 ### Build & Run
 
@@ -42,3 +38,11 @@ To run after it is built:
 ```node
 npm start
 ```
+
+### Dictionary Meta Schema
+
+Lectern provides a Meta-Schema definition that describes the structure of Lectern Dictionaries, a JSON-Schema formatted copy of this schema can be found at [`./generated/DictionaryMetaSchema.json`](./generated/DictionaryMetaSchema.json). This can be used for any external applications that want to validate, generate, or interact with Lectern Dictionaries.
+
+#### Schema Definition for Lectern Developers
+
+The Lectern server uses a TypeScript native schema generated with [Zod](https://zod.dev/) that can be found in the [`./src/types/dictionaryTypes.ts`](./src/types/dictionaryTypes.ts) file. There is a custom script `npm run build:json-schema` - that is also executed in the `npm run build` script - that will regenerate the content in the `DictionaryMetaSchema.json`. The JSON-Schema version is generated thanks to the libary [zod-to-json-schema](https://www.npmjs.com/package/zod-to-json-schema). If the generation script needs updating, it can be found at [`./scripts/buildMetaSchema.ts`](./scripts/buildMetaSchema.ts).
