@@ -66,7 +66,6 @@ describe('Replace References', () => {
 	});
 	it('Should return the schema where references inside references are replaced', () => {
 		const output = replaceReferences(referencesWithinReferencesInput);
-		console.log(JSON.stringify(output));
 		expect(output).to.deep.eq(referencesWithinReferencesOutput);
 	});
 	it('Should throw exception if reference does not exist', () => {

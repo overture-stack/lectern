@@ -148,7 +148,6 @@ export const addSchema = async (id: string, schema: Schema): Promise<Dictionary>
 	logger.info(`Adding schema '${schema.name}' to ${id}`);
 
 	const existingDictionary = await getOneById(id);
-	console.log('existingDictionary', existingDictionary);
 	const isLatest = await checkLatest(existingDictionary);
 	if (!isLatest) {
 		throw new BadRequestError('Dictionary that you are trying to update is not the latest version.');
