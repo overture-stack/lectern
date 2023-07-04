@@ -19,7 +19,8 @@
 
 import * as immer from 'immer';
 import { ZodError } from 'zod';
-import { References, Schema } from '../types/dictionaryTypes';
+import { Schema } from '../types/dictionaryTypes';
+import { References } from '../types/referenceTypes';
 import { replaceSchemaReferences } from '../utils/references';
 
 export function validate(schema: Schema, references: References): { valid: boolean; errors?: ZodError } {
@@ -51,7 +52,11 @@ function normalizeScript(input: string | string[]) {
 export function normalizeSchema(schema: Schema): Schema {
 	const normalizedFields = schema.fields.map((baseField) =>
 		immer.produce(baseField, (field) => {
-			if (field.valueType !== 'boolean' && field.restrictions !== undefined && field.restrictions.script) {
+			if (
+				field.valueType !== 'boolean' &&
+				field.restrictions !== undefined &&
+				field.restrictions.script !== undefined
+			) {
 				field.restrictions.script = normalizeScript(field.restrictions.script);
 			}
 		}),

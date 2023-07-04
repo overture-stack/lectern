@@ -19,6 +19,7 @@
 
 import { z as zod } from 'zod';
 import allUnique from '../utils/allUnique';
+import { ReferenceTag, References } from './referenceTypes';
 
 export const NameString = zod
 	.string()
@@ -27,30 +28,6 @@ export const NameString = zod
 export type NameString = zod.infer<typeof NameString>;
 
 export const Integer = zod.number().int();
-
-/* ********** *
- * References *
- * ********** */
-export const ReferenceTag = zod
-	.string()
-	.regex(
-		RegExp('^#(/[-_A-Za-z0-9]+)+$'),
-		'Not formatted as a valid reference tag. References must be formatted like `#/path/to/reference',
-	);
-export type ReferenceTag = zod.infer<typeof ReferenceValue>;
-
-export const ReferenceValue = zod.string();
-export type ReferenceValue = zod.infer<typeof ReferenceValue>;
-export const ReferenceArray = zod.array(ReferenceValue).min(1, 'Arrays of references must have at least 1 value.');
-export type ReferenceArray = zod.infer<typeof ReferenceArray>;
-
-// References are recursive, but Zod can't do TS type inference for recursive definitions.
-// So in this one case we define the type first with the recursive structure and use it as a type-hint
-// for our zod schema. Reference: https://zod.dev/?id=recursive-types
-export type References = { [x: string]: ReferenceArray | ReferenceValue | References };
-export const References: zod.ZodType<References> = zod.record(
-	zod.union([ReferenceValue, ReferenceArray, zod.lazy(() => References)]), //TODO: test this please.
-);
 
 // Unlike references, meta is not nested and only accepts primatives or arrays of primatives as values.
 export const DictionaryMetaValue = zod.union([zod.string(), zod.number(), zod.boolean()]);
@@ -218,6 +195,8 @@ export const SchemaField = zod.discriminatedUnion('valueType', [
 	SchemaBooleanField,
 ]);
 export type SchemaField = zod.infer<typeof SchemaField>;
+
+export type SchemaRestrictions = SchemaField['restrictions'];
 
 /* ****** *
  * Schema *
