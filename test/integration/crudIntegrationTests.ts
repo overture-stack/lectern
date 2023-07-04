@@ -260,7 +260,7 @@ describe('CRUD', () => {
 		});
 
 		it('Should get a single dictionary by name and version', (done: Mocha.Done) => {
-			const name = 'ARGO Dictionary';
+			const name = 'Test Dictionary';
 			chai
 				.request(app)
 				.get(`/dictionaries/?name=${name}&version=${testVersion}`)

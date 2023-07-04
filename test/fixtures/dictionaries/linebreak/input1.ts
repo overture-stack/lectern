@@ -20,7 +20,7 @@
 import { Dictionary } from '../../../../src/types/dictionaryTypes';
 
 const output: Dictionary = {
-	name: 'ARGO Dictionary',
+	name: 'Test Dictionary',
 	version: '1.2',
 	schemas: [
 		{

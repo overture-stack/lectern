@@ -1,5 +1,5 @@
 {
-	"name": "ARGO Dictionary",
+	"name": "Test Dictionary",
 	"version": "1.2",
 	"schemas": [
 		{
@@ -15,7 +15,7 @@
 						"key": true
 					},
 					"restrictions": {
-						"regexp": "#/ID_REG_EXP"
+						"regex": "#/ID_REG_EXP"
 					}
 				},
 				{
@@ -40,9 +40,6 @@
 	],
 	"references": {
 		"ID_REG_EXP": "^[\\w\\s\\W]{5,}$",
-		"MALE": "Male",
-		"FEMALE": "Female",
-		"UNKNOWN": ["Unknown", "No answer"],
-		"SEX": ["#/MALE", "#/FEMALE", "#/UNKNOWN"]
+		"SEX": ["Male", "Female"]
 	}
 }

@@ -1,5 +1,5 @@
 {
-	"name": "ARGO Dictionary",
+	"name": "Test Dictionary",
 	"version": "1.2",
 	"schemas": [
 		{
@@ -15,7 +15,7 @@
 						"key": true
 					},
 					"restrictions": {
-						"regexp": "#/ID_REG_EXP"
+						"regex": "^[\\w\\s\\W]{5,}$"
 					}
 				},
 				{
@@ -23,7 +23,7 @@
 					"valueType": "string",
 					"description": "Donor Biological Sex",
 					"restrictions": {
-						"codeList": ["#/SEX", "Other"]
+						"codeList": ["Male", "Female", "Other"]
 					}
 				},
 				{
@@ -37,13 +37,5 @@
 				}
 			]
 		}
-	],
-	"references": {
-		"ID_REG_EXP": "^[\\w\\s\\W]{5,}$",
-		"MALE": "Male",
-		"FEMALE": "Female",
-		"OTHER": "#/UNKNOWN",
-		"UNKNOWN": "#/OTHER",
-		"SEX": ["#/MALE", "#/FEMALE", "#/OTHER"]
-	}
+	]
 }

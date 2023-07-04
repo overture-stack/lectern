@@ -1,5 +1,5 @@
 {
-	"name": "ARGO Dictionary",
+	"name": "Test Dictionary",
 	"version": "1.2",
 	"schemas": [
 		{
@@ -15,7 +15,7 @@
 						"key": true
 					},
 					"restrictions": {
-						"script": "field.length > 5"
+						"regex": "^[\\w\\s\\W]{5,}$"
 					}
 				},
 				{
@@ -37,6 +37,5 @@
 				}
 			]
 		}
-	],
-	"references": {}
+	]
 }
