@@ -9,7 +9,7 @@ import { References } from '../src/types/referenceTypes';
 
 const OUTPUT_FILE_LOCATION = './generated/DictionaryMetaSchema.json';
 
-console.log('Generating JSON-Schema Meta Schema...');
+console.log('Generating JSON Schema Meta-Schema...');
 const jsonSchema = zodToJsonSchema(Dictionary, {
 	name: 'Dictionary',
 	definitions: {
@@ -21,7 +21,7 @@ const jsonSchema = zodToJsonSchema(Dictionary, {
 	},
 });
 
-console.log(`Meta Schema generated, saving to '${OUTPUT_FILE_LOCATION}'...`);
+console.log(`Meta-Schema generated, saving to '${OUTPUT_FILE_LOCATION}'...`);
 fs.writeFileSync(OUTPUT_FILE_LOCATION, JSON.stringify(jsonSchema, null, 2));
 
-console.log('Finished Meta Schema generation.');
+console.log('Finished Meta-Schema generation.');
