@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2023 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,136 +17,208 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { DictionaryDocument } from '../models/Dictionary';
+import * as immer from 'immer';
+import { cloneDeep, get, isArray, isObject, omit } from 'lodash';
+import { Values } from '../types/common';
+import { Dictionary, DictionaryMeta, Schema, SchemaRestrictions } from '../types/dictionaryTypes';
+import { ReferenceArray, ReferenceTag, ReferenceValue, References } from '../types/referenceTypes';
 import { InvalidReferenceError } from '../utils/errors';
-import { get, omit, cloneDeep } from 'lodash';
+
+// This is the union of all schema sections that could have reference values
+type SectionsWithReferences = SchemaRestrictions | DictionaryMeta;
+type InputReferenceValues = Values<SectionsWithReferences>;
+type OutputReferenceValues = ReferenceArray | ReferenceValue;
+
+type DiscoveredMap = Map<ReferenceTag, OutputReferenceValues>;
+type VisitedSet = Set<ReferenceTag>;
 
 /**
+ * Logic for replacing references in an individual schema.
  *
- * @param dictionary Dictionary object, matching the mongoose documents
- * @returns Dictionary with replacements made
+ * This is used by the replaceReferences method that replaces references in ALL schemas. By allowing the caller
+ * to provide the discovered/visited objects that are used in the recursive logic we can let the replaceReferences
+ * method reuse the same dictionaries across all schemas.
+ * @param schema
+ * @param references
+ * @param discovered
+ * @param visited
+ * @returns
  */
-export const replaceReferences = (dictionary: DictionaryDocument) => {
-	const { schemas, references } = dictionary;
+const internalReplaceSchemaReferences = (
+	schema: Schema,
+	references: References,
+	discovered: DiscoveredMap,
+	visited: VisitedSet,
+): Schema => {
+	const clone = cloneDeep(schema);
 
-	const updatedSchemas = schemas.map((schema) => replaceSchemaReferences(schema, references));
-	const clone = cloneDeep(dictionary);
-	clone.schemas = updatedSchemas;
-	// Remove references property
-	return omit(clone, 'references');
+	clone.fields.forEach((field) => {
+		// Process Field Meta:
+		if (field.meta !== undefined) {
+			for (const key in field.meta) {
+				const value = field.meta[key];
+				if (isReferenceTag(value)) {
+					const replacement = resolveReference(value, references, discovered, visited);
+					if (isArray(replacement)) {
+						throw new InvalidReferenceError(
+							`Field '${field.name}' has meta field '${key}' with a reference '${value}' that resolves to an array. Meta fields must be string, number, or boolean.`,
+						);
+					}
+				}
+			}
+		}
+		// Process Field Restrictions:
+		if (field.restrictions !== undefined) {
+			// reusable functions to simplify converting
+			const resolveRestriction = (value: undefined | string | string[]) =>
+				resolveAllReferences(value, references, discovered, visited);
+			const resolveNoArrays = (value: undefined | string | string[], restrictionName: string) => {
+				const output = resolveRestriction(value);
+				if (isArray(output)) {
+					throw new InvalidReferenceError(
+						`Field '${field.name}' has restriction '${restrictionName}' with a reference '${value}' that resolves to an array. This restriction must be a string.`,
+					);
+				}
+				return output;
+			};
+			switch (field.valueType) {
+				// Each field type has different allowed restriction types, we need to handle the reference replacement rules carefully
+				// to ensure the output schema adhers to the type rules.
+				// All the checking for undefined prevents us from adding properties with value undefined into the field's ouput JSON
+				case 'string':
+					if (field.restrictions.codeList !== undefined) {
+						field.restrictions.codeList = resolveRestriction(field.restrictions.codeList);
+					}
+					if (field.restrictions.regex !== undefined) {
+						field.restrictions.regex = resolveNoArrays(field.restrictions.regex, 'regex');
+					}
+					if (field.restrictions.script !== undefined) {
+						field.restrictions.script = resolveRestriction(field.restrictions.script);
+					}
+					break;
+				case 'number':
+					if (field.restrictions.script !== undefined) {
+						field.restrictions.script = resolveRestriction(field.restrictions.script);
+					}
+					break;
+				case 'integer':
+					if (field.restrictions.script !== undefined) {
+						field.restrictions.script = resolveRestriction(field.restrictions.script);
+					}
+					break;
+				case 'boolean':
+					break;
+			}
+		}
+	});
+
+	return clone;
+};
+
+const isReferenceTag = (input: unknown): input is ReferenceTag => ReferenceTag.safeParse(input).success;
+const referenceTagToObjectPath = (value: ReferenceTag): string => {
+	try {
+		return value.split('/').slice(1).join('.');
+	} catch (e) {
+		throw new SyntaxError(`Unable to parse value '${value}' as a ReferenceTag.`);
+	}
+};
+
+const resolveAllReferences = (
+	value: undefined | string | string[],
+	references: References,
+	discovered: DiscoveredMap,
+	visited: VisitedSet,
+): string | string[] | undefined => {
+	if (isArray(value)) {
+		return value.flatMap((item) =>
+			isReferenceTag(item) ? resolveReference(item, references, discovered, visited) : item,
+		);
+	}
+	if (isReferenceTag(value)) {
+		return resolveReference(value, references, discovered, visited);
+	} else {
+		return value;
+	}
 };
 
 /**
+ * Recursive handler for getting value associated with a reference tag.
+ * This will throw an error if the tag provided finds no matching references, so ensure that the value provided
+ * to the tag argument is a valid ReferenceTag.
+ *
+ * @param tag
+ * @param references
+ * @param discovered
+ * @param visited
+ * @returns
+ */
+const resolveReference = (
+	tag: ReferenceTag,
+	references: References,
+	discovered: DiscoveredMap,
+	visited: VisitedSet,
+): string | string[] => {
+	const cachedValue = discovered.get(tag);
+	if (cachedValue !== undefined) {
+		return cachedValue;
+	}
+	if (visited.has(tag)) {
+		throw new InvalidReferenceError(`Cyclical references found for '${tag}'`);
+	}
+	visited.add(tag);
+
+	const path = referenceTagToObjectPath(tag);
+	const replacement = get(references, path, undefined);
+	if (replacement === undefined || (isObject(replacement) && !isArray(replacement))) {
+		throw new InvalidReferenceError(`No reference found for provided tag '${tag}'.`);
+	}
+	if (isArray(replacement)) {
+		const output = replacement.flatMap((item) =>
+			isReferenceTag(item) ? resolveReference(item, references, discovered, visited) : item,
+		);
+		discovered.set(tag, output);
+		return output;
+	} else if (isReferenceTag(replacement)) {
+		const output = resolveReference(replacement, references, discovered, visited);
+		discovered.set(tag, output);
+		return output;
+	} else {
+		// must be string now and not a reference tag
+		return replacement;
+	}
+};
+
+/**
+ * Replace all Reference Tags in the restrictions and meta sections of the schema with values retrieved from
+ * the `references` argument.
  * @param schema
  * @param references
  * @return schema clone with references replaced
  */
-export const replaceSchemaReferences = (schema: any, references: any) => {
-	const clone = cloneDeep(schema);
+export const replaceSchemaReferences = (schema: Schema, references: References) =>
+	internalReplaceSchemaReferences(
+		schema,
+		references,
+		new Map<ReferenceTag, OutputReferenceValues>(),
+		new Set<ReferenceTag>(),
+	);
 
-	const referenceSections = ['restrictions', 'meta'];
+/**
+ * Replace all ReferenceTags found in dictionary schemas with the values retrieved from the dictionary's references.
+ * @param dictionary
+ * @returns Clone of dictionary with reference replacements
+ */
+export const replaceReferences = (dictionary: Dictionary): Dictionary => {
+	const references = dictionary.references || {};
+	const discovered: DiscoveredMap = new Map<ReferenceTag, OutputReferenceValues>();
+	const visited: VisitedSet = new Set<ReferenceTag>();
 
-	clone.fields.forEach((field: any) => {
-		referenceSections.forEach((section) => {
-			for (const key in field[section]) {
-				const value = field[section][key];
-				const discovered = new Map<string, any>();
-				const visited = new Set<string>();
-				let replacedValue: any;
-				try {
-					replacedValue = replaceAllReferences(value, references, discovered, visited);
-				} catch (e) {
-					if (e instanceof InvalidReferenceError) {
-						const errorMessage = e.message + `. Schema: ${clone.name} Field: ${field.name} - Path: ${section}.${key}`
-						throw new InvalidReferenceError(errorMessage);
-					} else {
-						throw e; // re-throw the error unchanged
-					}
-				}
-				field[section][key] = replacedValue;
-			}
-		});
+	const updatedDictionary = immer.produce(dictionary, (draft) => {
+		draft.schemas = draft.schemas.map((schema) =>
+			internalReplaceSchemaReferences(schema, references, discovered, visited),
+		);
 	});
-	return clone;
+
+	return omit(updatedDictionary, 'references');
 };
-
-// Check if an object or any of its elements is a reference and try to resolve it, taking into account they can be embedded. 
-// In `discovered` references that have been resolved are kept to avoid reprocessing, and `visited` helps to avoid cycles.
-const replaceAllReferences = (obj: any, references: any, discovered: Map<string, any>, visited: Set<string>): any => {
-	if (isTerminalSymbol(obj)) {
-		// The object could be a terminal symbol already, like a boolean, or a number. In that case, further search is not required.
-		return obj;
-	}
-	if (isReferenceValue(obj)) {
-		// If the object represents a reference, then try to resolve it, either by a direct look up or recursively.
-		return resolveReference(obj, references, discovered, visited);
-	} else if (Array.isArray(obj)) {
-		// If the object is an array, each element could potentially be a reference that ends up being resolved to one or more elements.
-		return replaceReferencesInArray(obj, references, discovered, visited);
-	} else {
-		// `obj` is an object, so each property is replaced with the resolved references
-		return replaceReferencesInObject(obj, references, discovered, visited);
-	}
-}
-
-const referenceToObjectPath = (value: string) => {
-	return value
-		.split('/')
-		.slice(1)
-		.join('.');
-};
-
-const isReferenceValue = (value: string) => {
-	const regex = new RegExp('^#(/[-_A-Za-z0-9]+)+$');
-	return regex.test(value);
-};
-
-// Checks if the symbol is already something that can be replaced in a reference
-const isTerminalSymbol = (value: any): boolean => {
-	return typeof value !== 'object' && !(isReferenceValue(value))
-}
-
-const resolveReference = (reference: string, references: any, discovered: Map<string, any>, visited: Set<string>): any => {
-	if (discovered.has(reference)) {
-		return discovered.get(reference)
-	}
-	const refPath = referenceToObjectPath(reference);
-	const replacement = get(references, refPath, undefined);
-	if (!replacement) {
-		throw new InvalidReferenceError(`Unknown reference found - Reference: ${refPath}`);
-	}
-	if (isTerminalSymbol(replacement)) {
-		discovered.set(reference, replacement);
-		return replacement;
-	} else {
-		if (visited.has(reference)) {
-			throw new InvalidReferenceError(`Cyclical references found - Reference: ${refPath}`);
-		}
-		visited.add(reference);
-		const resolvedReplacement = replaceAllReferences(replacement, references, discovered, visited);
-		discovered.set(reference, resolvedReplacement);
-		return resolvedReplacement;
-	}
-}
-
-const replaceReferencesInArray = (arr: any[], references: any, discovered: Map<string, any>, visited: Set<string>): any[] => {
-	const replacedArray: any[] = [];
-	arr.forEach(element => {
-		const replacedValue = replaceAllReferences(element, references, discovered, visited);
-		if (Array.isArray(replacedValue)) {
-			replacedArray.push(...replacedValue)
-		} else {
-			replacedArray.push(replacedValue)
-		}
-	});
-	return replacedArray;
-}
-
-const replaceReferencesInObject = (obj: any, references: any, discovered: Map<string, any>, visited: Set<string>): any[] => {
-	Object.entries(obj).forEach(([key, value]) => {
-		const replacedValue = replaceAllReferences(value, references, discovered, visited);
-		obj[key] = replacedValue;
-	});
-	return obj;
-}
-

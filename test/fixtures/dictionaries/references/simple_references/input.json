@@ -1,0 +1,44 @@
+{
+	"name": "Test Dictionary",
+	"version": "1.2",
+	"schemas": [
+		{
+			"name": "donor",
+			"description": "Donor Entity",
+			"fields": [
+				{
+					"name": "donor_submitter_id",
+					"displayName": "Submitter Donor ID",
+					"valueType": "string",
+					"description": "Unique identifier for donor; assigned by data provider",
+					"meta": {
+						"key": true
+					},
+					"restrictions": {
+						"regex": "#/ID_REG_EXP"
+					}
+				},
+				{
+					"name": "gender",
+					"valueType": "string",
+					"description": "Donor Biological Sex",
+					"restrictions": {
+						"codeList": ["Male", "Female", "Other"]
+					}
+				},
+				{
+					"name": "ethnicity",
+					"valueType": "string",
+					"description": "Self described",
+					"meta": {
+						"default": "Unknown"
+					},
+					"restrictions": {}
+				}
+			]
+		}
+	],
+	"references": {
+		"ID_REG_EXP": "^[\\w\\s\\W]{5,}$"
+	}
+}

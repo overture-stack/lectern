@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2023 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -139,7 +139,7 @@ describe('CRUD', () => {
 				.request(app)
 				.post('/dictionaries')
 				.send(dictRequest)
-				.end((err: Error, res: Response) => {
+				.end((err: unknown, res) => {
 					expect(err).to.be.null;
 					expect(res).to.have.status(400);
 					setImmediate(done);
@@ -222,6 +222,7 @@ describe('CRUD', () => {
 				.request(app)
 				.get('/dictionaries/' + id)
 				.end((err: Error, res: Response) => {
+					console.log(JSON.stringify(res.body));
 					expect(err).to.be.null;
 					expect(res).to.have.status(200);
 					expect(res.body.references).to.not.exist;
@@ -259,7 +260,7 @@ describe('CRUD', () => {
 		});
 
 		it('Should get a single dictionary by name and version', (done: Mocha.Done) => {
-			const name = 'ARGO Dictionary';
+			const name = 'Test Dictionary';
 			chai
 				.request(app)
 				.get(`/dictionaries/?name=${name}&version=${testVersion}`)
@@ -308,7 +309,7 @@ describe('CRUD', () => {
 				});
 		});
 
-		it('Should successfully update a file in a dictionary and increment to next minor version', (done: Mocha.Done) => {
+		it('Should successfully update a schema in a dictionary and increment to next minor version', (done: Mocha.Done) => {
 			const newFile = require('./fixtures/updateNewFile.json');
 			chai
 				.request(app)
@@ -323,7 +324,7 @@ describe('CRUD', () => {
 				});
 		});
 
-		it('Should successfully update a file in a dictionary and increment to next major version', (done: Mocha.Done) => {
+		it('Should successfully update a schema in a dictionary and increment to next major version', (done: Mocha.Done) => {
 			const newFile = require('./fixtures/updateNewFile.json');
 			chai
 				.request(app)

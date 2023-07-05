@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2023 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -18,7 +18,7 @@
  */
 
 import * as dotenv from 'dotenv';
-import * as vault from '../vault';
+import * as vault from '../external/vault';
 
 export interface AppConfig {
 	// Express
@@ -38,7 +38,7 @@ const buildBootstrapContext = async () => {
 	dotenv.config();
 
 	const vaultEnabled = process.env.VAULT_ENABLED || false;
-	let secrets: any = {};
+	let secrets: Record<string, any> = {};
 	/** Vault */
 	if (vaultEnabled) {
 		if (process.env.VAULT_ENABLED && process.env.VAULT_ENABLED == 'true') {
