@@ -18,9 +18,9 @@
  */
 
 import { Dictionary } from '../../../src/types/dictionaryTypes';
-import primativesSchema from '../schemas/primatives';
+import primitivesSchema from '../schemas/primitives';
 export default {
 	name: 'Simple Dictionary',
 	version: '1.0',
-	schemas: [primativesSchema],
+	schemas: [primitivesSchema],
 } satisfies Dictionary;
