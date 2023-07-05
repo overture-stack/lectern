@@ -53,7 +53,7 @@ router.put('/:dictId/schemas', wrapAsyncAuth(dictionaryController.updateSchema))
 router.get('/:dictId/schemas/:schemaName', wrapAsync(dictionaryController.getSchema));
 
 /**
- * Get Schema from Dictionary
+ * Get Field from Schema from Dictionary
  */
 router.get('/:dictId/schemas/:schemaName/fields/:fieldName', wrapAsync(dictionaryController.getSchemaField));
 
