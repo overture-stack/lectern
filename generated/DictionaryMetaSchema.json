@@ -81,6 +81,10 @@
             "description": {
               "type": "string"
             },
+            "isArray": {
+              "type": "boolean",
+              "default": false
+            },
             "meta": {
               "$ref": "#/definitions/Meta"
             },
@@ -141,6 +145,9 @@
             },
             "description": {
               "$ref": "#/definitions/SchemaField/anyOf/0/properties/description"
+            },
+            "isArray": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/isArray"
             },
             "meta": {
               "$ref": "#/definitions/SchemaField/anyOf/0/properties/meta"
@@ -208,6 +215,9 @@
             "description": {
               "$ref": "#/definitions/SchemaField/anyOf/0/properties/description"
             },
+            "isArray": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/isArray"
+            },
             "meta": {
               "$ref": "#/definitions/SchemaField/anyOf/0/properties/meta"
             },
@@ -273,6 +283,9 @@
             },
             "description": {
               "$ref": "#/definitions/SchemaField/anyOf/0/properties/description"
+            },
+            "isArray": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/isArray"
             },
             "meta": {
               "$ref": "#/definitions/SchemaField/anyOf/0/properties/meta"
