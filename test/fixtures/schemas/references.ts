@@ -17,10 +17,30 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary } from '../../../src/types/dictionaryTypes';
-import primitivesSchema from '../schemas/primitives';
+import { Schema } from '../../../src/types/dictionaryTypes';
+
+export const references = {
+	listA: ['a', 'b', 'c'],
+	scriptA: ["(function validate(inputs) {const {$row, $name, $field} = inputs; return {valid: true, message: 'Ok';}"],
+};
+
 export default {
-	name: 'Simple Dictionary',
-	version: '1.0',
-	schemas: [primitivesSchema],
-} satisfies Dictionary;
+	name: 'with_references',
+	description: 'Schema with references',
+	fields: [
+		{
+			name: 'code_list_as_reference',
+			valueType: 'string',
+			restrictions: {
+				codeList: '#/listA',
+			},
+		},
+		{
+			name: 'script_as_reference',
+			valueType: 'number',
+			restrictions: {
+				script: '#/scriptA',
+			},
+		},
+	],
+} satisfies Schema;

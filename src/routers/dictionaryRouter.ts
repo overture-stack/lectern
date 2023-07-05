@@ -47,4 +47,14 @@ router.post('/:dictId/schemas', wrapAsyncAuth(dictionaryController.addSchema));
  */
 router.put('/:dictId/schemas', wrapAsyncAuth(dictionaryController.updateSchema));
 
+/**
+ * Get Schema from Dictionary
+ */
+router.get('/:dictId/schemas/:schemaName', wrapAsync(dictionaryController.getSchema));
+
+/**
+ * Get Field from Schema from Dictionary
+ */
+router.get('/:dictId/schemas/:schemaName/fields/:fieldName', wrapAsync(dictionaryController.getSchemaField));
+
 export default router;

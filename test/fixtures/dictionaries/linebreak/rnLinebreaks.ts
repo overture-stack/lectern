@@ -17,10 +17,25 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary } from '../../../src/types/dictionaryTypes';
-import primitivesSchema from '../schemas/primitives';
-export default {
-	name: 'Simple Dictionary',
+import { Dictionary } from '../../../../src/types/dictionaryTypes';
+
+const output: Dictionary = {
+	name: 'Line Breaks',
 	version: '1.0',
-	schemas: [primitivesSchema],
-} satisfies Dictionary;
+	schemas: [
+		{
+			name: 'sample',
+			description: 'Sample to test repeated RN line breaks',
+			fields: [
+				{
+					name: 'field',
+					valueType: 'string',
+					restrictions: {
+						script: '(function(){\r\nreturn true;\r\n\r\n\r\n\r\n}())',
+					},
+				},
+			],
+		},
+	],
+};
+export default output;

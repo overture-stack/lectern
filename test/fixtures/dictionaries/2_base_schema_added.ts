@@ -19,8 +19,10 @@
 
 import { Dictionary } from '../../../src/types/dictionaryTypes';
 import primitivesSchema from '../schemas/primitives';
-export default {
+import additionalSchema from '../schemas/schemaChangesBase';
+const dictionary: Dictionary = {
 	name: 'Simple Dictionary',
-	version: '1.0',
-	schemas: [primitivesSchema],
-} satisfies Dictionary;
+	version: '2.0',
+	schemas: [primitivesSchema, additionalSchema],
+};
+export default dictionary;

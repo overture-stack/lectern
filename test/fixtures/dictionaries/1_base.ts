@@ -17,20 +17,11 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import mongoose from 'mongoose';
-import { Dictionary } from '../types/dictionaryTypes';
-
-export const DictionaryModel = mongoose.model(
-	'Dictionary',
-	new mongoose.Schema<Dictionary>(
-		{
-			name: { type: String, index: true },
-			version: String,
-			description: String,
-			meta: Object,
-			references: Object,
-			schemas: Array,
-		},
-		{ timestamps: true },
-	),
-);
+import { Dictionary } from '../../../src/types/dictionaryTypes';
+import primitivesSchema from '../schemas/primitives';
+const dictionary: Dictionary = {
+	name: 'Simple Dictionary',
+	version: '1.0',
+	schemas: [primitivesSchema],
+};
+export default dictionary;

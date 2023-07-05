@@ -84,13 +84,13 @@
 				"tags": ["Dictionaries"]
 			}
 		},
-		"/dictionaries/{_id}": {
+		"/dictionaries/{dictionaryId}": {
 			"get": {
 				"summary": "Get a single dictionary",
 				"description": "Get single dictionary stored in lectern by mongo id",
 				"parameters": [
 					{
-						"name": "_id",
+						"name": "dictionaryId",
 						"in": "path",
 						"required": true,
 						"schema": {
@@ -114,13 +114,13 @@
 				"tags": ["Dictionaries"]
 			}
 		},
-		"/dictionaries/{_id}/schemas": {
+		"/dictionaries/{dictionaryId}/schemas": {
 			"post": {
-				"summary": "Update a dictionary by adding a new file schema",
-				"description": "Update a dictionary to the next major version number by adding a new file schema that passes validation against the meta schema. ",
+				"summary": "Add a schema to an existing dictionary",
+				"description": "Update a dictionary by adding a new schema. The dictionary will be updated to the next major version number. ",
 				"parameters": [
 					{
-						"name": "_id",
+						"name": "dictionaryId",
 						"in": "path",
 						"required": true,
 						"schema": {
@@ -151,11 +151,11 @@
 				"tags": ["Dictionaries"]
 			},
 			"put": {
-				"summary": "Update an existing file schema that exists in a dictionary",
-				"description": "Updates an existing file schema in a dictionary and updates the version",
+				"summary": "Update an existing schema in a dictionary",
+				"description": "Updates an existing file schema in a dictionary and updates the version to the next minor version.",
 				"parameters": [
 					{
-						"name": "_id",
+						"name": "dictionaryId",
 						"in": "path",
 						"required": true,
 						"schema": {
@@ -186,6 +186,88 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/Dictionary"
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Dictionaries"]
+			}
+		},
+		"/dictionaries/{dictionaryId}/schemas/{schemaName}": {
+			"get": {
+				"summary": "Get a single schema",
+				"description": "Get all details of a schema from a specific dictionary. Results will have references replaced.",
+				"parameters": [
+					{
+						"name": "dictionaryId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "schemaName",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Schema"
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Dictionaries"]
+			}
+		},
+		"/dictionaries/{dictionaryId}/schemas/{schemaName}/fields/{fieldName}": {
+			"get": {
+				"summary": "Get a single field",
+				"description": "Get all details of a field, found in a named schema from a specific dictionary. Results will have references replaced.",
+				"parameters": [
+					{
+						"name": "dictionaryId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "schemaName",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "fieldName",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Field"
 								}
 							}
 						}
@@ -285,7 +367,12 @@
 				"properties": {
 					"name": {
 						"type": "string",
-						"description": "The name of the parameter"
+						"description": "Name of the dictionary"
+					},
+					"description": {
+						"type": "string",
+						"required": false,
+						"description": "Description of the schema"
 					},
 					"version": {
 						"type": "string",
@@ -295,8 +382,48 @@
 						"type": "array",
 						"description": "Set of file dictionaries describing the schemas for this dictionary version",
 						"items": {
-							"type": "object"
+							"$ref": "#/components/schemas/Schema"
 						}
+					}
+				}
+			},
+			"Schema": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "Name of the Schema"
+					},
+					"description": {
+						"type": "string",
+						"description": "Description of the schema"
+					},
+					"fields": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Field"
+						}
+					}
+				}
+			},
+			"Field": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "Name of the Field"
+					},
+					"description": {
+						"type": "string",
+						"description": "Description of the field"
+					},
+					"meta": {
+						"type": "object",
+						"description": "Custom properties describing context specific details for the field"
+					},
+					"restrictions": {
+						"type": "object",
+						"description": "Rules enforced by lectern validation clients"
 					}
 				}
 			},
@@ -323,7 +450,7 @@
 			"DictionaryListEntry": {
 				"type": "object",
 				"properties": {
-					"_id": {
+					"dictionaryId": {
 						"type": "string",
 						"description": "mongo generated object id"
 					},

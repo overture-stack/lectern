@@ -17,10 +17,14 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary } from '../../../src/types/dictionaryTypes';
-import primitivesSchema from '../schemas/primitives';
+import { Schema } from '../../../src/types/dictionaryTypes';
+
 export default {
-	name: 'Simple Dictionary',
-	version: '1.0',
-	schemas: [primitivesSchema],
-} satisfies Dictionary;
+	name: 'schema_tests',
+	description: 'Used to test adding a schema. Version 1.',
+	fields: [
+		{ name: 'static_field', valueType: 'integer' },
+		{ name: 'updated_field', valueType: 'boolean' },
+		{ name: 'removed_field', valueType: 'number' },
+	],
+} satisfies Schema;

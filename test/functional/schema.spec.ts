@@ -17,10 +17,19 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary } from '../../../src/types/dictionaryTypes';
-import primitivesSchema from '../schemas/primitives';
-export default {
-	name: 'Simple Dictionary',
-	version: '1.0',
-	schemas: [primitivesSchema],
-} satisfies Dictionary;
+import { expect } from 'chai';
+import { normalizeSchema } from '../../src/services/schemaService';
+import DICTIONARY_RN_LINEBREAKS from '../fixtures/dictionaries/linebreak/rnLinebreaks';
+import DICTIONARY_N_LINEBREAKS from '../fixtures/dictionaries/linebreak/nLinebreaks';
+import DICTIONARY_NORMALIZED_LINEBREAKS from '../fixtures/dictionaries/linebreak/normalizedLinebreaks';
+
+describe('New Line symbol normalization', () => {
+	it('Should convert \\r\\n to \\n in scripts', () => {
+		const normalizedSchema = normalizeSchema(DICTIONARY_N_LINEBREAKS.schemas[0]);
+		expect(normalizedSchema).to.deep.eq(DICTIONARY_NORMALIZED_LINEBREAKS.schemas[0]);
+	});
+	it('Should not alter already formatted files', () => {
+		const normalizedSchema = normalizeSchema(DICTIONARY_RN_LINEBREAKS.schemas[0]);
+		expect(normalizedSchema).to.deep.eq(DICTIONARY_NORMALIZED_LINEBREAKS.schemas[0]);
+	});
+});

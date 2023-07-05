@@ -23,6 +23,7 @@ import { BadRequestError } from '../utils/errors';
 import { replaceReferences } from '../utils/references';
 
 import { Dictionary, Schema } from '../types/dictionaryTypes';
+import { NotFoundError } from '../utils/errors';
 
 export const listDictionaries = async (
 	req: Request<{}, {}, {}, { name: string; version: string; references: boolean }>,
@@ -33,7 +34,7 @@ export const listDictionaries = async (
 	const showReferences = req.query.references || false;
 
 	if (name && version) {
-		const dict = await dictionaryService.findOne(name, version);
+		const dict = await dictionaryService.getOneByNameAndVersion(name, version);
 		const response = showReferences ? dict : replaceReferences(dict);
 		res.status(200).send([response]);
 	} else {
@@ -43,7 +44,10 @@ export const listDictionaries = async (
 	}
 };
 
-export const getDictionary = async (req: Request, res: Response) => {
+export const getDictionary = async (
+	req: Request<{ dictId: string }, {}, {}, Partial<{ references: boolean }>, {}>,
+	res: Response,
+) => {
 	const showReferences = req.query.references || false;
 
 	const dictId = req.params.dictId;
@@ -51,7 +55,7 @@ export const getDictionary = async (req: Request, res: Response) => {
 		throw new BadRequestError('Request is missing `dictId` parameter.');
 	}
 
-	const dict = await dictionaryService.getOne(dictId);
+	const dict = await dictionaryService.getOneById(dictId);
 	const response = showReferences ? dict : replaceReferences(dict);
 	res.status(200).send(response);
 };
@@ -85,4 +89,61 @@ export const updateSchema = async (req: Request, res: Response) => {
 	const major = req.query.major && req.query.major == 'true' ? true : false;
 	const dict = await dictionaryService.updateSchema(dictId, requestSchema, major);
 	res.status(200).send(dict);
+};
+
+export const getSchema = async (req: Request<{ dictId: string; schemaName: string }, {}, {}, {}>, res: Response) => {
+	const { dictId, schemaName } = req.params;
+	if (!dictId) {
+		throw new BadRequestError('Request is missing `dictId` parameter.');
+	}
+	if (!schemaName) {
+		throw new BadRequestError('Request is missing `schemaName` parameter.');
+	}
+
+	const dictionary = await dictionaryService.getOneById(dictId);
+	const formattedDictionary = replaceReferences(dictionary);
+
+	const schema = formattedDictionary.schemas.find((schema) => schema.name === schemaName);
+
+	if (!schema) {
+		throw new NotFoundError(
+			`Dictionary '${dictionary.name} ${dictionary.version}' does not have a schema named '${schemaName}'`,
+		);
+	}
+	res.send(schema);
+};
+
+export const getSchemaField = async (
+	req: Request<{ dictId: string; schemaName: string; fieldName: string }, {}, {}, {}>,
+	res: Response,
+) => {
+	const { dictId, schemaName, fieldName } = req.params;
+	if (!dictId) {
+		throw new BadRequestError('Request is missing `dictId` parameter.');
+	}
+	if (!schemaName) {
+		throw new BadRequestError('Request is missing `schemaName` parameter.');
+	}
+	if (!fieldName) {
+		throw new BadRequestError('Request is missing `fieldName` parameter.');
+	}
+
+	const dictionary = await dictionaryService.getOneById(dictId);
+	const formattedDictionary = replaceReferences(dictionary);
+
+	const schema = formattedDictionary.schemas.find((schema) => schema.name === schemaName);
+
+	if (!schema) {
+		throw new NotFoundError(
+			`Dictionary '${dictionary.name} ${dictionary.version}' does not have a schema named '${schemaName}'`,
+		);
+	}
+
+	const field = schema.fields.find((field) => field.name === fieldName);
+	if (!field) {
+		throw new NotFoundError(
+			`Schema '${schemaName}' from Dictionary '${dictionary.name} ${dictionary.version}' does not have a field named '${fieldName}'`,
+		);
+	}
+	res.send(field);
 };
