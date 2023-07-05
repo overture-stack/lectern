@@ -225,6 +225,7 @@ describe('Dictionary Routes', () => {
 				.request(app)
 				.get('/dictionaries/' + id)
 				.end((err: Error, res: Response) => {
+					console.log(JSON.stringify(res.body));
 					expect(err).to.be.null;
 					expect(res).to.have.status(200);
 					expect(res.body.references).to.not.exist;

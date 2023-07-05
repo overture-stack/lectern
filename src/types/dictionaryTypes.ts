@@ -29,7 +29,7 @@ export type NameString = zod.infer<typeof NameString>;
 
 export const Integer = zod.number().int();
 
-// Unlike references, meta is not nested and only accepts primatives or arrays of primatives as values.
+// Unlike references, meta is not nested and accepts as values only primitives or arrays of them.
 export const DictionaryMetaValue = zod.union([zod.string(), zod.number(), zod.boolean()]);
 export type DictionaryMetaValue = zod.infer<typeof DictionaryMetaValue>;
 export const DictionaryMeta = zod.record(DictionaryMetaValue);

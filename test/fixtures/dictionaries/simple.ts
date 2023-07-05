@@ -16,45 +16,11 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import { Router } from 'express';
-import * as dictionaryController from '../controllers/dictionaryController';
-import { wrapAsync, wrapAsyncAuth } from './wrappers';
 
-const router = Router();
-
-/**
- * List Dictionaries
- */
-router.get('', wrapAsync(dictionaryController.listDictionaries));
-
-/**
- * Create Dictionary
- */
-router.post('', wrapAsyncAuth(dictionaryController.createDictionary));
-
-/**
- * Get Dictionary by ID
- */
-router.get('/:dictId', wrapAsync(dictionaryController.getDictionary));
-
-/**
- * Add Schema to Dictionary
- */
-router.post('/:dictId/schemas', wrapAsyncAuth(dictionaryController.addSchema));
-
-/**
- * Update Schema for Dictionary
- */
-router.put('/:dictId/schemas', wrapAsyncAuth(dictionaryController.updateSchema));
-
-/**
- * Get Schema from Dictionary
- */
-router.get('/:dictId/schemas/:schemaName', wrapAsync(dictionaryController.getSchema));
-
-/**
- * Get Schema from Dictionary
- */
-router.get('/:dictId/schemas/:schemaName/fields/:fieldName', wrapAsync(dictionaryController.getSchemaField));
-
-export default router;
+import { Dictionary } from '../../../src/types/dictionaryTypes';
+import primativesSchema from '../schemas/primatives';
+export default {
+	name: 'Simple Dictionary',
+	version: '1.0',
+	schemas: [primativesSchema],
+} satisfies Dictionary;
