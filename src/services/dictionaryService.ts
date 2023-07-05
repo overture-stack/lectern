@@ -106,7 +106,7 @@ export const listAll = async (): Promise<Pick<Dictionary, 'name' | 'description'
 
 /**
  * Creates a new data dictionary version with included schemas, verifying version doesn't exist
- * and that the schemas are valid against the meta schema.
+ * and that the schemas are valid.
  * @param newDict The new data dictionary containing all of the schemas
  */
 export const create = async (newDict: Dictionary): Promise<Dictionary> => {

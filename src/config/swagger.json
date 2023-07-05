@@ -116,8 +116,8 @@
 		},
 		"/dictionaries/{dictionaryId}/schemas": {
 			"post": {
-				"summary": "Update a dictionary by adding a new file schema",
-				"description": "Update a dictionary to the next major version number by adding a new file schema that passes validation against the meta schema. ",
+				"summary": "Add a schema to an existing dictionary",
+				"description": "Update a dictionary by adding a new schema. The dictionary will be updated to the next major version number. ",
 				"parameters": [
 					{
 						"name": "dictionaryId",
@@ -151,8 +151,8 @@
 				"tags": ["Dictionaries"]
 			},
 			"put": {
-				"summary": "Update an existing file schema that exists in a dictionary",
-				"description": "Updates an existing file schema in a dictionary and updates the version",
+				"summary": "Update an existing schema in a dictionary",
+				"description": "Updates an existing file schema in a dictionary and updates the version to the next minor version.",
 				"parameters": [
 					{
 						"name": "dictionaryId",
