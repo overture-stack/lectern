@@ -213,12 +213,27 @@ export const Schema = zod
 		description: zod.string().optional(),
 		fields: zod.array(SchemaField).min(1),
 		meta: DictionaryMeta.optional(),
+		restrictions: zod
+			.object({
+				uniqueKey: zod.string().array(),
+			})
+			.partial()
+			.optional(),
 	})
 	.strict()
 	.refine(
 		(schema) => allUnique(schema.fields.map((field) => field.name)),
 		'All fields in the schema must have a unique name.',
-	);
+	)
+	.refine((schema) => {
+		if (schema.restrictions && schema.restrictions.uniqueKey) {
+			return schema.restrictions.uniqueKey
+				.map((requiredField) => schema.fields.some((field) => field.name === requiredField))
+				.every((requiredField) => requiredField);
+		} else {
+			return true;
+		}
+	}, "A field listed in schema restrictions.uniqueKey is not included the schema's fields");
 export type Schema = zod.infer<typeof Schema>;
 
 /* ********** *

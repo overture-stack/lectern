@@ -143,6 +143,84 @@ describe('Dictionary Types', () => {
 			};
 			expect(Schema.safeParse(schema).success).false;
 		});
+		it('Must have at least one field', () => {
+			const sharedName = 'schemaName';
+			const fieldA: SchemaField = {
+				name: sharedName,
+				valueType: 'boolean',
+			};
+			const schemaFail: Schema = {
+				name: 'asdf',
+				fields: [],
+			};
+			const schemaPass: Schema = {
+				name: 'asdf',
+				fields: [fieldA],
+			};
+			expect(Schema.safeParse(schemaFail).success).false;
+			expect(Schema.safeParse(schemaPass).success).true;
+		});
+		it('Can have uniqueKey restriction(s)', () => {
+			const sharedName = 'schemaName';
+			const fieldA: SchemaField = {
+				name: sharedName,
+				valueType: 'boolean',
+			};
+
+			const schema: Schema = {
+				name: 'asdf',
+				fields: [fieldA],
+				restrictions: {
+					uniqueKey: [sharedName],
+				},
+			};
+			expect(Schema.safeParse(schema).success).true;
+		});
+		it('Is invalid with uniqueKey restriction on field it does not have', () => {
+			const sharedNameA = 'sharedNameA';
+			const sharedNameB = 'schemaNameB';
+			const fieldPass: SchemaField = {
+				name: sharedNameA,
+				valueType: 'boolean',
+			};
+			const fieldFail: SchemaField = {
+				name: 'qwerty',
+				valueType: 'string',
+			};
+
+			const schemaSharedA: Schema = {
+				name: 'asdf',
+				fields: [fieldPass],
+				restrictions: {
+					uniqueKey: [sharedNameA],
+				},
+			};
+			const schemaFailSingle: Schema = {
+				name: 'asdf',
+				fields: [fieldFail],
+				restrictions: {
+					uniqueKey: [sharedNameA],
+				},
+			};
+			const schemaFailMulti: Schema = {
+				name: 'asdf',
+				fields: [fieldPass],
+				restrictions: {
+					uniqueKey: [sharedNameA, sharedNameB],
+				},
+			};
+			const schemaPassMultipleFields: Schema = {
+				name: 'asdf',
+				fields: [fieldPass, fieldFail],
+				restrictions: {
+					uniqueKey: [sharedNameA],
+				},
+			};
+			expect(Schema.safeParse(schemaSharedA).success).true;
+			expect(Schema.safeParse(schemaFailSingle).success).false;
+			expect(Schema.safeParse(schemaFailMulti).success).false;
+			expect(Schema.safeParse(schemaPassMultipleFields).success).true;
+		});
 	});
 	describe('Dictionary', () => {
 		it("Can't have repeated schema names", () => {
