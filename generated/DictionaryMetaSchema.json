@@ -1,6 +1,40 @@
 {
   "$ref": "#/definitions/Dictionary",
   "definitions": {
+    "ReferenceTag": {
+      "type": "string",
+      "pattern": "^#(\\/[-_A-Za-z0-9]+)+$"
+    },
+    "ReferenceArray": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "#/definitions/ReferenceTag"
+          }
+        ]
+      },
+      "minItems": 1
+    },
+    "References": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/ReferenceArray/items/anyOf/0"
+          },
+          {
+            "$ref": "#/definitions/ReferenceArray"
+          },
+          {
+            "$ref": "#/definitions/References"
+          }
+        ]
+      }
+    },
     "Meta": {
       "type": "object",
       "additionalProperties": {
@@ -15,34 +49,6 @@
       "type": "string",
       "minLength": 1,
       "pattern": "^[^.]+$"
-    },
-    "References": {
-      "type": "object",
-      "additionalProperties": {
-        "anyOf": [
-          {
-            "type": "string"
-          },
-          {
-            "type": "array",
-            "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/References/additionalProperties/anyOf/0"
-                },
-                {
-                  "type": "string",
-                  "pattern": "^#(\\/[-_A-Za-z0-9]+)+$"
-                }
-              ]
-            },
-            "minItems": 1
-          },
-          {
-            "$ref": "#/definitions/References"
-          }
-        ]
-      }
     },
     "Schema": {
       "type": "object",
@@ -104,7 +110,7 @@
                       }
                     },
                     {
-                      "$ref": "#/definitions/References/additionalProperties/anyOf/1/items/anyOf/1"
+                      "$ref": "#/definitions/ReferenceTag"
                     }
                   ]
                 },
@@ -120,12 +126,15 @@
                       }
                     },
                     {
-                      "$ref": "#/definitions/References/additionalProperties/anyOf/1/items/anyOf/1"
+                      "$ref": "#/definitions/ReferenceTag"
                     }
                   ]
                 },
                 "regex": {
                   "type": "string"
+                },
+                "unique": {
+                  "type": "boolean"
                 }
               },
               "additionalProperties": false
@@ -174,7 +183,7 @@
                       "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/properties/script/anyOf/0"
                     },
                     {
-                      "$ref": "#/definitions/References/additionalProperties/anyOf/1/items/anyOf/1"
+                      "$ref": "#/definitions/ReferenceTag"
                     }
                   ]
                 },
@@ -195,6 +204,9 @@
                     }
                   },
                   "additionalProperties": false
+                },
+                "unique": {
+                  "type": "boolean"
                 }
               },
               "additionalProperties": false
@@ -243,7 +255,7 @@
                       "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/properties/script/anyOf/0"
                     },
                     {
-                      "$ref": "#/definitions/References/additionalProperties/anyOf/1/items/anyOf/1"
+                      "$ref": "#/definitions/ReferenceTag"
                     }
                   ]
                 },
@@ -264,6 +276,9 @@
                     }
                   },
                   "additionalProperties": false
+                },
+                "unique": {
+                  "type": "boolean"
                 }
               },
               "additionalProperties": false
@@ -298,6 +313,19 @@
               "type": "object",
               "properties": {
                 "required": {
+                  "type": "boolean"
+                },
+                "script": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/properties/script/anyOf/0"
+                    },
+                    {
+                      "$ref": "#/definitions/ReferenceTag"
+                    }
+                  ]
+                },
+                "unique": {
                   "type": "boolean"
                 }
               },
