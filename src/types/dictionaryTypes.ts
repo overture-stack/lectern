@@ -207,6 +207,16 @@ export type SchemaRestrictions = SchemaField['restrictions'];
 /* ****** *
  * Schema *
  * ****** */
+export const ForeignKeyRestrictionMapping = zod.object({
+	schema: NameString,
+	mappings: zod.array(
+		zod.object({
+			local: NameString,
+			foreign: NameString,
+		}),
+	),
+});
+
 export const Schema = zod
 	.object({
 		name: NameString,
@@ -215,7 +225,8 @@ export const Schema = zod
 		meta: DictionaryMeta.optional(),
 		restrictions: zod
 			.object({
-				uniqueKey: zod.string().array(),
+				foreignKey: zod.array(ForeignKeyRestrictionMapping).min(1),
+				uniqueKey: zod.array(NameString).min(1),
 			})
 			.partial()
 			.optional(),
@@ -233,7 +244,29 @@ export const Schema = zod
 		} else {
 			return true;
 		}
-	}, "A field listed in schema restrictions.uniqueKey is not included the schema's fields");
+	}, "A field listed in schema restrictions.uniqueKey is not included the schema's fields")
+	.superRefine((schema, ctx) => {
+		const fieldNames = schema.fields.map((field) => field.name);
+		if (schema.restrictions?.foreignKey) {
+			schema.restrictions.foreignKey.forEach((fkRestriction) => {
+				if (fkRestriction.schema === schema.name) {
+					ctx.addIssue({
+						code: zod.ZodIssueCode.custom,
+						message: `Schema '${schema.name}' has a foreignKey restriction that references itself. ForeignKey restrictions must reference another schema.`,
+					});
+				} else {
+					fkRestriction.mappings.forEach((fkMapping) => {
+						if (!fieldNames.includes(fkMapping.local)) {
+							ctx.addIssue({
+								code: zod.ZodIssueCode.custom,
+								message: `Schema '${schema.name}' has a foreign key restriction with local field '${fkMapping.local}' that does not exist in the schema's fields.`,
+							});
+						}
+					});
+				}
+			});
+		}
+	});
 export type Schema = zod.infer<typeof Schema>;
 
 /* ********** *
@@ -259,5 +292,49 @@ export const Dictionary = zod
 		(dictionary) => allUnique(dictionary.schemas.map((schema) => schema.name)),
 		// TODO: Can improve uniqueness check error by providing list of duplicate field names.
 		'All schemas in the dictionary must have a unique name.',
-	);
+	)
+	.superRefine((dictionary, ctx) => {
+		/**
+		 * Enforce schema foreignKey restrictions:
+		 * 1. make sure that the foreign schema referenced in all provided foreignKey restrictions have matching schemas in the dicitonary
+		 * 2. make sure all foreign fields listed in foreignKey restrictions have matching fields in the specified foreign schemas
+		 */
+
+		// List of all schemas and all their fields, for cross reference from the foreignKey checks
+		const schemaNames = dictionary.schemas.map((schema) => schema.name);
+		const schemaFieldMap: Record<string, string[]> = dictionary.schemas.reduce<Record<string, string[]>>(
+			(acc, schema) => {
+				const fieldNames = schema.fields.map((field) => field.name);
+				return { ...acc, [schema.name]: fieldNames };
+			},
+			{},
+		);
+
+		// Loop through each schema and apply checks if they have a foreignKey restriction
+		dictionary.schemas.forEach((schema) => {
+			if (schema.restrictions?.foreignKey) {
+				// We have a foreign key restriction, now we will now check its properties all reference existing schemas and fields
+
+				schema.restrictions.foreignKey.forEach((fkRestriction) => {
+					if (!schemaNames.includes(fkRestriction.schema)) {
+						// foreign schema name is not included in this dictionary, add error to context
+						ctx.addIssue({
+							code: zod.ZodIssueCode.custom,
+							message: `Schema ForeignKey restriction references a schema name that is not included in the dictionary. The schema '${schema.name}' references foreign schema name '${fkRestriction.schema}'.`,
+						});
+					} else {
+						fkRestriction.mappings.forEach((fkMapping) => {
+							if (!schemaFieldMap[fkRestriction.schema]?.includes(fkMapping.foreign)) {
+								// foreign field does not exist on foreign schema
+								ctx.addIssue({
+									code: zod.ZodIssueCode.custom,
+									message: `Schema ForeignKey restriction references a foreign field that does not exist on the foreign schema. The schema '${schema.name}' references the foreign schema named '${fkRestriction.schema}' with foreign field '${fkMapping.foreign}'.`,
+								});
+							}
+						});
+					}
+				});
+			}
+		});
+	});
 export type Dictionary = zod.infer<typeof Dictionary>;
