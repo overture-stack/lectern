@@ -331,6 +331,19 @@ export const Dictionary = zod
 									message: `Schema ForeignKey restriction references a foreign field that does not exist on the foreign schema. The schema '${schema.name}' references the foreign schema named '${fkRestriction.schema}' with foreign field '${fkMapping.foreign}'.`,
 								});
 							}
+
+							// ensure mapped fields are the same type
+							const localFieldType = schema.fields.find((field) => field.name === fkMapping.local)?.valueType;
+							const foreignFieldType = dictionary.schemas
+								.find((s) => s.name === fkRestriction.schema)
+								?.fields.find((field) => field.name === fkMapping.foreign)?.valueType;
+							if (localFieldType && foreignFieldType && localFieldType !== foreignFieldType) {
+								//dont match undefined === undefined. Missing field validations are output elsewhere so don't check that here.
+								ctx.addIssue({
+									code: zod.ZodIssueCode.custom,
+									message: `Schema ForeignKey restriction maps two fields of different types: the restriction in schema '${schema}' maps local field '${fkMapping.local}' of type '${localFieldType}' to foreign schema '${fkRestriction.schema}' and field '${fkMapping.foreign}' of type '${foreignFieldType}'.`,
+								});
+							}
 						});
 					}
 				});

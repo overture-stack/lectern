@@ -430,6 +430,48 @@ describe('Dictionary Types', () => {
 				};
 				expect(Dictionary.safeParse(dictionary).success).false;
 			});
+			it('Fails when mapped between fields of different types', () => {
+				const foreignSchemaName = 'foreignSchema';
+				const foreignFieldName = 'foreignField';
+				const foreignField: SchemaField = {
+					name: foreignFieldName,
+					valueType: 'string',
+				};
+				const foreignSchema: Schema = {
+					name: foreignSchemaName,
+					fields: [foreignField],
+				};
+
+				const localFieldName = 'localField';
+				const localField: SchemaField = {
+					name: localFieldName,
+					valueType: 'boolean',
+				};
+				const localSchema: Schema = {
+					name: 'localSchema',
+					fields: [localField],
+					restrictions: {
+						foreignKey: [
+							{
+								schema: foreignSchemaName,
+								mappings: [
+									{
+										local: localFieldName,
+										foreign: foreignFieldName,
+									},
+								],
+							},
+						],
+					},
+				};
+
+				const dictionary: Dictionary = {
+					name: 'dictionaryName',
+					schemas: [localSchema, foreignSchema],
+					version: '1.0',
+				};
+				expect(Dictionary.safeParse(dictionary).success).false;
+			});
 		});
 	});
 });
