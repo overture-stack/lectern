@@ -5,7 +5,7 @@
 import fs from 'fs';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { Dictionary, DictionaryMeta, Schema, SchemaField, NameString } from '../src/types/dictionaryTypes';
-import { References } from '../src/types/referenceTypes';
+import { References, ReferenceArray, ReferenceTag } from '../src/types/referenceTypes';
 
 const OUTPUT_FILE_LOCATION = './generated/DictionaryMetaSchema.json';
 
@@ -13,9 +13,11 @@ console.log('Generating JSON Schema Meta-Schema...');
 const jsonSchema = zodToJsonSchema(Dictionary, {
 	name: 'Dictionary',
 	definitions: {
+		ReferenceTag,
+		ReferenceArray,
+		References,
 		Meta: DictionaryMeta,
 		Name: NameString,
-		References,
 		Schema,
 		SchemaField,
 	},

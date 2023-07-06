@@ -117,6 +117,7 @@ export const StringFieldRestrictions = zod
 		required: zod.boolean(),
 		script: zod.union([RestrictionScript, ReferenceTag]),
 		regex: RestrictionRegex,
+		unique: zod.boolean(),
 	})
 	.partial();
 export type StringFieldRestrictions = zod.infer<typeof StringFieldRestrictions>;
@@ -127,6 +128,7 @@ export const NumberFieldRestrictions = zod
 		required: zod.boolean(),
 		script: zod.union([RestrictionScript, ReferenceTag]),
 		range: RestrictionNumberRange,
+		unique: zod.boolean(),
 	})
 	.partial();
 export type NumberFieldRestrictions = zod.infer<typeof NumberFieldRestrictions>;
@@ -137,11 +139,14 @@ export const IntegerFieldRestrictions = zod
 		required: zod.boolean(),
 		script: zod.union([RestrictionScript, ReferenceTag]),
 		range: RestrictionIntegerRange,
+		unique: zod.boolean(),
 	})
 	.partial();
 export type IntegerFieldRestrictions = zod.infer<typeof IntegerFieldRestrictions>;
 
-export const BooleanFieldRestrictions = zod.object({ required: zod.boolean() }).partial();
+export const BooleanFieldRestrictions = zod
+	.object({ required: zod.boolean(), script: zod.union([RestrictionScript, ReferenceTag]), unique: zod.boolean() })
+	.partial();
 export type BooleanFieldRestrictions = zod.infer<typeof BooleanFieldRestrictions>;
 
 /* ***************** *
@@ -212,7 +217,6 @@ export const Schema = zod
 	.strict()
 	.refine(
 		(schema) => allUnique(schema.fields.map((field) => field.name)),
-		// TODO: Can improve uniqueness check error by providing list of duplicate field names.
 		'All fields in the schema must have a unique name.',
 	);
 export type Schema = zod.infer<typeof Schema>;
