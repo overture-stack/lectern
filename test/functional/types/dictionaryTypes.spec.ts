@@ -160,66 +160,153 @@ describe('Dictionary Types', () => {
 			expect(Schema.safeParse(schemaFail).success).false;
 			expect(Schema.safeParse(schemaPass).success).true;
 		});
-		it('Can have uniqueKey restriction(s)', () => {
-			const sharedName = 'schemaName';
-			const fieldA: SchemaField = {
-				name: sharedName,
-				valueType: 'boolean',
-			};
+		describe('Schema Restrictions', () => {
+			it('uniqueKey - Can have restriction', () => {
+				const sharedName = 'schemaName';
+				const fieldA: SchemaField = {
+					name: sharedName,
+					valueType: 'boolean',
+				};
+				const schema: Schema = {
+					name: 'asdf',
+					fields: [fieldA],
+					restrictions: {
+						uniqueKey: [sharedName],
+					},
+				};
+				expect(Schema.safeParse(schema).success).true;
+			});
+			it('uniqueKey - Schema must have all fields listed', () => {
+				const sharedNameA = 'sharedNameA';
+				const sharedNameB = 'schemaNameB';
+				const fieldPass: SchemaField = {
+					name: sharedNameA,
+					valueType: 'boolean',
+				};
+				const fieldFail: SchemaField = {
+					name: 'qwerty',
+					valueType: 'string',
+				};
 
-			const schema: Schema = {
-				name: 'asdf',
-				fields: [fieldA],
-				restrictions: {
-					uniqueKey: [sharedName],
-				},
-			};
-			expect(Schema.safeParse(schema).success).true;
-		});
-		it('Is invalid with uniqueKey restriction on field it does not have', () => {
-			const sharedNameA = 'sharedNameA';
-			const sharedNameB = 'schemaNameB';
-			const fieldPass: SchemaField = {
-				name: sharedNameA,
-				valueType: 'boolean',
-			};
-			const fieldFail: SchemaField = {
-				name: 'qwerty',
-				valueType: 'string',
-			};
+				const schemaSharedA: Schema = {
+					name: 'asdf',
+					fields: [fieldPass],
+					restrictions: {
+						uniqueKey: [sharedNameA],
+					},
+				};
+				const schemaFailSingle: Schema = {
+					name: 'asdf',
+					fields: [fieldFail],
+					restrictions: {
+						uniqueKey: [sharedNameA],
+					},
+				};
+				const schemaFailMulti: Schema = {
+					name: 'asdf',
+					fields: [fieldPass],
+					restrictions: {
+						uniqueKey: [sharedNameA, sharedNameB],
+					},
+				};
+				const schemaPassMultipleFields: Schema = {
+					name: 'asdf',
+					fields: [fieldPass, fieldFail],
+					restrictions: {
+						uniqueKey: [sharedNameA],
+					},
+				};
+				expect(Schema.safeParse(schemaSharedA).success).true;
+				expect(Schema.safeParse(schemaFailSingle).success).false;
+				expect(Schema.safeParse(schemaFailMulti).success).false;
+				expect(Schema.safeParse(schemaPassMultipleFields).success).true;
+			});
+			it('foreignKey - Can have restriction', () => {
+				const foreignFieldName = 'foreignField';
+				const foreignSchemaName = 'foreignSchema';
 
-			const schemaSharedA: Schema = {
-				name: 'asdf',
-				fields: [fieldPass],
-				restrictions: {
-					uniqueKey: [sharedNameA],
-				},
-			};
-			const schemaFailSingle: Schema = {
-				name: 'asdf',
-				fields: [fieldFail],
-				restrictions: {
-					uniqueKey: [sharedNameA],
-				},
-			};
-			const schemaFailMulti: Schema = {
-				name: 'asdf',
-				fields: [fieldPass],
-				restrictions: {
-					uniqueKey: [sharedNameA, sharedNameB],
-				},
-			};
-			const schemaPassMultipleFields: Schema = {
-				name: 'asdf',
-				fields: [fieldPass, fieldFail],
-				restrictions: {
-					uniqueKey: [sharedNameA],
-				},
-			};
-			expect(Schema.safeParse(schemaSharedA).success).true;
-			expect(Schema.safeParse(schemaFailSingle).success).false;
-			expect(Schema.safeParse(schemaFailMulti).success).false;
-			expect(Schema.safeParse(schemaPassMultipleFields).success).true;
+				const localFieldName = 'localField';
+				const localField: SchemaField = {
+					name: localFieldName,
+					valueType: 'boolean',
+				};
+				const schema: Schema = {
+					name: 'localSchema',
+					fields: [localField],
+					restrictions: {
+						foreignKey: [
+							{
+								schema: foreignSchemaName,
+								mappings: [
+									{
+										local: localFieldName,
+										foreign: foreignFieldName,
+									},
+								],
+							},
+						],
+					},
+				};
+
+				expect(Schema.safeParse(schema).success).true;
+			});
+			it('foreignKey - Rejects if uses same schema name', () => {
+				const foreignFieldName = 'foreignField';
+
+				const schemaName = 'reusedName';
+				const localFieldName = 'localField';
+				const localField: SchemaField = {
+					name: localFieldName,
+					valueType: 'boolean',
+				};
+				const schema: Schema = {
+					name: schemaName,
+					fields: [localField],
+					restrictions: {
+						foreignKey: [
+							{
+								schema: schemaName,
+								mappings: [
+									{
+										local: localFieldName,
+										foreign: foreignFieldName,
+									},
+								],
+							},
+						],
+					},
+				};
+				expect(Schema.safeParse(schema).success).false;
+			});
+			it('foreignKey - Rejects if local field does not exist', () => {
+				const foreignFieldName = 'foreignField';
+				const foreignSchemaName = 'foreignSchema';
+
+				const localFieldName = 'localField';
+				const localField: SchemaField = {
+					name: localFieldName,
+					valueType: 'boolean',
+				};
+				const schema: Schema = {
+					name: 'localSchema',
+					fields: [localField],
+					restrictions: {
+						foreignKey: [
+							{
+								schema: foreignSchemaName,
+								mappings: [
+									{
+										local: 'unknownName',
+										foreign: foreignFieldName,
+									},
+								],
+							},
+						],
+					},
+				};
+
+				expect(Schema.safeParse(schema).success).false;
+			});
 		});
 	});
 	describe('Dictionary', () => {
@@ -249,6 +336,142 @@ describe('Dictionary Types', () => {
 				schemas: [schemaA, schemaB],
 			};
 			expect(Dictionary.safeParse(dictionary).success).false;
+		});
+		describe('ForeignKey Restrictions', () => {
+			it('Validates that foreign schema exists in dictionary', () => {
+				const foreignFieldName = 'foreignField';
+				const foreignSchemaName = 'foreignSchema';
+				const foreignField: SchemaField = {
+					name: foreignFieldName,
+					valueType: 'boolean',
+				};
+				const foreignSchema: Schema = {
+					name: foreignSchemaName,
+					fields: [foreignField],
+				};
+
+				const localFieldName = 'localField';
+				const localField: SchemaField = {
+					name: localFieldName,
+					valueType: 'boolean',
+				};
+				const localSchema: Schema = {
+					name: 'localSchema',
+					fields: [localField],
+					restrictions: {
+						foreignKey: [
+							{
+								schema: foreignSchemaName,
+								mappings: [
+									{
+										local: localFieldName,
+										foreign: foreignFieldName,
+									},
+								],
+							},
+						],
+					},
+				};
+
+				// should pass
+				const dictionaryWithForeignSchema: Dictionary = {
+					name: 'dictionaryName',
+					schemas: [localSchema, foreignSchema],
+					version: '1.0',
+				};
+				expect(Dictionary.safeParse(dictionaryWithForeignSchema).success).true;
+
+				// should fail
+				const dictionaryWithoutForeignSchema: Dictionary = {
+					name: 'dictionaryName',
+					schemas: [localSchema],
+					version: '1.0',
+				};
+				expect(Dictionary.safeParse(dictionaryWithoutForeignSchema).success).false;
+			});
+			it('Fails when foreign field does not exists in foreign schema', () => {
+				const foreignSchemaName = 'foreignSchema';
+				const foreignField: SchemaField = {
+					name: 'foreignField',
+					valueType: 'boolean',
+				};
+				const foreignSchema: Schema = {
+					name: foreignSchemaName,
+					fields: [foreignField],
+				};
+
+				const localFieldName = 'localField';
+				const localField: SchemaField = {
+					name: localFieldName,
+					valueType: 'boolean',
+				};
+				const localSchema: Schema = {
+					name: 'localSchema',
+					fields: [localField],
+					restrictions: {
+						foreignKey: [
+							{
+								schema: foreignSchemaName,
+								mappings: [
+									{
+										local: localFieldName,
+										foreign: 'invalidField',
+									},
+								],
+							},
+						],
+					},
+				};
+
+				const dictionary: Dictionary = {
+					name: 'dictionaryName',
+					schemas: [localSchema, foreignSchema],
+					version: '1.0',
+				};
+				expect(Dictionary.safeParse(dictionary).success).false;
+			});
+			it('Fails when mapped between fields of different types', () => {
+				const foreignSchemaName = 'foreignSchema';
+				const foreignFieldName = 'foreignField';
+				const foreignField: SchemaField = {
+					name: foreignFieldName,
+					valueType: 'string',
+				};
+				const foreignSchema: Schema = {
+					name: foreignSchemaName,
+					fields: [foreignField],
+				};
+
+				const localFieldName = 'localField';
+				const localField: SchemaField = {
+					name: localFieldName,
+					valueType: 'boolean',
+				};
+				const localSchema: Schema = {
+					name: 'localSchema',
+					fields: [localField],
+					restrictions: {
+						foreignKey: [
+							{
+								schema: foreignSchemaName,
+								mappings: [
+									{
+										local: localFieldName,
+										foreign: foreignFieldName,
+									},
+								],
+							},
+						],
+					},
+				};
+
+				const dictionary: Dictionary = {
+					name: 'dictionaryName',
+					schemas: [localSchema, foreignSchema],
+					version: '1.0',
+				};
+				expect(Dictionary.safeParse(dictionary).success).false;
+			});
 		});
 	});
 });
