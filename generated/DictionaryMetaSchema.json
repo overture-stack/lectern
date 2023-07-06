@@ -68,6 +68,55 @@
         },
         "meta": {
           "$ref": "#/definitions/Meta"
+        },
+        "restrictions": {
+          "type": "object",
+          "properties": {
+            "foreignKey": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "schema": {
+                    "$ref": "#/definitions/Name"
+                  },
+                  "mappings": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "local": {
+                          "$ref": "#/definitions/Name"
+                        },
+                        "foreign": {
+                          "$ref": "#/definitions/Name"
+                        }
+                      },
+                      "required": [
+                        "local",
+                        "foreign"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "schema",
+                  "mappings"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            },
+            "uniqueKey": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Name"
+              },
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
         }
       },
       "required": [
