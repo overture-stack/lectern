@@ -316,13 +316,7 @@ export const Dictionary = zod
 				// We have a foreign key restriction, now we will now check its properties all reference existing schemas and fields
 
 				schema.restrictions.foreignKey.forEach((fkRestriction) => {
-					if (!schemaNames.includes(fkRestriction.schema)) {
-						// foreign schema name is not included in this dictionary, add error to context
-						ctx.addIssue({
-							code: zod.ZodIssueCode.custom,
-							message: `Schema ForeignKey restriction references a schema name that is not included in the dictionary. The schema '${schema.name}' references foreign schema name '${fkRestriction.schema}'.`,
-						});
-					} else {
+					if (schemaNames.includes(fkRestriction.schema)) {
 						fkRestriction.mappings.forEach((fkMapping) => {
 							if (!schemaFieldMap[fkRestriction.schema]?.includes(fkMapping.foreign)) {
 								// foreign field does not exist on foreign schema
@@ -344,6 +338,12 @@ export const Dictionary = zod
 									message: `Schema ForeignKey restriction maps two fields of different types: the restriction in schema '${schema}' maps local field '${fkMapping.local}' of type '${localFieldType}' to foreign schema '${fkRestriction.schema}' and field '${fkMapping.foreign}' of type '${foreignFieldType}'.`,
 								});
 							}
+						});
+					} else {
+						// foreign schema name is not included in this dictionary, add error to context
+						ctx.addIssue({
+							code: zod.ZodIssueCode.custom,
+							message: `Schema ForeignKey restriction references a schema name that is not included in the dictionary. The schema '${schema.name}' references foreign schema name '${fkRestriction.schema}'.`,
 						});
 					}
 				});
