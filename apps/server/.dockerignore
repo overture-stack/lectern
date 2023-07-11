@@ -1,0 +1,12 @@
+.nyc_output
+.env
+.env.example
+.huskyrc.json
+.mocharc.json
+*.log
+docker-compose.yaml
+Dockerfile
+
+node_modules
+dist
+test
