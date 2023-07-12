@@ -12,7 +12,7 @@ spec:
     - name: HOME
       value: /home/jenkins/agent
   - name: dind-daemon 
-    image: docker:18.06-dind
+    image: docker:20-dind
     securityContext: 
         privileged: true 
         runAsUser: 0
@@ -20,7 +20,7 @@ spec:
       - name: docker-graph-storage 
         mountPath: /var/lib/docker 
   - name: docker
-    image: docker:18-git
+    image: docker:20-git
     tty: true
     env: 
     - name: DOCKER_HOST 
