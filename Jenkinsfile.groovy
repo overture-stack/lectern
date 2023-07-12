@@ -12,7 +12,7 @@ spec:
     - name: HOME
       value: /home/jenkins/agent
   - name: dind-daemon 
-    image: docker:20-dind
+    image: docker:18-dind
     securityContext: 
         privileged: true 
         runAsUser: 0
