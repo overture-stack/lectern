@@ -54,9 +54,7 @@ async function login() {
 		role: process.env.VAULT_ROLE,
 		jwt: k8sToken,
 	});
-
-	const clientToken = response.auth.client_token;
-	console.log(`login successful, token length: ${clientToken?.length}`);
+	logger.info('Vault loggin successful.');
 }
 
 export async function loadSecret(key: string) {
@@ -65,6 +63,5 @@ export async function loadSecret(key: string) {
 	}
 
 	const result = await vaultClient.read(key);
-	console.log(`loaded Secret ${key}`);
 	return result.data;
 }

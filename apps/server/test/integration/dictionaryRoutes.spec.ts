@@ -17,17 +17,16 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import chai, { expect } from 'chai';
 import 'chai-http';
 import 'mocha';
-import chai, { expect } from 'chai';
-import App from '../../src/app';
-import { GenericContainer } from 'testcontainers';
-import { constructTestUri } from '../../src/utils/mongo';
-import { StartedTestContainer } from 'testcontainers/dist/test-container';
 import mongoose from 'mongoose';
 import { Response } from 'superagent';
+import { GenericContainer } from 'testcontainers';
+import { StartedTestContainer } from 'testcontainers/dist/test-container';
+import App from '../../src/app';
 import { AppConfig } from '../../src/config/appConfig';
-import { Dictionary } from 'dictionary';
+import { constructTestUri } from '../../src/utils/mongo';
 
 const testConfig: AppConfig = {
 	serverPort(): string {
@@ -89,7 +88,6 @@ describe('Dictionary Routes', () => {
 				.post('/dictionaries')
 				.send(require('./fixtures/createDictionary.json'))
 				.end((err: Error, res: Response) => {
-					console.log(res.text);
 					expect(err).to.be.null;
 					expect(res).to.have.status(200);
 					setImmediate(done);
@@ -227,7 +225,6 @@ describe('Dictionary Routes', () => {
 				.request(app)
 				.get('/dictionaries/' + id)
 				.end((err: Error, res: Response) => {
-					console.log(JSON.stringify(res.body));
 					expect(err).to.be.null;
 					expect(res).to.have.status(200);
 					expect(res.body.references).to.not.exist;

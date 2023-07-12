@@ -155,10 +155,8 @@ const resolveReference = (
 	discovered: DiscoveredMap,
 	visited: VisitedSet,
 ): string | string[] => {
-	console.log('resolveReference for tag', tag);
 	const cachedValue = discovered.get(tag);
 	if (cachedValue !== undefined) {
-		console.log('returning cached');
 		return cachedValue;
 	}
 	if (visited.has(tag)) {
@@ -168,7 +166,6 @@ const resolveReference = (
 
 	const path = referenceTagToObjectPath(tag);
 	const replacement = get(references, path, undefined);
-	console.log({ path, replacement });
 	if (replacement === undefined || (isObject(replacement) && !Array.isArray(replacement))) {
 		throw new InvalidReferenceError(`No reference found for provided tag '${tag}'.`);
 	}

@@ -18,13 +18,12 @@
  */
 
 import { BadRequestError, ConflictError, NotFoundError } from 'common';
-import { Dictionary, DictionaryDocument, DictionaryDocumentSummary, Schema } from 'dictionary';
+import { Dictionary, DictionaryDocument, DictionaryDocumentSummary, Schema, VersionUtils } from 'dictionary';
 import * as immer from 'immer';
 import { omit } from 'lodash';
 import logger from '../config/logger';
 import * as DictionaryRepo from '../db/dictionary';
 import { normalizeSchema, validate } from '../services/schemaService';
-import { VersionUtils } from 'dictionary';
 
 /**
  * Get latest version for all dictionaries with the provided name
