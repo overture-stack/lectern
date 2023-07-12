@@ -9,7 +9,7 @@
 		"noImplicitAny": true,
 		"noUnusedParameters": true,
 		"esModuleInterop": true,
-		"sourceMap": true,
+		"noEmit": true,
 		"outDir": "dist",
 		"baseUrl": "./src",
 		"skipLibCheck": true

@@ -13,7 +13,7 @@ This repository is organized as a monorepo using [`pnpm-workspace`](https://pnpm
 
 You can install all dependencies for the entire repo from the root (as defined  the `pnpm-lock.yaml`) with the command:
 
-`pnpm i --prod`
+`pnpm install`
 
 Using `nx` will ensure all local dependencies are built, in the correct sequence, when building, running, or testing any of the applications and packages in the repo. To run a package.json script from any module, use a command of the form `pnpm nx <script> <package name>`. For example, to build the lectern server and all its dependencies:
 
@@ -23,7 +23,7 @@ Using `nx` will ensure all local dependencies are built, in the correct sequence
 
 `pnpm nx debug server`
 
-...don't forget to run the application server dependencies (MongoDB) first! See quick start instructions for Lectern Server or the Lectern Client.
+...don't forget to run the application server dependencies (MongoDB) first! See instructions for [Lectern Server](./apps/server/README.md#development).
 
 ### Common Commands
 

@@ -13,7 +13,7 @@ Lectern is a NodeJS service written in TypeScript. It is published as a Containe
 To run the application from source, follow the [Development](#development) instructions below.
 
 ## Development
-### Package Manager
+### PNPM Monorepo Package Manager
 This project uses `pnpm` instead of `npm` to facilitate a monorepo workspace.
 
 You should install dependencies for the entire mono repo using:
@@ -30,7 +30,6 @@ You can start the dependency dockers with:
 ```shell
 docker-compose up -d
 ```
-
 ### Build & Run
 
 To build the server, and all modules it depends on:
@@ -45,6 +44,15 @@ To run the server as a service:
 pnpm nx start server
 ```
 
+### Creating Docker Image
+
+The [Dockerfile](./Dockerfile) that defines the Lectern Server image is located here in the server module directory, but building the container must be done with the workspace root as the docker context. The [.dockerignore](../../.dockerignore) at the workspace root defines what files are included in context.
+
+From the root of the workspace you can build the container with:
+
+```shell
+docker build --no-cache -t lectern -f apps/server/Dockerfile .
+```
 ## Configuration
 
 Lectern Server accepts configuration parameters through environment variables.
@@ -67,17 +75,9 @@ When launching Lectern from container using Docker, you can pass an environment 
 
 The .env file you pass to this command can follow the formatting of the template provided in [`./.env.example`](./.env.example).
 
-
 ### Configuration Variables
 
 Placeholder for details.
 
 Currently, all available configurations can be found in the example .env file: [`./.env.example`](./.env.example)
 
-#### Schema Definition for Lectern Developers
-
-The Lectern server uses a TypeScript native schema generated with [Zod](https://zod.dev/) that can be found in the [`./src/types/dictionaryTypes.ts`](./src/types/dictionaryTypes.ts) file. There is a custom script `npm run generate` that will regenerate the content in the `DictionaryMetaSchema.json`. The JSON Schema file is generated thanks to the libary [zod-to-JSON Schema](https://www.npmjs.com/package/zod-to-JSON Schema). 
-
-Whenever changes are made to the Zod Schemas in `./src/types` the generation script needs to be re-run and the updated Dictionary Meta Schema committed to the repository.
-
-If the generation script needs updating, it can be found at [`./scripts/buildMetaSchema.ts`](./scripts/buildMetaSchema.ts).

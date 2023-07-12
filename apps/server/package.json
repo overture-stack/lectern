@@ -3,10 +3,10 @@
 	"version": "2.0.0-next.0",
 	"description": "Overture Data Dictionary Management",
 	"scripts": {
-		"start": "npm run serve",
-		"serve": "node dist/server.js",
+		"start": "ts-node -T src/server.ts",
 		"watch-serve": "nodemon dist/server.js",
-		"build": "npm run build-ts",
+		"build": "npm run build:clean && npm run build-ts",
+		"build:clean": "rm -rf ./dist && mkdir ./dist",
 		"test": "nyc mocha",
 		"watch-test": "nyc mocha --watch",
 		"build-ts": "tsc",
