@@ -7,7 +7,7 @@ spec:
     image: node:18.16.1-bookworm-slim
     tty: true
     env: 
-    - name: DOCKER_HOST 
+    - name: DOCKER_HOST
       value: tcp://localhost:2375
     - name: HOME
       value: /home/jenkins/agent
@@ -65,8 +65,7 @@ pipeline {
         stage('Prepare') {
             steps {
                 container('node') {
-                    sh "npm i -g pnpm"
-                    sh "pnpm install"
+                    sh "npx --yes pnpm install"
                 }
             }
         }
@@ -74,7 +73,7 @@ pipeline {
         stage('Test') {
             steps {
                 container('node') {
-                    sh "pnpm test:all"
+                    sh "npx --yes pnpm test:all"
                 }
             }
         }
