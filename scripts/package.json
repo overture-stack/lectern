@@ -9,7 +9,7 @@
 	},
 	"keywords": [],
 	"author": "",
-	"license": "ISC",
+	"license": "AGPL-3.0",
 	"dependencies": {
 		"dictionary": "workspace:^",
 		"zod-to-json-schema": "^3.21.3"
