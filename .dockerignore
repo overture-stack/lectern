@@ -1,2 +1,18 @@
-node_modules
-dist
+# Deny All
+*
+
+# Allow select paths
+!apps/*
+!libraries/*
+!packages/*
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!nx.json
+
+# Ignore hidden files from sub-directories
+**/.*
+**/dist/*
+
+# Ignore test folders
+**/test/
