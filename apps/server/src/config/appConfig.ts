@@ -75,11 +75,11 @@ const buildAppContext = async (secrets: any): Promise<AppConfig> => {
 		},
 
 		mongoUser(): string {
-			return secrets.MONGO_USER || process.env.MONGO_USER;
+			return secrets.MONGO_USER || process.env.MONGO_USER || 'admin';
 		},
 
 		mongoPassword(): string {
-			return secrets.MONGO_PASS || process.env.MONGO_PASS;
+			return secrets.MONGO_PASS || process.env.MONGO_PASS || 'password';
 		},
 
 		mongoDb(): string {
