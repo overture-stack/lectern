@@ -1,29 +1,63 @@
 # Lectern - Data Dictionary Management and Validation
 
-[<img hspace="5" src="https://img.shields.io/badge/chat-on--slack-blue?style=for-the-badge">](http://slack.overture.bio)
-[<img hspace="5" src="https://img.shields.io/badge/License-gpl--v3.0-blue?style=for-the-badge">](https://github.com/overture-stack/lectern/blob/develop/LICENSE)
+[<img hspace="5" src="https://img.shields.io/badge/chat--with--developers-slack-blue?style=for-the-badge">](http://slack.overture.bio)
+[<img hspace="5" src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge">](https://github.com/overture-stack/lectern/blob/develop/LICENSE)
 [<img hspace="5" src="https://img.shields.io/badge/Code%20of%20Conduct-2.1-blue?style=for-the-badge">](CODE_OF_CONDUCT.md)
 
 
-Lectern is Overture's Data Dictionary Schema Manager, providing a system for defining Schemas that will validate the structured data collected by an applicaiton. The core of Lectern is a server application for storing and version management of data dictionaries, composed of schemas for tabular data files (like TSV). This application provides functionality to validate the structure of data dictionaries, maintain a list of dictionary versions, and to compute the difference between dictionary versions.
+Lectern is Overture's Data Dictionary Schema Manager, providing a system for defining Schemas that will validate the structured data collected by an application. The core of Lectern is a web-server application that handles storage and version management of data dictionaries. Lectern data dictionaries are collections of  schemas that define the structure of tabular data files (like TSV). This application provides functionality to validate the structure of data dictionaries, maintain a list of dictionary versions, and to compute the difference between dictionary versions.
+
+## Repository Structure
+
+This repository is organized as a monorepo using [`pnpm-workspace`](https://pnpm.io/workspaces) and [`nx`](https://nx.dev/). 
+
+> **Note:**
+> 
+> You will need to use [`pnpm`](https://pnpm.io/installation) instead of `npm` to manage dependencies in this code base. PNPM will take care of linking all modules together correctly.
+
+### Workspace Modules
+
+The repository is organized with the following directory structure:
+
+```
+.
+├── apps/
+│   └── server 
+├── libraries/
+│   ├── common
+│   └── dictionary
+└── packages/
+    └── client
+```
+
+The modules in the monorepo are organized into three categories:
+
+   * __apps/__ - Standalone processes meant to be run. These are published to [ghcr.io](https://ghcr.io) as container images.
+   * __libraries/__ - Interal modules shared between other apps, libraries, and packages.
+   * __packages/__ - Packages published to [NPM](https://npmjs.com) meant to be imported into other TypeScript applications.
+
+| Component                           | Type        | Package Name                   | Path                  | Published Location                                                       | Description                                                                                   |
+| ----------------------------------- | ----------- | ------------------------------ | --------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| [Lectern Server](apps/server/README.md)       | Application | server                         | apps/server/          | [GHCR](https://github.com/overture-stack/lectern/pkgs/container/lectern) | Lectern Server web application.                                                               |
+| [Lectern Client](packages/client/README.md)  | Package     | @overture-stack/lectern-client | packages/client       | [NPM](https://www.npmjs.com/package/@overturebio-stack/lectern-client)   | TypeScript Client to interact with Lectern Server and perform data validation.                           |
+| [common](libraries/common/README.md) | Library     | common                     | libraries/common/ | N/A                                                                      | Non-specific but commonly reusable utilities. Includes shared Error classes. |
+| [dictionary](libraries/dictionary/README.md) | Library     | dictionary                     | libraries/dictionary/ | N/A                                                                      | Dictionary meta-schema definition, includes TS types, and Zod schemas. This also exports all utilities for getting the diff of two dictionaries, and for validating data records with a Dictionary. |
 
 ## Developer Instructions
-
-This repository is organized as a monorepo using [`pnpm-workspace`](https://pnpm.io/workspaces) and [`nx`](https://nx.dev/). You will need to [use `pnpm`](https://pnpm.io/installation) instead of `npm` to manage dependencies for all modules to link correctly.
 
 You can install all dependencies for the entire repo from the root (as defined  the `pnpm-lock.yaml`) with the command:
 
 `pnpm install`
 
-Using `nx` will ensure all local dependencies are built, in the correct sequence, when building, running, or testing any of the applications and packages in the repo. To run a package.json script from any module, use a command of the form `pnpm nx <script> <package name>`. For example, to build the lectern server and all its dependencies:
+Using `nx` will ensure all local dependencies are built, in the correct sequence, when building, running, or testing any of the applications and packages in the repo. To run a package.json script from any module - after installing dependencies - use a command of the form `pnpm nx <script> <package name>`. For example, to `build` the module `server` can be done with the command:
 
 `pnpm nx build server`
 
-...or to run the server with hot-reloading after rebuilding all its dependencies:
+This will ensure that all dependencies of `server` are built in correct order before the `server` build is run.
 
-`pnpm nx debug server`
+To work with any module in this repository, follow the instructions in the README provide in the module directory.
 
-...don't forget to run the application server dependencies (MongoDB) first! See instructions for [Lectern Server](./apps/server/README.md#development).
+Get started by running the [Lecter Server application](apps/server/README.md).
 
 ### Common Commands
 
@@ -40,28 +74,23 @@ This will build all modules.
 
 This will test everything, building all dependencies needed to fully test.
 
-### Monorepo Modules
+## Additonal Content
 
-This repository is split into three sections each with their own type of module:
+In addition to the code for Lectern, this repository contains some useful reference material.
 
-   * __apps/__ - Standalone processes meant to be run. These are published to [ghcr.io](https://ghcr.io) as container images.
-   * __libraries/__ - Interal modules shared between other apps, libraries, and packages.
-   * __packages/__ - Packages published to [NPM](https://npmjs.com) meant to be imported into other TypeScript applications.
-  
-The following modules are included in this repo:
+### Meta-Schema
 
-| Component                           | Type        | Package Name                   | Path                  | Published Location                                                       | Description                                                                                   |
-| ----------------------------------- | ----------- | ------------------------------ | --------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
-| [Lectern Server](app/server/)       | Application | server                         | apps/server/          | [GHCR](https://github.com/overture-stack/lectern/pkgs/container/lectern) | Lectern Server web application.                                                               |
-| [Lectern Client](packages/client/)  | Package     | @overture-stack/lectern-client | packages/client       | [NPM](https://www.npmjs.com/package/@overturebio-stack/lectern-client)   | Client to interact with Lectern Server and perform data validation.                           |
-| [common](libraries/common/) | Library     | common                     | libraries/common/ | N/A                                                                      | Non-specific but commonly reusable utilities. Includes shared Errors. |
-| [dictionary](libraries/dictionary/) | Library     | dictionary                     | libraries/dictionary/ | N/A                                                                      | Dictionary meta-schema definition, includes TS types, and Zod schemas. This also exports all utilities for getting the diff of two dictionaries, and for validating data records with a Dictionary. |
-
-## Dictionary Meta-Schema
-
-Lectern provides a Meta-Schema definition that describes the structure of Lectern Dictionaries, a JSON Schema formatted copy of this schema can be found at [`./generated/DictionaryMetaSchema.json`](./generated/DictionaryMetaSchema.json).
+Lectern provides a meta-schema definition that describes the structure of Lectern Dictionaries. The generated JSON Schema formatted copy of this schema can be found at [`./generated/DictionaryMetaSchema.json`](./generated/DictionaryMetaSchema.json).
 
 This can be used as a programing language agnostic schema for external applications that want to validate, generate, or interact with Lectern Dictionaries.
+
+> **Note:**
+>
+> Don't manually update any files in the `./generated` path. This content is programatically generated from the source code.
+
+### Sample Dictionaries
+
+
 
 ## Support & Contributions
 
