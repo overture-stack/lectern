@@ -1,22 +1,18 @@
-def commit = "UNKNOWN"
-def dockerRepo = "ghcr.io/overture-stack" 
-pipeline {
-    agent {
-        kubernetes {
-            label 'lectern-executor'
-            yaml """
+String podSpec = '''
 apiVersion: v1
 kind: Pod
 spec:
   containers:
   - name: node
-    image: node:16-alpine3.14
+    image: node:18.16.1-alpine
     tty: true
     env: 
-    - name: DOCKER_HOST 
+    - name: DOCKER_HOST
       value: tcp://localhost:2375
+    - name: HOME
+      value: /home/jenkins/agent
   - name: dind-daemon 
-    image: docker:18.06-dind
+    image: docker:18-dind
     securityContext: 
         privileged: true 
         runAsUser: 0
@@ -24,7 +20,7 @@ spec:
       - name: docker-graph-storage 
         mountPath: /var/lib/docker 
   - name: docker
-    image: docker:18-git
+    image: docker:20-git
     tty: true
     env: 
     - name: DOCKER_HOST 
@@ -36,96 +32,165 @@ spec:
   volumes:
   - name: docker-graph-storage 
     emptyDir: {}
-"""
+'''
+
+pipeline {
+
+    agent {
+        kubernetes {
+            yaml podSpec
         }
     }
+
+    environment {
+      containerRegistry = "ghcr.io"
+      organization = "overture-stack" 
+      appName = "lectern"
+      gitHubRepo = "${organization}/${appName}"
+      containerImageName = "${containerRegistry}/${gitHubRepo}"
+      
+      commit = sh(returnStdout: true, script: 'git describe --always').trim()
+      version = sh(returnStdout: true, script: 'cat package.json | grep version | cut -d \':\' -f2 | sed -e \'s/"//\' -e \'s/",//\'').trim()
+
+      slackNotificationsUrl = credentials('OvertureSlackJenkinsWebhookURL')
+    }
+
+    options {
+        timeout(time: 30, unit: 'MINUTES')
+        timestamps()
+    }
+
     stages {
+
         stage('Prepare') {
             steps {
-                script {
-                    commit = sh(returnStdout: true, script: 'git describe --always').trim()
-                }
-                script {
-                    version = sh(returnStdout: true, script: 'cat package.json | grep version | cut -d \':\' -f2 | sed -e \'s/"//\' -e \'s/",//\'').trim()
+                container('node') {
+                    sh "npx --yes pnpm install"
                 }
             }
         }
+
         stage('Test') {
             steps {
                 container('node') {
-                    sh "npm ci"
-                    sh "npm run test"
+                    sh "npx --yes pnpm test:all"
                 }
             }
         }
+
         stage('Build') {
             steps {
-                container('node') {
-                    sh "npm ci"
-                    sh "npm run build"
-                }
                 container('docker') {
-                    // the network=host needed to download dependencies using the host network (since we are inside 'docker'
-                    // container)
-                    sh "docker build --build-arg=COMMIT=${commit} --network=host -f Dockerfile . -t overture/lectern:${commit} -t ${dockerRepo}/lectern:${commit}"
+                    // the network=host needed to download dependencies using the host network (since we are inside 'docker' container)
+                    sh "docker build --build-arg=COMMIT=${commit} --network=host -f apps/server/Dockerfile . -t server:${commit}"
                 }
                 
             }
         }
-       // publish the edge tag
-        stage('Publish Develop (edge)') {
+
+        stage('Git Tags') {
             when {
-                branch "develop"
+                branch 'main'
             }
             steps {
                 container('docker') {
-                    withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                    withCredentials([usernamePassword(
+                        credentialsId: 'OvertureBioGithub',
+                        passwordVariable: 'GIT_PASSWORD',
+                        usernameVariable: 'GIT_USERNAME'
+                    )]) {
+                        sh "git tag v${version}"
+                        sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${gitHubRepo} --tags"
                     }
-                    sh "docker tag overture/lectern:${commit} overture/lectern:edge"
-                    sh "docker push overture/lectern:${commit}"
-                    sh "docker push overture/lectern:edge"
-               }
+                }
+            }
+        }
+
+        stage('Publish Image') {
+            when {
+              anyOf {
+                branch "main"
+                branch "develop"
+              }
+            }
+            steps {
                container('docker') {
                     withCredentials([usernamePassword(credentialsId:'OvertureBioGithub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
                     }
-                    sh "docker tag ${dockerRepo}/lectern:${commit} ${dockerRepo}/lectern:edge"
-                    sh "docker push ${dockerRepo}/lectern:${commit}"
-                    sh "docker push ${dockerRepo}/lectern:edge"
+                    script {
+                        if (env.BRANCH_NAME ==~ 'main') { // push latest and version tags
+                            sh "docker tag server:${commit} ${containerImageName}:${version}"
+                            sh "docker push ${containerImageName}:${version}"
+
+                            sh "docker tag server:${commit} ${containerImageName}:latest"
+                            sh "docker push ${containerImageName}:latest"
+                        } else { // push commit tag
+                            sh "docker tag server:${commit} ${containerImageName}:${commit}"
+                            sh "docker push ${containerImageName}:${commit}"
+                        }
+
+                        if (env.BRANCH_NAME ==~ 'develop') { // push edge tag
+                            sh "docker tag server:${commit} ${containerImageName}:edge"
+                            sh "docker push ${containerImageName}:edge"
+                        }
+                    }
+
                }
             }
         }
+    }
 
-        stage('Release & tag') {
-          when {
-            branch "master"
-          }
-          steps {
-              container('docker') {
-                  withCredentials([usernamePassword(credentialsId: 'OvertureBioGithub', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                      sh "git tag ${version}"
-                      sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/overture-stack/lectern --tags"
-                  }
-                  withCredentials([usernamePassword(credentialsId:'OvertureDockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                      sh 'docker login -u $USERNAME -p $PASSWORD'
-                  }
-                  sh "docker tag overture/lectern:${commit} overture/lectern:${version}"
-                  sh "docker tag overture/lectern:${commit} overture/lectern:latest"
-                  sh "docker push overture/lectern:${version}"
-                  sh "docker push overture/lectern:latest"
-             }
-             container('docker') {
-                  withCredentials([usernamePassword(credentialsId:'OvertureBioGithub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                      sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
-                  }
-                  sh "docker tag ${dockerRepo}/lectern:${commit} ${dockerRepo}/lectern:${version}"
-                  sh "docker tag ${dockerRepo}/lectern:${commit} ${dockerRepo}/lectern:latest"
-                  sh "docker push ${dockerRepo}/lectern:${version}"
-                  sh "docker push ${dockerRepo}/lectern:latest"
-             }
-          }
+     post {
+        failure {
+            container('node') {
+                script {
+                    if (env.BRANCH_NAME ==~ /(develop|main|\S*[Tt]est\S*)/) {
+                        sh "curl \
+                            -X POST \
+                            -H 'Content-type: application/json' \
+                            --data '{ \
+                                \"text\":\"Build Failed: ${env.JOB_NAME}#${commit} \
+                                \n[Build ${env.BUILD_NUMBER}] (${env.BUILD_URL})\" \
+                            }' \
+                            ${slackNotificationsUrl}"
+                    }
+                }
+            }
         }
-        // TBD: auto deploy to qa/staging
+
+        fixed {
+            container('node') {
+                script {
+                    if (env.BRANCH_NAME ==~ /(develop|main|\S*[Tt]est\S*)/) {
+                        sh "curl \
+                            -X POST \
+                            -H 'Content-type: application/json' \
+                            --data '{ \
+                                \"text\":\"Build Fixed: ${env.JOB_NAME}#${commit} \
+                                \n[Build ${env.BUILD_NUMBER}] (${env.BUILD_URL})\" \
+                            }' \
+                            ${slackNotificationsUrl}"
+                    }
+                }
+            }
+        }
+
+        success {
+            container('node') {
+                script {
+                    if (env.BRANCH_NAME ==~ /(\S*[Tt]est\S*)/) {
+                        sh "curl \
+                            -X POST \
+                            -H 'Content-type: application/json' \
+                            --data '{ \
+                                \"text\":\"Build tested: ${env.JOB_NAME}#${commit} \
+                                \n[Build ${env.BUILD_NUMBER}] (${env.BUILD_URL})\" \
+                            }' \
+                            ${slackNotificationsUrl}"
+                    }
+                }
+            }
+        }
     }
 }

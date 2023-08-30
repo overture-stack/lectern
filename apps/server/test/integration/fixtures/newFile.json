@@ -1,0 +1,21 @@
+{
+	"name": "testNewFile",
+	"description": "testNewFile",
+	"fields": [
+		{
+			"name": "testNewFile1",
+			"valueType": "string",
+			"description": "Unique identifier for donor; assigned by data provider"
+		},
+		{
+			"name": "testNewFile2",
+			"valueType": "string",
+			"description": "Unique identifier for donor; assigned by data provider"
+		},
+		{
+			"name": "testNewFile3",
+			"valueType": "string",
+			"description": "Unique identifier for donor; assigned by data provider"
+		}
+	]
+}

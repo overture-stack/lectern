@@ -1,0 +1,467 @@
+{
+  "$ref": "#/definitions/Dictionary",
+  "definitions": {
+    "ReferenceTag": {
+      "type": "string",
+      "pattern": "^#(\\/[-_A-Za-z0-9]+)+$"
+    },
+    "ReferenceArray": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "#/definitions/ReferenceTag"
+          }
+        ]
+      },
+      "minItems": 1
+    },
+    "References": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/ReferenceArray/items/anyOf/0"
+          },
+          {
+            "$ref": "#/definitions/ReferenceArray"
+          },
+          {
+            "$ref": "#/definitions/References"
+          }
+        ]
+      }
+    },
+    "Meta": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      }
+    },
+    "Name": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^.]+$"
+    },
+    "Schema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/Name"
+        },
+        "description": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SchemaField"
+          },
+          "minItems": 1
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        },
+        "restrictions": {
+          "type": "object",
+          "properties": {
+            "foreignKey": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "schema": {
+                    "$ref": "#/definitions/Name"
+                  },
+                  "mappings": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "local": {
+                          "$ref": "#/definitions/Name"
+                        },
+                        "foreign": {
+                          "$ref": "#/definitions/Name"
+                        }
+                      },
+                      "required": [
+                        "local",
+                        "foreign"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "schema",
+                  "mappings"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            },
+            "uniqueKey": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Name"
+              },
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "name",
+        "fields"
+      ],
+      "additionalProperties": false
+    },
+    "SchemaField": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "$ref": "#/definitions/Name"
+            },
+            "description": {
+              "type": "string"
+            },
+            "isArray": {
+              "type": "boolean"
+            },
+            "meta": {
+              "$ref": "#/definitions/Meta"
+            },
+            "valueType": {
+              "type": "string",
+              "const": "string"
+            },
+            "restrictions": {
+              "type": "object",
+              "properties": {
+                "codeList": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "$ref": "#/definitions/ReferenceTag"
+                          }
+                        ]
+                      },
+                      "minItems": 1
+                    },
+                    {
+                      "$ref": "#/definitions/ReferenceTag"
+                    }
+                  ]
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "script": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "$ref": "#/definitions/ReferenceTag"
+                          }
+                        ]
+                      },
+                      "minItems": 1
+                    },
+                    {
+                      "$ref": "#/definitions/ReferenceTag"
+                    }
+                  ]
+                },
+                "regex": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/definitions/ReferenceTag"
+                    }
+                  ]
+                },
+                "unique": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "name",
+            "valueType"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "$ref": "#/definitions/Name"
+            },
+            "description": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/description"
+            },
+            "isArray": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/isArray"
+            },
+            "meta": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/meta"
+            },
+            "valueType": {
+              "type": "string",
+              "const": "number"
+            },
+            "restrictions": {
+              "type": "object",
+              "properties": {
+                "codeList": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 1
+                    },
+                    {
+                      "$ref": "#/definitions/ReferenceTag"
+                    }
+                  ]
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "script": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/properties/script/anyOf/0"
+                    },
+                    {
+                      "$ref": "#/definitions/ReferenceTag"
+                    }
+                  ]
+                },
+                "range": {
+                  "type": "object",
+                  "properties": {
+                    "exclusiveMax": {
+                      "type": "number"
+                    },
+                    "exclusiveMin": {
+                      "type": "number"
+                    },
+                    "max": {
+                      "type": "number"
+                    },
+                    "min": {
+                      "type": "number"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "unique": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "name",
+            "valueType"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "$ref": "#/definitions/Name"
+            },
+            "description": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/description"
+            },
+            "isArray": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/isArray"
+            },
+            "meta": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/meta"
+            },
+            "valueType": {
+              "type": "string",
+              "const": "integer"
+            },
+            "restrictions": {
+              "type": "object",
+              "properties": {
+                "codeList": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "minItems": 1
+                    },
+                    {
+                      "$ref": "#/definitions/ReferenceTag"
+                    }
+                  ]
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "script": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/properties/script/anyOf/0"
+                    },
+                    {
+                      "$ref": "#/definitions/ReferenceTag"
+                    }
+                  ]
+                },
+                "range": {
+                  "type": "object",
+                  "properties": {
+                    "exclusiveMax": {
+                      "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/properties/codeList/anyOf/0/items"
+                    },
+                    "exclusiveMin": {
+                      "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/properties/codeList/anyOf/0/items"
+                    },
+                    "max": {
+                      "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/properties/codeList/anyOf/0/items"
+                    },
+                    "min": {
+                      "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/properties/codeList/anyOf/0/items"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "unique": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "name",
+            "valueType"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "$ref": "#/definitions/Name"
+            },
+            "description": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/description"
+            },
+            "isArray": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/isArray"
+            },
+            "meta": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/meta"
+            },
+            "valueType": {
+              "type": "string",
+              "const": "boolean"
+            },
+            "restrictions": {
+              "type": "object",
+              "properties": {
+                "required": {
+                  "type": "boolean"
+                },
+                "script": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/properties/script/anyOf/0"
+                    },
+                    {
+                      "$ref": "#/definitions/ReferenceTag"
+                    }
+                  ]
+                },
+                "unique": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "name",
+            "valueType"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Dictionary": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        },
+        "references": {
+          "$ref": "#/definitions/References"
+        },
+        "schemas": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Schema"
+          },
+          "minItems": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+.[0-9]+$"
+        }
+      },
+      "required": [
+        "name",
+        "schemas",
+        "version"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
