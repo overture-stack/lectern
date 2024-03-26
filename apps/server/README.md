@@ -66,7 +66,7 @@ A template for environment variables is found at [`./.env.example`](./.env.examp
 
 ### From Source
 
-When running from source as detailed in [Build & Run](#build--run), the application will look for a file named `.env` in your current working directory. The easiest way to manage this is to copy [`./.env.example`](./.env.example) into a new file named `.env`.
+When running from source as detailed in [Build & Run](#build--run), the application will look for a file named `.env` in the `apps/server` directory. The easiest way to manage this is to copy [`apps/server/.env.example`](./.env.example) into a new file named `apps/server/.env`.
 
 ```shell
 cp .env.example .env
