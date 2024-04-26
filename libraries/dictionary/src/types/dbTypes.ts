@@ -1,5 +1,5 @@
 import { z as zod } from 'zod';
-import { DictionaryBase } from './dictionaryTypes';
+import { DictionaryBase } from './dictionary';
 
 /**
  * A Dictionary stored in the DB is represented as a document and gets an `_id` property
