@@ -22,7 +22,7 @@ import { NameString } from './commonDictionaryTypes';
 import { DictionaryMeta } from './metaTypes';
 import { References } from './referenceTypes';
 import { Schema } from './schemaTypes';
-import allUnique from 'utils/allUnique';
+import allUnique from '../../utils/allUnique';
 
 export const VersionString = zod.string().regex(RegExp('^[0-9]+.[0-9]+$'));
 // TODO: Semantic Versioning version string, reference: https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39

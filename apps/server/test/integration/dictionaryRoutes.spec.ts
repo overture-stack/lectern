@@ -262,7 +262,7 @@ describe('Dictionary Routes', () => {
 		});
 
 		it('Should get a single dictionary by name and version', (done: Mocha.Done) => {
-			const name = 'Test Dictionary';
+			const name = 'test_dictionary';
 			chai
 				.request(app)
 				.get(`/dictionaries/?name=${name}&version=${testVersion}`)

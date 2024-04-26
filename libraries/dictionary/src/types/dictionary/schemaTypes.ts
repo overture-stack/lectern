@@ -21,7 +21,7 @@ import { z as zod } from 'zod';
 import { NameString } from './commonDictionaryTypes';
 import { DictionaryMeta } from './metaTypes';
 import { SchemaField } from './schemaFieldTypes';
-import allUnique from 'utils/allUnique';
+import allUnique from '../../utils/allUnique';
 
 export const ForeignKeyRestrictionMapping = zod.object({
 	schema: NameString,

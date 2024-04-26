@@ -1,5 +1,5 @@
 import { z as zod } from 'zod';
-import { SchemaField } from './dictionaryTypes';
+import { SchemaField } from './dictionary';
 
 export const ValueChangeTypeNames = {
 	CREATED: 'created',
