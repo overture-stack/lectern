@@ -21,6 +21,7 @@ import { expect } from 'chai';
 import {
 	BooleanFieldRestrictions,
 	Dictionary,
+	DictionaryMeta,
 	Integer,
 	IntegerFieldRestrictions,
 	NameString,
@@ -469,6 +470,36 @@ describe('Dictionary Types', () => {
 				};
 				expect(Dictionary.safeParse(dictionary).success).false;
 			});
+		});
+	});
+	describe('Meta', () => {
+		it('Can accept non-nested values', () => {
+			const meta = { a: 'string', b: 123, c: true };
+			expect(DictionaryMeta.safeParse(meta).success).true;
+		});
+		it('Can accept nested values', () => {
+			const singleNested = { a: 'string', b: 123, c: true, nested: { d: 'asdf' } };
+			const doubleNested = { a: 'string', b: 123, c: true, nested: { d: 'asdf', nested2: { e: 'asdf' } } };
+			expect(DictionaryMeta.safeParse(singleNested).success).true;
+			expect(DictionaryMeta.safeParse(doubleNested).success).true;
+		});
+		it('Can accept arrays of strings', () => {
+			const meta = { a: 'string', b: 123, c: true, array: ['asdf', 'qwerty'] };
+			expect(DictionaryMeta.safeParse(meta).success).true;
+		});
+		it('Can accept arrays of numbers', () => {
+			const meta = { a: 'string', b: 123, c: true, array: [123, 456, 789] };
+			expect(DictionaryMeta.safeParse(meta).success).true;
+		});
+		it('Cannot accept arrays of booleans', () => {
+			// This constraint feels a bit arbitrary but I can't imagine a clear use case for this.
+			// Could be changed with discussion
+			const meta = { a: 'string', b: 123, c: true, array: [true, false, true, false] };
+			expect(DictionaryMeta.safeParse(meta).success).false;
+		});
+		it('Cannot accept arrays of mixed types', () => {
+			const meta = { a: 'string', b: 123, c: true, array: ['asdf', 123] };
+			expect(DictionaryMeta.safeParse(meta).success).false;
 		});
 	});
 });
