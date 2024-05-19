@@ -29,7 +29,7 @@ export type NameString = zod.infer<typeof NameString>;
 
 export const Integer = zod.number().int();
 
-// Meta accepts as values only stirngs, numbers, booleans, arrays of numbers or arrays of strings
+// Meta accepts as values only strings, numbers, booleans, arrays of numbers or arrays of strings
 // Another Meta object can be nested inside a Meta property
 export const DictionaryMetaValue = zod.union([
 	zod.string(),
