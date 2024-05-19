@@ -37,7 +37,7 @@ export type ReferenceArray = zod.infer<typeof ReferenceArray>;
 // References are recursive, but Zod can't do TS type inference for recursive definitions.
 // So in this one case we define the type first with the recursive structure and use it as a type-hint
 // for our zod schema. Reference: https://zod.dev/?id=recursive-types
-export type References = { [x: string]: ReferenceArray | ReferenceValue | References };
+export type References = { [key: string]: ReferenceArray | ReferenceValue | References };
 export const References: zod.ZodType<References> = zod.record(
 	zod.union([ReferenceValue, ReferenceArray, zod.lazy(() => References)]), //TODO: test this please.
 );
