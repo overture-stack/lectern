@@ -13,7 +13,12 @@
 					"meta": {
 						"key": true,
 						"displayName": "KEY VALUE ID",
-						"noArrays": ["lol", "sorry", "no_arrays", "please"]
+						"arraysOk": ["arrays", "are", "ok"],
+						"nested": { "key": "value", "number": 123, "bool": false },
+						"errorArrayOfObjects": [
+							{ "a": "b", "c": 4 },
+							{ "e": "f", "g": 8 }
+						]
 					},
 					"restrictions": {
 						"required": true,

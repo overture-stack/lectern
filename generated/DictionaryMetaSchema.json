@@ -38,10 +38,35 @@
     "Meta": {
       "type": "object",
       "additionalProperties": {
-        "type": [
-          "string",
-          "number",
-          "boolean"
+        "anyOf": [
+          {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              }
+            ]
+          },
+          {
+            "$ref": "#/definitions/Meta"
+          }
         ]
       }
     },

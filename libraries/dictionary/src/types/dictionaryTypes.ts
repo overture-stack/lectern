@@ -29,11 +29,20 @@ export type NameString = zod.infer<typeof NameString>;
 
 export const Integer = zod.number().int();
 
-// Unlike references, meta is not nested and accepts as values only primitives or arrays of them.
-export const DictionaryMetaValue = zod.union([zod.string(), zod.number(), zod.boolean()]);
+// Meta accepts as values only strings, numbers, booleans, arrays of numbers or arrays of strings
+// Another Meta object can be nested inside a Meta property
+export const DictionaryMetaValue = zod.union([
+	zod.string(),
+	zod.number(),
+	zod.boolean(),
+	zod.array(zod.string()),
+	zod.array(zod.number()),
+]);
 export type DictionaryMetaValue = zod.infer<typeof DictionaryMetaValue>;
-export const DictionaryMeta = zod.record(DictionaryMetaValue);
-export type DictionaryMeta = zod.infer<typeof DictionaryMeta>;
+export type DictionaryMeta = { [key: string]: DictionaryMetaValue | DictionaryMeta };
+export const DictionaryMeta: zod.ZodType<DictionaryMeta> = zod.record(
+	zod.union([DictionaryMetaValue, zod.lazy(() => DictionaryMeta)]),
+);
 
 export const SchemaFieldValueType = zod.enum(['string', 'integer', 'number', 'boolean']);
 export type SchemaFieldValueType = zod.infer<typeof SchemaFieldValueType>;

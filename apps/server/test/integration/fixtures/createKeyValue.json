@@ -17,7 +17,9 @@
 					"description": "kv_id",
 					"meta": {
 						"key": true,
-						"displayName": "KEY VALUE ID"
+						"displayName": "KEY VALUE ID",
+						"arraysOk": ["arrays", "are", "ok"],
+						"nested": { "key": "value", "number": 123, "bool": false }
 					},
 					"restrictions": {
 						"required": true,
