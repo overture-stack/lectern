@@ -15,7 +15,7 @@ In addition to schemas, a Lectern Dictionary can contain reference values that c
 > **Dictionary Structure Example**
 > ```json
 > {
-> 	"name": "Example Dictionary",
+> 	"name": "example_dictionary",
 > 	"description": "Collection of schemas to demonstrate Lectern functionality",
 > 	"meta": { /* Custom meta data about the dictionary here */ },
 > 
