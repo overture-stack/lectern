@@ -30,8 +30,6 @@ import codeListReferencesInput from '../fixtures/references/codeList_references/
 import codeListReferencesOutput from '../fixtures/references/codeList_references/output';
 import referencesWithinReferencesInput from '../fixtures/references/references_within_references/input';
 import referencesWithinReferencesOutput from '../fixtures/references/references_within_references/output';
-import scriptReferencesInput from '../fixtures/references/script_references/input';
-import scriptReferencesOutput from '../fixtures/references/script_references/output';
 import regexReferencesInput from '../fixtures/references/regex_reference/input';
 import regexReferencesOutput from '../fixtures/references/regex_reference/output';
 import regexArrayReferencesInput from '../fixtures/references/regex_reference/input_with_array';
@@ -60,10 +58,6 @@ describe('Replace References', () => {
 	it('Should return the schema where references inside references are replaced', () => {
 		const output = replaceReferences(referencesWithinReferencesInput);
 		expect(output).to.deep.eq(referencesWithinReferencesOutput);
-	});
-	it('Should return the schema where references inside scripts arrays are replaced', () => {
-		const output = replaceReferences(scriptReferencesInput);
-		expect(output).to.deep.eq(scriptReferencesOutput);
 	});
 	it('Regex Reference replaced successfully', () => {
 		const output = replaceReferences(regexReferencesInput);

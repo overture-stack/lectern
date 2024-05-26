@@ -71,12 +71,13 @@ describe('SchemaField Types', () => {
 			expect(BooleanFieldRestrictions.safeParse({ unique: true }).success).true;
 		});
 	});
-	describe('ScriptRestriction', () => {
-		it('All fields accept script restriction', () => {
-			expect(StringFieldRestrictions.safeParse({ script: ['()=>true'] }).success).true;
-			expect(NumberFieldRestrictions.safeParse({ script: ['()=>true'] }).success).true;
-			expect(IntegerFieldRestrictions.safeParse({ script: ['()=>true'] }).success).true;
-			expect(BooleanFieldRestrictions.safeParse({ script: ['()=>true'] }).success).true;
+	describe('ScriptRestriction - Removed', () => {
+		// Script restrictions have been removed, this ensures they aren't still available
+		it('No fields accept script restriction', () => {
+			expect(StringFieldRestrictions.safeParse({ script: ['()=>true'] }).success).false;
+			expect(NumberFieldRestrictions.safeParse({ script: ['()=>true'] }).success).false;
+			expect(IntegerFieldRestrictions.safeParse({ script: ['()=>true'] }).success).false;
+			expect(BooleanFieldRestrictions.safeParse({ script: ['()=>true'] }).success).false;
 		});
 	});
 });

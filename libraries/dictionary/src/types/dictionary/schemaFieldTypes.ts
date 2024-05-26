@@ -28,8 +28,6 @@ export type SchemaFieldValueType = zod.infer<typeof SchemaFieldValueType>;
 /* ************ *
  * Restrictions *
  * ************ */
-export const RestrictionScript = zod.array(zod.string().or(ReferenceTag)).min(1); //TODO: script formatting validation
-export type RestrictionScript = zod.infer<typeof RestrictionScript>;
 export const RestrictionNumberRange = zod
 	.object({
 		exclusiveMax: zod.number().optional(),
@@ -101,10 +99,10 @@ export const StringFieldRestrictions = zod
 	.object({
 		codeList: zod.union([zod.string(), ReferenceTag]).array().min(1).or(ReferenceTag),
 		required: zod.boolean(),
-		script: RestrictionScript.or(ReferenceTag),
 		regex: RestrictionRegex.or(ReferenceTag),
 		unique: zod.boolean(),
 	})
+	.strict()
 	.partial();
 export type StringFieldRestrictions = zod.infer<typeof StringFieldRestrictions>;
 
@@ -112,10 +110,10 @@ export const NumberFieldRestrictions = zod
 	.object({
 		codeList: zod.array(zod.number()).min(1).or(ReferenceTag),
 		required: zod.boolean(),
-		script: RestrictionScript.or(ReferenceTag),
 		range: RestrictionNumberRange,
 		unique: zod.boolean(),
 	})
+	.strict()
 	.partial();
 export type NumberFieldRestrictions = zod.infer<typeof NumberFieldRestrictions>;
 
@@ -123,15 +121,16 @@ export const IntegerFieldRestrictions = zod
 	.object({
 		codeList: zod.array(Integer).min(1).or(ReferenceTag),
 		required: zod.boolean(),
-		script: RestrictionScript.or(ReferenceTag),
 		range: RestrictionIntegerRange,
 		unique: zod.boolean(),
 	})
+	.strict()
 	.partial();
 export type IntegerFieldRestrictions = zod.infer<typeof IntegerFieldRestrictions>;
 
 export const BooleanFieldRestrictions = zod
-	.object({ required: zod.boolean(), script: RestrictionScript.or(ReferenceTag), unique: zod.boolean() })
+	.object({ required: zod.boolean(), unique: zod.boolean() })
+	.strict()
 	.partial();
 export type BooleanFieldRestrictions = zod.infer<typeof BooleanFieldRestrictions>;
 

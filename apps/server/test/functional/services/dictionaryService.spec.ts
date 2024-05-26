@@ -165,15 +165,6 @@ describe('Dictionary Service', () => {
 			sinon.stub(DictionaryRepo, 'listByName').returns(wrapPromise([]));
 			await expect(dictionaryService.create(DICTIONARY_REFERENCES_INVALID)).eventually.rejected;
 		});
-		it('Normalizes scripts before creating the DB', async () => {
-			sinon.stub(DictionaryRepo, 'listByName').returns(wrapPromise([]));
-			const addStub = sinon.stub(DictionaryRepo, 'addDictionary').returns(wrapPromise(asDocument(DICTIONARY_1_BASE)));
-			const result = await dictionaryService.create(DICTIONARY_1_BASE);
-			expect(result).deep.equal(asDocument(DICTIONARY_1_BASE));
-			expect(addStub.calledOnce).true;
-			expect(addStub.calledWithMatch(DICTIONARY_1_BASE)).true;
-		});
-		// TODO: Test that all restriction values were normalized
 	});
 
 	describe('addSchema', () => {

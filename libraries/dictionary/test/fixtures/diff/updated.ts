@@ -34,9 +34,6 @@ const DIFF_DICTIONARY_UPDATED: Dictionary = {
 					meta: {
 						key: true,
 					},
-					restrictions: {
-						script: ['(field)=>field.length > 6'],
-					},
 				},
 				{
 					name: 'gender',

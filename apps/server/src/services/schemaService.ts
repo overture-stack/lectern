@@ -22,46 +22,18 @@ import * as immer from 'immer';
 import { ZodError } from 'zod';
 import { replaceSchemaReferences } from 'dictionary';
 
+/**
+ * Attempts replacement of references in a schema to ensure that all references can be found and that
+ * the schema is still valid after replacements are performed.
+ * @param schema
+ * @param references
+ * @returns
+ */
 export function validate(schema: Schema, references: References): { valid: boolean; errors?: ZodError } {
 	const schemaWithReplacements = replaceSchemaReferences(schema, references);
 
-	// Ensure schema is still valid after reference replacement
 	// TODO: errors originating here should contain better messaging about failure after reference replacement
 	const parseResult = Schema.safeParse(schemaWithReplacements);
 
 	return parseResult.success ? { valid: true } : { valid: false, errors: parseResult.error };
-}
-
-/**
- * String formatting of values provided as scripts. This will normalize the formatting of newline characters,
- * All instances of `/r/n` will be converted to `/n`
- * @param script
- * @returns
- */
-function normalizeScript(input: string | string[]) {
-	const normalize = (script: string) => script.replace(/\r\n/g, '\n');
-
-	if (typeof input === 'string') {
-		return normalize(input);
-	} else {
-		return input.map(normalize);
-	}
-}
-
-export function normalizeSchema(schema: Schema): Schema {
-	const normalizedFields = schema.fields.map((baseField) =>
-		immer.produce(baseField, (field) => {
-			if (
-				field.valueType !== 'boolean' &&
-				field.restrictions !== undefined &&
-				field.restrictions.script !== undefined
-			) {
-				field.restrictions.script = normalizeScript(field.restrictions.script);
-			}
-		}),
-	);
-
-	return immer.produce(schema, (draft) => {
-		draft.fields = normalizedFields;
-	});
 }

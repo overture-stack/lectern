@@ -29,12 +29,6 @@ describe('Compute diff report between dictionary versions', () => {
 		expect(diffReport.get('donor.donor_submitter_id')).to.not.be.undefined;
 		expect(diffReport.get('donor.donor_submitter_id')?.diff).to.deep.eq({
 			meta: { displayName: { type: 'deleted', data: 'Submitter Donor ID' } },
-			restrictions: {
-				script: {
-					type: 'updated',
-					data: { added: ['(field)=>field.length > 6'], deleted: ['(field)=>field.length > 5'] },
-				},
-			},
 		});
 
 		expect(diffReport.get('donor.gender')?.diff).to.deep.eq({

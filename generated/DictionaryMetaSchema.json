@@ -73,7 +73,7 @@
     "Name": {
       "type": "string",
       "minLength": 1,
-      "pattern": "^[^.]+$"
+      "pattern": "^[^\\s.]+$"
     },
     "Schema": {
       "type": "object",
@@ -198,27 +198,6 @@
                 "required": {
                   "type": "boolean"
                 },
-                "script": {
-                  "anyOf": [
-                    {
-                      "type": "array",
-                      "items": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "$ref": "#/definitions/ReferenceTag"
-                          }
-                        ]
-                      },
-                      "minItems": 1
-                    },
-                    {
-                      "$ref": "#/definitions/ReferenceTag"
-                    }
-                  ]
-                },
                 "regex": {
                   "anyOf": [
                     {
@@ -280,16 +259,6 @@
                 },
                 "required": {
                   "type": "boolean"
-                },
-                "script": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/properties/script/anyOf/0"
-                    },
-                    {
-                      "$ref": "#/definitions/ReferenceTag"
-                    }
-                  ]
                 },
                 "range": {
                   "type": "object",
@@ -361,16 +330,6 @@
                 "required": {
                   "type": "boolean"
                 },
-                "script": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/properties/script/anyOf/0"
-                    },
-                    {
-                      "$ref": "#/definitions/ReferenceTag"
-                    }
-                  ]
-                },
                 "range": {
                   "type": "object",
                   "properties": {
@@ -427,16 +386,6 @@
                 "required": {
                   "type": "boolean"
                 },
-                "script": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/properties/script/anyOf/0"
-                    },
-                    {
-                      "$ref": "#/definitions/ReferenceTag"
-                    }
-                  ]
-                },
                 "unique": {
                   "type": "boolean"
                 }
@@ -456,8 +405,7 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/definitions/Name"
         },
         "description": {
           "type": "string"

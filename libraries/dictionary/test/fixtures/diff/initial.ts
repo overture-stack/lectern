@@ -35,9 +35,6 @@ const DIFF_DICTIONARY_INITIAL: Dictionary = {
 						displayName: 'Submitter Donor ID',
 						key: true,
 					},
-					restrictions: {
-						script: ['(field)=>field.length > 5'],
-					},
 				},
 				{
 					name: 'gender',

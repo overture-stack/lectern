@@ -88,19 +88,10 @@ const internalReplaceSchemaReferences = (
 					if (field.restrictions.regex !== undefined) {
 						field.restrictions.regex = resolveNoArrays(field.restrictions.regex, 'regex');
 					}
-					if (field.restrictions.script !== undefined) {
-						field.restrictions.script = asArray(resolveRestriction(field.restrictions.script));
-					}
 					break;
 				case 'number':
-					if (field.restrictions.script !== undefined) {
-						field.restrictions.script = asArray(resolveRestriction(field.restrictions.script));
-					}
 					break;
 				case 'integer':
-					if (field.restrictions.script !== undefined) {
-						field.restrictions.script = asArray(resolveRestriction(field.restrictions.script));
-					}
 					break;
 				case 'boolean':
 					break;

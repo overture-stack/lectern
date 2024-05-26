@@ -23,7 +23,7 @@ import * as immer from 'immer';
 import { omit } from 'lodash';
 import logger from '../config/logger';
 import * as DictionaryRepo from '../db/dictionary';
-import { normalizeSchema, validate } from '../services/schemaService';
+import { validate } from '../services/schemaService';
 
 /**
  * Get latest version for all dictionaries with the provided name
@@ -124,15 +124,8 @@ export const create = async (newDict: Dictionary): Promise<Dictionary> => {
 		if (!result.valid) throw new BadRequestError(JSON.stringify(result.errors));
 	});
 
-	const normalizedSchemas = newDict.schemas.map((schema) => normalizeSchema(schema));
-
 	// Save new dictionary version
-	const result = await DictionaryRepo.addDictionary({
-		name: newDict.name,
-		version: newDict.version,
-		schemas: normalizedSchemas,
-		references: newDict.references || {},
-	});
+	const result = await DictionaryRepo.addDictionary(newDict);
 	return result;
 };
 
@@ -159,11 +152,9 @@ export const addSchema = async (id: string, schema: Schema): Promise<Dictionary>
 		throw new ConflictError('Schema with this name already exists.');
 	}
 
-	const normalizedSchema = normalizeSchema(schema);
-
 	const updatedDictionary = immer.produce(existingDictionary, (draft) => {
 		draft.version = VersionUtils.incrementMajor(draft.version);
-		draft.schemas = [...draft.schemas, normalizedSchema];
+		draft.schemas = [...draft.schemas, schema];
 	});
 
 	// Save new dictionary version
@@ -195,9 +186,7 @@ export const updateSchema = async (id: string, schema: Schema, major: boolean): 
 	// Filter out one to update
 	const schemas = existingDictionary.schemas.filter((s) => !(s['name'] === schema['name']));
 
-	const normalizedSchema = normalizeSchema(schema);
-
-	schemas.push(normalizedSchema);
+	schemas.push(schema);
 
 	// Increment Version
 	const nextVersion = major
@@ -205,7 +194,7 @@ export const updateSchema = async (id: string, schema: Schema, major: boolean): 
 		: VersionUtils.incrementMinor(existingDictionary.version);
 	const updatedDictionary = immer.produce(existingDictionary, (draft) => {
 		const filteredSchemas = draft.schemas.filter((s) => !(s['name'] === schema['name']));
-		draft.schemas = [...filteredSchemas, normalizedSchema];
+		draft.schemas = [...filteredSchemas, schema];
 		draft.version = nextVersion;
 	});
 
