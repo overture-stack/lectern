@@ -1,0 +1,52 @@
+{
+	"name": "@overturebio-stack/lectern-client",
+	"version": "1.5.0",
+	"files": [
+		"dist/"
+	],
+	"main": "./dist/index.js",
+	"typings": "./dist/index.d.ts",
+	"description": "TypeScript client to interact with Lectern servers and perform data validation versus Lectern dictionaries.",
+	"scripts": {
+		"build": "rimraf dist && tsc",
+		"test": "nyc mocha --exit --timeout 5000 -r ts-node/register test/**.spec.ts",
+		"lint": "tslint -c tslint.json -e node_modules -p tsconfig.json"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/overture-stack/lectern.git"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"license": "AGPL-3.0",
+	"devDependencies": {
+		"@types/chai": "^4.2.16",
+		"@types/deep-freeze": "^0.1.2",
+		"@types/lodash": "^4.14.195",
+		"@types/mocha": "^8.2.2",
+		"@types/node": "^12.0.10",
+		"@types/node-fetch": "^2.5.10",
+		"chai": "^4.3.4",
+		"husky": "^6.0.0",
+		"mocha": "^8.3.2",
+		"prettier": "^2.2.1",
+		"pretty-quick": "^3.1.0",
+		"rimraf": "^3.0.2",
+		"ts-node": "^9.1.1",
+		"tslint": "^6.1.3",
+		"typedoc": "^0.17.7",
+		"typescript": "^5.1.6"
+	},
+	"dependencies": {
+		"cd": "^0.3.3",
+		"common": "workspace:^",
+		"deep-freeze": "^0.0.1",
+		"lodash": "^4.17.21",
+		"node-fetch": "^2.6.1",
+		"node-worker-threads-pool": "^1.4.3",
+		"promise-tools": "^2.1.0",
+		"winston": "^3.3.3"
+	},
+	"author": "Ontario Institute for Cancer Research"
+}
