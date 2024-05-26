@@ -91,16 +91,6 @@ const expectedResult: ChangeAnalysis = {
 			created: [],
 			deleted: [],
 		},
-		script: {
-			updated: [],
-			created: [
-				{
-					field: 'donor.survival_time',
-					definition: ' $field / 2 == 0 ',
-				},
-			],
-			deleted: [],
-		},
 		range: {
 			updated: [
 				{

@@ -116,7 +116,6 @@
 				"name": "survival_time",
 				"valueType": "integer",
 				"restrictions": {
-					"script": " $field / 2 == 0 ",
 					"range": {
 						"min": 0,
 						"max": 200000
@@ -130,8 +129,7 @@
 						"range": {
 							"min": 0,
 							"max": 200000
-						},
-						"script": " $field / 2 == 0 "
+						}
 					}
 				}
 			}

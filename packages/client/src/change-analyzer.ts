@@ -70,11 +70,6 @@ export const analyzeChanges = (schemasDiff: SchemasDictionaryDiffs): ChangeAnaly
 				created: [],
 				deleted: [],
 			},
-			script: {
-				updated: [],
-				created: [],
-				deleted: [],
-			},
 			range: {
 				updated: [],
 				created: [],
@@ -147,7 +142,7 @@ const categorizeRestrictionChanges = (
 	restrictionsChange: { [field: string]: FieldChanges } | Change,
 	fieldDefinitionAfter?: FieldDefinition,
 ) => {
-	const restrictionsToCheck = ['regex', 'script', 'required', 'codeList', 'range'];
+	const restrictionsToCheck = ['regex', 'required', 'codeList', 'range'];
 
 	// additions or deletions of a restriction object as whole (i.e. contains 1 or many restrictions within the 'data')
 	if (restrictionsChange.type) {

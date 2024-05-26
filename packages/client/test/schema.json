@@ -150,8 +150,7 @@
 						"valueType": "string",
 						"description": "postal code",
 						"restrictions": {
-							"required": true,
-							"script": "/**  important to return the result object here here */\r\n(function validate(inputs) {\r\n   const {$row, $field, $name} = inputs; var person = $row;\r\nvar postalCode = $field; var result = { valid: true, message: \"ok\"};\r\n\r\n    /* custom logic start */\r\n    if (person.country === \"US\") {\r\n        var valid = /^[0-9]{5}(?:-[0-9]{4})?$/.test(postalCode);\r\n        if (!valid) {\r\n            result.valid = false;\r\n            result.message = \"invalid postal code for US\";\r\n        }\r\n    } else if (person.country === \"CANADA\") {\r\n        var valid = /^[A-Za-z]\\d[A-Za-z][ -]?\\d[A-Za-z]\\d$/.test(postalCode);\r\n        if (!valid) {\r\n            result.valid = false;\r\n            result.message = \"invalid postal code for CANADA\";\r\n        }\r\n    }\r\n    /* custom logic end */\r\n\r\n    return result;\r\n})\r\n\r\n"
+							"required": true
 						}
 					},
 					{

@@ -224,39 +224,6 @@ describe('schema-functions', () => {
 		});
 	});
 
-	it('should validate script', () => {
-		const result = schemaService.processRecords(schema, 'address', [
-			{
-				country: 'US',
-				postal_code: '12',
-			},
-			{
-				country: 'CANADA',
-				postal_code: 'ABC',
-			},
-			{
-				country: 'US',
-				postal_code: '15523',
-			},
-		]);
-
-		chai.expect(result.validationErrors.length).to.eq(2);
-		chai.expect(result.validationErrors).to.deep.include({
-			errorType: SchemaValidationErrorTypes.INVALID_BY_SCRIPT,
-			fieldName: 'postal_code',
-			index: 0,
-			info: { message: 'invalid postal code for US', value: '12' },
-			message: 'invalid postal code for US',
-		});
-		chai.expect(result.validationErrors).to.deep.include({
-			errorType: SchemaValidationErrorTypes.INVALID_BY_SCRIPT,
-			fieldName: 'postal_code',
-			index: 1,
-			info: { message: 'invalid postal code for CANADA', value: 'ABC' },
-			message: 'invalid postal code for CANADA',
-		});
-	});
-
 	it('should validate if non-required feilds are not provided', () => {
 		const result = schemaService.processRecords(schema, 'donor', [
 			// optional enum field not provided

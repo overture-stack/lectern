@@ -92,7 +92,6 @@ export interface FieldDefinition {
 	restrictions?: {
 		codeList?: CodeListRestriction;
 		regex?: string;
-		script?: Array<string> | string;
 		required?: boolean;
 		unique?: boolean;
 		range?: RangeRestriction;
@@ -173,7 +172,6 @@ export type RestrictionChanges = {
 	};
 	regex: RegexChanges;
 	required: RequiredChanges;
-	script: ScriptChanges;
 };
 
 export type MetaChanges = {

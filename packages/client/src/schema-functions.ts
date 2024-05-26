@@ -391,7 +391,6 @@ const validateAfterTypeConversion = (
 			validation.validateRegex,
 			validation.validateRange,
 			validation.validateEnum,
-			validation.validateScript,
 		])
 		.filter(notEmpty);
 
@@ -515,27 +514,6 @@ namespace validation {
 				if (invalidValues.length !== 0) {
 					const info = { value: invalidValues, ...range };
 					return buildError(SchemaValidationErrorTypes.INVALID_BY_RANGE, field.name, index, info);
-				}
-				return undefined;
-			})
-			.filter(notEmpty);
-	};
-
-	export const validateScript: TypedValidationFunction = (
-		rec: TypedDataRecord,
-		index: number,
-		fields: Array<FieldDefinition>,
-	) => {
-		return fields
-			.map((field) => {
-				if (field.restrictions && field.restrictions.script) {
-					const scriptResult = validateWithScript(field, rec);
-					if (!scriptResult.valid) {
-						return buildError(SchemaValidationErrorTypes.INVALID_BY_SCRIPT, field.name, index, {
-							message: scriptResult.message,
-							value: rec[field.name],
-						});
-					}
 				}
 				return undefined;
 			})
@@ -776,63 +754,6 @@ namespace validation {
 	};
 
 	const ctx = vm.createContext();
-
-	const validateWithScript = (
-		field: FieldDefinition,
-		record: TypedDataRecord,
-	): {
-		valid: boolean;
-		message: string;
-	} => {
-		try {
-			const args = {
-				$row: record,
-				$field: record[field.name],
-				$name: field.name,
-			};
-
-			if (!field.restrictions || !field.restrictions.script) {
-				throw new Error('called validation by script without script provided');
-			}
-
-			// scripts should already be strings inside arrays, but ensure that they are to help transition between lectern versions
-			// checking for this can be removed in future versions of lectern (feb 2020)
-			const scripts =
-				typeof field.restrictions.script === 'string' ? [field.restrictions.script] : field.restrictions.script;
-
-			let result: {
-				valid: boolean;
-				message: string;
-			} = {
-				valid: false,
-				message: '',
-			};
-
-			for (const scriptString of scripts) {
-				const script = getScript(scriptString);
-				const valFunc = script.runInContext(ctx);
-				if (!valFunc) throw new Error('Invalid script');
-				result = valFunc(args);
-				/* Return the first script that's invalid. Otherwise result will be valid with message: 'ok'*/
-				if (!result.valid) break;
-			}
-
-			return result;
-		} catch (err) {
-			console.error(
-				`failed running validation script ${field.name} for record: ${JSON.stringify(record)}. Error message: ${err}`,
-			);
-			return {
-				valid: false,
-				message: 'failed to run script validation, check script and the input',
-			};
-		}
-	};
-
-	const getScript = (scriptString: string) => {
-		const script = new vm.Script(scriptString);
-		return script;
-	};
 
 	const buildError = (
 		errorType: SchemaValidationErrorTypes,
