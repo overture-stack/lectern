@@ -20,22 +20,24 @@
 import { expect } from 'chai';
 import { replaceReferences } from '../../src/references';
 
-import noReferencesSectionInput from '../fixtures/references/no_references_section/input';
-import noReferencesSectionOutput from '../fixtures/references/no_references_section/output';
-import emptyReferencesInput from '../fixtures/references/empty_references_section/input';
-import emptyReferencesOutput from '../fixtures/references/empty_references_section/output';
-import simpleReferencesInput from '../fixtures/references/simple_references/input';
-import simpleReferencesOutput from '../fixtures/references/simple_references/output';
+import arrayRestrictionsReferencesInput from '../fixtures/references/array_of_restrictions_with_references/input';
+import arrayRestrictionsReferencesOutput from '../fixtures/references/array_of_restrictions_with_references/output';
 import codeListReferencesInput from '../fixtures/references/codeList_references/input';
 import codeListReferencesOutput from '../fixtures/references/codeList_references/output';
+import cyclicReferencesInput from '../fixtures/references/cyclic_references/input';
+import emptyReferencesInput from '../fixtures/references/empty_references_section/input';
+import emptyReferencesOutput from '../fixtures/references/empty_references_section/output';
+import noReferencesSectionInput from '../fixtures/references/no_references_section/input';
+import noReferencesSectionOutput from '../fixtures/references/no_references_section/output';
+import nonExistingReferencesInput from '../fixtures/references/non_existing_references/input';
 import referencesWithinReferencesInput from '../fixtures/references/references_within_references/input';
 import referencesWithinReferencesOutput from '../fixtures/references/references_within_references/output';
 import regexReferencesInput from '../fixtures/references/regex_reference/input';
-import regexReferencesOutput from '../fixtures/references/regex_reference/output';
 import regexArrayReferencesInput from '../fixtures/references/regex_reference/input_with_array';
-import nonExistingReferencesInput from '../fixtures/references/non_existing_references/input';
-import cyclicReferencesInput from '../fixtures/references/cyclic_references/input';
+import regexReferencesOutput from '../fixtures/references/regex_reference/output';
 import selfReferencesInput from '../fixtures/references/self_references/input';
+import simpleReferencesInput from '../fixtures/references/simple_references/input';
+import simpleReferencesOutput from '../fixtures/references/simple_references/output';
 
 describe('Replace References', () => {
 	it('Should return the same original schema if dictionary does not contain a references section', () => {
@@ -78,5 +80,9 @@ describe('Replace References', () => {
 	});
 	it('Should throw exception if self references are found', () => {
 		expect(() => replaceReferences(selfReferencesInput)).to.throw("Cyclical references found for '#/SELF_REFERENCE'");
+	});
+	it('Restriction arrays have references correctly replaced', () => {
+		const output = replaceReferences(arrayRestrictionsReferencesInput);
+		expect(output).to.deep.eq(arrayRestrictionsReferencesOutput);
 	});
 });

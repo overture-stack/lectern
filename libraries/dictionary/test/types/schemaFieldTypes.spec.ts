@@ -24,10 +24,48 @@ import {
 	NumberFieldRestrictions,
 	RestrictionIntegerRange,
 	RestrictionNumberRange,
+	SchemaBooleanField,
+	SchemaIntegerField,
+	SchemaNumberField,
+	SchemaStringField,
 	StringFieldRestrictions,
 } from '../../src';
 
 describe('SchemaField Types', () => {
+	describe('Restrictions as arrays', () => {
+		it('Boolean restrictions can be arrays', () => {
+			const field: SchemaBooleanField = {
+				name: 'boolean_field',
+				valueType: 'boolean',
+				restrictions: [{ required: true }, { unique: true }],
+			};
+			expect(SchemaBooleanField.safeParse(field).success).true;
+		});
+		it('Integer restrictions can be arrays', () => {
+			const field: SchemaIntegerField = {
+				name: 'integer_field',
+				valueType: 'integer',
+				restrictions: [{ required: true }, { range: { min: 12, max: 34 } }],
+			};
+			expect(SchemaIntegerField.safeParse(field).success).true;
+		});
+		it('Number restrictions can be arrays', () => {
+			const field: SchemaNumberField = {
+				name: 'number_field',
+				valueType: 'number',
+				restrictions: [{ required: true }, { range: { min: 12, max: 34 } }],
+			};
+			expect(SchemaNumberField.safeParse(field).success).true;
+		});
+		it('String restrictions can be arrays', () => {
+			const field: SchemaStringField = {
+				name: 'string_field',
+				valueType: 'string',
+				restrictions: [{ required: true }, { codeList: ['a', 'b', 'c'] }],
+			};
+			expect(SchemaStringField.safeParse(field).success).true;
+		});
+	});
 	describe('RangeRestriction', () => {
 		it("Integer Range Can't have exclusiveMin and Min", () => {
 			expect(RestrictionIntegerRange.safeParse({ exclusiveMin: 0, min: 0 }).success).false;
