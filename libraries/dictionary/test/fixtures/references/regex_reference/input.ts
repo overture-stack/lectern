@@ -1,7 +1,7 @@
 import { Dictionary } from '../../../../src';
 
 const content: Dictionary = {
-	name: 'Test Dictionary',
+	name: 'test_dictionary',
 	version: '1.0',
 	schemas: [
 		{
