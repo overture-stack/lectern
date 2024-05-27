@@ -53,7 +53,7 @@ In addition to schemas, a Lectern Dictionary can contain reference values that c
 | `name`        | NameString (no whitespace or `.`)                       | Required |         | Name of the schema. This will be used in paths that reference this schema, and for identifying files containing records for this schema.    | `"example-schema"`                                        |
 | `fields`      | `Array<`[`LecterField`](#dictionary-field-structure)`>` | Required |         | List of fields contained in this Schema.                                                                                                    | [Dictionary Field Structure](#dictionary-field-structure) |
 | `description` | `string`                                                | Optional | None    | Free text description of the schema, for use as a reference for users of the schema. This description is not used in dictionary validation. | `"Demonstrating structure of Lectern Schema"`             |
-| `meta`        | [MetaData](#meta-data-structure) object                 | Optional | None    | Schema implementor defined fields to capture any additional properties not defined in standard Lectern schemas.                             | [Meta Data Structure](#meta-data-structure)               |
+| `meta`        | [`MetaData`](#meta-data-structure)                  | Optional | None    | Schema implementor defined fields to capture any additional properties not defined in standard Lectern schemas.                             | [Meta Data Structure](#meta-data-structure)               |
 
 ### Dictionary Field Structure
 > **Example Dictionary Field Definition**
@@ -79,7 +79,7 @@ In addition to schemas, a Lectern Dictionary can contain reference values that c
 | `description`    | Optional | `""` No value          | `string`                                  | Free text description of the field, for use as a reference for users of the schema. This description is not used in dictionary validation. | `"Shows a string field with a required restriction"` |
 | `meta`           | Optional | Empty object, no value | [`MetaData`](#meta-data-structure) object | Schema implementor defined fields to capture any additional properties not defined in standard Lectern fields.                             | `{ "displayName": "Example Field" }`                 |
 | `isArray`        | Optional | `false`                | `boolean`                                 | Type of value stored in this field                                                                                                         |                                                      |
-| `restrictions`   | Optional | `\|`                   | `string`                                  | Character or string that will be used to split multiple values into an array. The default delimiter is the `\|` character.                 |                                                      |
+| `restrictions`   | Optional | No Restrictions                   | `RestrictionsObject` or `Array<RestricitonsObject>`                                 | An object containing all validation rules for this field. This can be a single object containing all [restrictions](#field-restrictions) applied to this field or a list of objects whose restrictions will be combined. [Conditional restrictions](#conditional-restrictions) can also be used to apply validation rules based on values of other fields in the record.                 | `{ "required": true }`                                                     |
 
 
 
@@ -196,7 +196,12 @@ A requirement condition is defined by providing a field name or list of field na
 > }
 > ```
 
-A `meta` object is available to allow the dictionary creator to add custom properties to the Lectern Dictionary. The `meta` property is available to all Dictionary, Schema, and Field objects. Providing a `meta` value is optional, but if provided it must be a JSON object. There are no restrictions on the field names that can be added to the `meta` object other than they must be valid JSON. The values for meta properties are restricted to being a `string`, `number`, or `boolean` value. This means that meta data cannot be nested or accept arrays.
+A `meta` object is available to allow the dictionary creator to add custom properties to the Lectern Dictionary. The `meta` property is available to all Dictionary, Schema, and Field objects. Providing a `meta` value is optional. If provided the `meta` value is a JSON object. There are no restrictions on the field names that can be added to the `meta` object other than they must be valid JSON. The values for properties of the `meta` can either be another nested meta object, or are one of the allowed value types:
+  - `string`
+  - `number`
+  - `boolean`
+  - `Array<string>`
+  - `Array<number>`
 
 ### References Structure
 
