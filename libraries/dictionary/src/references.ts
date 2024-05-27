@@ -17,10 +17,19 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { InvalidReferenceError, asArray } from 'common';
 import * as immer from 'immer';
 import { cloneDeep, get, isObject, omit } from 'lodash';
-import { Dictionary, ReferenceArray, ReferenceTag, ReferenceValue, References, Schema } from '.';
-import { InvalidReferenceError, asArray } from 'common';
+
+import {
+	Dictionary,
+	ReferenceArray,
+	ReferenceTag,
+	ReferenceValue,
+	References,
+	Schema,
+	StringFieldRestrictions,
+} from '.';
 
 // This is the union of all schema sections that could have reference values
 type OutputReferenceValues = ReferenceArray | ReferenceValue;
@@ -77,16 +86,27 @@ const internalReplaceSchemaReferences = (
 				}
 				return output;
 			};
+
+			const resolveStringFieldRestrictions = (restrictions: StringFieldRestrictions): StringFieldRestrictions => {
+				const output = cloneDeep(restrictions);
+				if (output.codeList !== undefined) {
+					output.codeList = asArray(resolveRestriction(output.codeList));
+				}
+				if (output.regex !== undefined) {
+					output.regex = resolveNoArrays(output.regex, 'regex');
+				}
+				return output;
+			};
+
 			switch (field.valueType) {
 				// Each field type has different allowed restriction types, we need to handle the reference replacement rules carefully
 				// to ensure the output schema adhers to the type rules.
 				// All the checking for undefined prevents us from adding properties with value undefined into the field's ouput JSON
 				case 'string':
-					if (field.restrictions.codeList !== undefined) {
-						field.restrictions.codeList = asArray(resolveRestriction(field.restrictions.codeList));
-					}
-					if (field.restrictions.regex !== undefined) {
-						field.restrictions.regex = resolveNoArrays(field.restrictions.regex, 'regex');
+					if (Array.isArray(field.restrictions)) {
+						field.restrictions = field.restrictions.map(resolveStringFieldRestrictions);
+					} else {
+						field.restrictions = resolveStringFieldRestrictions(field.restrictions);
 					}
 					break;
 				case 'number':
