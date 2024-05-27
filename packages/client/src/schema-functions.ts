@@ -18,44 +18,42 @@
  */
 
 import {
-	SchemaValidationError,
-	TypedDataRecord,
-	SchemaTypes,
-	SchemaProcessingResult,
-	FieldNamesByPriorityMap,
 	BatchProcessingResult,
 	CodeListRestriction,
+	DataRecord,
+	FieldDefinition,
+	FieldNamesByPriorityMap,
 	RangeRestriction,
 	SchemaData,
-} from './schema-entities';
-import vm from 'vm';
-import {
-	SchemasDictionary,
 	SchemaDefinition,
-	FieldDefinition,
-	ValueType,
-	DataRecord,
+	SchemaProcessingResult,
+	SchemaTypes,
+	SchemaValidationError,
 	SchemaValidationErrorTypes,
+	SchemasDictionary,
+	TypedDataRecord,
+	ValueType,
 } from './schema-entities';
 
+import { DeepReadonly } from 'deep-freeze';
+import _ from 'lodash';
+import { loggerFor } from './logger';
+import { findDuplicateKeys, findMissingForeignKeys } from './records-operations';
+import schemaErrorMessage from './schema-error-messages';
 import {
 	Checks,
-	notEmpty,
-	isEmptyString,
-	isAbsent,
 	F,
-	isNotAbsent,
-	isStringArray,
-	isString,
-	isEmpty,
 	convertToArray,
+	isAbsent,
+	isEmpty,
+	isEmptyString,
+	isNotAbsent,
 	isNumberArray,
+	isString,
+	isStringArray,
+	notEmpty,
 } from './utils';
-import schemaErrorMessage from './schema-error-messages';
-import { loggerFor } from './logger';
-import { DeepReadonly } from 'deep-freeze';
-import _, { isArray } from 'lodash';
-import { findDuplicateKeys, findMissingForeignKeys } from './records-operations';
+
 const L = loggerFor(__filename);
 
 export const getSchemaFieldNamesWithPriority = (
@@ -752,8 +750,6 @@ namespace validation {
 		const regexPattern = new RegExp(regex);
 		return !regexPattern.test(value);
 	};
-
-	const ctx = vm.createContext();
 
 	const buildError = (
 		errorType: SchemaValidationErrorTypes,
