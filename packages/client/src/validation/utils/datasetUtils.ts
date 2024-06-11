@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2024 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,25 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { differenceWith, isEqual } from 'lodash';
-
-/**
- * Renames properties in a record using a mapping between current and new names.
- * @param record The record whose properties should be renamed.
- * @param fieldsMapping A mapping of current property names to new property names.
- * @returns A new record with the properties' names changed according to the mapping.
- */
-const renameProperties = (
-	record: Record<string, string | string[]>,
-	fieldsMapping: Map<string, string>,
-): Record<string, string | string[]> => {
-	const renamed: Record<string, string | string[]> = {};
-	Object.entries(record).forEach(([propertyName, propertyValue]) => {
-		const newName = fieldsMapping.get(propertyName) ?? propertyName;
-		renamed[newName] = propertyValue;
-	});
-	return renamed;
-};
+import { DataRecord } from '../../types/dataRecords';
 
 /**
  * Returns a string representation of a record. The record is sorted by its properties so
@@ -44,9 +26,9 @@ const renameProperties = (
  * @param record Record to be processed.
  * @returns String representation of the record sorted by its properties.
  */
-const getSortedRecordKey = (record: Record<string, string | string[]>): string => {
+const getSortedRecordKey = (record: DataRecord): string => {
 	const sortedKeys = Object.keys(record).sort();
-	const sortedRecord: Record<string, string | string[]> = {};
+	const sortedRecord: DataRecord = {};
 	for (const key of sortedKeys) {
 		sortedRecord[key] = record[key];
 	}
@@ -54,33 +36,13 @@ const getSortedRecordKey = (record: Record<string, string | string[]>): string =
 };
 
 /**
- * Find missing foreign keys by calculating the difference between 2 dataset keys (similar to a set difference).
- * Returns rows in `dataKeysA` which are not present in `dataKeysB`.
- * @param datasetKeysA Keys of the dataset A. The returned value of this function is a subset of this array.
- * @param datasetKeysB Keys of the dataset B. Elements to be substracted from `datasetKeysA`.
- * @param fieldsMapping Mapping of the field names so the keys can be compared correctly.
- */
-export const findMissingForeignKeys = (
-	datasetKeysA: [number, Record<string, string | string[]>][],
-	datasetKeysB: [number, Record<string, string | string[]>][],
-	fieldsMapping: Map<string, string>,
-): [number, Record<string, string | string[]>][] => {
-	const diff = differenceWith(datasetKeysA, datasetKeysB, (a, b) =>
-		isEqual(a[1], renameProperties(b[1], fieldsMapping)),
-	);
-	return diff;
-};
-
-/**
  * Find duplicate keys in a dataset.
  * @param datasetKeys Array with the keys to evaluate.
  * @returns An Array with all the values that appear more than once in the dataset.
  */
-export const findDuplicateKeys = (
-	datasetKeys: [number, Record<string, string | string[]>][],
-): [number, Record<string, string | string[]>][] => {
-	const duplicateKeys: [number, Record<string, string | string[]>][] = [];
-	const recordKeysMap: Map<[number, Record<string, string | string[]>], string> = new Map();
+export const findDuplicateKeys = (datasetKeys: [number, DataRecord][]): [number, DataRecord][] => {
+	const duplicateKeys: [number, DataRecord][] = [];
+	const recordKeysMap: Map<[number, DataRecord], string> = new Map();
 	const keyCount: Map<string, number> = new Map();
 
 	// Calculate a key per record, which is a string representation that allows to compare records even if their properties
@@ -101,3 +63,19 @@ export const findDuplicateKeys = (
 	});
 	return duplicateKeys;
 };
+
+/**
+ * A "select" function that retrieves specific fields from the dataset as a record, as well as the numeric position of each row in the dataset.
+ * @param dataset Dataset to select fields from.
+ * @param fields Array with names of the fields to select.
+ * @returns An array of tuples tuple where the first element is the index of the row in the dataset, and the second value is the record with the
+ * selected values.
+ */
+export const selectFieldsFromDataset = (dataset: DataRecord[], fields: string[]): [number, DataRecord][] =>
+	dataset.map((row, index) => {
+		const filteredRecord = fields.reduce<DataRecord>((acc, field) => {
+			acc[field] = row[field] || '';
+			return acc;
+		}, {});
+		return [index, filteredRecord];
+	});
