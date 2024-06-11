@@ -42,9 +42,9 @@
 		"cd": "^0.3.3",
 		"common": "workspace:^",
 		"deep-freeze": "^0.0.1",
+		"dictionary": "workspace:^",
 		"lodash": "^4.17.21",
 		"node-fetch": "^2.6.1",
-		"node-worker-threads-pool": "^1.4.3",
 		"promise-tools": "^2.1.0",
 		"winston": "^3.3.3"
 	},
