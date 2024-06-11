@@ -52,6 +52,7 @@ export type SchemaFieldValueType = zod.infer<typeof SchemaFieldValueType>;
  * ************ */
 export const RestrictionScript = zod.array(zod.string().or(ReferenceTag)).min(1); //TODO: script formatting validation
 export type RestrictionScript = zod.infer<typeof RestrictionScript>;
+
 export const RestrictionNumberRange = zod
 	.object({
 		exclusiveMax: zod.number().optional(),
@@ -99,6 +100,8 @@ export const RestrictionIntegerRange = zod
 		(data) => !(data.exclusiveMax !== undefined && data.max !== undefined),
 		'Range restriction cannot have both `exclusiveMax` and `max`.',
 	);
+
+export const RestrictionRange = RestrictionNumberRange;
 export type RestrictionRange = zod.infer<typeof RestrictionIntegerRange>;
 
 export const RestrictionRegex = zod.string().superRefine((data, context) => {
