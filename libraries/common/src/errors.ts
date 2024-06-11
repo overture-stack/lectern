@@ -17,13 +17,6 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export class ConflictError extends Error {
-	constructor(message: string) {
-		super(message);
-		this.name = 'Conflict';
-	}
-}
-
 export class BadRequestError extends Error {
 	constructor(message: string) {
 		super(message);
@@ -31,10 +24,17 @@ export class BadRequestError extends Error {
 	}
 }
 
-export class MalformedVersionError extends Error {
+export class ConflictError extends Error {
 	constructor(message: string) {
 		super(message);
-		this.name = 'MalformedVersion';
+		this.name = 'Conflict';
+	}
+}
+
+export class ForbiddenError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'Forbidden';
 	}
 }
 
@@ -42,6 +42,26 @@ export class InternalServerError extends Error {
 	constructor(message: string) {
 		super(message);
 		this.name = 'InternalServer';
+	}
+}
+
+export class InvalidArgument extends Error {
+	constructor(argumentName: string) {
+		super(`Invalid argument : ${argumentName}`);
+	}
+}
+
+export class InvalidReferenceError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'InvalidReference';
+	}
+}
+
+export class MalformedVersionError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'MalformedVersion';
 	}
 }
 
@@ -56,19 +76,5 @@ export class UnauthorizedError extends Error {
 	constructor(message: string) {
 		super(message);
 		this.name = 'Unauthorized';
-	}
-}
-
-export class ForbiddenError extends Error {
-	constructor(message: string) {
-		super(message);
-		this.name = 'Forbidden';
-	}
-}
-
-export class InvalidReferenceError extends Error {
-	constructor(message: string) {
-		super(message);
-		this.name = 'InvalidReference';
 	}
 }
