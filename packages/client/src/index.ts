@@ -17,10 +17,9 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import * as entities from './schema-entities';
-import * as analyzer from './change-analyzer';
-import * as functions from './schema-functions';
-import * as parallel from './parallel';
+export * as DictionaryTypes from 'dictionary';
+export * as analyzer from './changeAnalysis';
+export * as functions from './processing';
+export { restClient } from './rest';
 
-import { restClient } from './schema-rest-client';
-export { entities, analyzer, functions, parallel, restClient };
+export type { DataRecord, DataRecordValue, UnprocessedDataRecord } from './types';
