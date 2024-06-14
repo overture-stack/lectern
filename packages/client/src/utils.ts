@@ -17,40 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import fs from 'fs';
 import deepFreeze from 'deep-freeze';
 import _ from 'lodash';
-import { isArray } from 'util';
-
-const fsPromises = fs.promises;
-
-export namespace Checks {
-	export const checkNotNull = (argName: string, arg: any) => {
-		if (!arg) {
-			throw new Errors.InvalidArgument(argName);
-		}
-	};
-}
-
-export namespace Errors {
-	export class InvalidArgument extends Error {
-		constructor(argumentName: string) {
-			super(`Invalid argument : ${argumentName}`);
-		}
-	}
-
-	export class NotFound extends Error {
-		constructor(msg: string) {
-			super(msg);
-		}
-	}
-
-	export class StateConflict extends Error {
-		constructor(msg: string) {
-			super(msg);
-		}
-	}
-}
 
 // type gaurd to filter out undefined and null
 // https://stackoverflow.com/questions/43118692/typescript-filter-out-nulls-from-an-array
@@ -108,7 +76,9 @@ export const isAbsent = (value: string | number | boolean | undefined): value is
 	return !isNotAbsent(value);
 };
 
-export const isNotAbsent = (value: string | number | boolean | undefined): value is string | number | boolean => {
+export const isNotAbsent = (
+	value: string | number | boolean | undefined | null,
+): value is string | number | boolean => {
 	return value !== null && value !== undefined;
 };
 
@@ -131,7 +101,7 @@ export function toString(obj: any) {
 }
 
 export function isValueEqual(value: any, other: any) {
-	if (isArray(value) && isArray(other)) {
+	if (Array.isArray(value) && Array.isArray(other)) {
 		return _.difference(value, other).length === 0; // check equal, ignore order
 	}
 

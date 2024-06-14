@@ -18,35 +18,19 @@
  */
 
 import chai from 'chai';
-import * as analyzer from '../src/change-analyzer';
-import { SchemasDictionaryDiffs, FieldDiff, ChangeAnalysis } from '../src/schema-entities';
-import _ from 'lodash';
+import { DiffUtils } from 'dictionary';
+import { analyzer } from '../src';
+import { ChangeAnalysis } from '../src/changeAnalysis';
+import diffResponse from './fixtures/diffResponse';
 chai.should();
-const diffResponse: any = require('./schema-diff.json');
-const schemaDiff: SchemasDictionaryDiffs = {};
-for (const entry of diffResponse) {
-	const fieldName = entry[0] as string;
-	if (entry[1]) {
-		const fieldDiff: FieldDiff = {
-			before: entry[1].left,
-			after: entry[1].right,
-			diff: entry[1].diff,
-		};
-		schemaDiff[fieldName] = fieldDiff;
-	}
-}
+
+const diffFixture = DiffUtils.diffArrayToMap(diffResponse);
 
 const expectedResult: ChangeAnalysis = {
 	fields: {
 		addedFields: [],
 		renamedFields: [],
 		deletedFields: ['primary_diagnosis.menopause_status'],
-	},
-	metaChanges: {
-		core: {
-			changedToCore: [],
-			changedFromCore: [],
-		},
 	},
 	restrictionsChanges: {
 		codeList: {
@@ -91,16 +75,6 @@ const expectedResult: ChangeAnalysis = {
 			created: [],
 			deleted: [],
 		},
-		script: {
-			updated: [],
-			created: [
-				{
-					field: 'donor.survival_time',
-					definition: ' $field / 2 == 0 ',
-				},
-			],
-			deleted: [],
-		},
 		range: {
 			updated: [
 				{
@@ -121,14 +95,19 @@ const expectedResult: ChangeAnalysis = {
 			],
 			deleted: [],
 		},
+		script: {
+			created: [],
+			deleted: [],
+			updated: [],
+		},
 	},
 	isArrayDesignationChanges: ['primary_diagnosis.presenting_symptoms'],
 	valueTypeChanges: ['sample_registration.program_id'],
 };
 
-describe('change-analyzer', () => {
+describe('changeAnalyzer', () => {
 	it('categorize changes correctly', () => {
-		const result = analyzer.analyzeChanges(schemaDiff);
+		const result = analyzer.analyzeChanges(diffFixture);
 		result.should.deep.eq(expectedResult);
 	});
 });

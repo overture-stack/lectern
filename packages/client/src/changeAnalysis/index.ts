@@ -17,9 +17,5 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * as DictionaryTypes from 'dictionary';
-export * as analyzer from './changeAnalysis';
-export * as functions from './processing';
-export { restClient } from './rest';
-
-export type { DataRecord, DataRecordValue, UnprocessedDataRecord } from './types';
+export * from './changeAnalysisTypes';
+export * from './changeAnalyzer';

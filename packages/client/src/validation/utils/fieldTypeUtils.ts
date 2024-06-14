@@ -17,9 +17,27 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * as DictionaryTypes from 'dictionary';
-export * as analyzer from './changeAnalysis';
-export * as functions from './processing';
-export { restClient } from './rest';
+import { SchemaFieldValueType } from 'dictionary';
 
-export type { DataRecord, DataRecordValue, UnprocessedDataRecord } from './types';
+import { isEmptyString } from '../../utils';
+
+/**
+ * Check a value is valid for a given schema value type.
+ * @param valueType
+ * @param value
+ * @returns
+ */
+export const isInvalidFieldType = (valueType: SchemaFieldValueType, value: string) => {
+	// optional field if the value is absent at this point
+	if (isEmptyString(value)) return false;
+	switch (valueType) {
+		case SchemaFieldValueType.Values.string:
+			return false;
+		case SchemaFieldValueType.Values.integer:
+			return !Number.isSafeInteger(Number(value));
+		case SchemaFieldValueType.Values.number:
+			return isNaN(Number(value));
+		case SchemaFieldValueType.Values.boolean:
+			return !(value.toLowerCase() === 'true' || value.toLowerCase() === 'false');
+	}
+};

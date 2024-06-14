@@ -17,25 +17,20 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { loggerFor } from './logger';
-import fetch from 'node-fetch';
-import { SchemasDictionary, SchemasDictionaryDiffs, FieldChanges, FieldDiff } from './schema-entities';
-import promiseTools from 'promise-tools';
 import { unknownToString } from 'common';
+import { Dictionary, DictionaryDiff, DictionaryDiffArray, FieldDiff } from 'dictionary';
+import fetch from 'node-fetch';
+import promiseTools from 'promise-tools';
+import { loggerFor } from '../logger';
 const L = loggerFor(__filename);
 
 export interface SchemaServiceRestClient {
-	fetchSchema(schemaSvcUrl: string, name: string, version: string): Promise<SchemasDictionary>;
-	fetchDiff(
-		schemaSvcUrl: string,
-		name: string,
-		fromVersion: string,
-		toVersion: string,
-	): Promise<SchemasDictionaryDiffs>;
+	fetchSchema(schemaSvcUrl: string, name: string, version: string): Promise<Dictionary>;
+	fetchDiff(schemaSvcUrl: string, name: string, fromVersion: string, toVersion: string): Promise<DictionaryDiff>;
 }
 
 export const restClient: SchemaServiceRestClient = {
-	fetchSchema: async (schemaSvcUrl: string, name: string, version: string): Promise<SchemasDictionary> => {
+	fetchSchema: async (schemaSvcUrl: string, name: string, version: string): Promise<Dictionary> => {
 		// for testing where we need to work against stub schema
 		if (schemaSvcUrl.startsWith('file://')) {
 			return await loadSchemaFromFile(version, schemaSvcUrl, name);
@@ -49,7 +44,7 @@ export const restClient: SchemaServiceRestClient = {
 			L.debug(`in fetch live schema ${version}`);
 			const schemaDictionary = await doRequest(url);
 			// todo validate response and map it to a schema
-			return schemaDictionary[0] as SchemasDictionary;
+			return schemaDictionary[0] as Dictionary;
 		} catch (error: unknown) {
 			L.error(`failed to fetch schema at url: ${url} - ${unknownToString(error)}`);
 			throw error;
@@ -60,25 +55,19 @@ export const restClient: SchemaServiceRestClient = {
 		name: string,
 		fromVersion: string,
 		toVersion: string,
-	): Promise<SchemasDictionaryDiffs> => {
-		// for testing where we need to work against stub schema
-		let diffResponse: any;
-		if (schemaSvcBaseUrl.startsWith('file://')) {
-			diffResponse = await loadDiffFromFile(schemaSvcBaseUrl, name, fromVersion, toVersion);
-		} else {
-			const url = `${schemaSvcBaseUrl}/diff?name=${name}&left=${fromVersion}&right=${toVersion}`;
-			diffResponse = (await doRequest(url)) as any[];
-		}
-		const result: SchemasDictionaryDiffs = {};
-		for (const entry of diffResponse) {
-			const fieldName = entry[0] as string;
+	): Promise<DictionaryDiff> => {
+		// TODO: Error handling (return result?)
+		const url = `${schemaSvcBaseUrl}/diff?name=${name}&left=${fromVersion}&right=${toVersion}`;
+		const diffResponse = await doRequest(url);
+
+		const diffArray = DictionaryDiffArray.parse(diffResponse);
+
+		const result: DictionaryDiff = new Map();
+		for (const entry of diffArray) {
+			const fieldName = entry[0];
 			if (entry[1]) {
-				const fieldDiff: FieldDiff = {
-					before: entry[1].left,
-					after: entry[1].right,
-					diff: entry[1].diff,
-				};
-				result[fieldName] = fieldDiff;
+				const fieldDiff: FieldDiff = entry[1];
+				result.set(fieldName, fieldDiff);
 			}
 		}
 		return result;
@@ -96,26 +85,26 @@ const doRequest = async (url: string) => {
 		return await response.json();
 	} catch (error: unknown) {
 		L.error(`failed to fetch schema at url: ${url} - ${unknownToString(error)}`);
-		throw response.status == 404 ? new Error('Not Found') : new Error('Request Failed');
+		throw response.status === 404 ? new Error('Not Found') : new Error('Request Failed');
 	}
 };
 
 async function loadSchemaFromFile(version: string, schemaSvcUrl: string, name: string) {
 	L.debug(`in fetch stub schema ${version}`);
-	const result = delay<SchemasDictionary>(1000);
+	const result = delay<Dictionary>(1000);
 	const dictionary = await result(() => {
-		const dictionaries: SchemasDictionary[] = require(schemaSvcUrl.substring(7, schemaSvcUrl.length))
-			.dictionaries as SchemasDictionary[];
+		const dictionaries: Dictionary[] = require(schemaSvcUrl.substring(7, schemaSvcUrl.length))
+			.dictionaries as Dictionary[];
 		if (!dictionaries) {
 			throw new Error('your mock json is not structured correctly, see sampleFiles/sample-schema.json');
 		}
-		const dic = dictionaries.find((d: any) => d.version == version && d.name == name);
+		const dic = dictionaries.find((d: any) => d.version === version && d.name === name);
 		if (!dic) {
 			return undefined;
 		}
 		return dic;
 	});
-	if (dictionary == undefined) {
+	if (dictionary === undefined) {
 		throw new Error("couldn't load stub dictionary with the criteria specified");
 	}
 	L.debug(`schema found ${dictionary.version}`);
@@ -132,14 +121,14 @@ async function loadDiffFromFile(schemaSvcBaseUrl: string, name: string, fromVers
 		}
 
 		const diff = diffResponse.find(
-			(d: any) => d.fromVersion == fromVersion && d.toVersion == toVersion && d.name == name,
+			(d) => d.fromVersion === fromVersion && d.toVersion === toVersion && d.name === name,
 		);
 		if (!diff) {
 			return undefined;
 		}
 		return diff;
 	});
-	if (diff == undefined) {
+	if (diff === undefined) {
 		throw new Error("couldn't load stub diff with the criteria specified, check your stub file");
 	}
 	return diff.data;

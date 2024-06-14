@@ -17,9 +17,23 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * as DictionaryTypes from 'dictionary';
-export * as analyzer from './changeAnalysis';
-export * as functions from './processing';
-export { restClient } from './rest';
+/**
+ * Represents a data record as taken from an input file. All values are the original strings and have not been validated into
+ * numbers/bools or split into arrays.
+ */
+export type UnprocessedDataRecord = {
+	[k: string]: string | string[];
+};
 
-export type { DataRecord, DataRecordValue, UnprocessedDataRecord } from './types';
+/**
+ * The available data types for a field in a Lectern Schema.
+ */
+export type DataRecordValue = string | string[] | number | number[] | boolean | boolean[] | undefined;
+
+/**
+ * Represents a data record after processing, with the data checked to be a valid type for a Lectern schema.
+ * The type of data should match the expected type for the given field.
+ */
+export type DataRecord = {
+	[key: string]: DataRecordValue;
+};
