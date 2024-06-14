@@ -21,7 +21,6 @@ import { SchemaField, ValueChangeTypeName } from 'dictionary';
 
 type ChangeOnlyTypeNames = Exclude<ValueChangeTypeName, 'unchanged'>;
 
-/* ===== Change Analysis Types (Duplicate?) ===== */
 export interface ChangeAnalysis {
 	fields: {
 		addedFields: AddedFieldChange[];
