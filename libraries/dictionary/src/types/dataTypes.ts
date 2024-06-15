@@ -33,3 +33,18 @@ export type DataRecordValue = string | string[] | number | number[] | boolean | 
  * The type of data should match the expected type for the given field.
  */
 export type DataRecord = Record<string, DataRecordValue>;
+
+/**
+ * RegExp to check if a string value represents a boolean value.
+ * This allows for case insensitive text (true, True, TRUE are all valid) and will ignore leading
+ * and trailing whitespace.
+ *
+ * Example Values:
+ * - `true`
+ * - `True`
+ * - `TRUE`
+ * - `false`
+ * - `False`
+ * - `FALSE`
+ */
+export const REGEXP_BOOLEAN_VALUE = /^[\s]*(true|false)[\s]*$/i;
