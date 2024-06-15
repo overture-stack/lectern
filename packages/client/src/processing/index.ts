@@ -26,6 +26,7 @@ import { loggerFor } from '../logger';
 import { convertToArray, isEmpty, isNotAbsent, isString, isStringArray, notEmpty } from '../utils';
 import { convertFromRawStrings } from './convertDataValueTypes';
 import { BatchProcessingResult, FieldNamesByPriorityMap, SchemaProcessingResult } from './processingResultTypes';
+import * as pipelines from './validationPipelines';
 
 const L = loggerFor(__filename);
 
@@ -41,7 +42,7 @@ export const processSchemas = (
 
 		// Run cross-schema validations
 		const schemaDef = getNotNullSchemaDefinitionFromDictionary(dictionary, schemaName);
-		const crossSchemaLevelValidationResults = validation
+		const crossSchemaLevelValidationResults = pipelines
 			.runCrossSchemaValidationPipeline(schemaDef, schemasData, [validation.validateForeignKeys])
 			.filter(notEmpty);
 
@@ -200,7 +201,7 @@ const validateUnprocessedRecord = (
 	record: UnprocessedDataRecord,
 	index: number,
 ): ReadonlyArray<SchemaValidationError> => {
-	const majorErrors = validation
+	const majorErrors = pipelines
 		.runUnprocessedRecordValidationPipeline(record, index, schemaDef.fields, [
 			validation.validateFieldNames,
 			validation.validateNonArrayFields,
@@ -216,7 +217,7 @@ const validateAfterTypeConversion = (
 	record: DataRecord,
 	index: number,
 ): ReadonlyArray<SchemaValidationError> => {
-	const validationErrors = validation
+	const validationErrors = pipelines
 		.runRecordValidationPipeline(record, index, schemaDef.fields, [
 			validation.validateRegex,
 			validation.validateRange,
@@ -229,7 +230,7 @@ const validateAfterTypeConversion = (
 };
 
 function validateRecordsSet(schemaDef: Schema, processedRecords: DataRecord[]) {
-	const validationErrors = validation
+	const validationErrors = pipelines
 		.runDatasetValidationPipeline(processedRecords, schemaDef, [
 			validation.validateUnique,
 			validation.validateUniqueKey,

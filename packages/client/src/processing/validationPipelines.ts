@@ -19,13 +19,13 @@
 
 import { DataRecord, UnprocessedDataRecord, Schema, SchemaField } from 'dictionary';
 
-import { SchemaValidationError } from './types/validationErrorTypes';
+import { SchemaValidationError } from '../../../../libraries/validation/src/types/validationErrorTypes';
 import {
 	CrossSchemaValidationFunction,
 	DatasetValidationFunction,
 	UnprocessedRecordValidationFunction,
 	ValidationFunction,
-} from './types/validationFunctionTypes';
+} from '../../../../libraries/validation/src/types/validationFunctionTypes';
 
 export const runUnprocessedRecordValidationPipeline = (
 	record: UnprocessedDataRecord,

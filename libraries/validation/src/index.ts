@@ -28,4 +28,3 @@ export * from './schemaRestrictions/foreignKeysValidation';
 export * from './schemaRestrictions/uniqueKeyValidation';
 export * from './schemaRestrictions/uniqueValidation';
 export * from './types';
-export * from './validationPipelines';
