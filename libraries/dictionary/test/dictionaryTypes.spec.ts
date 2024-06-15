@@ -31,11 +31,12 @@ import {
 	Schema,
 	SchemaField,
 	StringFieldRestrictions,
+	VersionString,
 } from '../src';
 
 describe('Dictionary Types', () => {
 	describe('NameString', () => {
-		it("Can't be empty string", () => {
+		it('Rejects empty string', () => {
 			expect(NameString.safeParse('').success).false;
 		});
 		it('Can be string', () => {
@@ -305,6 +306,30 @@ describe('Dictionary Types', () => {
 
 				expect(Schema.safeParse(schema).success).false;
 			});
+		});
+	});
+	describe('Version String', () => {
+		it('Rejects empty string', () => {
+			expect(VersionString.safeParse('').success).false;
+		});
+		it('Accepts valid version strings', () => {
+			expect(VersionString.safeParse('0.0').success).true;
+			expect(VersionString.safeParse('1.0').success).true;
+			expect(VersionString.safeParse('1.1').success).true;
+			expect(VersionString.safeParse('10.10').success).true;
+			expect(VersionString.safeParse('234.567').success).true;
+		});
+		it('Rejects single number strings', () => {
+			expect(VersionString.safeParse('0').success).false;
+			expect(VersionString.safeParse('1').success).false;
+			expect(VersionString.safeParse('10').success).false;
+			expect(VersionString.safeParse('123').success).false;
+		});
+		it('Rejects other invalid strings', () => {
+			expect(VersionString.safeParse('1-2').success).false;
+			expect(VersionString.safeParse('1.2.3').success).false;
+			expect(VersionString.safeParse('1.2.').success).false;
+			expect(VersionString.safeParse('one dot two').success).false;
 		});
 	});
 	describe('Dictionary', () => {
