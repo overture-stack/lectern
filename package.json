@@ -5,7 +5,17 @@
 	"main": "index.js",
 	"scripts": {
 		"build:all": "pnpm nx run-many --all --target=build",
+		"build:common": "pnpm nx build common",
+		"build:dictionary": "pnpm nx build dictionary",
+		"build:validation": "pnpm nx build @overture-stack/lectern-validation",
+		"build:server": "pnpm nx build server",
+		"build:client": "pnpm nx build @overture-stack/lectern-client",
 		"test:all": "pnpm nx run-many --all --target=test",
+		"test:common": "pnpm nx test common",
+		"test:dictionary": "pnpm nx test dictionary",
+		"test:validation": "pnpm nx test @overture-stack/lectern-validation",
+		"test:server": "pnpm nx test server",
+		"test:client": "pnpm nx test @overture-stack/lectern-client",
 		"generate": "pnpm -C scripts generate"
 	},
 	"keywords": [],
