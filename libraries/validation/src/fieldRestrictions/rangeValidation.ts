@@ -17,15 +17,16 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { asArray } from 'common';
 import { RestrictionRange } from 'dictionary';
-import { convertToArray, isEmpty, isNumberArray, notEmpty } from '../../utils';
-import { rangeToSymbol } from '../utils/rangeToSymbol';
 import {
 	BaseSchemaValidationError,
 	RangeValidationError,
 	SchemaValidationErrorTypes,
 } from '../types/validationErrorTypes';
 import { ValidationFunction } from '../types/validationFunctionTypes';
+import { isDefined, isNumberArray } from '../utils/typeUtils';
+import { rangeToSymbol } from '../utils/rangeToSymbol';
 
 /**
  * Check all values of a DataRecord pass range restrictions in their schema.
@@ -37,13 +38,13 @@ import { ValidationFunction } from '../types/validationFunctionTypes';
 export const validateRange: ValidationFunction = (record, index, schemaFields): RangeValidationError[] => {
 	return schemaFields
 		.map((field) => {
-			const recordFieldValues = convertToArray(record[field.name]);
+			const recordFieldValues = asArray(record[field.name]);
 			if (!isNumberArray(recordFieldValues)) {
 				return undefined;
 			}
 
 			const range = field.restrictions && 'range' in field.restrictions ? field.restrictions.range : undefined;
-			if (isEmpty(range)) {
+			if (range === undefined) {
 				return undefined;
 			}
 
@@ -54,7 +55,7 @@ export const validateRange: ValidationFunction = (record, index, schemaFields): 
 			}
 			return undefined;
 		})
-		.filter(notEmpty);
+		.filter(isDefined);
 };
 
 const buildRangeError = (

@@ -17,10 +17,10 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { SchemaValidationErrorTypes } from '@overture-stack/lectern-validation';
 import chai from 'chai';
 import { functions as schemaService } from '../src';
 import { loggerFor } from '../src/logger';
-import { SchemaValidationErrorTypes } from '../src/validation';
 import dictionary from './fixtures/registrationSchema';
 const L = loggerFor(__filename);
 

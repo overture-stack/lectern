@@ -17,15 +17,32 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './dataRecordValidation/fieldNamesValidation';
-export * from './dataRecordValidation/valueTypeValidation';
-export * from './fieldRestrictions/codeListValidation';
-export * from './fieldRestrictions/rangeValidation';
-export * from './fieldRestrictions/regexValidation';
-export * from './fieldRestrictions/requiredValidation';
-export * from './fieldRestrictions/scriptValidation';
-export * from './schemaRestrictions/foreignKeysValidation';
-export * from './schemaRestrictions/uniqueKeyValidation';
-export * from './schemaRestrictions/uniqueValidation';
-export * from './types';
-export * from './validationPipelines';
+/**
+ * Checks that the input does not equal undefined (and lets the type checker know).
+ *
+ * Useful for filtering undefined values out of lists.
+ *
+ * (input) => input !== undefined
+ *
+ * @example
+ * const combinedArray: Array<string | undefined> = ['hello', undefined, 'world'];
+ * const stringArray = combinedArray.filter(isDefined); // type is: Array<string>
+ */
+export const isDefined = <T>(input: T | undefined): input is T => input !== undefined;
+
+/**
+ * Determines if a variable is of type number[]
+ * @param value
+ * @returns
+ */
+export const isNumberArray = (value: unknown): value is number[] =>
+	Array.isArray(value) && value.every((item) => typeof item === 'number');
+
+/**
+ * Determines if a variable is of type string[]
+ * @param value
+ * @returns
+ */
+export const isStringArray = (value: unknown): value is string[] => {
+	return Array.isArray(value) && value.every((item) => typeof item === 'string');
+};

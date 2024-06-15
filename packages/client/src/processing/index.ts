@@ -17,15 +17,13 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import type { SchemaValidationError } from '@overture-stack/lectern-validation';
+import * as validation from '@overture-stack/lectern-validation';
 import { NotFoundError } from 'common';
-import { Dictionary, Schema } from 'dictionary';
+import { DataRecord, Dictionary, Schema, UnprocessedDataRecord } from 'dictionary';
 import _ from 'lodash';
-
 import { loggerFor } from '../logger';
-import { DataRecord, UnprocessedDataRecord } from '../types/dataRecords';
 import { convertToArray, isEmpty, isNotAbsent, isString, isStringArray, notEmpty } from '../utils';
-import type { SchemaValidationError } from '../validation';
-import * as validation from '../validation';
 import { convertFromRawStrings } from './convertDataValueTypes';
 import { BatchProcessingResult, FieldNamesByPriorityMap, SchemaProcessingResult } from './processingResultTypes';
 
@@ -115,7 +113,7 @@ export const process = (
 	L.debug(`converted row #${index} from raw strings`);
 	const postTypeConversionValidationResult = validateAfterTypeConversion(
 		schemaDef,
-		_.cloneDeep(convertedRecord) as DataRecord,
+		_.cloneDeep(convertedRecord),
 		index,
 	);
 

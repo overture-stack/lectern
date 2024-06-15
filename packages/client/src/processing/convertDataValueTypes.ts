@@ -20,11 +20,17 @@
 import _ from 'lodash';
 
 import { Singular } from 'common';
-import { Schema, SchemaField, SchemaFieldValueType } from 'dictionary';
+import {
+	DataRecord,
+	DataRecordValue,
+	UnprocessedDataRecord,
+	Schema,
+	SchemaField,
+	SchemaFieldValueType,
+} from 'dictionary';
 
-import { DataRecord, DataRecordValue, UnprocessedDataRecord } from '../types';
 import { convertToArray, isEmpty } from '../utils';
-import { SchemaValidationError, SchemaValidationErrorTypes } from '../validation';
+import { SchemaValidationError, SchemaValidationErrorTypes } from '@overture-stack/lectern-validation';
 
 /**
  * Warning:

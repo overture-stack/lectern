@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { convertToArray, isAbsent, isEmptyString, notEmpty } from '../../utils';
+import { asArray } from 'common';
 import {
 	BaseSchemaValidationError,
 	EnumValueValidationError,
@@ -25,6 +25,8 @@ import {
 	SchemaValidationErrorTypes,
 } from '../types/validationErrorTypes';
 import { ValidationFunction } from '../types/validationFunctionTypes';
+import { isEmptyString } from '../utils/isEmptyString';
+import { isDefined } from '../utils/typeUtils';
 
 /**
  * Check all values of a DataRecord pass codeList restrictions in their schema.
@@ -45,8 +47,8 @@ export const validateCodeList: ValidationFunction = (rec, index, fields): EnumVa
 				}
 
 				// put all values into array to standardize validation for array and non array fields
-				const recordFieldValues = convertToArray(rec[field.name]);
-				const invalidValues = recordFieldValues.filter((val) => isInvalidEnumValue(codeList, val));
+				const recordFieldValues = asArray(rec[field.name]);
+				const invalidValues = recordFieldValues.filter((val) => !isValidEnumValue(codeList, val));
 
 				if (invalidValues.length !== 0) {
 					return buildCodeListError({ fieldName: field.name, index }, { value: invalidValues });
@@ -54,7 +56,7 @@ export const validateCodeList: ValidationFunction = (rec, index, fields): EnumVa
 			}
 			return undefined;
 		})
-		.filter(notEmpty);
+		.filter(isDefined);
 };
 
 const buildCodeListError = (
@@ -71,11 +73,17 @@ const buildCodeListError = (
 	};
 };
 
-const isInvalidEnumValue = (codeList: string[] | number[], value: string | boolean | number | undefined) => {
-	// only validate existing values
-	if (isAbsent(value) || (typeof value === 'string' && isEmptyString(value))) {
-		return false;
+/**
+ * If value exists, confirm that it matches an option in the provided code list
+ * @param codeList
+ * @param value
+ * @returns
+ */
+const isValidEnumValue = (codeList: string[] | number[], value: string | boolean | number | undefined) => {
+	// do not run validation on empty values
+	if (value === undefined || (typeof value === 'string' && isEmptyString(value))) {
+		return true;
 	}
 
-	return !codeList.some((allowedValue) => allowedValue === value);
+	return codeList.some((allowedValue) => allowedValue === value);
 };

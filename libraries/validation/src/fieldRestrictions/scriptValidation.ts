@@ -17,16 +17,16 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { SchemaField } from 'dictionary';
+import { DataRecord, SchemaField } from 'dictionary';
 import vm from 'vm';
-import { DataRecord } from '../../types/dataRecords';
-import { notEmpty } from '../../utils';
 import {
 	BaseSchemaValidationError,
 	SchemaValidationErrorTypes,
 	ScriptValidationError,
 } from '../types/validationErrorTypes';
 import { ValidationFunction } from '../types/validationFunctionTypes';
+import { isDefined } from '../utils/typeUtils';
+import { asArray } from 'common';
 
 const ctx = vm.createContext();
 
@@ -59,7 +59,7 @@ export const validateScript: ValidationFunction = (record, index, fields) => {
 			}
 			return undefined;
 		})
-		.filter(notEmpty);
+		.filter(isDefined);
 };
 
 const buildScriptError = (
@@ -101,8 +101,7 @@ const validateWithScript = (
 
 		// scripts should already be strings inside arrays, but ensure that they are to help transition between lectern versions
 		// checking for this can be removed in future versions of lectern (feb 2020)
-		const scripts =
-			typeof field.restrictions.script === 'string' ? [field.restrictions.script] : field.restrictions.script;
+		const scripts = asArray(field.restrictions.script);
 
 		let result: {
 			valid: boolean;

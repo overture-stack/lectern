@@ -17,13 +17,11 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { SchemaValidationErrorTypes } from '@overture-stack/lectern-validation';
 import chai from 'chai';
 import { functions as schemaService } from '../src';
 import { loggerFor } from '../src/logger';
-import { SchemaValidationErrorTypes } from '../src/validation';
-import { rangeToSymbol } from '../src/validation/utils/rangeToSymbol';
 import dictionary from './fixtures/registrationSchema';
-const L = loggerFor(__filename);
 
 chai.should();
 
@@ -136,12 +134,13 @@ describe('validation', () => {
 			min: 0,
 			value: [-1],
 		};
+
 		chai.expect(result.validationErrors).to.deep.include({
 			errorType: SchemaValidationErrorTypes.INVALID_BY_RANGE,
 			fieldName: 'unit_number',
 			index: 0,
 			info: info1,
-			message: `Value is out of permissible range, it must be ${rangeToSymbol(info1)}.`,
+			message: `Value is out of permissible range, it must be >= 0 and < 999.`,
 		});
 
 		const info2 = {
@@ -154,7 +153,7 @@ describe('validation', () => {
 			fieldName: 'unit_number',
 			index: 2,
 			info: info2,
-			message: `Value is out of permissible range, it must be ${rangeToSymbol(info2)}.`,
+			message: `Value is out of permissible range, it must be >= 0 and < 999.`,
 		});
 	});
 

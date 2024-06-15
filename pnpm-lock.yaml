@@ -191,9 +191,9 @@ importers:
       common:
         specifier: workspace:^
         version: link:../common
-      immer:
-        specifier: ^10.0.2
-        version: 10.0.2
+      dictionary:
+        specifier: workspace:^
+        version: link:../dictionary
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -210,6 +210,9 @@ importers:
 
   packages/client:
     dependencies:
+      '@overture-stack/lectern-validation':
+        specifier: workspace:^
+        version: link:../../libraries/validation
       cd:
         specifier: ^0.3.3
         version: 0.3.3

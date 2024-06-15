@@ -39,6 +39,7 @@
 		"typescript": "^5.1.6"
 	},
 	"dependencies": {
+		"@overture-stack/lectern-validation": "workspace:^",
 		"cd": "^0.3.3",
 		"common": "workspace:^",
 		"deep-freeze": "^0.0.1",

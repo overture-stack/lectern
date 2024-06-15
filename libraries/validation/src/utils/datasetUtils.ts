@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { DataRecord } from '../../types/dataRecords';
+import { DataRecord } from 'dictionary';
 
 /**
  * Returns a string representation of a record. The record is sorted by its properties so

@@ -17,27 +17,28 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { SchemaFieldValueType } from 'dictionary';
+import { DataRecord, UnprocessedDataRecord, Schema } from 'dictionary';
+import { SchemaValidationError } from './validationErrorTypes';
 
-import { isEmptyString } from '../../utils';
+// these validation functions run AFTER the record has been converted to the correct types from raw strings
+export type UnprocessedRecordValidationFunction = (
+	record: UnprocessedDataRecord,
+	index: number,
+	schemaFields: Schema['fields'],
+) => Array<SchemaValidationError>;
 
-/**
- * Check a value is valid for a given schema value type.
- * @param valueType
- * @param value
- * @returns
- */
-export const isInvalidFieldType = (valueType: SchemaFieldValueType, value: string) => {
-	// optional field if the value is absent at this point
-	if (isEmptyString(value)) return false;
-	switch (valueType) {
-		case SchemaFieldValueType.Values.string:
-			return false;
-		case SchemaFieldValueType.Values.integer:
-			return !Number.isSafeInteger(Number(value));
-		case SchemaFieldValueType.Values.number:
-			return isNaN(Number(value));
-		case SchemaFieldValueType.Values.boolean:
-			return !(value.toLowerCase() === 'true' || value.toLowerCase() === 'false');
-	}
-};
+// these validation functions run BEFORE the record has been converted to the correct types from raw strings
+export type ValidationFunction = (
+	record: DataRecord,
+	index: number,
+	schemaFields: Schema['fields'],
+) => Array<SchemaValidationError>;
+
+// these validation functions run AFTER the records has been converted to the correct types from raw strings, and apply to a dataset instead of
+// individual records
+export type DatasetValidationFunction = (data: Array<DataRecord>, schema: Schema) => Array<SchemaValidationError>;
+
+export type CrossSchemaValidationFunction = (
+	schema: Schema,
+	data: Record<string, DataRecord[]>,
+) => Array<SchemaValidationError>;

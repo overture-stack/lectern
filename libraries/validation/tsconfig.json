@@ -13,7 +13,6 @@
 		"sourceMap": true,
 		"inlineSources": true,
 		"outDir": "dist/",
-		"baseUrl": "./src",
 		"downlevelIteration": true,
 		"skipLibCheck": true
 	},
