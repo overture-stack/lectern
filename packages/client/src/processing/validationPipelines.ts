@@ -17,16 +17,15 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Schema, SchemaField } from 'dictionary';
+import { DataRecord, UnprocessedDataRecord, Schema, SchemaField } from 'dictionary';
 
-import { DataRecord, UnprocessedDataRecord } from '../types/dataRecords';
-import { SchemaValidationError } from './types/validationErrorTypes';
+import { SchemaValidationError } from '../../../../libraries/validation/src/types/validationErrorTypes';
 import {
 	CrossSchemaValidationFunction,
 	DatasetValidationFunction,
 	UnprocessedRecordValidationFunction,
 	ValidationFunction,
-} from './types/validationFunctionTypes';
+} from '../../../../libraries/validation/src/types/validationFunctionTypes';
 
 export const runUnprocessedRecordValidationPipeline = (
 	record: UnprocessedDataRecord,

@@ -21,10 +21,19 @@ import { z as zod } from 'zod';
 import allUnique from '../utils/allUnique';
 import { ReferenceTag, References } from './referenceTypes';
 
+/**
+ * String rules for all name fields used in dictionary, including Dictionary, Schema, and Fields.
+ * This validates the format of the string since names are not allowed to have `.` characters.
+ *
+ * Example Values:
+ * - `donors`
+ * - `primary-site`
+ * - `maximumVelocity`
+ */
 export const NameString = zod
 	.string()
 	.min(1, 'Name fields cannot be empty.')
-	.regex(RegExp('^[^.]+$'), 'Name fields cannot have `.` characters.');
+	.regex(/^[^.]+$/, 'Name fields cannot have `.` characters.');
 export type NameString = zod.infer<typeof NameString>;
 
 export const Integer = zod.number().int();
@@ -283,11 +292,24 @@ export type Schema = zod.infer<typeof Schema>;
 /* ********** *
  * Dictionary *
  * ********** */
-
-export const VersionString = zod.string().regex(RegExp('^[0-9]+.[0-9]+$'));
+/**
+ * Validation rules for dictionary version field. The dictionary version is a string with two numbers,
+ * a major and minor version. Minor dictionary versions are meant to be backwards compatible with all
+ * earlier dictionaries of the same Major version. This is done by making the changes additive for minor
+ * changes. Changes that break backwards compatibility of a dictionary should be given a new Major version.
+ *
+ * Example Values:
+ * - `0.0`
+ * - `1.0`
+ * - `1.1`
+ * - `23.45`
+ */
+export const VersionString = zod.string().regex(/^([0-9]+)\.[0-9]+$/);
 // TODO: Semantic Versioning version string, reference: https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39
 // update requires dictionary service changes, leaving like this for now
 // .regex(RegExp('^([0-9]+).([0-9]+).([0-9]+)(?:-([0-9A-Za-z-]+(?:.[0-9A-Za-z-]+)*))?(?:+[0-9A-Za-z-]+)?$'));
+// This is a valid regexp for semantic versions, but we should instead use the npmjs semantic versioning library
+// https://www.npmjs.com/package/semver
 
 // Dictionary Base is the dictionary object types only, no refinements enforcing the restriction rules.
 // This is needed to use for the base of the dbType DictionaryDocument

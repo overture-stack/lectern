@@ -17,27 +17,34 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { SchemaFieldValueType } from 'dictionary';
-
-import { isEmptyString } from '../../utils';
+/**
+ * Represents a data record as taken from an input file. All values are the original strings and have not been validated into
+ * numbers/bools or split into arrays.
+ */
+export type UnprocessedDataRecord = Record<string, string | string[]>;
 
 /**
- * Check a value is valid for a given schema value type.
- * @param valueType
- * @param value
- * @returns
+ * The available data types for a field in a Lectern Schema.
  */
-export const isInvalidFieldType = (valueType: SchemaFieldValueType, value: string) => {
-	// optional field if the value is absent at this point
-	if (isEmptyString(value)) return false;
-	switch (valueType) {
-		case SchemaFieldValueType.Values.string:
-			return false;
-		case SchemaFieldValueType.Values.integer:
-			return !Number.isSafeInteger(Number(value));
-		case SchemaFieldValueType.Values.number:
-			return isNaN(Number(value));
-		case SchemaFieldValueType.Values.boolean:
-			return !(value.toLowerCase() === 'true' || value.toLowerCase() === 'false');
-	}
-};
+export type DataRecordValue = string | string[] | number | number[] | boolean | boolean[] | undefined;
+
+/**
+ * Represents a data record after processing, with the data checked to be a valid type for a Lectern schema.
+ * The type of data should match the expected type for the given field.
+ */
+export type DataRecord = Record<string, DataRecordValue>;
+
+/**
+ * RegExp to check if a string value represents a boolean value.
+ * This allows for case insensitive text (true, True, TRUE are all valid) and will ignore leading
+ * and trailing whitespace.
+ *
+ * Example Values:
+ * - `true`
+ * - `True`
+ * - `TRUE`
+ * - `false`
+ * - `False`
+ * - `FALSE`
+ */
+export const REGEXP_BOOLEAN_VALUE = /^[\s]*(true|false)[\s]*$/i;

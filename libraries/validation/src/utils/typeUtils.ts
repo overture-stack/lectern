@@ -18,22 +18,31 @@
  */
 
 /**
- * Represents a data record as taken from an input file. All values are the original strings and have not been validated into
- * numbers/bools or split into arrays.
+ * Checks that the input does not equal undefined (and lets the type checker know).
+ *
+ * Useful for filtering undefined values out of lists.
+ *
+ * (input) => input !== undefined
+ *
+ * @example
+ * const combinedArray: Array<string | undefined> = ['hello', undefined, 'world'];
+ * const stringArray = combinedArray.filter(isDefined); // type is: Array<string>
  */
-export type UnprocessedDataRecord = {
-	[k: string]: string | string[];
-};
+export const isDefined = <T>(input: T | undefined): input is T => input !== undefined;
 
 /**
- * The available data types for a field in a Lectern Schema.
+ * Determines if a variable is of type number[]
+ * @param value
+ * @returns
  */
-export type DataRecordValue = string | string[] | number | number[] | boolean | boolean[] | undefined;
+export const isNumberArray = (value: unknown): value is number[] =>
+	Array.isArray(value) && value.every((item) => typeof item === 'number');
 
 /**
- * Represents a data record after processing, with the data checked to be a valid type for a Lectern schema.
- * The type of data should match the expected type for the given field.
+ * Determines if a variable is of type string[]
+ * @param value
+ * @returns
  */
-export type DataRecord = {
-	[key: string]: DataRecordValue;
+export const isStringArray = (value: unknown): value is string[] => {
+	return Array.isArray(value) && value.every((item) => typeof item === 'string');
 };

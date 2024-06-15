@@ -17,16 +17,17 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { SchemaFieldValueType } from 'dictionary';
-
-import { convertToArray, isEmpty, isEmptyString, isStringArray, notEmpty } from '../../utils';
+import { asArray } from 'common';
+import { REGEXP_BOOLEAN_VALUE, SchemaFieldValueType } from 'dictionary';
 import {
 	INVALID_VALUE_ERROR_MESSAGE,
 	SchemaValidationErrorTypes,
 	type BaseSchemaValidationError,
 	type ValueTypeValidationError,
 } from '../types/validationErrorTypes';
-import type { UnprocessedRecordValidationFunction, ValidationFunction } from '../types/validationFunctionTypes';
+import type { UnprocessedRecordValidationFunction } from '../types/validationFunctionTypes';
+import { isEmptyString } from '../utils/isEmptyString';
+import { isDefined } from '../utils/typeUtils';
 
 /**
  * Test the values provided to every field in a DataRecord to find any non-array fields that
@@ -44,12 +45,12 @@ export const validateNonArrayFields: UnprocessedRecordValidationFunction = (
 	return schemaFields
 		.map((field) => {
 			const value = record[field.name];
-			if (!field.isArray && isStringArray(value)) {
+			if (!field.isArray && Array.isArray(value)) {
 				return buildFieldValueTypeError({ fieldName: field.name, index }, { value });
 			}
 			return undefined;
 		})
-		.filter(notEmpty);
+		.filter(isDefined);
 };
 
 /**
@@ -67,12 +68,9 @@ export const validateValueTypes: UnprocessedRecordValidationFunction = (
 ): ValueTypeValidationError[] => {
 	return schemaFields
 		.map((field) => {
-			if (isEmpty(record[field.name])) {
-				return undefined;
-			}
-
-			const recordFieldValues = convertToArray(record[field.name]); // put all values into array
-			const invalidValues = recordFieldValues.filter((v) => v !== undefined && isInvalidFieldType(field.valueType, v));
+			const invalidValues = asArray(record[field.name]).filter(
+				(value) => value !== undefined && !isValidFieldType(field.valueType, value),
+			);
 			const info = { value: invalidValues };
 
 			if (invalidValues.length !== 0) {
@@ -80,7 +78,7 @@ export const validateValueTypes: UnprocessedRecordValidationFunction = (
 			}
 			return undefined;
 		})
-		.filter(notEmpty);
+		.filter(isDefined);
 };
 
 /**
@@ -89,20 +87,26 @@ export const validateValueTypes: UnprocessedRecordValidationFunction = (
  * @param value
  * @returns
  */
-const isInvalidFieldType = (valueType: SchemaFieldValueType, value: string) => {
-	// optional field if the value is absent at this point
-	if (isEmptyString(value)) return false;
+const isValidFieldType = (valueType: SchemaFieldValueType, value: string): boolean => {
+	if (isEmptyString(value)) {
+		return true;
+	}
 	switch (valueType) {
-		case SchemaFieldValueType.Values.string:
-			return false;
-		case SchemaFieldValueType.Values.integer:
-			return !Number.isSafeInteger(Number(value));
-		case SchemaFieldValueType.Values.number:
-			return isNaN(Number(value));
 		case SchemaFieldValueType.Values.boolean:
-			return !(value.toLowerCase() === 'true' || value.toLowerCase() === 'false');
+			return isValidBoolean(value);
+		case SchemaFieldValueType.Values.integer:
+			return isValidInteger(value);
+		case SchemaFieldValueType.Values.number:
+			return isValidNumber(value);
+		case SchemaFieldValueType.Values.string:
+			// input values all start as strings so this is valid in all cases
+			return true;
 	}
 };
+
+const isValidInteger = (value: string): boolean => Number.isSafeInteger(Number(value));
+const isValidNumber = (value: string): boolean => isFinite(Number(value));
+const isValidBoolean = (value: string): boolean => value.trim().match(REGEXP_BOOLEAN_VALUE) !== null;
 
 const buildFieldValueTypeError = (
 	errorData: BaseSchemaValidationError,

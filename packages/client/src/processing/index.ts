@@ -17,17 +17,16 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import type { SchemaValidationError } from '@overture-stack/lectern-validation';
+import * as validation from '@overture-stack/lectern-validation';
 import { NotFoundError } from 'common';
-import { Dictionary, Schema } from 'dictionary';
+import { DataRecord, Dictionary, Schema, UnprocessedDataRecord } from 'dictionary';
 import _ from 'lodash';
-
 import { loggerFor } from '../logger';
-import { DataRecord, UnprocessedDataRecord } from '../types/dataRecords';
 import { convertToArray, isEmpty, isNotAbsent, isString, isStringArray, notEmpty } from '../utils';
-import type { SchemaValidationError } from '../validation';
-import * as validation from '../validation';
 import { convertFromRawStrings } from './convertDataValueTypes';
 import { BatchProcessingResult, FieldNamesByPriorityMap, SchemaProcessingResult } from './processingResultTypes';
+import * as pipelines from './validationPipelines';
 
 const L = loggerFor(__filename);
 
@@ -43,7 +42,7 @@ export const processSchemas = (
 
 		// Run cross-schema validations
 		const schemaDef = getNotNullSchemaDefinitionFromDictionary(dictionary, schemaName);
-		const crossSchemaLevelValidationResults = validation
+		const crossSchemaLevelValidationResults = pipelines
 			.runCrossSchemaValidationPipeline(schemaDef, schemasData, [validation.validateForeignKeys])
 			.filter(notEmpty);
 
@@ -115,7 +114,7 @@ export const process = (
 	L.debug(`converted row #${index} from raw strings`);
 	const postTypeConversionValidationResult = validateAfterTypeConversion(
 		schemaDef,
-		_.cloneDeep(convertedRecord) as DataRecord,
+		_.cloneDeep(convertedRecord),
 		index,
 	);
 
@@ -202,7 +201,7 @@ const validateUnprocessedRecord = (
 	record: UnprocessedDataRecord,
 	index: number,
 ): ReadonlyArray<SchemaValidationError> => {
-	const majorErrors = validation
+	const majorErrors = pipelines
 		.runUnprocessedRecordValidationPipeline(record, index, schemaDef.fields, [
 			validation.validateFieldNames,
 			validation.validateNonArrayFields,
@@ -218,7 +217,7 @@ const validateAfterTypeConversion = (
 	record: DataRecord,
 	index: number,
 ): ReadonlyArray<SchemaValidationError> => {
-	const validationErrors = validation
+	const validationErrors = pipelines
 		.runRecordValidationPipeline(record, index, schemaDef.fields, [
 			validation.validateRegex,
 			validation.validateRange,
@@ -231,7 +230,7 @@ const validateAfterTypeConversion = (
 };
 
 function validateRecordsSet(schemaDef: Schema, processedRecords: DataRecord[]) {
-	const validationErrors = validation
+	const validationErrors = pipelines
 		.runDatasetValidationPipeline(processedRecords, schemaDef, [
 			validation.validateUnique,
 			validation.validateUniqueKey,

@@ -17,29 +17,14 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Schema, SchemaField } from 'dictionary';
-import { DataRecord, UnprocessedDataRecord } from '../../types/dataRecords';
-import { SchemaValidationError } from './validationErrorTypes';
-
-// these validation functions run AFTER the record has been converted to the correct types from raw strings
-export type UnprocessedRecordValidationFunction = (
-	record: UnprocessedDataRecord,
-	index: number,
-	schemaFields: Schema['fields'],
-) => Array<SchemaValidationError>;
-
-// these validation functions run BEFORE the record has been converted to the correct types from raw strings
-export type ValidationFunction = (
-	record: DataRecord,
-	index: number,
-	schemaFields: Schema['fields'],
-) => Array<SchemaValidationError>;
-
-// these validation functions run AFTER the records has been converted to the correct types from raw strings, and apply to a dataset instead of
-// individual records
-export type DatasetValidationFunction = (data: Array<DataRecord>, schema: Schema) => Array<SchemaValidationError>;
-
-export type CrossSchemaValidationFunction = (
-	schema: Schema,
-	data: Record<string, DataRecord[]>,
-) => Array<SchemaValidationError>;
+export * from './dataRecordValidation/fieldNamesValidation';
+export * from './dataRecordValidation/valueTypeValidation';
+export * from './fieldRestrictions/codeListValidation';
+export * from './fieldRestrictions/rangeValidation';
+export * from './fieldRestrictions/regexValidation';
+export * from './fieldRestrictions/requiredValidation';
+export * from './fieldRestrictions/scriptValidation';
+export * from './schemaRestrictions/foreignKeysValidation';
+export * from './schemaRestrictions/uniqueKeyValidation';
+export * from './schemaRestrictions/uniqueValidation';
+export * from './types';

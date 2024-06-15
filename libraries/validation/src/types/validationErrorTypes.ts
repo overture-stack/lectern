@@ -18,8 +18,7 @@
  */
 
 import type { Values, Singular } from 'common';
-import type { DataRecord, DataRecordValue } from '../../types/dataRecords';
-import type { RestrictionRange } from 'dictionary';
+import type { DataRecord, DataRecordValue, RestrictionRange } from 'dictionary';
 
 /**
  * Represents the common structure of a validation error without the custom content provided by specific error types.

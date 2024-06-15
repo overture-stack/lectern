@@ -18,7 +18,7 @@
  */
 
 import { differenceWith, isEqual } from 'lodash';
-import { DataRecord } from '../../types/dataRecords';
+import { DataRecord } from 'dictionary';
 import { ForeignKeyValidationError, SchemaValidationErrorTypes } from '../types/validationErrorTypes';
 import { CrossSchemaValidationFunction } from '../types/validationFunctionTypes';
 import { selectFieldsFromDataset } from '../utils/datasetUtils';

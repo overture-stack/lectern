@@ -17,15 +17,16 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { SchemaField } from 'dictionary';
-import { convertToArray, isEmpty, notEmpty } from '../../utils';
+import { DataRecord, SchemaField } from 'dictionary';
 import {
 	BaseSchemaValidationError,
 	MissingRequiredFieldValidationError,
 	SchemaValidationErrorTypes,
 } from '../types/validationErrorTypes';
 import { ValidationFunction } from '../types/validationFunctionTypes';
-import { DataRecord } from '../../types/dataRecords';
+import { isDefined } from '../utils/typeUtils';
+import { asArray } from 'common';
+import { isEmptyString } from '../utils/isEmptyString';
 
 /**
  * Check all values of a DataRecord pass required restrictions in their schema.
@@ -46,7 +47,7 @@ export const validateRequiredFields: ValidationFunction = (
 			}
 			return undefined;
 		})
-		.filter(notEmpty);
+		.filter(isDefined);
 };
 
 const buildRequiredError = (
@@ -65,8 +66,12 @@ const buildRequiredError = (
 
 const isRequiredMissing = (field: SchemaField, record: DataRecord) => {
 	const isRequired = field.restrictions && field.restrictions.required;
-	if (!isRequired) return false;
+	if (!isRequired) {
+		return false;
+	}
 
-	const recordFieldValues = convertToArray(record[field.name]);
-	return recordFieldValues.every(isEmpty);
+	// a required field is missing if there are is no value provided for this field (or if an array, all array values are empty)
+	return asArray(record[field.name]).every(
+		(item) => item === undefined || (typeof item === 'string' && isEmptyString(item)),
+	);
 };

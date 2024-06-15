@@ -17,13 +17,15 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import { SchemaFieldValueType } from 'dictionary';
-import { convertToArray, isEmpty, isEmptyString, isStringArray, notEmpty } from '../../utils';
 import {
 	BaseSchemaValidationError,
 	RegexValidationError,
 	SchemaValidationErrorTypes,
 } from '../types/validationErrorTypes';
 import { ValidationFunction } from '../types/validationFunctionTypes';
+import { asArray } from 'common';
+import { isDefined, isStringArray } from '../utils/typeUtils';
+import { isEmptyString } from '../utils/isEmptyString';
 
 /**
  * Check all values of a DataRecord pass regex restrictions in their schema.
@@ -35,13 +37,9 @@ import { ValidationFunction } from '../types/validationFunctionTypes';
 export const validateRegex: ValidationFunction = (record, index, fields): RegexValidationError[] => {
 	return fields
 		.map((field) => {
-			if (
-				field.valueType === SchemaFieldValueType.Values.string &&
-				field.restrictions &&
-				!isEmpty(field.restrictions.regex)
-			) {
+			if (field.valueType === SchemaFieldValueType.Values.string && field.restrictions && field.restrictions.regex) {
 				const regex = field.restrictions.regex;
-				const recordFieldValues = convertToArray(record[field.name]);
+				const recordFieldValues = asArray(record[field.name]);
 				if (!isStringArray(recordFieldValues)) {
 					// This field value should be string or string array, we will skip validation if the type is wrong.
 					return undefined;
@@ -58,12 +56,14 @@ export const validateRegex: ValidationFunction = (record, index, fields): RegexV
 			// Field does not have regex validation
 			return undefined;
 		})
-		.filter(notEmpty);
+		.filter(isDefined);
 };
 
 const isInvalidRegexValue = (regex: string, value: string) => {
 	// optional field if the value is absent at this point
-	if (isEmptyString(value)) return false;
+	if (isEmptyString(value)) {
+		return false;
+	}
 	const regexPattern = new RegExp(regex);
 	return !regexPattern.test(value);
 };

@@ -17,9 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Schema } from 'dictionary';
-import { DataRecord } from '../types/dataRecords';
-import { SchemaValidationError } from '../validation/types/validationErrorTypes';
+import { SchemaValidationError } from '@overture-stack/lectern-validation';
+import { DataRecord, Schema } from 'dictionary';
 
 export type ProcessingFunction = (schema: Schema, rec: Readonly<DataRecord>, index: number) => any;
 
