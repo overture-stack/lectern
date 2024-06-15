@@ -25,7 +25,8 @@ The repository is organized with the following directory structure:
 │   └── server 
 ├── libraries/
 │   ├── common
-│   └── dictionary
+│   ├── dictionary
+│   └── validation
 └── packages/
     └── client
 ```
@@ -39,9 +40,10 @@ The modules in the monorepo are organized into three categories:
 | Component                                    | Type        | Package Name                   | Path                  | Published Location                                                       | Description                                                                                                                                                                                         |
 | -------------------------------------------- | ----------- | ------------------------------ | --------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [Lectern Server](apps/server/README.md)      | Application | server                         | apps/server/          | [GHCR](https://github.com/overture-stack/lectern/pkgs/container/lectern) | Lectern Server web application.                                                                                                                                                                     |
-| [Lectern Client](packages/client/README.md)  | Package     | @overture-stack/lectern-client | packages/client       | [NPM](https://www.npmjs.com/package/@overturebio-stack/lectern-client)   | TypeScript Client to interact with Lectern Server and perform data validation.                                                                                                                      |
+| [Lectern Client](packages/client/README.md)  | Package     | @overture-stack/lectern-client | packages/client       | [NPM](https://www.npmjs.com/package/@overture-stack/lectern-client)   | TypeScript Client to interact with Lectern Server and perform data validation.                                                                                                                      |
 | [common](libraries/common/README.md)         | Library     | common                         | libraries/common/     | N/A                                                                      | Non-specific but commonly reusable utilities. Includes shared Error classes.                                                                                                                        |
 | [dictionary](libraries/dictionary/README.md) | Library     | dictionary                     | libraries/dictionary/ | N/A                                                                      | Dictionary meta-schema definition, includes TS types, and Zod schemas. This also exports all utilities for getting the diff of two dictionaries, and for validating data records with a Dictionary. |
+| [validation](libraries/validation/README.md) | Library     | @overture-stack/lectern-validation                     | libraries/validation/ | [NPM](https://www.npmjs.com/package/@overture-stack/lectern-validation)                                                                      | Validate data using Lectern Dictionaries. |
 
 ## Developer Instructions
 
@@ -55,13 +57,26 @@ Using `nx` will ensure all local dependencies are built, in the correct sequence
 
 This will ensure that all dependencies of `server` are built in correct order before the `server` build is run.
 
-To work with any module in this repository, follow the instructions in the README provide in the module directory.
+Note that the full name of from the package must be used for this to work, so for the client the command would be:
+
+`pnpm nx build @overture-stack/lectern-client`
+
+For convenience, scripts have been added to the root level [`package.json`](./package.json) to run `build` and `test` scripts for every service using short names. These follow the pattern `pnpm <build|test>:<package short name/alias>`. For example,  the same build command can be performed by:
+
+`pnpm build:client`
+
+To work with any module in this repository, follow the instructions in the README provide in that module's directory.
 
 Get started by running the [Lecter Server application](apps/server/README.md).
 
 ### Common Commands
 
 A few commonly reused scripts have been added to the root `package.json`. Run them from the root directory, or if you are in a sub directory then use `pnpm -w`.
+
+For example, when your current working directory is not in the project root, you can still conveniently test every module in the monorepo with the command:
+
+`pnpm -w test:all`
+
 #### Build Everything
 
 `pnpm build:all`
@@ -87,10 +102,6 @@ This can be used as a programing language agnostic schema for external applicati
 > **Note:**
 >
 > Don't manually update any files in the `./generated` path. This content is programatically generated from the source code.
-
-### Sample Dictionaries
-
-
 
 ## Support & Contributions
 
