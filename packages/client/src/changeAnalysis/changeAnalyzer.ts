@@ -95,7 +95,7 @@ export const analyzeChanges = (schemasDiff: DictionaryDiff): ChangeAnalysis => {
 				}
 
 				if (fieldDiff.valueType) {
-					categorizerValueTypeChange(analysis, fieldName, fieldDiff.valueType);
+					categorizerValueTypeChange(analysis, fieldName);
 				}
 			}
 		}
@@ -111,7 +111,7 @@ const categorizeFieldArrayDesignationChange = (analysis: ChangeAnalysis, field: 
 	}
 };
 
-const categorizerValueTypeChange = (analysis: ChangeAnalysis, field: string, changes: FieldChanges) => {
+const categorizerValueTypeChange = (analysis: ChangeAnalysis, field: string) => {
 	analysis.valueTypeChanges.push(field);
 };
 
