@@ -21,9 +21,7 @@
  * Represents a data record as taken from an input file. All values are the original strings and have not been validated into
  * numbers/bools or split into arrays.
  */
-export type UnprocessedDataRecord = {
-	[k: string]: string | string[];
-};
+export type UnprocessedDataRecord = Record<string, string | string[]>;
 
 /**
  * The available data types for a field in a Lectern Schema.
@@ -34,6 +32,4 @@ export type DataRecordValue = string | string[] | number | number[] | boolean | 
  * Represents a data record after processing, with the data checked to be a valid type for a Lectern schema.
  * The type of data should match the expected type for the given field.
  */
-export type DataRecord = {
-	[key: string]: DataRecordValue;
-};
+export type DataRecord = Record<string, DataRecordValue>;
