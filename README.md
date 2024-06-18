@@ -23,27 +23,25 @@ The repository is organized with the following directory structure:
 .
 ├── apps/
 │   └── server 
-├── libraries/
-│   ├── common
-│   ├── dictionary
-│   └── validation
 └── packages/
-    └── client
+    ├── client
+    ├── common
+    ├── dictionary
+    └── validation
 ```
 
 The modules in the monorepo are organized into three categories:
 
    * __apps/__ - Standalone processes meant to be run. These are published to [ghcr.io](https://ghcr.io) as container images.
-   * __libraries/__ - Interal modules shared between other apps, libraries, and packages.
-   * __packages/__ - Packages published to [NPM](https://npmjs.com) meant to be imported into other TypeScript applications.
+   * __packages/__ - Reusable packages shared between applications and other packages. Packages are published to [NPM](https://npmjs.com) .
 
-| Component                                    | Type        | Package Name                   | Path                  | Published Location                                                       | Description                                                                                                                                                                                         |
-| -------------------------------------------- | ----------- | ------------------------------ | --------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Lectern Server](apps/server/README.md)      | Application | server                         | apps/server/          | [GHCR](https://github.com/overture-stack/lectern/pkgs/container/lectern) | Lectern Server web application.                                                                                                                                                                     |
-| [Lectern Client](packages/client/README.md)  | Package     | @overture-stack/lectern-client | packages/client       | [NPM](https://www.npmjs.com/package/@overture-stack/lectern-client)   | TypeScript Client to interact with Lectern Server and perform data validation.                                                                                                                      |
-| [common](libraries/common/README.md)         | Library     | common                         | libraries/common/     | N/A                                                                      | Non-specific but commonly reusable utilities. Includes shared Error classes.                                                                                                                        |
-| [dictionary](libraries/dictionary/README.md) | Library     | dictionary                     | libraries/dictionary/ | N/A                                                                      | Dictionary meta-schema definition, includes TS types, and Zod schemas. This also exports all utilities for getting the diff of two dictionaries, and for validating data records with a Dictionary. |
-| [validation](libraries/validation/README.md) | Library     | @overture-stack/lectern-validation                     | libraries/validation/ | [NPM](https://www.npmjs.com/package/@overture-stack/lectern-validation)                                                                      | Validate data using Lectern Dictionaries. |
+| Component                                   | Type        | Package Name                       | Path                 | Published Location                                                       | Description                                                                                                                                                                                         |
+| ------------------------------------------- | ----------- | ---------------------------------- | -------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Lectern Server](apps/server/README.md)     | Application | server                             | apps/server/         | [GHCR](https://github.com/overture-stack/lectern/pkgs/container/lectern) | Lectern Server web application.                                                                                                                                                                     |
+| [Lectern Client](packages/client/README.md) | Package     | @overture-stack/lectern-client     | packages/client      | [NPM](https://www.npmjs.com/package/@overture-stack/lectern-client)      | TypeScript Client to interact with Lectern Server and perform data validation.                                                                                                                      |
+| [common](packages/common/README.md)         | Package     | common                             | packages/common/     | N/A                                                                      | Non-specific but commonly reusable utilities. Includes shared Error classes.                                                                                                                        |
+| [dictionary](packages/dictionary/README.md) | Package     | dictionary                         | packages/dictionary/ | N/A                                                                      | Dictionary meta-schema definition, includes TS types, and Zod schemas. This also exports all utilities for getting the diff of two dictionaries, and for validating data records with a Dictionary. |
+| [validation](packages/validation/README.md) | Package     | @overture-stack/lectern-validation | packages/validation/ | [NPM](https://www.npmjs.com/package/@overture-stack/lectern-validation)  | Validate data using Lectern Dictionaries.                                                                                                                                                           |
 
 ## Developer Instructions
 

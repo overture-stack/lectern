@@ -68,10 +68,10 @@ importers:
         version: 1.20.2
       common:
         specifier: workspace:^
-        version: link:../../libraries/common
+        version: link:../../packages/common
       dictionary:
         specifier: workspace:^
-        version: link:../../libraries/dictionary
+        version: link:../../packages/dictionary
       dotenv:
         specifier: ^16.3.1
         version: 16.3.1
@@ -158,73 +158,23 @@ importers:
         specifier: ^3.21.3
         version: 3.21.3(zod@3.21.4)
 
-  libraries/common:
-    devDependencies:
-      rimraf:
-        specifier: ^3.0.2
-        version: 3.0.2
-
-  libraries/dictionary:
-    dependencies:
-      common:
-        specifier: workspace:^
-        version: link:../common
-      immer:
-        specifier: ^10.0.2
-        version: 10.0.2
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      zod:
-        specifier: ^3.21.4
-        version: 3.21.4
-    devDependencies:
-      '@types/lodash':
-        specifier: ^4.14.195
-        version: 4.14.195
-      rimraf:
-        specifier: ^3.0.2
-        version: 3.0.2
-
-  libraries/validation:
-    dependencies:
-      common:
-        specifier: workspace:^
-        version: link:../common
-      dictionary:
-        specifier: workspace:^
-        version: link:../dictionary
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      zod:
-        specifier: ^3.21.4
-        version: 3.21.4
-    devDependencies:
-      '@types/lodash':
-        specifier: ^4.14.195
-        version: 4.14.195
-      rimraf:
-        specifier: ^3.0.2
-        version: 3.0.2
-
   packages/client:
     dependencies:
       '@overture-stack/lectern-validation':
         specifier: workspace:^
-        version: link:../../libraries/validation
+        version: link:../validation
       cd:
         specifier: ^0.3.3
         version: 0.3.3
       common:
         specifier: workspace:^
-        version: link:../../libraries/common
+        version: link:../common
       deep-freeze:
         specifier: ^0.0.1
         version: 0.0.1
       dictionary:
         specifier: workspace:^
-        version: link:../../libraries/dictionary
+        version: link:../dictionary
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -286,6 +236,56 @@ importers:
       typescript:
         specifier: ^5.1.6
         version: 5.1.6
+
+  packages/common:
+    devDependencies:
+      rimraf:
+        specifier: ^3.0.2
+        version: 3.0.2
+
+  packages/dictionary:
+    dependencies:
+      common:
+        specifier: workspace:^
+        version: link:../common
+      immer:
+        specifier: ^10.0.2
+        version: 10.0.2
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
+    devDependencies:
+      '@types/lodash':
+        specifier: ^4.14.195
+        version: 4.14.195
+      rimraf:
+        specifier: ^3.0.2
+        version: 3.0.2
+
+  packages/validation:
+    dependencies:
+      common:
+        specifier: workspace:^
+        version: link:../common
+      dictionary:
+        specifier: workspace:^
+        version: link:../dictionary
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
+    devDependencies:
+      '@types/lodash':
+        specifier: ^4.14.195
+        version: 4.14.195
+      rimraf:
+        specifier: ^3.0.2
+        version: 3.0.2
 
 packages:
 

@@ -19,13 +19,13 @@
 
 import { DataRecord, UnprocessedDataRecord, Schema, SchemaField } from 'dictionary';
 
-import { SchemaValidationError } from '../../../../libraries/validation/src/types/validationErrorTypes';
+import { SchemaValidationError } from '@overture-stack/lectern-validation';
 import {
 	CrossSchemaValidationFunction,
 	DatasetValidationFunction,
 	UnprocessedRecordValidationFunction,
 	ValidationFunction,
-} from '../../../../libraries/validation/src/types/validationFunctionTypes';
+} from '@overture-stack/lectern-validation';
 
 export const runUnprocessedRecordValidationPipeline = (
 	record: UnprocessedDataRecord,
