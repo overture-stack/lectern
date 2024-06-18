@@ -30,7 +30,7 @@ The repository is organized with the following directory structure:
     └── validation
 ```
 
-The modules in the monorepo are organized into three categories:
+The modules in the monorepo are organized into two categories:
 
    * __apps/__ - Standalone processes meant to be run. These are published to [ghcr.io](https://ghcr.io) as container images.
    * __packages/__ - Reusable packages shared between applications and other packages. Packages are published to [NPM](https://npmjs.com) .
