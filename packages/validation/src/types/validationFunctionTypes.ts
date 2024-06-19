@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { DataRecord, UnprocessedDataRecord, Schema } from 'dictionary';
+import { DataRecord, UnprocessedDataRecord, Schema } from '@overture-stack/lectern-dictionary';
 import { SchemaValidationError } from './validationErrorTypes';
 
 // these validation functions run AFTER the record has been converted to the correct types from raw strings

@@ -16,14 +16,14 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import { SchemaFieldValueType } from 'dictionary';
+import { SchemaFieldValueType } from '@overture-stack/lectern-dictionary';
 import {
 	BaseSchemaValidationError,
 	RegexValidationError,
 	SchemaValidationErrorTypes,
 } from '../types/validationErrorTypes';
 import { ValidationFunction } from '../types/validationFunctionTypes';
-import { asArray } from 'common';
+import { asArray } from '@overture-stack/lectern-common';
 import { isDefined, isStringArray } from '../utils/typeUtils';
 import { isEmptyString } from '../utils/isEmptyString';
 

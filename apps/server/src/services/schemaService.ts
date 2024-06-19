@@ -17,10 +17,10 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { References, Schema } from 'dictionary';
+import { References, Schema } from '@overture-stack/lectern-dictionary';
 import * as immer from 'immer';
 import { ZodError } from 'zod';
-import { replaceSchemaReferences } from 'dictionary';
+import { replaceSchemaReferences } from '@overture-stack/lectern-dictionary';
 
 export function validate(schema: Schema, references: References): { valid: boolean; errors?: ZodError } {
 	const schemaWithReplacements = replaceSchemaReferences(schema, references);

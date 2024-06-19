@@ -17,8 +17,14 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { BadRequestError, ConflictError, NotFoundError } from 'common';
-import { Dictionary, DictionaryDocument, DictionaryDocumentSummary, Schema, VersionUtils } from 'dictionary';
+import { BadRequestError, ConflictError, NotFoundError } from '@overture-stack/lectern-common';
+import {
+	Dictionary,
+	DictionaryDocument,
+	DictionaryDocumentSummary,
+	Schema,
+	VersionUtils,
+} from '@overture-stack/lectern-dictionary';
 import * as immer from 'immer';
 import { omit } from 'lodash';
 import logger from '../config/logger';

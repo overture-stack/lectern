@@ -19,7 +19,7 @@
 
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { DictionaryDocument, VersionUtils } from 'dictionary';
+import { DictionaryDocument, VersionUtils } from '@overture-stack/lectern-dictionary';
 import * as immer from 'immer';
 import { Error as MongooseError } from 'mongoose';
 import sinon from 'sinon';

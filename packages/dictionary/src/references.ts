@@ -20,7 +20,7 @@
 import * as immer from 'immer';
 import { cloneDeep, get, isObject, omit } from 'lodash';
 import { Dictionary, ReferenceArray, ReferenceTag, ReferenceValue, References, Schema } from '.';
-import { InvalidReferenceError, asArray } from 'common';
+import { InvalidReferenceError, asArray } from '@overture-stack/lectern-common';
 
 // This is the union of all schema sections that could have reference values
 type OutputReferenceValues = ReferenceArray | ReferenceValue;

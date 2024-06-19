@@ -19,8 +19,8 @@
 
 import type { SchemaValidationError } from '@overture-stack/lectern-validation';
 import * as validation from '@overture-stack/lectern-validation';
-import { NotFoundError } from 'common';
-import { DataRecord, Dictionary, Schema, UnprocessedDataRecord } from 'dictionary';
+import { NotFoundError } from '@overture-stack/lectern-common';
+import { DataRecord, Dictionary, Schema, UnprocessedDataRecord } from '@overture-stack/lectern-dictionary';
 import _ from 'lodash';
 import { loggerFor } from '../logger';
 import { convertToArray, isEmpty, isNotAbsent, isString, isStringArray, notEmpty } from '../utils';

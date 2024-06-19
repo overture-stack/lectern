@@ -18,7 +18,7 @@
  */
 
 import chai from 'chai';
-import { DiffUtils } from 'dictionary';
+import { DiffUtils } from '@overture-stack/lectern-dictionary';
 import { analyzer } from '../src';
 import { ChangeAnalysis } from '../src/changeAnalysis';
 import diffResponse from './fixtures/diffResponse';

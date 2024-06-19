@@ -11,7 +11,7 @@ import {
 	References,
 	Schema,
 	SchemaField,
-} from 'dictionary';
+} from '@overture-stack/lectern-dictionary';
 import fs from 'fs';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 

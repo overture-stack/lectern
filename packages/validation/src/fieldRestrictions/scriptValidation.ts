@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { DataRecord, SchemaField } from 'dictionary';
+import { DataRecord, SchemaField } from '@overture-stack/lectern-dictionary';
 import vm from 'vm';
 import {
 	BaseSchemaValidationError,
@@ -26,7 +26,7 @@ import {
 } from '../types/validationErrorTypes';
 import { ValidationFunction } from '../types/validationFunctionTypes';
 import { isDefined } from '../utils/typeUtils';
-import { asArray } from 'common';
+import { asArray } from '@overture-stack/lectern-common';
 
 const ctx = vm.createContext();
 

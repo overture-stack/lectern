@@ -17,8 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { BadRequestError, NotFoundError } from 'common';
-import { Dictionary, Schema, replaceReferences } from 'dictionary';
+import { BadRequestError, NotFoundError } from '@overture-stack/lectern-common';
+import { Dictionary, Schema, replaceReferences } from '@overture-stack/lectern-dictionary';
 import { Request, Response } from 'express';
 import * as dictionaryService from '../services/dictionaryService';
 

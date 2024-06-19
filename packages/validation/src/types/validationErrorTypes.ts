@@ -17,8 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { Values, Singular } from 'common';
-import type { DataRecord, DataRecordValue, RestrictionRange } from 'dictionary';
+import type { Values, Singular } from '@overture-stack/lectern-common';
+import type { DataRecord, DataRecordValue, RestrictionRange } from '@overture-stack/lectern-dictionary';
 
 /**
  * Represents the common structure of a validation error without the custom content provided by specific error types.

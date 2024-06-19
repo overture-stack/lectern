@@ -19,7 +19,7 @@
 
 import _ from 'lodash';
 
-import { Singular } from 'common';
+import { Singular } from '@overture-stack/lectern-common';
 import {
 	DataRecord,
 	DataRecordValue,
@@ -27,7 +27,7 @@ import {
 	Schema,
 	SchemaField,
 	SchemaFieldValueType,
-} from 'dictionary';
+} from '@overture-stack/lectern-dictionary';
 
 import { convertToArray, isEmpty } from '../utils';
 import { SchemaValidationError, SchemaValidationErrorTypes } from '@overture-stack/lectern-validation';

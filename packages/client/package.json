@@ -40,8 +40,8 @@
 	"dependencies": {
 		"@overture-stack/lectern-validation": "workspace:^",
 		"cd": "^0.3.3",
-		"common": "workspace:^",
-		"dictionary": "workspace:^",
+		"@overture-stack/lectern-common": "workspace:^",
+		"@overture-stack/lectern-dictionary": "workspace:^",
 		"lodash": "^4.17.21",
 		"node-fetch": "^2.6.1",
 		"promise-tools": "^2.1.0",
