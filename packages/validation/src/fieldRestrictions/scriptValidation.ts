@@ -18,7 +18,6 @@
  */
 
 import { DataRecord, SchemaField } from 'dictionary';
-import vm from 'vm';
 import {
 	BaseSchemaValidationError,
 	SchemaValidationErrorTypes,
@@ -27,8 +26,6 @@ import {
 import { ValidationFunction } from '../types/validationFunctionTypes';
 import { isDefined } from '../utils/typeUtils';
 import { asArray } from 'common';
-
-const ctx = vm.createContext();
 
 /**
  * Check all values of a DataRecord pass all script restrictions in their schema.
@@ -76,10 +73,7 @@ const buildScriptError = (
 	};
 };
 
-const getScript = (scriptString: string) => {
-	const script = new vm.Script(scriptString);
-	return script;
-};
+const getScript = (scriptString: string) => eval(`"use strict"; ${scriptString}`);
 
 const validateWithScript = (
 	field: SchemaField,
@@ -113,9 +107,7 @@ const validateWithScript = (
 
 		for (const scriptString of scripts) {
 			const script = getScript(scriptString);
-			const valFunc = script.runInContext(ctx);
-			if (!valFunc) throw new Error('Invalid script');
-			result = valFunc(args);
+			result = script(args);
 			/* Return the first script that's invalid. Otherwise result will be valid with message: 'ok'*/
 			if (!result.valid) break;
 		}
