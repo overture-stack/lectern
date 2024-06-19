@@ -75,9 +75,6 @@ export const processRecords = (
 	// Record set level validations
 	const newErrors = validateRecordsSet(schemaDef, processedRecords);
 	validationErrors.push(...newErrors);
-	console.debug(
-		`done processing all rows, validationErrors: ${validationErrors.length}, validRecords: ${processedRecords.length}`,
-	);
 
 	return {
 		validationErrors,
@@ -100,15 +97,11 @@ export const process = (
 	let validationErrors: SchemaValidationError[] = [];
 
 	const defaultedRecord = populateDefaults(schemaDef, data, index);
-	console.debug(`done populating defaults for record #${index}`);
 	const result = validateUnprocessedRecord(schemaDef, defaultedRecord, index);
-	console.debug(`done validation for record #${index}`);
 	if (result && result.length > 0) {
-		console.debug(`${result.length} validation errors for record #${index}`);
 		validationErrors = validationErrors.concat(result);
 	}
 	const convertedRecord = convertFromRawStrings(schemaDef, defaultedRecord, index, result);
-	console.debug(`converted row #${index} from raw strings`);
 	const postTypeConversionValidationResult = validateAfterTypeConversion(
 		schemaDef,
 		_.cloneDeep(convertedRecord),
@@ -118,10 +111,6 @@ export const process = (
 	if (postTypeConversionValidationResult && postTypeConversionValidationResult.length > 0) {
 		validationErrors = validationErrors.concat(postTypeConversionValidationResult);
 	}
-
-	console.debug(
-		`done processing all rows, validationErrors: ${validationErrors.length}, validRecords: ${convertedRecord}`,
-	);
 
 	return {
 		validationErrors,
@@ -170,7 +159,6 @@ const populateDefaults = (schemaDef: Schema, record: UnprocessedDataRecord, inde
 		// data record  value is (or is expected to be) just one string
 		if (isString(value) && !field.isArray) {
 			if (isNotAbsent(value) && value.trim() === '') {
-				console.debug(`populating Default: "${defaultValue}" for "${field.name}" of record at index ${index}`);
 				clonedRecord[field.name] = `${defaultValue}`;
 			}
 			return undefined;
@@ -179,7 +167,6 @@ const populateDefaults = (schemaDef: Schema, record: UnprocessedDataRecord, inde
 		// data record value is (or is expected to be) array of string
 		if (isStringArray(value) && field.isArray) {
 			if (notEmpty(value) && value.every((v) => v.trim() === '')) {
-				console.debug(`populating Default: "${defaultValue}" for ${field.name} of record at index ${index}`);
 				const arrayDefaultValue = convertToArray(defaultValue);
 				clonedRecord[field.name] = arrayDefaultValue.map((v) => `${v}`);
 			}

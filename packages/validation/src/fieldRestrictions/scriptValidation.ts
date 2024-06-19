@@ -123,7 +123,7 @@ const validateWithScript = (
 		return result;
 	} catch (err) {
 		console.error(
-			`failed running validation script ${field.name} for record: ${JSON.stringify(record)}. Error message: ${err}`,
+			`Failed running validation script ${field.name} for record: ${JSON.stringify(record)}. Error message: ${err}`,
 		);
 		return {
 			valid: false,
