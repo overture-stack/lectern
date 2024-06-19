@@ -17,7 +17,6 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import deepFreeze from 'deep-freeze';
 import _ from 'lodash';
 
 // type gaurd to filter out undefined and null
@@ -115,5 +114,3 @@ export function isValueNotEqual(value: any, other: any) {
 export function convertToTrimmedString(val: unknown | undefined | string | number | boolean | null) {
 	return val === undefined || val === null ? '' : String(val).trim();
 }
-
-export const F = deepFreeze;
