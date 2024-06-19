@@ -21,8 +21,6 @@ import { unknownToString } from 'common';
 import { Dictionary, DictionaryDiff, DictionaryDiffArray, FieldDiff } from 'dictionary';
 import fetch from 'node-fetch';
 import promiseTools from 'promise-tools';
-import { loggerFor } from '../logger';
-const L = loggerFor(__filename);
 
 export interface SchemaServiceRestClient {
 	fetchSchema(schemaSvcUrl: string, name: string, version: string): Promise<Dictionary>;
@@ -41,12 +39,12 @@ export const restClient: SchemaServiceRestClient = {
 		}
 		const url = `${schemaSvcUrl}/dictionaries?name=${name}&version=${version}`;
 		try {
-			L.debug(`in fetch live schema ${version}`);
+			console.debug(`in fetch live schema ${version}`);
 			const schemaDictionary = await doRequest(url);
 			// todo validate response and map it to a schema
 			return schemaDictionary[0] as Dictionary;
 		} catch (error: unknown) {
-			L.error(`failed to fetch schema at url: ${url} - ${unknownToString(error)}`);
+			console.error(`failed to fetch schema at url: ${url} - ${unknownToString(error)}`);
 			throw error;
 		}
 	},
@@ -79,18 +77,18 @@ const doRequest = async (url: string) => {
 	try {
 		const retryAttempt = 1;
 		response = await promiseTools.retry({ times: 5, interval: 1000 }, async () => {
-			L.debug(`fetching schema attempt #${retryAttempt}`);
+			console.debug(`fetching schema attempt #${retryAttempt}`);
 			return promiseTools.timeout(fetch(url), 5000);
 		});
 		return await response.json();
 	} catch (error: unknown) {
-		L.error(`failed to fetch schema at url: ${url} - ${unknownToString(error)}`);
+		console.error(`failed to fetch schema at url: ${url} - ${unknownToString(error)}`);
 		throw response.status === 404 ? new Error('Not Found') : new Error('Request Failed');
 	}
 };
 
 async function loadSchemaFromFile(version: string, schemaSvcUrl: string, name: string) {
-	L.debug(`in fetch stub schema ${version}`);
+	console.debug(`in fetch stub schema ${version}`);
 	const result = delay<Dictionary>(1000);
 	const dictionary = await result(() => {
 		const dictionaries: Dictionary[] = require(schemaSvcUrl.substring(7, schemaSvcUrl.length))
@@ -107,12 +105,12 @@ async function loadSchemaFromFile(version: string, schemaSvcUrl: string, name: s
 	if (dictionary === undefined) {
 		throw new Error("couldn't load stub dictionary with the criteria specified");
 	}
-	L.debug(`schema found ${dictionary.version}`);
+	console.debug(`schema found ${dictionary.version}`);
 	return dictionary;
 }
 
 async function loadDiffFromFile(schemaSvcBaseUrl: string, name: string, fromVersion: string, toVersion: string) {
-	L.debug(`in fetch stub diffs ${name} ${fromVersion} ${toVersion}`);
+	console.debug(`in fetch stub diffs ${name} ${fromVersion} ${toVersion}`);
 	const result = delay<any>(1000);
 	const diff = await result(() => {
 		const diffResponse = require(schemaSvcBaseUrl.substring(7, schemaSvcBaseUrl.length)).diffs as any[];

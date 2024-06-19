@@ -184,9 +184,6 @@ importers:
       promise-tools:
         specifier: ^2.1.0
         version: 2.1.0
-      winston:
-        specifier: ^3.3.3
-        version: 3.9.0
     devDependencies:
       '@types/chai':
         specifier: ^4.2.16
@@ -200,9 +197,6 @@ importers:
       '@types/mocha':
         specifier: ^8.2.2
         version: 8.2.3
-      '@types/node':
-        specifier: ^12.0.10
-        version: 12.20.55
       '@types/node-fetch':
         specifier: ^2.5.10
         version: 2.6.11

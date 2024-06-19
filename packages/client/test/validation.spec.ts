@@ -20,7 +20,6 @@
 import { SchemaValidationErrorTypes } from '@overture-stack/lectern-validation';
 import chai from 'chai';
 import { functions as schemaService } from '../src';
-import { loggerFor } from '../src/logger';
 import dictionary from './fixtures/registrationSchema';
 
 chai.should();

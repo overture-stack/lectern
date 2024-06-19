@@ -24,7 +24,6 @@
 		"@types/chai": "^4.2.16",
 		"@types/lodash": "^4.14.195",
 		"@types/mocha": "^8.2.2",
-		"@types/node": "^12.0.10",
 		"@types/node-fetch": "^2.5.10",
 		"chai": "^4.3.4",
 		"husky": "^6.0.0",
@@ -44,8 +43,7 @@
 		"dictionary": "workspace:^",
 		"lodash": "^4.17.21",
 		"node-fetch": "^2.6.1",
-		"promise-tools": "^2.1.0",
-		"winston": "^3.3.3"
+		"promise-tools": "^2.1.0"
 	},
 	"author": "Ontario Institute for Cancer Research"
 }

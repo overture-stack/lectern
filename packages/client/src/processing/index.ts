@@ -22,13 +22,10 @@ import * as validation from '@overture-stack/lectern-validation';
 import { NotFoundError } from 'common';
 import { DataRecord, Dictionary, Schema, UnprocessedDataRecord } from 'dictionary';
 import _ from 'lodash';
-import { loggerFor } from '../logger';
 import { convertToArray, isEmpty, isNotAbsent, isString, isStringArray, notEmpty } from '../utils';
 import { convertFromRawStrings } from './convertDataValueTypes';
 import { BatchProcessingResult, FieldNamesByPriorityMap, SchemaProcessingResult } from './processingResultTypes';
 import * as pipelines from './validationPipelines';
-
-const L = loggerFor(__filename);
 
 export const processSchemas = (
 	dictionary: Dictionary,
@@ -78,7 +75,7 @@ export const processRecords = (
 	// Record set level validations
 	const newErrors = validateRecordsSet(schemaDef, processedRecords);
 	validationErrors.push(...newErrors);
-	L.debug(
+	console.debug(
 		`done processing all rows, validationErrors: ${validationErrors.length}, validRecords: ${processedRecords.length}`,
 	);
 
@@ -103,15 +100,15 @@ export const process = (
 	let validationErrors: SchemaValidationError[] = [];
 
 	const defaultedRecord = populateDefaults(schemaDef, data, index);
-	L.debug(`done populating defaults for record #${index}`);
+	console.debug(`done populating defaults for record #${index}`);
 	const result = validateUnprocessedRecord(schemaDef, defaultedRecord, index);
-	L.debug(`done validation for record #${index}`);
+	console.debug(`done validation for record #${index}`);
 	if (result && result.length > 0) {
-		L.debug(`${result.length} validation errors for record #${index}`);
+		console.debug(`${result.length} validation errors for record #${index}`);
 		validationErrors = validationErrors.concat(result);
 	}
 	const convertedRecord = convertFromRawStrings(schemaDef, defaultedRecord, index, result);
-	L.debug(`converted row #${index} from raw strings`);
+	console.debug(`converted row #${index} from raw strings`);
 	const postTypeConversionValidationResult = validateAfterTypeConversion(
 		schemaDef,
 		_.cloneDeep(convertedRecord),
@@ -122,7 +119,9 @@ export const process = (
 		validationErrors = validationErrors.concat(postTypeConversionValidationResult);
 	}
 
-	L.debug(`done processing all rows, validationErrors: ${validationErrors.length}, validRecords: ${convertedRecord}`);
+	console.debug(
+		`done processing all rows, validationErrors: ${validationErrors.length}, validRecords: ${convertedRecord}`,
+	);
 
 	return {
 		validationErrors,
@@ -171,7 +170,7 @@ const populateDefaults = (schemaDef: Schema, record: UnprocessedDataRecord, inde
 		// data record  value is (or is expected to be) just one string
 		if (isString(value) && !field.isArray) {
 			if (isNotAbsent(value) && value.trim() === '') {
-				L.debug(`populating Default: "${defaultValue}" for "${field.name}" of record at index ${index}`);
+				console.debug(`populating Default: "${defaultValue}" for "${field.name}" of record at index ${index}`);
 				clonedRecord[field.name] = `${defaultValue}`;
 			}
 			return undefined;
@@ -180,7 +179,7 @@ const populateDefaults = (schemaDef: Schema, record: UnprocessedDataRecord, inde
 		// data record value is (or is expected to be) array of string
 		if (isStringArray(value) && field.isArray) {
 			if (notEmpty(value) && value.every((v) => v.trim() === '')) {
-				L.debug(`populating Default: "${defaultValue}" for ${field.name} of record at index ${index}`);
+				console.debug(`populating Default: "${defaultValue}" for ${field.name} of record at index ${index}`);
 				const arrayDefaultValue = convertToArray(defaultValue);
 				clonedRecord[field.name] = arrayDefaultValue.map((v) => `${v}`);
 			}
