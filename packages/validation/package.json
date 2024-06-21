@@ -19,6 +19,6 @@
 	},
 	"devDependencies": {
 		"@types/lodash": "^4.14.195",
-		"rimraf": "^3.0.2"
+		"rimraf": "^5.0.0"
 	}
 }

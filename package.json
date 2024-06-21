@@ -35,9 +35,8 @@
 		"nyc": "^15.1.0",
 		"prettier": "^3",
 		"sinon": "^15.2.0",
-		"typescript": "^5.1.6"
-	},
-	"dependencies": {
+		"typescript": "^5.5.0",
 		"ts-node": "^10.9.1"
-	}
+	},
+	"dependencies": {}
 }
