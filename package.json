@@ -22,21 +22,20 @@
 	"author": "Ontario Institute for Cancer Research",
 	"license": "AGPL-3.0",
 	"devDependencies": {
-		"@types/chai": "^4.3.5",
-		"@types/chai-as-promised": "^7.1.5",
-		"@types/mocha": "^10",
-		"@types/node": "^20.4.1",
-		"@types/sinon": "^10.0.15",
-		"chai": "^4.3.7",
-		"chai-as-promised": "^7.1.1",
+		"@types/chai": "^4.3.16",
+		"@types/chai-as-promised": "^7.1.8",
+		"@types/mocha": "^10.0.6",
+		"@types/node": "^20.14.7",
+		"@types/sinon": "^10.0.20",
+		"chai": "^4.4.1",
+		"chai-as-promised": "^7.1.2",
 		"chai-http": "^4.4.0",
-		"mocha": "^10",
-		"nx": "^16.5.0",
+		"mocha": "^10.4.0",
+		"nx": "^16.10.0",
 		"nyc": "^15.1.0",
-		"prettier": "^3",
+		"prettier": "^3.3.2",
 		"sinon": "^15.2.0",
-		"typescript": "^5.5.0",
-		"ts-node": "^10.9.1"
-	},
-	"dependencies": {}
+		"ts-node": "^10.9.2",
+		"typescript": "^5.5.2"
+	}
 }
