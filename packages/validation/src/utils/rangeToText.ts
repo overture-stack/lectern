@@ -19,7 +19,7 @@
 
 import { RestrictionRange } from 'dictionary';
 
-export const rangeToSymbol = (range: RestrictionRange): string => {
+export const rangeToText = (range: RestrictionRange): string => {
 	let minString = '';
 	let maxString = '';
 
@@ -27,20 +27,23 @@ export const rangeToSymbol = (range: RestrictionRange): string => {
 		(range.min !== undefined || range.exclusiveMin !== undefined) &&
 		(range.max !== undefined || range.exclusiveMax !== undefined);
 
-	if (range.min !== undefined) {
-		minString = `>= ${range.min}`;
-	}
-
+	// The order here is intentionally putting exclusiveMin/exclusiveMax before the simple min/max.
+	// If a RestrictionRange is created with both min and exclusiveMin (or max and exclusiveMax),
+	// the generated text will use the more restrictive rule
 	if (range.exclusiveMin !== undefined) {
 		minString = `> ${range.exclusiveMin}`;
 	}
 
-	if (range.max !== undefined) {
-		maxString = `<= ${range.max}`;
+	if (range.min !== undefined) {
+		minString = `>= ${range.min}`;
 	}
 
 	if (range.exclusiveMax !== undefined) {
 		maxString = `< ${range.exclusiveMax}`;
+	}
+
+	if (range.max !== undefined) {
+		maxString = `<= ${range.max}`;
 	}
 
 	return hasBothRange ? `${minString} and ${maxString}` : `${minString}${maxString}`;
