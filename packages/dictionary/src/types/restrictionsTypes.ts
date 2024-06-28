@@ -1,12 +1,31 @@
 import { z as zod } from 'zod';
 import { ReferenceTag } from './referenceTypes';
-import { Integer } from './dataValueTypes';
+import { Integer } from './commonTypes';
+import type { Values } from 'common';
 
-/* ************ *
- * Restrictions *
- * ************ */
+export const FieldRestrictionTypes = {
+	codeList: 'codeList',
+	range: 'range',
+	required: 'required',
+	regex: 'regex',
+	script: 'script',
+	unique: 'unique',
+} as const;
+export type FieldRestrictionType = Values<typeof FieldRestrictionTypes>;
+
 export const RestrictionScript = zod.array(zod.string().or(ReferenceTag)).min(1); //TODO: script formatting validation
 export type RestrictionScript = zod.infer<typeof RestrictionScript>;
+
+export const RestrictionCodeListString = zod.union([zod.string(), ReferenceTag]).array().min(1);
+export type RestrictionCodeListString = zod.infer<typeof RestrictionCodeListString>;
+
+export const RestrictionCodeListNumber = zod.number().array().min(1);
+export type RestrictionCodeListNumber = zod.infer<typeof RestrictionCodeListNumber>;
+
+export const RestrictionCodeListInteger = Integer.array().min(1);
+export type RestrictionCodeListInteger = zod.infer<typeof RestrictionCodeListInteger>;
+
+export type RestrictionCodeList = RestrictionCodeListString | RestrictionCodeListNumber | RestrictionCodeListInteger;
 
 export const RestrictionNumberRange = zod
 	.object({
