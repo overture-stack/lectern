@@ -17,61 +17,51 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { DataRecord, SchemaField } from 'dictionary';
-import {
-	BaseSchemaValidationError,
-	MissingRequiredFieldValidationError,
-	SchemaValidationErrorTypes,
-} from '../types/validationErrorTypes';
-import { ValidationFunction } from '../types/validationFunctionTypes';
-import { isDefined } from '../utils/typeUtils';
-import { asArray } from 'common';
-import { isEmptyString } from '../utils/isEmptyString';
+import { type ArrayDataValue } from 'dictionary';
+import { invalid, valid, type RestrictionTestResult } from '../types/restrictionTestResult';
+import type { FieldRestrictionSingleValueTest, FieldRestrictionTest } from './FieldRestrictionTest';
+import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
 
-/**
- * Check all values of a DataRecord pass required restrictions in their schema.
- * @param record
- * @param index
- * @param fields
- * @returns
- */
-export const validateRequiredFields: ValidationFunction = (
-	record,
-	index,
-	fields,
-): MissingRequiredFieldValidationError[] => {
-	return fields
-		.map((field) => {
-			if (isRequiredMissing(field, record)) {
-				return buildRequiredError({ fieldName: field.name, index }, {});
-			}
-			return undefined;
-		})
-		.filter(isDefined);
-};
-
-const buildRequiredError = (
-	errorData: BaseSchemaValidationError,
-	info: MissingRequiredFieldValidationError['info'],
-): MissingRequiredFieldValidationError => {
-	const message = `${errorData.fieldName} is a required field.`;
-
-	return {
-		...errorData,
-		errorType: SchemaValidationErrorTypes.MISSING_REQUIRED_FIELD,
-		info,
-		message,
-	};
-};
-
-const isRequiredMissing = (field: SchemaField, record: DataRecord) => {
-	const isRequired = field.restrictions && field.restrictions.required;
-	if (!isRequired) {
-		return false;
+const testRequiredSingleValue: FieldRestrictionSingleValueTest<boolean> = (rule, value) => {
+	if (rule === false) {
+		return valid();
+	}
+	if (value === undefined) {
+		return invalid(`A value is required for this field`);
 	}
 
-	// a required field is missing if there are is no value provided for this field (or if an array, all array values are empty)
-	return asArray(record[field.name]).every(
-		(item) => item === undefined || (typeof item === 'string' && isEmptyString(item)),
-	);
+	return valid();
 };
+
+/**
+ * This function is the common pattern for applying a fieldRestriction value test to an array.
+ * For the required restriction, we wanted to perform a couple additional checks to modify how
+ * this works, so this is used inside testRequiredArray after those additional checks are complete.
+ */
+const internalTestRequiredArray = createFieldRestrictionTestForArrays(
+	testRequiredSingleValue,
+	`This field requires all items to have a defined value.`,
+);
+
+/**
+ * Test for required value on an array field. Before using the common pattern of applying the value test to
+ * each item in the array, we first check:
+ * - if the rule is `false` then the value is always valid
+ * - if the length of the array is 0 then the value is invalid
+ * @param rule
+ * @param values
+ * @returns
+ */
+const testRequiredArray = (rule: boolean, values: ArrayDataValue): RestrictionTestResult => {
+	// Note: This doesn't apply the
+	if (rule === false) {
+		return valid();
+	}
+	if (values.length === 0) {
+		return { ...invalid('A value is required for this field.') };
+	}
+	return internalTestRequiredArray(rule, values);
+};
+
+export const testRequired: FieldRestrictionTest<boolean> = (rule, value) =>
+	Array.isArray(value) ? testRequiredArray(rule, value) : testRequiredSingleValue(rule, value);

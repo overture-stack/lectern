@@ -16,69 +16,35 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import { SchemaFieldValueType } from 'dictionary';
-import {
-	BaseSchemaValidationError,
-	RegexValidationError,
-	SchemaValidationErrorTypes,
-} from '../types/validationErrorTypes';
-import { ValidationFunction } from '../types/validationFunctionTypes';
-import { asArray } from 'common';
-import { isDefined, isStringArray } from '../utils/typeUtils';
-import { isEmptyString } from '../utils/isEmptyString';
+import { type RestrictionRegex } from 'dictionary';
+import { invalid, valid } from '../types/restrictionTestResult';
+import type { FieldRestrictionSingleValueTest, FieldRestrictionTest } from './FieldRestrictionTest';
+import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
 
 /**
- * Check all values of a DataRecord pass regex restrictions in their schema.
- * @param record
- * @param index
- * @param fields
+ * regex tests are only performed on strings. All other values will be true.
+ * @param rule
+ * @param value
  * @returns
  */
-export const validateRegex: ValidationFunction = (record, index, fields): RegexValidationError[] => {
-	return fields
-		.map((field) => {
-			if (field.valueType === SchemaFieldValueType.Values.string && field.restrictions && field.restrictions.regex) {
-				const regex = field.restrictions.regex;
-				const recordFieldValues = asArray(record[field.name]);
-				if (!isStringArray(recordFieldValues)) {
-					// This field value should be string or string array, we will skip validation if the type is wrong.
-					return undefined;
-				}
-
-				const invalidValues = recordFieldValues.filter((v) => isInvalidRegexValue(regex, v));
-				if (invalidValues.length !== 0) {
-					const examples = typeof field.meta?.examples === 'string' ? field.meta.examples : undefined;
-
-					return buildRegexError({ fieldName: field.name, index }, { value: invalidValues, regex, examples });
-				}
-			}
-
-			// Field does not have regex validation
-			return undefined;
-		})
-		.filter(isDefined);
-};
-
-const isInvalidRegexValue = (regex: string, value: string) => {
-	// optional field if the value is absent at this point
-	if (isEmptyString(value)) {
-		return false;
+const testRegexSingleValue: FieldRestrictionSingleValueTest<RestrictionRegex> = (rule, value) => {
+	// Regex tests are only applied to strings
+	if (typeof value !== 'string') {
+		return valid();
 	}
-	const regexPattern = new RegExp(regex);
-	return !regexPattern.test(value);
+
+	const regexPattern = new RegExp(rule);
+
+	if (regexPattern.test(value)) {
+		return valid();
+	}
+	return invalid(`The value must match the regular expression: ${rule}`);
 };
 
-const buildRegexError = (
-	errorData: BaseSchemaValidationError,
-	info: RegexValidationError['info'],
-): RegexValidationError => {
-	const examplesMessage = info.examples ? ` Examples: ${info.examples}` : '';
-	const message = `The value is not a permissible for this field, it must meet the regular expression: "${info.regex}".${examplesMessage}`;
+const testRegexArray = createFieldRestrictionTestForArrays(
+	testRegexSingleValue,
+	(rule) => `All values in the array must match the regular expression: ${rule}`,
+);
 
-	return {
-		...errorData,
-		errorType: SchemaValidationErrorTypes.INVALID_BY_REGEX,
-		info,
-		message,
-	};
-};
+export const testRegex: FieldRestrictionTest<RestrictionRegex> = (rule, value) =>
+	Array.isArray(value) ? testRegexArray(rule, value) : testRegexSingleValue(rule, value);

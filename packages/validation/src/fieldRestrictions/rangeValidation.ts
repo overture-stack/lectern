@@ -17,69 +17,29 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { asArray } from 'common';
-import { RestrictionRange } from 'dictionary';
-import {
-	BaseSchemaValidationError,
-	RangeValidationError,
-	SchemaValidationErrorTypes,
-} from '../types/validationErrorTypes';
-import { ValidationFunction } from '../types/validationFunctionTypes';
-import { isDefined, isNumberArray } from '../utils/typeUtils';
-import { rangeToSymbol } from '../utils/rangeToSymbol';
+import { RestrictionRange, type SingleDataValue } from 'dictionary';
+import { invalid, valid, type RestrictionTestResult } from '../types/restrictionTestResult';
+import { isWithinRange } from '../utils/isWithinRange';
+import { rangeToText } from '../utils/rangeToText';
+import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
+import type { FieldRestrictionSingleValueTest, FieldRestrictionTest } from './FieldRestrictionTest';
 
-/**
- * Check all values of a DataRecord pass range restrictions in their schema.
- * @param record
- * @param index
- * @param schemaFields
- * @returns
- */
-export const validateRange: ValidationFunction = (record, index, schemaFields): RangeValidationError[] => {
-	return schemaFields
-		.map((field) => {
-			const recordFieldValues = asArray(record[field.name]);
-			if (!isNumberArray(recordFieldValues)) {
-				return undefined;
-			}
+const testRangeSingleValue: FieldRestrictionSingleValueTest<RestrictionRange> = (rule, value) => {
+	if (typeof value !== 'number') {
+		// only apply range tests to numbers
+		return valid();
+	}
 
-			const range = field.restrictions && 'range' in field.restrictions ? field.restrictions.range : undefined;
-			if (range === undefined) {
-				return undefined;
-			}
-
-			const invalidValues = recordFieldValues.filter((value) => isOutOfRange(range, value));
-			if (invalidValues.length !== 0) {
-				const info = { value: invalidValues, ...range };
-				return buildRangeError({ fieldName: field.name, index }, info);
-			}
-			return undefined;
-		})
-		.filter(isDefined);
+	if (isWithinRange(rule, value)) {
+		return valid();
+	}
+	return invalid(`The value must be within the range: ${rangeToText(rule)}`);
 };
 
-const buildRangeError = (
-	errorData: BaseSchemaValidationError,
-	info: RangeValidationError['info'],
-): RangeValidationError => {
-	const message = `Value is out of permissible range, it must be ${rangeToSymbol(info)}.`;
+const testRangeArray = createFieldRestrictionTestForArrays(
+	testRangeSingleValue,
+	(rule) => `All values in the array must be within the range: ${rangeToText(rule)}`,
+);
 
-	return {
-		...errorData,
-		errorType: SchemaValidationErrorTypes.INVALID_BY_RANGE,
-		info,
-		message,
-	};
-};
-
-const isOutOfRange = (range: RestrictionRange, value: number | undefined) => {
-	if (value === undefined) return false;
-	const invalidRange =
-		// less than the min if defined ?
-		(range.min !== undefined && value < range.min) ||
-		(range.exclusiveMin !== undefined && value <= range.exclusiveMin) ||
-		// bigger than max if defined ?
-		(range.max !== undefined && value > range.max) ||
-		(range.exclusiveMax !== undefined && value >= range.exclusiveMax);
-	return invalidRange;
-};
+export const testRange: FieldRestrictionTest<RestrictionRange> = (rule, value) =>
+	Array.isArray(value) ? testRangeArray(rule, value) : testRangeSingleValue(rule, value);

@@ -17,73 +17,30 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { asArray } from 'common';
-import {
-	BaseSchemaValidationError,
-	EnumValueValidationError,
-	INVALID_VALUE_ERROR_MESSAGE,
-	SchemaValidationErrorTypes,
-} from '../types/validationErrorTypes';
-import { ValidationFunction } from '../types/validationFunctionTypes';
-import { isEmptyString } from '../utils/isEmptyString';
-import { isDefined } from '../utils/typeUtils';
+import type { RestrictionCodeList, SingleDataValue } from 'dictionary';
+import { invalid, valid, type RestrictionTestResult } from '../types/restrictionTestResult';
+import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
+import type { FieldRestrictionSingleValueTest, FieldRestrictionTest } from './FieldRestrictionTest';
 
-/**
- * Check all values of a DataRecord pass codeList restrictions in their schema.
- * @param rec
- * @param index
- * @param fields
- * @returns
- */
-export const validateCodeList: ValidationFunction = (rec, index, fields): EnumValueValidationError[] => {
-	return fields
-		.map((field) => {
-			if (field.restrictions && 'codeList' in field.restrictions && field.restrictions.codeList !== undefined) {
-				const codeList = field.restrictions.codeList;
-				if (!Array.isArray(codeList)) {
-					// codeList restriction is a string, not array. This happens when the references have not been replaced.
-					// We cannot proceed without the final array so we will return undefined.
-					return undefined;
-				}
-
-				// put all values into array to standardize validation for array and non array fields
-				const recordFieldValues = asArray(rec[field.name]);
-				const invalidValues = recordFieldValues.filter((val) => !isValidEnumValue(codeList, val));
-
-				if (invalidValues.length !== 0) {
-					return buildCodeListError({ fieldName: field.name, index }, { value: invalidValues });
-				}
-			}
-			return undefined;
-		})
-		.filter(isDefined);
-};
-
-const buildCodeListError = (
-	errorData: BaseSchemaValidationError,
-	info: EnumValueValidationError['info'],
-): EnumValueValidationError => {
-	const message = INVALID_VALUE_ERROR_MESSAGE;
-
-	return {
-		...errorData,
-		errorType: SchemaValidationErrorTypes.INVALID_ENUM_VALUE,
-		info,
-		message,
-	};
-};
-
-/**
- * If value exists, confirm that it matches an option in the provided code list
- * @param codeList
- * @param value
- * @returns
- */
-const isValidEnumValue = (codeList: string[] | number[], value: string | boolean | number | undefined) => {
-	// do not run validation on empty values
-	if (value === undefined || (typeof value === 'string' && isEmptyString(value))) {
-		return true;
+const testCodeListSingleValue: FieldRestrictionSingleValueTest<RestrictionCodeList> = (rule, value) => {
+	// TODO: this can be sped up by using a set for the rule instead of an array. finding an element in the set is faster.
+	if (!(typeof value === 'string' || typeof value === 'number')) {
+		// only apply code list check to strings and numbers
+		return valid();
 	}
 
-	return codeList.some((allowedValue) => allowedValue === value);
+	for (const option in rule) {
+		if (option === value) {
+			return valid();
+		}
+	}
+	return invalid(`The value for this field must match an option from the list.`);
 };
+
+const testCodeListArray = createFieldRestrictionTestForArrays(
+	testCodeListSingleValue,
+	`All values in this field must match an option from the list.`,
+);
+
+export const testCodeList: FieldRestrictionTest<RestrictionCodeList> = (rule, value) =>
+	Array.isArray(value) ? testCodeListArray(rule, value) : testCodeListSingleValue(rule, value);
