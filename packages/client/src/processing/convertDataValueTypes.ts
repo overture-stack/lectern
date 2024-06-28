@@ -28,6 +28,7 @@ import {
 	SchemaField,
 	SchemaFieldValueType,
 	type ArrayDataValue,
+	type SingleDataValue,
 } from 'dictionary';
 
 import { convertToArray, isEmpty } from '../utils';
@@ -95,7 +96,7 @@ export const convertFromRawStrings = (
 	return mutableRecord;
 };
 
-const getTypedValue = (field: SchemaField, rawValue: string): Defined<Singular<DataRecordValue>> => {
+const getTypedValue = (field: SchemaField, rawValue: string): Defined<SingleDataValue> => {
 	switch (field.valueType) {
 		case SchemaFieldValueType.Values.boolean: {
 			return Boolean(rawValue.toLowerCase());
