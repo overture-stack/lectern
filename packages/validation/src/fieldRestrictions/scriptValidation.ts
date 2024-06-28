@@ -17,6 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { asArray, isDefined } from 'common';
 import { DataRecord, SchemaField } from 'dictionary';
 import vm from 'vm';
 import {
@@ -25,8 +26,6 @@ import {
 	ScriptValidationError,
 } from '../types/validationErrorTypes';
 import { ValidationFunction } from '../types/validationFunctionTypes';
-import { isDefined } from '../utils/typeUtils';
-import { asArray } from 'common';
 
 const ctx = vm.createContext();
 

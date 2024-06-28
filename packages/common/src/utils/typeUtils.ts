@@ -25,3 +25,16 @@
  * @return an array
  */
 export const asArray = <T>(val: T | T[]): T[] => (Array.isArray(val) ? val : [val]);
+
+/**
+ * Checks that the input does not equal undefined (and lets the type checker know).
+ *
+ * Useful for filtering undefined values out of lists.
+ *
+ * (input) => input !== undefined
+ *
+ * @example
+ * const combinedArray: Array<string | undefined> = ['hello', undefined, 'world'];
+ * const stringArray = combinedArray.filter(isDefined); // type is: Array<string>
+ */
+export const isDefined = <T>(input: T | undefined): input is T => input !== undefined;

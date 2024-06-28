@@ -18,31 +18,47 @@
  */
 
 /**
- * Checks that the input does not equal undefined (and lets the type checker know).
- *
- * Useful for filtering undefined values out of lists.
- *
- * (input) => input !== undefined
+ * Given a predicate function that checks for type T, this will create a new predicate funcion that
+ * will check if a value is of type T[].
  *
  * @example
- * const combinedArray: Array<string | undefined> = ['hello', undefined, 'world'];
- * const stringArray = combinedArray.filter(isDefined); // type is: Array<string>
+ * type Person = { name: string; age: number };
+ * const isPerson = (value: unknown): value is Person =>
+ * 	!!value &&
+ * 	typeof value === 'object' &&
+ * 	'name' in value &&
+ * 	typeof value.name === 'string' &&
+ * 	'age' in value &&
+ * 	typeof value.age === 'number';
+ * const isPersonArray = isArrayOf(isPerson);
+ * isPersonArray([{name:'Lisa', age: 8}, {name: 'Bart', age: 10}]); // true
+ * isPersonArray(['not a person']); // false
+ * isPersonArray([{name:'Lisa', age: 8}, {another: 'type'}]); // false
+ * @param predicate
+ * @returns
  */
-export const isDefined = <T>(input: T | undefined): input is T => input !== undefined;
+export const isArrayOf =
+	<T>(predicate: (value: unknown) => value is T) =>
+	(value: unknown): value is T[] =>
+		Array.isArray(value) && value.every(predicate);
+
+/**
+ * Determines if a variable is of type boolean[]
+ * @param value
+ * @returns
+ */
+export const isBooleanArray = isArrayOf((value: unknown): value is boolean => typeof value === 'boolean');
 
 /**
  * Determines if a variable is of type number[]
  * @param value
  * @returns
  */
-export const isNumberArray = (value: unknown): value is number[] =>
-	Array.isArray(value) && value.every((item) => typeof item === 'number');
+export const isNumberArray = isArrayOf((value: unknown): value is number => typeof value === 'number');
 
 /**
  * Determines if a variable is of type string[]
  * @param value
  * @returns
  */
-export const isStringArray = (value: unknown): value is string[] => {
-	return Array.isArray(value) && value.every((item) => typeof item === 'string');
-};
+export const isStringArray = isArrayOf((value: unknown): value is string => typeof value === 'string');

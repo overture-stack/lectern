@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { asArray } from 'common';
+import { asArray, isDefined } from 'common';
 import { REGEXP_BOOLEAN_VALUE, SchemaFieldValueType } from 'dictionary';
 import {
 	INVALID_VALUE_ERROR_MESSAGE,
@@ -27,7 +27,6 @@ import {
 } from '../types/validationErrorTypes';
 import type { UnprocessedRecordValidationFunction } from '../types/validationFunctionTypes';
 import { isEmptyString } from '../utils/isEmptyString';
-import { isDefined } from '../utils/typeUtils';
 
 /**
  * Test the values provided to every field in a DataRecord to find any non-array fields that
