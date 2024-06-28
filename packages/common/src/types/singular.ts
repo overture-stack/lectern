@@ -9,8 +9,9 @@
  * type TupleContents = Singular<[number, string, boolean]> // `TupleContents` is `number | string | boolean`
  * type ArrayOfTuplesContents = Singular<[number, string, boolean]> // `ArrayOfTuplesContents` is `number | string | boolean`
  */
-export type Singular<T> = T extends Array<infer ElementTypes>
-	? Singular<ElementTypes>
-	: T extends ReadonlyArray<infer ElementTypes>
-	? Singular<ElementTypes>
-	: T;
+export type Singular<T> =
+	T extends Array<infer ElementTypes>
+		? Singular<ElementTypes>
+		: T extends ReadonlyArray<infer ElementTypes>
+			? Singular<ElementTypes>
+			: T;
