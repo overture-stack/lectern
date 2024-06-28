@@ -1,3 +1,4 @@
+export * from './commonTypes';
 export * from './dataTypes';
 export * from './dbTypes';
 export * from './dictionaryTypes';
