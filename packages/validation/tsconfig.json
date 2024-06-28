@@ -8,6 +8,7 @@
 		"strict": true,
 		"noImplicitAny": true,
 		"noUnusedParameters": true,
+		"noUncheckedIndexedAccess": true,
 		"esModuleInterop": true,
 		"declaration": true,
 		"sourceMap": true,
@@ -16,5 +17,5 @@
 		"downlevelIteration": true,
 		"skipLibCheck": true
 	},
-	"include": ["./src/**/*.ts"]
+	"include": ["./src/**/*.ts", "./test/**/*.ts"]
 }

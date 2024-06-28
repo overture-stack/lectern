@@ -14,8 +14,9 @@
 		"sourceMap": true,
 		"declaration": true,
 		"outDir": "dist",
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"noUncheckedIndexedAccess": true
 	},
-	"include": ["./src/**/*.ts"],
+	"include": ["./src/**/*.ts", "./test/**/*.ts"],
 	"exclude": ["node_modules/"]
 }
