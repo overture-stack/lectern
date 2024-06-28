@@ -36,9 +36,9 @@ export const processSchemas = (
 ): Record<string, BatchProcessingResult> => {
 	const results: Record<string, BatchProcessingResult> = {};
 
-	Object.keys(schemasData).forEach((schemaName) => {
+	for (const [schemaName, schemaData] of Object.entries(schemasData)) {
 		// Run validations at the record level
-		const recordLevelValidationResults = processRecords(dictionary, schemaName, schemasData[schemaName]);
+		const recordLevelValidationResults = processRecords(dictionary, schemaName, schemaData);
 
 		// Run cross-schema validations
 		const schemaDef = getNotNullSchemaDefinitionFromDictionary(dictionary, schemaName);
@@ -55,7 +55,7 @@ export const processSchemas = (
 			validationErrors: allErrorsBySchema,
 			processedRecords: recordLevelValidationResults.processedRecords,
 		};
-	});
+	}
 
 	return results;
 };

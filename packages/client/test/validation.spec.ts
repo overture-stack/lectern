@@ -22,6 +22,7 @@ import chai from 'chai';
 import { functions as schemaService } from '../src';
 import { loggerFor } from '../src/logger';
 import dictionary from './fixtures/registrationSchema';
+import assert from 'assert';
 
 chai.should();
 
@@ -496,8 +497,8 @@ describe('validation', () => {
 
 		const result = schemaService.processSchemas(dictionary, schemaData);
 
-		chai.expect(result['parent_schema_1'].validationErrors.length).to.eq(0);
-		chai.expect(result['child_schema_simple_fk'].validationErrors.length).to.eq(0);
+		chai.expect(result['parent_schema_1']?.validationErrors.length).to.eq(0);
+		chai.expect(result['child_schema_simple_fk']?.validationErrors.length).to.eq(0);
 	});
 
 	it('should pass foreignKey restriction validation when local schema has null values', () => {
@@ -529,8 +530,8 @@ describe('validation', () => {
 
 		const result = schemaService.processSchemas(dictionary, schemaData);
 
-		chai.expect(result['parent_schema_1'].validationErrors.length).to.eq(0);
-		chai.expect(result['child_schema_simple_fk'].validationErrors.length).to.eq(0);
+		chai.expect(result['parent_schema_1']?.validationErrors.length).to.eq(0);
+		chai.expect(result['child_schema_simple_fk']?.validationErrors.length).to.eq(0);
 	});
 
 	it('should pass foreignKey restriction validation when values exist in foreign schema (composite fk)', () => {
@@ -566,8 +567,8 @@ describe('validation', () => {
 
 		const result = schemaService.processSchemas(dictionary, schemaData);
 
-		chai.expect(result['parent_schema_1'].validationErrors.length).to.eq(0);
-		chai.expect(result['child_schema_composite_fk'].validationErrors.length).to.eq(0);
+		chai.expect(result['parent_schema_1']?.validationErrors.length).to.eq(0);
+		chai.expect(result['child_schema_composite_fk']?.validationErrors.length).to.eq(0);
 	});
 
 	it('should fail foreignKey restriction validation when value does not exist in foreign schema', () => {
@@ -598,8 +599,10 @@ describe('validation', () => {
 		};
 
 		const result = schemaService.processSchemas(dictionary, schemaData);
-		const childSchemaErrors = result['child_schema_simple_fk'].validationErrors;
+		const childSchemaErrors = result['child_schema_simple_fk']?.validationErrors;
 
+		chai.expect(Array.isArray(childSchemaErrors)).to.be.true;
+		assert(Array.isArray(childSchemaErrors));
 		chai.expect(childSchemaErrors.length).to.eq(1);
 		chai.expect(childSchemaErrors[0]).to.deep.eq({
 			errorType: SchemaValidationErrorTypes.INVALID_BY_FOREIGN_KEY,
@@ -643,8 +646,10 @@ describe('validation', () => {
 		};
 
 		const result = schemaService.processSchemas(dictionary, schemaData);
-		const childSchemaErrors = result['child_schema_composite_fk'].validationErrors;
+		const childSchemaErrors = result['child_schema_composite_fk']?.validationErrors;
 
+		chai.expect(Array.isArray(childSchemaErrors)).to.be.true;
+		assert(Array.isArray(childSchemaErrors));
 		chai.expect(childSchemaErrors.length).to.eq(1);
 		chai.expect(childSchemaErrors[0]).to.deep.eq({
 			errorType: SchemaValidationErrorTypes.INVALID_BY_FOREIGN_KEY,
@@ -683,8 +688,10 @@ describe('validation', () => {
 		};
 
 		const result = schemaService.processSchemas(dictionary, schemaData);
-		const childSchemaErrors = result['child_schema_composite_array_values_fk'].validationErrors;
+		const childSchemaErrors = result['child_schema_composite_array_values_fk']?.validationErrors;
 
+		chai.expect(Array.isArray(childSchemaErrors)).to.be.true;
+		assert(Array.isArray(childSchemaErrors));
 		chai.expect(childSchemaErrors.length).to.eq(1);
 		chai.expect(childSchemaErrors[0]).to.deep.eq({
 			errorType: SchemaValidationErrorTypes.INVALID_BY_FOREIGN_KEY,

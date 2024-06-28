@@ -19,7 +19,7 @@
 
 import _ from 'lodash';
 
-import { Singular } from 'common';
+import { Singular, asArray, isDefined, type Defined } from 'common';
 import {
 	DataRecord,
 	DataRecordValue,
@@ -27,6 +27,7 @@ import {
 	Schema,
 	SchemaField,
 	SchemaFieldValueType,
+	type ArrayDataValue,
 } from 'dictionary';
 
 import { convertToArray, isEmpty } from '../utils';
@@ -78,21 +79,23 @@ export const convertFromRawStrings = (
 		const rawValue = record[field.name];
 
 		if (field.isArray) {
-			const rawValueAsArray = convertToArray(rawValue);
-			// TODO: Keeping this type assertion for during the type refactoring process. We need to refactor how values are validated as matching their corresponding types
+			const rawValueAsArray = asArray(rawValue);
+			// TODO: Keeping this type assertion during the type refactoring process. We need to refactor how values are validated as matching their corresponding types
 			//  refactoring type checking/conversion will result in combining the conversion and type checking code into a single place. Right now its possible to run the converter
 			//  on values that have not been properly validated.
-			// This type assertion is needed because the code as is results in teh type `(string | number | boolean | undefined)[]` instead of `string[] | number[] | boolean[] | undefined`
-			mutableRecord[field.name] = rawValueAsArray.map((value) => getTypedValue(field, value)) as DataRecordValue;
+			// This type assertion is needed because the code as is results in teh type `(string | number | boolean | undefined)[]` instead of `string[] | number[] | boolean[]`
+			mutableRecord[field.name] = rawValueAsArray
+				.map((value) => (value !== undefined ? getTypedValue(field, value) : undefined))
+				.filter(isDefined) as ArrayDataValue;
 		} else {
 			const rawValueAsString = Array.isArray(rawValue) ? rawValue.join('') : rawValue;
-			mutableRecord[field.name] = getTypedValue(field, rawValueAsString);
+			mutableRecord[field.name] = rawValueAsString !== undefined ? getTypedValue(field, rawValueAsString) : undefined;
 		}
 	});
 	return mutableRecord;
 };
 
-const getTypedValue = (field: SchemaField, rawValue: string): Singular<DataRecordValue> => {
+const getTypedValue = (field: SchemaField, rawValue: string): Defined<Singular<DataRecordValue>> => {
 	switch (field.valueType) {
 		case SchemaFieldValueType.Values.boolean: {
 			return Boolean(rawValue.toLowerCase());

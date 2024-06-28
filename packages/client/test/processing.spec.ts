@@ -53,8 +53,8 @@ describe('processing', () => {
 				sample_type: 'ctDNA',
 			},
 		]);
-		chai.expect(result.processedRecords[0].gender).to.eq('Other');
-		chai.expect(result.processedRecords[1].gender).to.eq('Other');
+		chai.expect(result.processedRecords[0]?.gender).to.eq('Other');
+		chai.expect(result.processedRecords[1]?.gender).to.eq('Other');
 	});
 
 	it('should NOT populate missing columns based on default value ', () => {
