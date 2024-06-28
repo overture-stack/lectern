@@ -3,7 +3,7 @@
 	"version": "2.0.0-next.0",
 	"description": "Overture Data Dictionary Management",
 	"scripts": {
-		"build": "tsc",
+		"build": "tsc -p tsconfig.build.json",
 		"debug": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec node --inspect -r ts-node/register ./src/server.ts",
 		"start": "NODE_ENV=production ts-node -T src/server.ts",
 		"test": "nyc mocha"
