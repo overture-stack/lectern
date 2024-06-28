@@ -19,9 +19,12 @@
 
 import { z as zod } from 'zod';
 import allUnique from '../utils/allUnique';
+import { NameString } from './commonTypes';
 import { ReferenceTag, References } from './referenceTypes';
-import { Integer, NameString } from './dataValueTypes';
 import {
+	RestrictionCodeListInteger,
+	RestrictionCodeListNumber,
+	RestrictionCodeListString,
 	RestrictionIntegerRange,
 	RestrictionNumberRange,
 	RestrictionRegex,
@@ -51,7 +54,7 @@ export type SchemaFieldValueType = zod.infer<typeof SchemaFieldValueType>;
  * ****************************** */
 export const StringFieldRestrictions = zod
 	.object({
-		codeList: zod.union([zod.string(), ReferenceTag]).array().min(1).or(ReferenceTag),
+		codeList: RestrictionCodeListString.or(ReferenceTag),
 		required: zod.boolean(),
 		script: RestrictionScript.or(ReferenceTag),
 		regex: RestrictionRegex.or(ReferenceTag),
@@ -62,7 +65,7 @@ export type StringFieldRestrictions = zod.infer<typeof StringFieldRestrictions>;
 
 export const NumberFieldRestrictions = zod
 	.object({
-		codeList: zod.array(zod.number()).min(1).or(ReferenceTag),
+		codeList: RestrictionCodeListNumber.or(ReferenceTag),
 		required: zod.boolean(),
 		script: RestrictionScript.or(ReferenceTag),
 		range: RestrictionNumberRange,
@@ -73,7 +76,7 @@ export type NumberFieldRestrictions = zod.infer<typeof NumberFieldRestrictions>;
 
 export const IntegerFieldRestrictions = zod
 	.object({
-		codeList: zod.array(Integer).min(1).or(ReferenceTag),
+		codeList: RestrictionCodeListInteger.or(ReferenceTag),
 		required: zod.boolean(),
 		script: RestrictionScript.or(ReferenceTag),
 		range: RestrictionIntegerRange,
