@@ -23,4 +23,5 @@ export * from './schemaRestrictions/foreignKeysValidation';
 export * from './schemaRestrictions/uniqueKeyValidation';
 export * from './schemaRestrictions/uniqueValidation';
 export * from './validateField';
+export * from './validateRecord';
 export * from './types';

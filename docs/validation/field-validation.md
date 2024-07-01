@@ -1,12 +1,12 @@
 # Field Validation
 
-To validate a field, each restriction from the field definition must be applied to the value in turn. The outcome of a field validation test will then be a [`TestResult`](./important-concepts.md#testresult) that if invalid will contain an array of type `FieldValidationError` that contains all the reasons why the validation failed.
+To validate a field, each restriction from the field definition must be applied to the value in turn. The outcome of a field validation test will then be a [`TestResult`](../important-concepts.md#testresult) that if invalid will contain an array of type `FieldValidationError` that contains all the [reasons why the validation failed](#field-validation-failure-reasons).
 
 ## Inputs
 
 - **Value** - The value to be validated. This is not the raw string from a TSV, this is the final value coerced to the correct type. The type of the value will be confirmed in this process.
 - **Field Definition** - The definition for the field being validated, taken from the Schema. This will provide validation information including valueType and all restrictions to apply.
-- **Data Record** - The data record that this value belongs to. This is used to resolve [Conditional Restrictions](./important-concepts.md#conditional-field-restriction).
+- **Data Record** - The data record that this value belongs to. This is used to resolve [Conditional Restrictions](../important-concepts.md#conditional-field-restriction).
 
 ## Sequence Diagram
 
@@ -48,6 +48,6 @@ In place of a perfect one to one mapping of restrictions and types to validation
 
 When a field validation function is given a value that is untestable - for example a regex restriction is given a value with type `number` - then the validation function should return that the test is **valid**. We simply do not apply the test when the type is wrong. Importantly, this usually applies to `undefined` values. For example, a range restriction will be **valid** if given an `undefined` value. A required restriction will return **invalid** for `undefined` values, but can return **valid** for everything else.
 
-Types are defined for these test functions, named [`FieldRestrictionTest`](../packages/validation/src/fieldRestrictions/FieldRestrictionTest.ts). There are versions of the test for single values and for array values - the array version returns additional information in order to indicate which items in the array are invalid. The function [`createFieldRestrictionTestForArrays`](../packages/validation/src/fieldValidation//restrictions/createFieldRestrictionTestForArrays.ts) allows a test function for a single value to be applied to an entire array using a standard process, including properly formatted errors. This results in a common format for defining a field restriction test file that can define a single and array function and combine them for the final test function. 
+Types are defined for these test functions, named [`FieldRestrictionTest`](../../packages/validation/src/fieldValidation/FieldRestrictionTest.ts). There are versions of the test for single values and for array values - the array version returns additional information in order to indicate which items in the array are invalid. The function [`createFieldRestrictionTestForArrays`](../../packages/validation/src/fieldValidation/restrictions/createFieldRestrictionTestForArrays.ts) allows a test function for a single value to be applied to an entire array using a standard process, including properly formatted errors. This results in a common format for defining a field restriction test file that can define a single and array function and combine them for the final test function. 
 
-See the [`rangeValidation`](../packages/validation/src/fieldValidation/restrictions/rangeValidation.ts) file as a standard templated example of a Field Restriction Test file.
+See the [`rangeValidation`](../../packages/validation/src/fieldValidation/restrictions/rangeValidation.ts) file as a standard templated example of a Field Restriction Test file.
