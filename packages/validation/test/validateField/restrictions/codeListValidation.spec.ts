@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import assert from 'node:assert';
-import { testCodeList } from '../../../src/fieldValidation/restrictions';
+import { testCodeList } from '../../../src/validateField/restrictions';
 import { codeListInteger, codeListNumber, codeListString } from '../../fixtures/restrictions/codeListsFixtures';
 
 describe('Field - Restrictions - testCodeList', () => {

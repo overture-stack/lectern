@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import assert from 'node:assert';
-import { testRequired } from '../../../src/fieldValidation/restrictions';
+import { testRequired } from '../../../src/validateField/restrictions';
 
 describe('Field - Restrictions - testRequired', () => {
 	describe('Restriction is false', () => {

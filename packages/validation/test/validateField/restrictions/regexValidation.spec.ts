@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { testRegex } from '../../../src/fieldValidation/restrictions';
+import { testRegex } from '../../../src/validateField/restrictions';
 import { regexYearMonthDay } from '../../fixtures/restrictions/regexFixtures';
 import assert from 'assert';
 
