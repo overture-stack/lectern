@@ -37,4 +37,4 @@ export const asArray = <T>(val: T | T[]): T[] => (Array.isArray(val) ? val : [va
  * const combinedArray: Array<string | undefined> = ['hello', undefined, 'world'];
  * const stringArray = combinedArray.filter(isDefined); // type is: Array<string>
  */
-export const isDefined = <T>(input: T | undefined): input is T => input !== undefined;
+export const isDefined = <T>(input: T | undefined) => input !== undefined;

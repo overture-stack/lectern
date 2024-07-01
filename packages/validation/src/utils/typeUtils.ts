@@ -45,7 +45,7 @@
  */
 export const isArrayOf =
 	<T>(predicate: (value: unknown) => value is T) =>
-	(value: unknown): value is T[] =>
+	(value: unknown) =>
 		Array.isArray(value) && value.every(predicate);
 
 /**
@@ -53,7 +53,7 @@ export const isArrayOf =
  * @param value
  * @returns
  */
-export const isBooleanArray = isArrayOf((value: unknown): value is boolean => typeof value === 'boolean');
+export const isBooleanArray = isArrayOf((value: unknown) => typeof value === 'boolean');
 
 /**
  * Determines if a variable is a number, with added restriction that it is Finite.
@@ -76,7 +76,7 @@ export const isNumberArray = isArrayOf(isNumber);
  * @param value
  * @returns
  */
-export const isStringArray = isArrayOf((value: unknown): value is string => typeof value === 'string');
+export const isStringArray = isArrayOf((value: unknown) => typeof value === 'string');
 
 /**
  * Determines if a variable is a number, with added restriction that it is an Integer.
