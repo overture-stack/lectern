@@ -24,8 +24,8 @@ import {
 	BaseSchemaValidationError,
 	SchemaValidationErrorTypes,
 	ScriptValidationError,
-} from '../types/validationErrorTypes';
-import { ValidationFunction } from '../types/validationFunctionTypes';
+} from '../../types/deprecated/validationErrorTypes';
+import { ValidationFunction } from '../../types/deprecated/validationFunctionTypes';
 
 const ctx = vm.createContext();
 

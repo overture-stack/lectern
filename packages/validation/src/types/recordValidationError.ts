@@ -17,29 +17,15 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { RestrictionRange, type SingleDataValue } from 'dictionary';
-import { invalid, valid, type RestrictionTestResult } from '../types/restrictionTestResult';
-import { isWithinRange } from '../utils/isWithinRange';
-import { rangeToText } from '../utils/rangeToText';
-import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
-import type { FieldRestrictionSingleValueTest, FieldRestrictionTest } from './FieldRestrictionTest';
+import type { DataRecordValue } from 'dictionary';
 
-const testRangeSingleValue: FieldRestrictionSingleValueTest<RestrictionRange> = (rule, value) => {
-	if (typeof value !== 'number') {
-		// only apply range tests to numbers
-		return valid();
-	}
-
-	if (isWithinRange(rule, value)) {
-		return valid();
-	}
-	return invalid(`The value must be within the range: ${rangeToText(rule)}`);
+type RecordValidationErrorBase = {
+	fieldName: string;
+	value: DataRecordValue;
 };
 
-const testRangeArray = createFieldRestrictionTestForArrays(
-	testRangeSingleValue,
-	(rule) => `All values in the array must be within the range: ${rangeToText(rule)}`,
-);
+export type RecordValidationErrorUnrecognizedField = RecordValidationErrorBase & {
+	result: 'UNRECOGNIZED_FIELD';
+};
 
-export const testRange: FieldRestrictionTest<RestrictionRange> = (rule, value) =>
-	Array.isArray(value) ? testRangeArray(rule, value) : testRangeSingleValue(rule, value);
+export type RecordValidationError = RecordValidationErrorUnrecognizedField;

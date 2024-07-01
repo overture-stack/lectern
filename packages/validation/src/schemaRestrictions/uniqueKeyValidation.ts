@@ -21,8 +21,8 @@ import {
 	BaseSchemaValidationError,
 	SchemaValidationErrorTypes,
 	UniqueKeyValidationError,
-} from '../types/validationErrorTypes';
-import { DatasetValidationFunction } from '../types/validationFunctionTypes';
+} from '../types/deprecated/validationErrorTypes';
+import { DatasetValidationFunction } from '../types/deprecated/validationFunctionTypes';
 import { findDuplicateKeys, selectFieldsFromDataset } from '../utils/datasetUtils';
 
 export const validateUniqueKey: DatasetValidationFunction = (dataset, schema): UniqueKeyValidationError[] => {

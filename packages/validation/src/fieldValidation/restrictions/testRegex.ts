@@ -17,32 +17,35 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {
-	BaseSchemaValidationError,
-	SchemaValidationErrorTypes,
-	UnrecognizedFieldValidationError,
-} from '../types/deprecated/validationErrorTypes';
-import { UnprocessedRecordValidationFunction } from '../types/deprecated/validationFunctionTypes';
+import { type RestrictionRegex } from 'dictionary';
+import { invalid, valid } from '../../types/testResult';
+import type { FieldRestrictionSingleValueTest, FieldRestrictionTest } from '../FieldRestrictionTest';
+import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
 
-export const validateFieldNames: UnprocessedRecordValidationFunction = (
-	record,
-	index,
-	fields,
-): UnrecognizedFieldValidationError[] => {
-	const expectedFields = new Set(fields.map((field) => field.name));
-	return Object.keys(record)
-		.filter((fieldName) => !expectedFields.has(fieldName))
-		.map((fieldName) => buildUnrecognizedFieldError({ fieldName, index }));
+/**
+ * regex tests are only performed on strings. All other values will be true.
+ * @param rule
+ * @param value
+ * @returns
+ */
+const testRegexSingleValue: FieldRestrictionSingleValueTest<RestrictionRegex> = (rule, value) => {
+	// Regex tests are only applied to strings
+	if (typeof value !== 'string') {
+		return valid();
+	}
+
+	const regexPattern = new RegExp(rule);
+
+	if (regexPattern.test(value)) {
+		return valid();
+	}
+	return invalid({ message: `The value must match the regular expression: ${rule}` });
 };
 
-export const buildUnrecognizedFieldError = (errorData: BaseSchemaValidationError): UnrecognizedFieldValidationError => {
-	const message = `${errorData.fieldName} is not an allowed field for this schema.`;
-	const info = {};
+const testRegexArray = createFieldRestrictionTestForArrays(
+	testRegexSingleValue,
+	(rule) => `All values in the array must match the regular expression: ${rule}`,
+);
 
-	return {
-		...errorData,
-		errorType: SchemaValidationErrorTypes.UNRECOGNIZED_FIELD,
-		info,
-		message,
-	};
-};
+export const testRegex: FieldRestrictionTest<RestrictionRegex> = (rule, value) =>
+	Array.isArray(value) ? testRegexArray(rule, value) : testRegexSingleValue(rule, value);

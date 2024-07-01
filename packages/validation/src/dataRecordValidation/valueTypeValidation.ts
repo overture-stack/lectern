@@ -24,8 +24,8 @@ import {
 	SchemaValidationErrorTypes,
 	type BaseSchemaValidationError,
 	type ValueTypeValidationError,
-} from '../types/validationErrorTypes';
-import type { UnprocessedRecordValidationFunction } from '../types/validationFunctionTypes';
+} from '../types/deprecated/validationErrorTypes';
+import type { UnprocessedRecordValidationFunction } from '../types/deprecated/validationFunctionTypes';
 import { isEmptyString } from '../utils/isEmptyString';
 
 /**

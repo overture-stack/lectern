@@ -18,16 +18,20 @@
  */
 
 import { type ArrayDataValue } from 'dictionary';
-import { invalid, valid, type RestrictionTestResult } from '../types/restrictionTestResult';
-import type { FieldRestrictionSingleValueTest, FieldRestrictionTest } from './FieldRestrictionTest';
+import { invalid, valid, type TestResult } from '../../types/testResult';
+import type {
+	FieldRestrictionSingleValueTest,
+	FieldRestrictionTest,
+	RestrictionTestInvalidInfo,
+} from '../FieldRestrictionTest';
 import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
 
 const testRequiredSingleValue: FieldRestrictionSingleValueTest<boolean> = (rule, value) => {
 	if (rule === false) {
 		return valid();
 	}
-	if (value === undefined) {
-		return invalid(`A value is required for this field`);
+	if (value === undefined || value === '') {
+		return invalid({ message: `A value is required for this field` });
 	}
 
 	return valid();
@@ -52,16 +56,27 @@ const internalTestRequiredArray = createFieldRestrictionTestForArrays(
  * @param values
  * @returns
  */
-const testRequiredArray = (rule: boolean, values: ArrayDataValue): RestrictionTestResult => {
+const testRequiredArray = (rule: boolean, values: ArrayDataValue): TestResult<RestrictionTestInvalidInfo> => {
 	// Note: This doesn't apply the
 	if (rule === false) {
 		return valid();
 	}
 	if (values.length === 0) {
-		return { ...invalid('A value is required for this field.') };
+		return invalid({ message: 'A value is required for this field.' });
 	}
 	return internalTestRequiredArray(rule, values);
 };
 
+/**
+ * Validate if a value is valid based on the required restriction value.
+ *
+ * When a field has the restriciton `required: true`, it cannot be `undefined` or be an empty string. If
+ * the field is an array it cannot be an empty array (length 0).
+ *
+ * When a field has the restriction `required: false` then this test will always return as `valid: true`
+ * @param rule
+ * @param value
+ * @returns
+ */
 export const testRequired: FieldRestrictionTest<boolean> = (rule, value) =>
 	Array.isArray(value) ? testRequiredArray(rule, value) : testRequiredSingleValue(rule, value);

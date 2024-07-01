@@ -17,6 +17,13 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * Deprecated types. These were the mechanism used by version 1.x.x of the Lectern Client for communicating
+ * validation errors.
+ *
+ * TODO: Move these into the Client as an optional format to be used as an output to dictionary validations.
+ */
+
 import type { Values, Singular } from 'common';
 import type { DataRecord, DataRecordValue, RestrictionRange } from 'dictionary';
 

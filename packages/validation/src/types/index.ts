@@ -17,8 +17,4 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './restrictionRules';
-export * from './restrictionTestResult';
-export * from './validationErrorTypes';
-export * from './validationFunctionTypes';
-export * from './validationResult';
+export * from './testResult';

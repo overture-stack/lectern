@@ -17,32 +17,37 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {
-	BaseSchemaValidationError,
-	SchemaValidationErrorTypes,
-	UnrecognizedFieldValidationError,
-} from '../types/deprecated/validationErrorTypes';
-import { UnprocessedRecordValidationFunction } from '../types/deprecated/validationFunctionTypes';
+import type { SchemaFieldValueType } from 'dictionary';
+import type { FieldRestrictionRule } from './FieldRestrictionRule';
+import type { RestrictionTestInvalidInfo } from './FieldRestrictionTest';
 
-export const validateFieldNames: UnprocessedRecordValidationFunction = (
-	record,
-	index,
-	fields,
-): UnrecognizedFieldValidationError[] => {
-	const expectedFields = new Set(fields.map((field) => field.name));
-	return Object.keys(record)
-		.filter((fieldName) => !expectedFields.has(fieldName))
-		.map((fieldName) => buildUnrecognizedFieldError({ fieldName, index }));
+export type FieldValidationErrorRestrictionInfo = RestrictionTestInvalidInfo & {
+	restriction: FieldRestrictionRule;
 };
 
-export const buildUnrecognizedFieldError = (errorData: BaseSchemaValidationError): UnrecognizedFieldValidationError => {
-	const message = `${errorData.fieldName} is not an allowed field for this schema.`;
-	const info = {};
+// export type FieldValidationErrorEmpty = {
+// 	reason: 'VALUE_MUST_BE_EMPTY';
+// };
+// export type FieldValidationErrorRequired = {
+// 	reason: 'VALUE_IS_REQUIRED';
+// };
 
-	return {
-		...errorData,
-		errorType: SchemaValidationErrorTypes.UNRECOGNIZED_FIELD,
-		info,
-		message,
-	};
+export type FieldValidationErrorRestrictions = {
+	reason: 'INVALID_BY_RESTRICTION';
+	errors: Array<FieldValidationErrorRestrictionInfo>;
 };
+
+/**
+ * This is the result when the value does not match the value type defined in the field. The properties
+ * `valueType` and `isArray` are the expected type values as defined in the field definition.
+ */
+export type FieldValidationErrorValueType = {
+	reason: 'INVALID_VALUE_TYPE';
+	valueType: SchemaFieldValueType;
+	isArray: boolean;
+};
+
+export type FieldValidationError =
+	// | FieldValidationErrorEmpty
+	// | FieldValidationErrorRequired
+	FieldValidationErrorRestrictions | FieldValidationErrorValueType;

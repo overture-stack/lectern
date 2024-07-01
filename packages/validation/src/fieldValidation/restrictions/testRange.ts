@@ -17,32 +17,29 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {
-	BaseSchemaValidationError,
-	SchemaValidationErrorTypes,
-	UnrecognizedFieldValidationError,
-} from '../types/deprecated/validationErrorTypes';
-import { UnprocessedRecordValidationFunction } from '../types/deprecated/validationFunctionTypes';
+import { RestrictionRange } from 'dictionary';
+import { invalid, valid } from '../../types/testResult';
+import { isWithinRange } from '../../utils/isWithinRange';
+import { rangeToText } from '../../utils/rangeToText';
+import type { FieldRestrictionSingleValueTest, FieldRestrictionTest } from '../FieldRestrictionTest';
+import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
 
-export const validateFieldNames: UnprocessedRecordValidationFunction = (
-	record,
-	index,
-	fields,
-): UnrecognizedFieldValidationError[] => {
-	const expectedFields = new Set(fields.map((field) => field.name));
-	return Object.keys(record)
-		.filter((fieldName) => !expectedFields.has(fieldName))
-		.map((fieldName) => buildUnrecognizedFieldError({ fieldName, index }));
+const testRangeSingleValue: FieldRestrictionSingleValueTest<RestrictionRange> = (rule, value) => {
+	if (typeof value !== 'number') {
+		// only apply range tests to numbers
+		return valid();
+	}
+
+	if (isWithinRange(rule, value)) {
+		return valid();
+	}
+	return invalid({ message: `The value must be within the range: ${rangeToText(rule)}` });
 };
 
-export const buildUnrecognizedFieldError = (errorData: BaseSchemaValidationError): UnrecognizedFieldValidationError => {
-	const message = `${errorData.fieldName} is not an allowed field for this schema.`;
-	const info = {};
+const testRangeArray = createFieldRestrictionTestForArrays(
+	testRangeSingleValue,
+	(rule) => `All values in the array must be within the range: ${rangeToText(rule)}`,
+);
 
-	return {
-		...errorData,
-		errorType: SchemaValidationErrorTypes.UNRECOGNIZED_FIELD,
-		info,
-		message,
-	};
-};
+export const testRange: FieldRestrictionTest<RestrictionRange> = (rule, value) =>
+	Array.isArray(value) ? testRangeArray(rule, value) : testRangeSingleValue(rule, value);

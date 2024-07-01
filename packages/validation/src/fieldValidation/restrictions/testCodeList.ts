@@ -17,10 +17,10 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { RestrictionCodeList, SingleDataValue } from 'dictionary';
-import { invalid, valid, type RestrictionTestResult } from '../types/restrictionTestResult';
+import type { RestrictionCodeList } from 'dictionary';
+import { invalid, valid } from '../../types/testResult';
+import type { FieldRestrictionSingleValueTest, FieldRestrictionTest } from '../FieldRestrictionTest';
 import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
-import type { FieldRestrictionSingleValueTest, FieldRestrictionTest } from './FieldRestrictionTest';
 
 const testCodeListSingleValue: FieldRestrictionSingleValueTest<RestrictionCodeList> = (rule, value) => {
 	// TODO: this can be sped up by using a set for the rule instead of an array. finding an element in the set is faster.
@@ -29,12 +29,16 @@ const testCodeListSingleValue: FieldRestrictionSingleValueTest<RestrictionCodeLi
 		return valid();
 	}
 
-	for (const option in rule) {
-		if (option === value) {
+	// We want to compare strings after removing whitespace and converting both the option and the value to lowercase
+	const testValue = typeof value === 'string' ? value.trim().toLowerCase() : value;
+
+	for (const option of rule) {
+		const testOption = typeof option === 'string' ? option.trim().toLowerCase() : option;
+		if (testOption === testValue) {
 			return valid();
 		}
 	}
-	return invalid(`The value for this field must match an option from the list.`);
+	return invalid({ message: `The value for this field must match an option from the list.` });
 };
 
 const testCodeListArray = createFieldRestrictionTestForArrays(

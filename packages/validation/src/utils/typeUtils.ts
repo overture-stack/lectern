@@ -50,11 +50,20 @@ export const isArrayOf =
 export const isBooleanArray = isArrayOf((value: unknown): value is boolean => typeof value === 'boolean');
 
 /**
- * Determines if a variable is of type number[]
+ * Determines if a variable is a number, with added restriction that it is Finite.
+ * This eliminates the values NaN and Infinity.
+ *
+ * Note: this is a wrapper on Number.isFinite(value)
  * @param value
  * @returns
  */
-export const isNumberArray = isArrayOf((value: unknown): value is number => typeof value === 'number');
+export const isNumber = (value: unknown): value is number => Number.isFinite(value);
+/**
+ * Determines if variable is of type number[], with added restriction that every element is Finite.
+ * @param value
+ * @returns
+ */
+export const isNumberArray = isArrayOf(isNumber);
 
 /**
  * Determines if a variable is of type string[]
@@ -62,3 +71,19 @@ export const isNumberArray = isArrayOf((value: unknown): value is number => type
  * @returns
  */
 export const isStringArray = isArrayOf((value: unknown): value is string => typeof value === 'string');
+
+/**
+ * Determines if a variable is a number, with added restriction that it is an Integer.
+ *
+ * Note: This is a wrapper over Number.isInteger()
+ * @param value
+ * @returns
+ */
+export const isInteger = (value: unknown): value is number => Number.isInteger(value);
+
+/**
+ * Determines if a variables is of type number[], with add restriction that every element is an Integer
+ * @param value
+ * @returns
+ */
+export const isIntegerArray = isArrayOf(isInteger);
