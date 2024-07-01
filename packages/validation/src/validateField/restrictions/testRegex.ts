@@ -17,34 +17,35 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { RestrictionCodeList } from 'dictionary';
+import { type RestrictionRegex } from 'dictionary';
 import { invalid, valid } from '../../types/testResult';
-import type { FieldRestrictionSingleValueTest, FieldRestrictionTest } from '../FieldRestrictionTest';
+import type { FieldRestrictionSingleValueTestFunction, FieldRestrictionTestFunction } from '../FieldRestrictionTest';
 import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
 
-const testCodeListSingleValue: FieldRestrictionSingleValueTest<RestrictionCodeList> = (rule, value) => {
-	// TODO: this can be sped up by using a set for the rule instead of an array. finding an element in the set is faster.
-	if (!(typeof value === 'string' || typeof value === 'number')) {
-		// only apply code list check to strings and numbers
+/**
+ * regex tests are only performed on strings. All other values will be true.
+ * @param rule
+ * @param value
+ * @returns
+ */
+const testRegexSingleValue: FieldRestrictionSingleValueTestFunction<RestrictionRegex> = (rule, value) => {
+	// Regex tests are only applied to strings
+	if (typeof value !== 'string') {
 		return valid();
 	}
 
-	// We want to compare strings after removing whitespace and converting both the option and the value to lowercase
-	const testValue = typeof value === 'string' ? value.trim().toLowerCase() : value;
+	const regexPattern = new RegExp(rule);
 
-	for (const option of rule) {
-		const testOption = typeof option === 'string' ? option.trim().toLowerCase() : option;
-		if (testOption === testValue) {
-			return valid();
-		}
+	if (regexPattern.test(value)) {
+		return valid();
 	}
-	return invalid({ message: `The value for this field must match an option from the list.` });
+	return invalid({ message: `The value must match the regular expression: ${rule}` });
 };
 
-const testCodeListArray = createFieldRestrictionTestForArrays(
-	testCodeListSingleValue,
-	`All values in this field must match an option from the list.`,
+const testRegexArray = createFieldRestrictionTestForArrays(
+	testRegexSingleValue,
+	(rule) => `All values in the array must match the regular expression: ${rule}`,
 );
 
-export const testCodeList: FieldRestrictionTest<RestrictionCodeList> = (rule, value) =>
-	Array.isArray(value) ? testCodeListArray(rule, value) : testCodeListSingleValue(rule, value);
+export const testRegex: FieldRestrictionTestFunction<RestrictionRegex> = (rule, value) =>
+	Array.isArray(value) ? testRegexArray(rule, value) : testRegexSingleValue(rule, value);

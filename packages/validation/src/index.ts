@@ -22,5 +22,5 @@ export * from './dataRecordValidation/valueTypeValidation';
 export * from './schemaRestrictions/foreignKeysValidation';
 export * from './schemaRestrictions/uniqueKeyValidation';
 export * from './schemaRestrictions/uniqueValidation';
-export * from './fieldValidation';
+export * from './validateField';
 export * from './types';

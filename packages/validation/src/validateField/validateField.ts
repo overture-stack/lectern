@@ -159,17 +159,10 @@ export const resolveFieldRestrictions = (
 	}
 };
 
-const invalidByType = (fieldDefinition: SchemaField): TestResult<FieldValidationErrorValueType> =>
-	invalid({
-		reason: 'INVALID_VALUE_TYPE',
-		valueType: fieldDefinition.valueType,
-		isArray: !!fieldDefinition.isArray,
-	});
-
 /**
  * Confirm that a value is valid for a field definition.
  *
- * This validation expects type accurate values, not raw string inputs.
+ * This validation expects values with correct types matching the Field definition, not raw string inputs from a TSV.
  * @param value
  * @param record
  * @param fieldDefinition
@@ -186,30 +179,17 @@ export const validateField = (
 		// We now know the value is defined, so we will confirm that the value is the correct type based on the field definition
 		if (!isValidValueType(value, fieldDefinition)) {
 			// The value is the wrong type! return invalid immediately!
-			return invalidByType(fieldDefinition);
+			return invalid({
+				reason: 'INVALID_VALUE_TYPE',
+				valueType: fieldDefinition.valueType,
+				isArray: !!fieldDefinition.isArray,
+			});
 		}
 	}
 
-	// We have the correct value type, lets get our list of restrictions
-
-	// First we transform restrictions into a list of FieldRestrictionRules, then we apply each of these rules
+	// Now we know we don't have the wrong value type, we transform the field restrictions into a list of FieldRestrictionRules
+	// and then apply each of these rules
 	const restrictions = resolveFieldRestrictions(value, record, fieldDefinition);
-
-	// Check the restrictions for any required restrictions and apply those.
-	// const requiredRestrictions = restrictions.filter(
-	// 	(restriction): restriction is FieldRestrictionRuleRequired => restriction.type === 'required',
-	// );
-	// const requiredTestResults = requiredRestrictions.map((restriction) => testRequired(restriction.rule, value));
-	// if (requiredTestResults.length) {
-	// 	return invalid({
-	// 		reason: 'VALUE_IS_REQUIRED',
-	// 	});
-	// }
-
-	// if (value === undefined || (fieldDefinition.isArray && Array.isArray(value) && value.length === 0)) {
-	// 	// no value and that is OK because no required restriction
-	// 	valid();
-	// }
 
 	const errors = applyFieldRestrictionTests(value, restrictions);
 

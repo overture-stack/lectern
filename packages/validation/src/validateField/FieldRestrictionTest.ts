@@ -11,12 +11,15 @@ export type RestrictionTestInvalidInfo = {
 	invalidItems?: Array<RestrictionTestInvalidArrayItem>;
 };
 
-export type FieldRestrictionSingleValueTest<Rule> = (
+export type FieldRestrictionSingleValueTestFunction<Rule> = (
 	rule: Rule,
 	value: SingleDataValue,
 ) => TestResult<RestrictionTestInvalidInfo>;
-export type FieldRestrictionArrayTest<Rule> = (
+export type FieldRestrictionArrayTestFunction<Rule> = (
 	rule: Rule,
 	values: ArrayDataValue,
 ) => TestResult<RestrictionTestInvalidInfo>;
-export type FieldRestrictionTest<Rule> = (rule: Rule, value: DataRecordValue) => TestResult<RestrictionTestInvalidInfo>;
+export type FieldRestrictionTestFunction<Rule> = (
+	rule: Rule,
+	value: DataRecordValue,
+) => TestResult<RestrictionTestInvalidInfo>;

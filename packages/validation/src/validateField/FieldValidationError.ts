@@ -25,13 +25,6 @@ export type FieldValidationErrorRestrictionInfo = RestrictionTestInvalidInfo & {
 	restriction: FieldRestrictionRule;
 };
 
-// export type FieldValidationErrorEmpty = {
-// 	reason: 'VALUE_MUST_BE_EMPTY';
-// };
-// export type FieldValidationErrorRequired = {
-// 	reason: 'VALUE_IS_REQUIRED';
-// };
-
 export type FieldValidationErrorRestrictions = {
 	reason: 'INVALID_BY_RESTRICTION';
 	errors: Array<FieldValidationErrorRestrictionInfo>;
@@ -47,7 +40,4 @@ export type FieldValidationErrorValueType = {
 	isArray: boolean;
 };
 
-export type FieldValidationError =
-	// | FieldValidationErrorEmpty
-	// | FieldValidationErrorRequired
-	FieldValidationErrorRestrictions | FieldValidationErrorValueType;
+export type FieldValidationError = FieldValidationErrorRestrictions | FieldValidationErrorValueType;

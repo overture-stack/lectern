@@ -20,13 +20,13 @@
 import { type ArrayDataValue } from 'dictionary';
 import { invalid, valid, type TestResult } from '../../types/testResult';
 import type {
-	FieldRestrictionSingleValueTest,
-	FieldRestrictionTest,
+	FieldRestrictionSingleValueTestFunction,
+	FieldRestrictionTestFunction,
 	RestrictionTestInvalidInfo,
 } from '../FieldRestrictionTest';
 import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
 
-const testRequiredSingleValue: FieldRestrictionSingleValueTest<boolean> = (rule, value) => {
+const testRequiredSingleValue: FieldRestrictionSingleValueTestFunction<boolean> = (rule, value) => {
 	if (rule === false) {
 		return valid();
 	}
@@ -78,5 +78,5 @@ const testRequiredArray = (rule: boolean, values: ArrayDataValue): TestResult<Re
  * @param value
  * @returns
  */
-export const testRequired: FieldRestrictionTest<boolean> = (rule, value) =>
+export const testRequired: FieldRestrictionTestFunction<boolean> = (rule, value) =>
 	Array.isArray(value) ? testRequiredArray(rule, value) : testRequiredSingleValue(rule, value);

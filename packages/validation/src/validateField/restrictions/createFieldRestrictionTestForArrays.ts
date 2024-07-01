@@ -19,7 +19,10 @@
 
 import { isDefined } from 'common';
 import { invalid, valid } from '../../types';
-import type { FieldRestrictionArrayTest, FieldRestrictionSingleValueTest } from '../FieldRestrictionTest';
+import type {
+	FieldRestrictionArrayTestFunction,
+	FieldRestrictionSingleValueTestFunction,
+} from '../FieldRestrictionTest';
 
 /**
  * Given a function that will apply a fieldRestriction validation test to a single value, this function will
@@ -32,9 +35,9 @@ import type { FieldRestrictionArrayTest, FieldRestrictionSingleValueTest } from 
  */
 export const createFieldRestrictionTestForArrays =
 	<Rule>(
-		test: FieldRestrictionSingleValueTest<Rule>,
+		test: FieldRestrictionSingleValueTestFunction<Rule>,
 		errorMessage: string | ((rule: Rule) => string),
-	): FieldRestrictionArrayTest<Rule> =>
+	): FieldRestrictionArrayTestFunction<Rule> =>
 	(rule, values) => {
 		const invalidItems = values
 			.map((value, position) => (test(rule, value).valid ? undefined : { position, value }))

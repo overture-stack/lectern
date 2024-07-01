@@ -17,35 +17,29 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { type RestrictionRegex } from 'dictionary';
+import { RestrictionRange } from 'dictionary';
 import { invalid, valid } from '../../types/testResult';
-import type { FieldRestrictionSingleValueTest, FieldRestrictionTest } from '../FieldRestrictionTest';
+import { isWithinRange } from '../../utils/isWithinRange';
+import { rangeToText } from '../../utils/rangeToText';
+import type { FieldRestrictionSingleValueTestFunction, FieldRestrictionTestFunction } from '../FieldRestrictionTest';
 import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
 
-/**
- * regex tests are only performed on strings. All other values will be true.
- * @param rule
- * @param value
- * @returns
- */
-const testRegexSingleValue: FieldRestrictionSingleValueTest<RestrictionRegex> = (rule, value) => {
-	// Regex tests are only applied to strings
-	if (typeof value !== 'string') {
+const testRangeSingleValue: FieldRestrictionSingleValueTestFunction<RestrictionRange> = (rule, value) => {
+	if (typeof value !== 'number') {
+		// only apply range tests to numbers
 		return valid();
 	}
 
-	const regexPattern = new RegExp(rule);
-
-	if (regexPattern.test(value)) {
+	if (isWithinRange(rule, value)) {
 		return valid();
 	}
-	return invalid({ message: `The value must match the regular expression: ${rule}` });
+	return invalid({ message: `The value must be within the range: ${rangeToText(rule)}` });
 };
 
-const testRegexArray = createFieldRestrictionTestForArrays(
-	testRegexSingleValue,
-	(rule) => `All values in the array must match the regular expression: ${rule}`,
+const testRangeArray = createFieldRestrictionTestForArrays(
+	testRangeSingleValue,
+	(rule) => `All values in the array must be within the range: ${rangeToText(rule)}`,
 );
 
-export const testRegex: FieldRestrictionTest<RestrictionRegex> = (rule, value) =>
-	Array.isArray(value) ? testRegexArray(rule, value) : testRegexSingleValue(rule, value);
+export const testRange: FieldRestrictionTestFunction<RestrictionRange> = (rule, value) =>
+	Array.isArray(value) ? testRangeArray(rule, value) : testRangeSingleValue(rule, value);
