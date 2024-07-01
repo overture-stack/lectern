@@ -28,9 +28,9 @@ import type { RestrictionRange } from 'dictionary';
 export const isWithinRange = (range: RestrictionRange, value: number): boolean =>
 	// less than the min if defined ?
 	!(
-		(range.min !== undefined && value <= range.min) ||
-		(range.exclusiveMin !== undefined && value < range.exclusiveMin) ||
+		(range.min !== undefined && value < range.min) ||
+		(range.exclusiveMin !== undefined && value <= range.exclusiveMin) ||
 		// bigger than max if defined ?
-		(range.max !== undefined && value >= range.max) ||
-		(range.exclusiveMax !== undefined && value > range.exclusiveMax)
+		(range.max !== undefined && value > range.max) ||
+		(range.exclusiveMax !== undefined && value >= range.exclusiveMax)
 	);
