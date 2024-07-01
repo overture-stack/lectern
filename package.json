@@ -16,7 +16,7 @@
 		"test:validation": "pnpm nx test @overture-stack/lectern-validation",
 		"test:server": "pnpm nx test server",
 		"test:client": "pnpm nx test @overture-stack/lectern-client",
-		"generate": "pnpm build:dictionary && pnpm -C scripts generate"
+		"generate": "pnpm build:dictionary && pnpm -C generate generate"
 	},
 	"keywords": [],
 	"author": "Ontario Institute for Cancer Research",
