@@ -1,7 +1,7 @@
-import type { SchemaField, SchemaStringField } from 'dictionary';
+import type { SchemaStringField } from 'dictionary';
 import { regexYearMonthDay } from '../../restrictions/regexFixtures';
 
-export const fieldStringManyRestrictions: SchemaStringField = {
+export const fieldStringManyRestrictions = {
 	name: 'complicated-multi-restriction-rules',
 	valueType: 'string',
 	description:
@@ -14,4 +14,4 @@ export const fieldStringManyRestrictions: SchemaStringField = {
 		regex: regexYearMonthDay,
 		required: true,
 	},
-};
+} as const satisfies SchemaStringField;

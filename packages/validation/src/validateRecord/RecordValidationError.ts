@@ -27,7 +27,7 @@ type RecordValidationErrorBase = {
 
 export type RecordValidationErrorInvalidValue = RecordValidationErrorBase & {
 	reason: 'INVALID_FIELD_VALUE';
-	error: FieldValidationError;
+	fieldError: FieldValidationError;
 };
 
 export type RecordValidationErrorUnrecognizedField = RecordValidationErrorBase & {

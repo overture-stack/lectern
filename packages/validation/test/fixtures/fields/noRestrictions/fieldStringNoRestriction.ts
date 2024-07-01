@@ -1,6 +1,6 @@
-import type { SchemaField } from 'dictionary';
+import type { SchemaStringField } from 'dictionary';
 
-export const fieldStringNoRestriction: SchemaField = {
+export const fieldStringNoRestriction = {
 	name: 'any-string',
 	valueType: 'string',
-};
+} as const satisfies SchemaStringField;

@@ -1,6 +1,9 @@
 import type { SchemaIntegerField } from 'dictionary';
 
-export const fieldIntegerNoRestriction = {
-	name: 'any-integer',
+export const fieldIntegerRequired = {
+	name: 'integer-required',
 	valueType: 'integer',
+	restrictions: {
+		required: true,
+	},
 } as const satisfies SchemaIntegerField;

@@ -1,7 +1,7 @@
-import type { SchemaField } from 'dictionary';
+import type { SchemaBooleanField } from 'dictionary';
 
-export const fieldBooleanNoRestriction: SchemaField = {
+export const fieldBooleanNoRestriction = {
 	name: 'any-boolean',
 	description: 'Valid values are any boolean (true or false).',
 	valueType: 'boolean',
-};
+} as const satisfies SchemaBooleanField;

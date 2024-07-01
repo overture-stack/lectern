@@ -24,7 +24,7 @@ import type {
 	RecordValidationError,
 	RecordValidationErrorInvalidValue,
 	RecordValidationErrorUnrecognizedField,
-} from '../types/recordValidationError';
+} from './RecordValidationError';
 
 /**
  * Validate a DataRecord using the fields in a Schema. Will confirm that there are no unrecognized fields, all required fields have a
@@ -42,6 +42,7 @@ export const validateRecord = (record: DataRecord, schema: Schema): TestResult<R
 			if (!schema.fields.some((field) => field.name === fieldName)) {
 				output.push({
 					reason: 'UNRECOGNIZED_FIELD',
+
 					fieldName,
 					value,
 				});
@@ -58,13 +59,19 @@ export const validateRecord = (record: DataRecord, schema: Schema): TestResult<R
 		const value = record[fieldName];
 		const fieldValidationResult = validateField(value, record, field);
 		if (!fieldValidationResult.valid) {
-			output.push({ reason: 'INVALID_FIELD_VALUE', fieldName, value, error: fieldValidationResult.info });
+			output.push({
+				reason: 'INVALID_FIELD_VALUE',
+
+				fieldError: fieldValidationResult.info,
+				fieldName,
+				value,
+			});
 		}
 		return output;
 	}, []);
 
 	const errors = [...unrecognizedFieldErrors, ...fieldValidationErrors];
-	if (errors) {
+	if (errors.length) {
 		return invalid(errors);
 	}
 	return valid();

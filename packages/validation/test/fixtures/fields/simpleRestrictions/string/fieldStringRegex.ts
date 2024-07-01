@@ -1,7 +1,7 @@
 import type { SchemaStringField } from 'dictionary';
 import { regexYearMonthDay } from '../../../restrictions/regexFixtures';
 
-export const fieldStringRegex: SchemaStringField = {
+export const fieldStringRegex = {
 	name: 'notable-date',
 	valueType: 'string',
 	description: 'Optional field. Values must be a date in the form YYYY-MM-DD.',
@@ -11,4 +11,4 @@ export const fieldStringRegex: SchemaStringField = {
 	restrictions: {
 		regex: regexYearMonthDay,
 	},
-};
+} as const satisfies SchemaStringField;

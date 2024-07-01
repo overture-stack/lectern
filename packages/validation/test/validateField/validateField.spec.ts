@@ -12,6 +12,7 @@ import { fieldNumberArrayCodeList } from '../fixtures/fields/simpleRestrictions/
 import { fieldStringArrayRequired } from '../fixtures/fields/simpleRestrictions/string/fieldStringArrayRequired';
 import { fieldStringManyRestrictions } from '../fixtures/fields/multipleRestrictions/fieldStringManyRestrictions';
 import { fieldNumberRange } from '../fixtures/fields/simpleRestrictions/number/fieldNumberRange';
+import type { SchemaStringField } from 'dictionary';
 
 const emptyDataRecord = {};
 
@@ -44,7 +45,7 @@ describe('Field - validateField', () => {
 				expect(validateField(['abc', 'def', 'xyz'], emptyDataRecord, fieldStringNoRestriction).valid).false;
 			});
 			it('Invalid result for wrong type includes expected type info', () => {
-				const testField = fieldStringNoRestriction;
+				const testField: SchemaStringField = fieldStringNoRestriction;
 				const result = validateField(123, emptyDataRecord, testField);
 				expect(result.valid).false;
 				assert(!result.valid);
@@ -52,7 +53,7 @@ describe('Field - validateField', () => {
 				expect(result.info.reason).equal('INVALID_VALUE_TYPE');
 				assert(result.info.reason === 'INVALID_VALUE_TYPE');
 
-				expect(!!testField.isArray).equal(result.info.isArray); // needs the !! to convert to boolean since `testField.isArray` is undefined
+				expect(result.info.isArray).equal(!!testField.isArray); // needs the !! to convert to boolean since `testField.isArray` is undefined
 				expect(result.info.valueType).equal(testField.valueType);
 			});
 		});
