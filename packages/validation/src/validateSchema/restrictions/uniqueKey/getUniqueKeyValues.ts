@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2023 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,32 +17,15 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {
-	BaseSchemaValidationError,
-	SchemaValidationErrorTypes,
-	UnrecognizedFieldValidationError,
-} from '../types/deprecated/validationErrorTypes';
-import { UnprocessedRecordValidationFunction } from '../types/deprecated/validationFunctionTypes';
-
-export const validateFieldNames: UnprocessedRecordValidationFunction = (
-	record,
-	index,
-	fields,
-): UnrecognizedFieldValidationError[] => {
-	const expectedFields = new Set(fields.map((field) => field.name));
-	return Object.keys(record)
-		.filter((fieldName) => !expectedFields.has(fieldName))
-		.map((fieldName) => buildUnrecognizedFieldError({ fieldName, index }));
-};
-
-export const buildUnrecognizedFieldError = (errorData: BaseSchemaValidationError): UnrecognizedFieldValidationError => {
-	const message = `${errorData.fieldName} is not an allowed field for this schema.`;
-	const info = {};
-
-	return {
-		...errorData,
-		errorType: SchemaValidationErrorTypes.UNRECOGNIZED_FIELD,
-		info,
-		message,
-	};
-};
+import type { DataRecord } from 'dictionary';
+/**
+ * Extract from a data record an object with only the unique key field values.
+ * @param record
+ * @param uniqueKeyRule
+ * @returns
+ */
+export const getUniqueKeyValues = (record: DataRecord, uniqueKeyRule: string[]): DataRecord =>
+	uniqueKeyRule.reduce<DataRecord>((acc, fieldName) => {
+		acc[fieldName] = record[fieldName];
+		return acc;
+	}, {});

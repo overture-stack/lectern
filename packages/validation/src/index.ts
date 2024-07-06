@@ -17,11 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './dataRecordValidation/fieldNamesValidation';
-export * from './dataRecordValidation/valueTypeValidation';
 export * from './schemaRestrictions/foreignKeysValidation';
-export * from './schemaRestrictions/uniqueKeyValidation';
-export * from './schemaRestrictions/uniqueValidation';
 export * from './validateField';
 export * from './validateRecord';
+export * from './validateSchema';
 export * from './types';

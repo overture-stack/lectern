@@ -57,14 +57,13 @@ export const validateRecord = (record: DataRecord, schema: Schema): TestResult<R
 	const fieldValidationErrors = schema.fields.reduce<RecordValidationErrorInvalidValue[]>((output, field) => {
 		const fieldName = field.name;
 		const value = record[fieldName];
+
 		const fieldValidationResult = validateField(value, record, field);
 		if (!fieldValidationResult.valid) {
 			output.push({
-				reason: 'INVALID_FIELD_VALUE',
-
-				fieldError: fieldValidationResult.info,
 				fieldName,
 				value,
+				...fieldValidationResult.info,
 			});
 		}
 		return output;
@@ -76,7 +75,3 @@ export const validateRecord = (record: DataRecord, schema: Schema): TestResult<R
 	}
 	return valid();
 };
-
-// // Next to write:
-// // validateSchema (list of records within one schema, adds in schema validations such as unique and uniqueKey
-// // validateDataSet (dictionary of many schemas worth of data, adds in validation of foreign keys and unknown entity names)

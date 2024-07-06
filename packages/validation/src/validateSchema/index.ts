@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2023 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,22 +17,5 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecordValue, SchemaField } from 'dictionary';
-import { isBooleanArray, isInteger, isIntegerArray, isNumber, isNumberArray, isStringArray } from './typeUtils';
-
-export const isValidValueType = (value: DataRecordValue, fieldDefinition: SchemaField): boolean => {
-	switch (fieldDefinition.valueType) {
-		case 'boolean': {
-			return fieldDefinition.isArray ? isBooleanArray(value) : typeof value === 'boolean';
-		}
-		case 'integer': {
-			return fieldDefinition.isArray ? isIntegerArray(value) : isInteger(value);
-		}
-		case 'number': {
-			return fieldDefinition.isArray ? isNumberArray(value) : isNumber(value);
-		}
-		case 'string': {
-			return fieldDefinition.isArray ? isStringArray(value) : typeof value === 'string';
-		}
-	}
-};
+export * from './SchemaValidationError';
+export * from './validateSchema';

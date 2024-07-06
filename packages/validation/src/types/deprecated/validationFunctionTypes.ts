@@ -20,24 +20,36 @@
 import { DataRecord, UnprocessedDataRecord, Schema } from 'dictionary';
 import { SchemaValidationError } from './validationErrorTypes';
 
-// these validation functions run AFTER the record has been converted to the correct types from raw strings
+/**
+ * these validation functions run AFTER the record has been converted to the correct types from raw strings
+ * @deprecated
+ */
 export type UnprocessedRecordValidationFunction = (
 	record: UnprocessedDataRecord,
 	index: number,
 	schemaFields: Schema['fields'],
 ) => Array<SchemaValidationError>;
 
-// these validation functions run BEFORE the record has been converted to the correct types from raw strings
+/**
+ * these validation functions run BEFORE the record has been converted to the correct types from raw strings
+ * @deprecated
+ */
 export type ValidationFunction = (
 	record: DataRecord,
 	index: number,
 	schemaFields: Schema['fields'],
 ) => Array<SchemaValidationError>;
 
-// these validation functions run AFTER the records has been converted to the correct types from raw strings, and apply to a dataset instead of
-// individual records
+/**
+ * these validation functions run AFTER the records has been converted to the correct types from raw strings, and apply to a dataset instead of
+ * individual records
+ * @deprecated
+ */
 export type DatasetValidationFunction = (data: Array<DataRecord>, schema: Schema) => Array<SchemaValidationError>;
 
+/**
+ * @deprecated
+ */
 export type CrossSchemaValidationFunction = (
 	schema: Schema,
 	data: Record<string, DataRecord[]>,

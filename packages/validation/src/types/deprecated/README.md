@@ -3,7 +3,8 @@
 > Deprecated Module
 > 
 > The types presented here were the mechanism used by version 1.x.x of the Lectern Client for communicating
-> validation errors. They are still referenced 
+> validation errors. They are still referenced by the client and may be moved there to support some backwards
+> compatibility.
 
 TODO: Move these into the Client as an optional format to be used as an output to dictionary validations.
 

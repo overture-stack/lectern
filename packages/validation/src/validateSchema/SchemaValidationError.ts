@@ -17,22 +17,26 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecordValue, SchemaField } from 'dictionary';
-import { isBooleanArray, isInteger, isIntegerArray, isNumber, isNumberArray, isStringArray } from './typeUtils';
+import type { DataRecord } from 'dictionary';
+import type { RecordValidationError, RecordValidationErrorBase } from '../validateRecord';
 
-export const isValidValueType = (value: DataRecordValue, fieldDefinition: SchemaField): boolean => {
-	switch (fieldDefinition.valueType) {
-		case 'boolean': {
-			return fieldDefinition.isArray ? isBooleanArray(value) : typeof value === 'boolean';
-		}
-		case 'integer': {
-			return fieldDefinition.isArray ? isIntegerArray(value) : isInteger(value);
-		}
-		case 'number': {
-			return fieldDefinition.isArray ? isNumberArray(value) : isNumber(value);
-		}
-		case 'string': {
-			return fieldDefinition.isArray ? isStringArray(value) : typeof value === 'string';
-		}
-	}
+export type SchemaValidationRecordErrorUniqueKey = {
+	reason: 'INVALID_BY_UNIQUE_KEY';
+	uniqueKey: DataRecord;
+	matchingRecords: number[];
+};
+
+export type SchemaValidationRecordErrorUnique = RecordValidationErrorBase & {
+	reason: 'INVALID_BY_UNIQUE';
+	matchingRecords: number[];
+};
+
+export type SchemaValitdationRecordErrorDetails =
+	| RecordValidationError
+	| SchemaValidationRecordErrorUnique
+	| SchemaValidationRecordErrorUniqueKey;
+
+export type SchemaValidationRecordError = {
+	recordIndex: number;
+	recordErrors: SchemaValitdationRecordErrorDetails[];
 };

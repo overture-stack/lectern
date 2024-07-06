@@ -20,15 +20,12 @@
 import type { DataRecordValue } from 'dictionary';
 import type { FieldValidationError } from '../validateField';
 
-type RecordValidationErrorBase = {
+export type RecordValidationErrorBase = {
 	fieldName: string;
 	value: DataRecordValue;
 };
 
-export type RecordValidationErrorInvalidValue = RecordValidationErrorBase & {
-	reason: 'INVALID_FIELD_VALUE';
-	fieldError: FieldValidationError;
-};
+export type RecordValidationErrorInvalidValue = RecordValidationErrorBase & FieldValidationError;
 
 export type RecordValidationErrorUnrecognizedField = RecordValidationErrorBase & {
 	reason: 'UNRECOGNIZED_FIELD';

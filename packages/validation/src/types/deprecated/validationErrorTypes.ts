@@ -31,6 +31,7 @@ import type { DataRecord, DataRecordValue, RestrictionRange } from 'dictionary';
  * Represents the common structure of a validation error without the custom content provided by specific error types.
  * The `message` property is not included here as this allows the rest of the error content to be passed to a message building function
  * that will produce the final typed SchemaValidationError
+ * @deprecated
  */
 export type BaseSchemaValidationError = {
 	index: number;
@@ -49,6 +50,9 @@ type GenericSchemaValidationError<
 // Common string for invalid value errors
 export const INVALID_VALUE_ERROR_MESSAGE = 'The value is not permissible for this field.';
 
+/**
+ * @deprecated
+ */
 export const SchemaValidationErrorTypes = {
 	INVALID_FIELD_VALUE_TYPE: 'INVALID_FIELD_VALUE_TYPE',
 	INVALID_BY_REGEX: 'INVALID_BY_REGEX',
@@ -61,48 +65,84 @@ export const SchemaValidationErrorTypes = {
 	MISSING_REQUIRED_FIELD: 'MISSING_REQUIRED_FIELD',
 	UNRECOGNIZED_FIELD: 'UNRECOGNIZED_FIELD',
 } as const;
+/**
+ * @deprecated
+ */
 export type SchemaValidationErrorType = Values<typeof SchemaValidationErrorTypes>;
 
+/**
+ * @deprecated
+ */
 export type EnumValueValidationError = GenericSchemaValidationError<
 	typeof SchemaValidationErrorTypes.INVALID_ENUM_VALUE,
 	{ value: DataRecordValue[] }
 >;
+/**
+ * @deprecated
+ */
 export type ForeignKeyValidationError = GenericSchemaValidationError<
 	typeof SchemaValidationErrorTypes.INVALID_BY_FOREIGN_KEY,
 	{ value: DataRecord; foreignSchema: string }
 >;
+/**
+ * @deprecated
+ */
 export type MissingRequiredFieldValidationError = GenericSchemaValidationError<
 	typeof SchemaValidationErrorTypes.MISSING_REQUIRED_FIELD,
 	{}
 >;
+/**
+ * @deprecated
+ */
 export type RangeValidationError = GenericSchemaValidationError<
 	typeof SchemaValidationErrorTypes.INVALID_BY_RANGE,
 	{ value: number[] } & RestrictionRange
 >;
+/**
+ * @deprecated
+ */
 export type RegexValidationError = GenericSchemaValidationError<
 	typeof SchemaValidationErrorTypes.INVALID_BY_REGEX,
 	{ value: string[]; regex: string; examples?: string }
 >;
+/**
+ * @deprecated
+ */
 export type ScriptValidationError = GenericSchemaValidationError<
 	typeof SchemaValidationErrorTypes.INVALID_BY_SCRIPT,
 	{ message: string; value: DataRecordValue }
 >;
+/**
+ * @deprecated
+ */
 export type UniqueValidationError = GenericSchemaValidationError<
 	typeof SchemaValidationErrorTypes.INVALID_BY_UNIQUE,
 	{ value: DataRecordValue }
 >;
+/**
+ * @deprecated
+ */
 export type UniqueKeyValidationError = GenericSchemaValidationError<
 	typeof SchemaValidationErrorTypes.INVALID_BY_UNIQUE_KEY,
 	{ uniqueKeyFields: string[]; value: DataRecord }
 >;
+/**
+ * @deprecated
+ */
 export type UnrecognizedFieldValidationError = GenericSchemaValidationError<
 	typeof SchemaValidationErrorTypes.UNRECOGNIZED_FIELD,
 	{}
 >;
+/**
+ * @deprecated
+ */
 export type ValueTypeValidationError = GenericSchemaValidationError<
 	typeof SchemaValidationErrorTypes.INVALID_FIELD_VALUE_TYPE,
 	{ value: Singular<DataRecordValue>[] }
 >;
+/**
+ * @deprecated
+ */
 export type SchemaValidationError =
 	| EnumValueValidationError
 	| ValueTypeValidationError
