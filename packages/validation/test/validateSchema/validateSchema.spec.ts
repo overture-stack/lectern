@@ -89,6 +89,17 @@ describe('Schema - validateSchema', () => {
 			const result = validateSchema(records, schemaUniqueKey);
 			expect(result.valid).true;
 		});
+		it('Valid when unique key value changes to undefined', () => {
+			const records: DataRecord[] = [
+				{ 'any-string': 'asdf', 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
+				{ 'any-string': undefined, 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
+				{ 'any-string': 'asdf', 'any-number': undefined, 'any-integer': 123, 'any-boolean': true },
+				{ 'any-string': 'asdf', 'any-number': 12.34, 'any-integer': undefined, 'any-boolean': true },
+				{ 'any-string': 'asdf', 'any-number': 12.34, 'any-integer': 123, 'any-boolean': undefined },
+			];
+			const result = validateSchema(records, schemaUniqueKey);
+			expect(result.valid).true;
+		});
 		it('Invalid for repeated key', () => {
 			const records: DataRecord[] = [
 				{ 'any-string': 'asdf', 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
@@ -110,7 +121,28 @@ describe('Schema - validateSchema', () => {
 				'Every invalid record should have a uniqueKey error',
 			).true;
 		});
-		it('Invalid for repeated key with entries missing/undefined for all unique key fields', () => {
+		it('Invalid for repeated key including an undefined', () => {
+			const records: DataRecord[] = [
+				{ 'any-string': 'asdf', 'any-number': 12.34, 'any-integer': 123, 'any-boolean': undefined },
+				{ 'any-string': 'asdf', 'any-number': 12.34, 'any-integer': 123, 'any-boolean': undefined },
+			];
+			const result = validateSchema(records, schemaUniqueKey);
+			expect(result.valid).false;
+			assert(result.valid === false);
+
+			expect(result.info.length, 'There should be an invalid record for each field with a duplicate value').equal(
+				records.length,
+			);
+			expect(
+				result.info.every((invalidRecord) => invalidRecord.recordErrors.length === 1),
+				'Each invalid record should have a single error',
+			).true;
+			expect(
+				result.info.every((invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_BY_UNIQUE_KEY'),
+				'Every invalid record should have a uniqueKey error',
+			).true;
+		});
+		it('Invalid for repeated key with all entries missing/undefined for all unique key fields', () => {
 			const records: DataRecord[] = [
 				{ 'any-string': undefined, 'any-number': undefined, 'any-integer': undefined, 'any-boolean': undefined },
 				{},
