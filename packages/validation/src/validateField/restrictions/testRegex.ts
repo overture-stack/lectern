@@ -39,12 +39,12 @@ const testRegexSingleValue: FieldRestrictionSingleValueTestFunction<RestrictionR
 	if (regexPattern.test(value)) {
 		return valid();
 	}
-	return invalid({ message: `The value must match the regular expression: ${rule}` });
+	return invalid({ message: `The value must match the regular expression.` });
 };
 
 const testRegexArray = createFieldRestrictionTestForArrays(
 	testRegexSingleValue,
-	(rule) => `All values in the array must match the regular expression: ${rule}`,
+	(_rule) => `All values in the array must match the regular expression.`,
 );
 
 export const testRegex: FieldRestrictionTestFunction<RestrictionRegex> = (rule, value) =>
