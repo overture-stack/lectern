@@ -4,6 +4,7 @@ import { schemaUniqueString } from '../fixtures/schema/schemaUniqueString';
 import type { DataRecord, Schema } from 'dictionary';
 import assert from 'node:assert';
 import { schemaUniqueKey } from '../fixtures/schema/schemaUniqueKey';
+import { schemaSingleStringRequired } from '../fixtures/schema/schemaSingleStringRequired';
 
 describe('Schema - validateSchema', () => {
 	describe('Restriction - unique', () => {
@@ -164,5 +165,83 @@ describe('Schema - validateSchema', () => {
 			).true;
 		});
 	});
-	describe('field validations', () => {});
+	describe('Record validations', () => {
+		it('Invalid when one record has invalid field values', () => {
+			const records: DataRecord[] = [{ 'string-required': 'asdf' }, {}];
+			const result = validateSchema(records, schemaSingleStringRequired);
+			expect(result.valid).false;
+			assert(result.valid === false);
+
+			expect(result.info.length).equal(1);
+			expect(result.info[0]?.recordIndex, 'Invalid record needs to indicate the correct position in the array.').equal(
+				1,
+			);
+			expect(
+				result.info[0]?.recordErrors[0]?.reason,
+				'Invalid record needs to indicate it failed by restriction.',
+			).equal('INVALID_BY_RESTRICTION');
+		});
+		it('Invalid when one record has invalid value type', () => {
+			const records: DataRecord[] = [
+				{ 'string-required': 'asdf' },
+				{ 'string-required': 'qwerty' },
+				{ 'string-required': 123 }, // invalid value type
+			];
+			const result = validateSchema(records, schemaSingleStringRequired);
+			expect(result.valid).false;
+			assert(result.valid === false);
+
+			expect(result.info.length).equal(1);
+			expect(result.info[0]?.recordIndex, 'Invalid record needs to indicate the correct position in the array.').equal(
+				2,
+			);
+			expect(
+				result.info[0]?.recordErrors[0]?.reason,
+				'Invalid record needs to indicate it failed by invalid value type.',
+			).equal('INVALID_VALUE_TYPE');
+		});
+		it('Invalid and reporting multiple invalid records, all invalid records are reported', () => {
+			const records: DataRecord[] = [
+				{ 'string-required': 'asdf' },
+				{}, // missing value
+				{ 'string-required': 123 }, // invalid value type
+				{ 'string-required': '123', 'unknown-field': 123 }, // unrecognized field
+			];
+			const result = validateSchema(records, schemaSingleStringRequired);
+			expect(result.valid).false;
+			assert(result.valid === false);
+
+			expect(result.info.length).equal(3);
+
+			const missingValueRecord = result.info.find(
+				(invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_BY_RESTRICTION',
+			);
+			const invalidValueTypeRecord = result.info.find(
+				(invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_VALUE_TYPE',
+			);
+			const unrecognizedFieldRecord = result.info.find(
+				(invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'UNRECOGNIZED_FIELD',
+			);
+
+			expect(missingValueRecord).not.undefined;
+			assert(missingValueRecord !== undefined);
+			expect(invalidValueTypeRecord).not.undefined;
+			assert(invalidValueTypeRecord !== undefined);
+			expect(unrecognizedFieldRecord).not.undefined;
+			assert(unrecognizedFieldRecord !== undefined);
+
+			expect(missingValueRecord.recordIndex, 'Invalid record should report correct index in records array.').equal(1);
+			expect(missingValueRecord.recordErrors.length, 'Invalid record should only have a single error.').equal(1);
+
+			expect(invalidValueTypeRecord.recordIndex, 'Invalid record should report correct index in records array.').equal(
+				2,
+			);
+			expect(invalidValueTypeRecord.recordErrors.length, 'Invalid record should only have a single error.').equal(1);
+
+			expect(unrecognizedFieldRecord.recordIndex, 'Invalid record should report correct index in records array.').equal(
+				3,
+			);
+			expect(unrecognizedFieldRecord.recordErrors.length, 'Invalid record should only have a single error.').equal(1);
+		});
+	});
 });
