@@ -41,7 +41,7 @@ export const testUniqueFieldRestriction = (
 		return valid();
 	}
 	// Build unique key for this record, based on the fields listed in the rule
-	const hash = hashDataRecord({ fieldName: value });
+	const hash = hashDataRecord({ [fieldName]: value });
 
 	// Lookup the key in the provided map. Report errors when the map has more than one record index found for this hash
 	const matchingRecords = uniqueKeyMap.get(hash);

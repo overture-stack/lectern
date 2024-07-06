@@ -22,6 +22,14 @@ import { hashDataRecord } from '../../utils/hashDataRecord';
 import { getUniqueKeyValues } from './uniqueKey/getUniqueKeyValues';
 
 /**
+ * The key in this Map is a unique hash made of select fields from a record. This is generated using `hashDataRecord()`
+ * The value in this Map is an array of numbers, where each number represents the position of a record in a data set (data sets will be `DataRecord[]` with all records from the same schema).
+ *
+ * This is a named alias over a Map<string, number>;
+ */
+export type DataSetHashMap = Map<string, number[]>;
+
+/**
  * Provides a DataSetHashMap for a provided data set. For every record in the data set this will generate a string
  * based on the values of specific fields, then an entry will added to the Map using this string as the key, with the
  * value an array of numbers representing the array index position of all records that share the same values for the
