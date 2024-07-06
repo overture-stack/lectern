@@ -102,10 +102,8 @@ describe('Schema - validateSchema', () => {
 			expect(result.valid).true;
 		});
 		it('Invalid for repeated key', () => {
-			const records: DataRecord[] = [
-				{ 'any-string': 'asdf', 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
-				{ 'any-string': 'asdf', 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
-			];
+			const repeatedRecord = { 'any-string': 'asdf', 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true };
+			const records: DataRecord[] = [{ ...repeatedRecord }, { ...repeatedRecord }];
 			const result = validateSchema(records, schemaUniqueKey);
 			expect(result.valid).false;
 			assert(result.valid === false);
@@ -121,6 +119,24 @@ describe('Schema - validateSchema', () => {
 				result.info.every((invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_BY_UNIQUE_KEY'),
 				'Every invalid record should have a uniqueKey error',
 			).true;
+			assert(
+				result.info[0] !== undefined &&
+					result.info[0].recordErrors[0] !== undefined &&
+					result.info[0].recordErrors[0].reason === 'INVALID_BY_UNIQUE_KEY',
+			);
+			assert(
+				result.info[1] !== undefined &&
+					result.info[1].recordErrors[0] !== undefined &&
+					result.info[1].recordErrors[0].reason === 'INVALID_BY_UNIQUE_KEY',
+			);
+
+			expect(result.info[0].recordErrors[0].uniqueKey).deep.equal({ ...repeatedRecord });
+			expect(result.info[0].recordErrors[0].matchingRecords).include(0);
+			expect(result.info[0].recordErrors[0].matchingRecords).include(1);
+
+			expect(result.info[1].recordErrors[0].uniqueKey).deep.equal({ ...repeatedRecord });
+			expect(result.info[1].recordErrors[0].matchingRecords).include(0);
+			expect(result.info[1].recordErrors[0].matchingRecords).include(1);
 		});
 		it('Invalid for repeated key including an undefined', () => {
 			const records: DataRecord[] = [
