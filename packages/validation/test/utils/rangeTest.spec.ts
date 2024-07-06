@@ -21,7 +21,7 @@ import type { RestrictionRange } from 'dictionary';
 import { isWithinRange } from '../../src/utils/isWithinRange';
 import { expect } from 'chai';
 
-describe('rangeTest', () => {
+describe('Utils - rangeTest', () => {
 	describe('Min only', () => {
 		it('Returns true when value greater than min', () => {
 			const range: RestrictionRange = { min: 0 };
