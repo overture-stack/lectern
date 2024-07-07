@@ -20,7 +20,6 @@
 import { RestrictionRange } from 'dictionary';
 import { invalid, valid } from '../../types/testResult';
 import { isWithinRange } from '../../utils/isWithinRange';
-import { rangeToText } from '../../utils/rangeToText';
 import type { FieldRestrictionSingleValueTestFunction, FieldRestrictionTestFunction } from '../FieldRestrictionTest';
 import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
 
@@ -33,12 +32,12 @@ const testRangeSingleValue: FieldRestrictionSingleValueTestFunction<RestrictionR
 	if (isWithinRange(rule, value)) {
 		return valid();
 	}
-	return invalid({ message: `The value must be within the range: ${rangeToText(rule)}` });
+	return invalid({ message: `The value must be within the range.`, rule });
 };
 
 const testRangeArray = createFieldRestrictionTestForArrays(
 	testRangeSingleValue,
-	(rule) => `All values in the array must be within the range: ${rangeToText(rule)}`,
+	`All values in the array must be within the range.`,
 );
 
 export const testRange: FieldRestrictionTestFunction<RestrictionRange> = (rule, value) =>
