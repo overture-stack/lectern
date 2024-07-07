@@ -1,4 +1,4 @@
-import type { DataRecord, ForeignKeyRestrictionMapping } from 'dictionary';
+import type { DataRecord, ForeignKeyRestriction } from 'dictionary';
 import type { SchemaDataReference } from './collectSchemaReferenceData';
 import type { DictionaryValidationRecordErrorForeignKey } from './DictionaryValidationError';
 import { invalid, valid, type TestResult } from '../types';
@@ -17,7 +17,7 @@ import { isDefined } from 'common';
  */
 export const testForeignKeyRestriction = (
 	record: DataRecord,
-	foreignKeyRestrictions: ForeignKeyRestrictionMapping[],
+	foreignKeyRestrictions: ForeignKeyRestriction[],
 	foreignSchemaReferenceData: Map<string, SchemaDataReference>,
 ): TestResult<DictionaryValidationRecordErrorForeignKey[]> => {
 	if (foreignKeyRestrictions.length === 0) {

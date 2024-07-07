@@ -1,5 +1,5 @@
 import { isDefined } from 'common';
-import type { DataRecord, DataRecordValue, Dictionary, ForeignKeyRestrictionMapping, Schema } from 'dictionary';
+import type { DataRecord, DataRecordValue, Dictionary, ForeignKeyRestriction, Schema } from 'dictionary';
 
 /**
  * This type alias is for a structure used to collect then lookup values from schemas. It is helpful
@@ -70,7 +70,7 @@ export const collectSchemaReferenceData = (
 ): Map<string, SchemaDataReference> => {
 	const schemasWithForeignKeyRestrictions: Array<{
 		schema: Schema;
-		foreignKeyRestriction: ForeignKeyRestrictionMapping[];
+		foreignKeyRestriction: ForeignKeyRestriction[];
 	}> = dictionary.schemas
 		.map((schema) =>
 			schema.restrictions?.foreignKey ? { schema, foreignKeyRestriction: schema.restrictions?.foreignKey } : undefined,

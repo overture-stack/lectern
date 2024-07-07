@@ -148,7 +148,7 @@ export type SchemaRestrictions = SchemaField['restrictions'];
 /* ****** *
  * Schema *
  * ****** */
-export const ForeignKeyRestrictionMapping = zod.object({
+export const ForeignKeyRestriction = zod.object({
 	schema: NameString,
 	mappings: zod.array(
 		zod.object({
@@ -157,6 +157,7 @@ export const ForeignKeyRestrictionMapping = zod.object({
 		}),
 	),
 });
+export type ForeignKeyRestriction = zod.infer<typeof ForeignKeyRestriction>;
 
 export const Schema = zod
 	.object({
@@ -166,7 +167,7 @@ export const Schema = zod
 		meta: DictionaryMeta.optional(),
 		restrictions: zod
 			.object({
-				foreignKey: zod.array(ForeignKeyRestrictionMapping).min(1),
+				foreignKey: zod.array(ForeignKeyRestriction).min(1),
 				uniqueKey: zod.array(NameString).min(1),
 			})
 			.partial()
