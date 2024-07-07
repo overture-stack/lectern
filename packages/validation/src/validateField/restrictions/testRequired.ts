@@ -31,7 +31,7 @@ const testRequiredSingleValue: FieldRestrictionSingleValueTestFunction<boolean> 
 		return valid();
 	}
 	if (value === undefined || value === '') {
-		return invalid({ message: `A value is required for this field` });
+		return invalid({ message: `A value is required for this field.` });
 	}
 
 	return valid();
