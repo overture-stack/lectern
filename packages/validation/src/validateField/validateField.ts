@@ -21,15 +21,12 @@ import type { DataRecord, DataRecordValue, SchemaField } from 'dictionary';
 import { invalid, valid, type TestResult } from '../types';
 import { isValidValueType } from '../utils/isValidValueType';
 import type { FieldRestrictionRule } from './FieldRestrictionRule';
-import type {
-	FieldValidationError,
-	FieldValidationErrorRestrictionInfo,
-	FieldValidationErrorValueType,
-} from './FieldValidationError';
+import type { FieldValidationError, FieldValidationErrorRestrictionInfo } from './FieldValidationError';
 import { testCodeList } from './restrictions/testCodeList';
 import { testRange } from './restrictions/testRange';
 import { testRegex } from './restrictions/testRegex';
 import { testRequired } from './restrictions/testRequired';
+import { resolveFieldRestrictions } from './resolveFieldRestrictions';
 
 const testRestriction = (value: DataRecordValue, restriction: FieldRestrictionRule) => {
 	switch (restriction.type) {
@@ -80,83 +77,6 @@ const applyFieldRestrictionTests = (
 	}, []);
 
 	return errors;
-};
-
-/**
- * Convert the restrictions found in a SchemaField definition into a list of rules that apply for this specific value
- * and DataRecord.
- */
-export const resolveFieldRestrictions = (
-	_value: DataRecordValue,
-	_record: DataRecord,
-	field: SchemaField,
-): FieldRestrictionRule[] => {
-	// TODO: This function requires value and record parameters so that conditional restrictions can be resolved.
-	// The original implementation with a static set of available restrictions does not need these parameters.
-	if (!field.restrictions) {
-		return [];
-	}
-
-	switch (field.valueType) {
-		case 'boolean': {
-			const output: FieldRestrictionRule[] = [];
-			if (field.restrictions.required) {
-				output.push({ type: 'required', rule: field.restrictions.required });
-			}
-			// if (field.restrictions.script) {
-			// 	output.push({ type: 'script', rule: asArray(field.restrictions.script) });
-			// }
-			return output;
-		}
-		case 'integer': {
-			const output: FieldRestrictionRule[] = [];
-			if (Array.isArray(field.restrictions.codeList)) {
-				output.push({ type: 'codeList', rule: field.restrictions.codeList });
-			}
-			if (field.restrictions.range) {
-				output.push({ type: 'range', rule: field.restrictions.range });
-			}
-			if (field.restrictions.required) {
-				output.push({ type: 'required', rule: field.restrictions.required });
-			}
-			// if (field.restrictions.script) {
-			// 	output.push({ type: 'script', rule: asArray(field.restrictions.script) });
-			// }
-			return output;
-		}
-		case 'number': {
-			const output: FieldRestrictionRule[] = [];
-			if (Array.isArray(field.restrictions.codeList)) {
-				output.push({ type: 'codeList', rule: field.restrictions.codeList });
-			}
-			if (field.restrictions.range) {
-				output.push({ type: 'range', rule: field.restrictions.range });
-			}
-			if (field.restrictions.required) {
-				output.push({ type: 'required', rule: field.restrictions.required });
-			}
-			// if (field.restrictions.script) {
-			// 	output.push({ type: 'script', rule: asArray(field.restrictions.script) });
-			// }
-			return output;
-		}
-		case 'string': {
-			const output: FieldRestrictionRule[] = [];
-			if (Array.isArray(field.restrictions.codeList)) {
-				output.push({ type: 'codeList', rule: field.restrictions.codeList });
-			}
-			if (field.restrictions.regex) {
-				output.push({ type: 'regex', rule: field.restrictions.regex });
-			}
-			if (field.restrictions.required) {
-				output.push({ type: 'required', rule: field.restrictions.required });
-			}
-			// if (field.restrictions.script) {
-			// 	output.push({ type: 'script', rule: asArray(field.restrictions.script) });
-			// }
-			return output;
-		}
-	}
 };
 
 /**
