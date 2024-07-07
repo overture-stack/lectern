@@ -11,4 +11,4 @@ export const schemaAllDataTypes = {
 	fields: [fieldStringNoRestriction, fieldNumberNoRestriction, fieldIntegerNoRestriction, fieldBooleanNoRestriction],
 } as const satisfies Schema;
 
-validateFixture(schemaAllDataTypes, Schema, 'schemaAllDataTypes is not a valid schema.');
+validateFixture(schemaAllDataTypes, Schema, 'schemaAllDataTypes is not a valid Schema');

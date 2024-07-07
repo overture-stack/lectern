@@ -1,10 +1,9 @@
 import { Schema } from 'dictionary';
+import { validateFixture } from '../../testUtils/validateFixture';
 import { fieldBooleanNoRestriction } from '../fields/noRestrictions/fieldBooleanNoRestriction';
 import { fieldIntegerNoRestriction } from '../fields/noRestrictions/fieldIntegerNoRestriction';
 import { fieldNumberNoRestriction } from '../fields/noRestrictions/fieldNumberNoRestriction';
 import { fieldStringNoRestriction } from '../fields/noRestrictions/fieldStringNoRestriction';
-import assert from 'assert';
-import { validateFixture } from '../../testUtils/validateFixture';
 
 const fields = [
 	fieldStringNoRestriction,
@@ -25,4 +24,4 @@ export const schemaUniqueKey = {
 	},
 } as const satisfies Schema;
 
-validateFixture(schemaUniqueKey, Schema, 'schemaUniqueKey is not a valid schema.');
+validateFixture(schemaUniqueKey, Schema, 'schemaUniqueKey is not a valid Schema');

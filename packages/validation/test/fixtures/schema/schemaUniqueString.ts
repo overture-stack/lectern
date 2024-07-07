@@ -9,4 +9,4 @@ export const schemaUniqueString = {
 	fields: [fieldStringUnique],
 } as const satisfies Schema;
 
-validateFixture(schemaUniqueString, Schema, 'schemaUniqueString is not a valid schema.');
+validateFixture(schemaUniqueString, Schema, 'schemaUniqueString is not a valid Schema');

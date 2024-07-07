@@ -8,4 +8,4 @@ export const schemaSingleString = {
 	fields: [fieldStringNoRestriction],
 } as const satisfies Schema;
 
-validateFixture(schemaSingleString, Schema, 'schemaSingleString is not a valid schema.');
+validateFixture(schemaSingleString, Schema, 'schemaSingleString is not a valid Schema');

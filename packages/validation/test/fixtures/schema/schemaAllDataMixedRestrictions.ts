@@ -13,5 +13,5 @@ export const schemaAllDataTypesMixedRestrictions = {
 validateFixture(
 	schemaAllDataTypesMixedRestrictions,
 	Schema,
-	'schemaAllDataTypesMixedRestrictions is not a valid schema.',
+	'schemaAllDataTypesMixedRestrictions is not a valid Schema',
 );
