@@ -17,9 +17,34 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './schemaRestrictions/foreignKeysValidation';
-export * from './validateDictionary';
-export * from './validateField';
-export * from './validateRecord';
-export * from './validateSchema';
-export * from './types';
+import type { RecordValidationErrorBase } from '../validateRecord';
+import type { SchemaRecordValidationError, SchemaValidationRecordErrorDetails } from '../validateSchema';
+
+export type DictionaryValidationErrorBase = {
+	schemaName: string;
+};
+
+export type DictionaryValidationErrorUnrecognizedSchema = DictionaryValidationErrorBase & {
+	reason: 'UNRECOGNIZED_SCHEMA';
+};
+
+export type DictionaryValidationRecordErrorForeignKey = RecordValidationErrorBase & {
+	reason: 'INVALID_BY_FOREIGNKEY';
+	foreignSchema: {
+		schemaName: string;
+		fieldName: string;
+	};
+};
+
+export type DictionaryValidationRecordErrorDetails =
+	| SchemaValidationRecordErrorDetails
+	| DictionaryValidationRecordErrorForeignKey;
+
+export type DictionaryValidationErrorInvalidRecords = DictionaryValidationErrorBase & {
+	reason: 'INVALID_RECORDS';
+	invalidRecords: SchemaRecordValidationError<DictionaryValidationRecordErrorDetails>[];
+};
+
+export type DictionaryValidationError =
+	| DictionaryValidationErrorUnrecognizedSchema
+	| DictionaryValidationErrorInvalidRecords;

@@ -19,7 +19,7 @@
 
 import type { DataRecord, Schema } from 'dictionary';
 import { invalid, valid, type TestResult } from '../types';
-import type { SchemaValidationRecordError, SchemaValitdationRecordErrorDetails } from './SchemaValidationError';
+import type { SchemaValidationError, SchemaValidationRecordErrorDetails } from './SchemaValidationError';
 import { validateRecord } from '../validateRecord';
 import { generateDataSetHashMap } from './restrictions/generateDataSetHashMap';
 import { testUniqueKey } from './restrictions/uniqueKey/testUniqueKey';
@@ -27,15 +27,20 @@ import { isDefined } from 'common';
 import { testUniqueFieldRestriction } from './restrictions/uniqueField/testUniqueFieldRestriction';
 
 /**
- * Validate entire
+ * Validate a data set using a Lectern Schema. The data to validate is an array of DataRecords that contains all
+ * records for the given schema. Each record of the data set will be validated individually, plus schema level
+ * validation tests will be applied.
+ *
+ * Validation tests specific to Schema validation are:
+ * - unique fields: for any fields marked as unique, this will check if there are multiple records with the same value
+ * - uniqueKey: if the schema has a uniqueKey defined, this will check if there are multiple records with the same
+ *   uniqueKey value
+ *
  * @param records
  * @param schema
  * @returns
  */
-export const validateSchema = (
-	records: Array<DataRecord>,
-	schema: Schema,
-): TestResult<SchemaValidationRecordError[]> => {
+export const validateSchema = (records: Array<DataRecord>, schema: Schema): TestResult<SchemaValidationError[]> => {
 	// Setup to improve performance of Schema validations that compare a record to every record in the data set.
 	// We build maps of uniqueKey and unique field values so that they can be used while testing these restricitons for each record
 	const uniqueKeyRule = schema.restrictions?.uniqueKey;
@@ -51,9 +56,9 @@ export const validateSchema = (
 
 	// Test each record, apply the schema restrictions to
 	const schemaValidationErrors = records
-		.map<SchemaValidationRecordError | undefined>((record, recordIndex) => {
+		.map<SchemaValidationError | undefined>((record, recordIndex) => {
 			// recordErrors is output collection of errors for this record
-			const recordErrors: SchemaValitdationRecordErrorDetails[] = [];
+			const recordErrors: SchemaValidationRecordErrorDetails[] = [];
 
 			// UniqueKey Test
 			const uniqueKeyResult =

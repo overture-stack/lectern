@@ -17,9 +17,19 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './schemaRestrictions/foreignKeysValidation';
-export * from './validateDictionary';
-export * from './validateField';
-export * from './validateRecord';
-export * from './validateSchema';
-export * from './types';
+import type { Dictionary } from 'dictionary';
+import { invalid, valid, type TestResult } from '../types';
+import type { DictionaryValidationErrorUnrecognizedSchema } from './DictionaryValidationError';
+
+export const testUnrecognizedSchema = (
+	schemaName: string,
+	dictionary: Dictionary,
+): TestResult<DictionaryValidationErrorUnrecognizedSchema> => {
+	if (dictionary.schemas.some((schema) => schema.name === schemaName)) {
+		return valid();
+	}
+	return invalid({
+		reason: 'UNRECOGNIZED_SCHEMA',
+		schemaName,
+	});
+};

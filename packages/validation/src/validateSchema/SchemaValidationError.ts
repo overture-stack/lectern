@@ -31,12 +31,14 @@ export type SchemaValidationRecordErrorUnique = RecordValidationErrorBase & {
 	matchingRecords: number[];
 };
 
-export type SchemaValitdationRecordErrorDetails =
+export type SchemaValidationRecordErrorDetails =
 	| RecordValidationError
 	| SchemaValidationRecordErrorUnique
 	| SchemaValidationRecordErrorUniqueKey;
 
-export type SchemaValidationRecordError = {
+export type SchemaRecordValidationError<ErrorDetails> = {
 	recordIndex: number;
-	recordErrors: SchemaValitdationRecordErrorDetails[];
+	recordErrors: ErrorDetails[];
 };
+
+export type SchemaValidationError = SchemaRecordValidationError<SchemaValidationRecordErrorDetails>;
