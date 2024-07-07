@@ -1,7 +1,7 @@
 import { expect } from 'chai';
+import assert from 'node:assert';
 import { testRegex } from '../../../src/validateField/restrictions';
 import { regexYearMonthDay } from '../../fixtures/restrictions/regexFixtures';
-import assert from 'assert';
 
 const validDateSingle = '1989-11-09';
 const validDateArray = ['1867-07-01', '1969-07-16', '1989-12-17'];

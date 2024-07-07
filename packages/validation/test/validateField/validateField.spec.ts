@@ -1,18 +1,18 @@
 import { expect } from 'chai';
+import type { SchemaStringField } from 'dictionary';
+import assert from 'node:assert';
 import { validateField } from '../../src';
-import { fieldStringNoRestriction } from '../fixtures/fields/noRestrictions/fieldStringNoRestriction';
-import assert from 'assert';
+import { fieldStringManyRestrictions } from '../fixtures/fields/multipleRestrictions/fieldStringManyRestrictions';
 import { fieldBooleanNoRestriction } from '../fixtures/fields/noRestrictions/fieldBooleanNoRestriction';
 import { fieldIntegerNoRestriction } from '../fixtures/fields/noRestrictions/fieldIntegerNoRestriction';
 import { fieldNumberNoRestriction } from '../fixtures/fields/noRestrictions/fieldNumberNoRestriction';
+import { fieldStringNoRestriction } from '../fixtures/fields/noRestrictions/fieldStringNoRestriction';
+import { fieldNumberArrayCodeList } from '../fixtures/fields/simpleRestrictions/number/fieldNumberArrayCodeList';
+import { fieldNumberRange } from '../fixtures/fields/simpleRestrictions/number/fieldNumberRange';
+import { fieldStringArrayRequired } from '../fixtures/fields/simpleRestrictions/string/fieldStringArrayRequired';
 import { fieldStringCodeList } from '../fixtures/fields/simpleRestrictions/string/fieldStringCodeList';
 import { fieldStringRegex } from '../fixtures/fields/simpleRestrictions/string/fieldStringRegex';
 import { fieldStringRequired } from '../fixtures/fields/simpleRestrictions/string/fieldStringRequired';
-import { fieldNumberArrayCodeList } from '../fixtures/fields/simpleRestrictions/number/fieldNumberArrayCodeList';
-import { fieldStringArrayRequired } from '../fixtures/fields/simpleRestrictions/string/fieldStringArrayRequired';
-import { fieldStringManyRestrictions } from '../fixtures/fields/multipleRestrictions/fieldStringManyRestrictions';
-import { fieldNumberRange } from '../fixtures/fields/simpleRestrictions/number/fieldNumberRange';
-import type { SchemaStringField } from 'dictionary';
 
 const emptyDataRecord = {};
 
