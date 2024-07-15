@@ -17,8 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { RecordValidationErrorBase } from '../validateRecord';
-import type { SchemaRecordValidationError, SchemaValidationRecordErrorDetails } from '../validateSchema';
+import type { FieldDetails } from '../validateRecord';
+import type { SchemaRecordError, SchemaValidationRecordErrorDetails } from '../validateSchema';
 
 export type DictionaryValidationErrorBase = {
 	schemaName: string;
@@ -28,7 +28,7 @@ export type DictionaryValidationErrorUnrecognizedSchema = DictionaryValidationEr
 	reason: 'UNRECOGNIZED_SCHEMA';
 };
 
-export type DictionaryValidationRecordErrorForeignKey = RecordValidationErrorBase & {
+export type DictionaryValidationErrorRecordForeignKey = FieldDetails & {
 	reason: 'INVALID_BY_FOREIGNKEY';
 	foreignSchema: {
 		schemaName: string;
@@ -38,11 +38,11 @@ export type DictionaryValidationRecordErrorForeignKey = RecordValidationErrorBas
 
 export type DictionaryValidationRecordErrorDetails =
 	| SchemaValidationRecordErrorDetails
-	| DictionaryValidationRecordErrorForeignKey;
+	| DictionaryValidationErrorRecordForeignKey;
 
 export type DictionaryValidationErrorInvalidRecords = DictionaryValidationErrorBase & {
 	reason: 'INVALID_RECORDS';
-	invalidRecords: SchemaRecordValidationError<DictionaryValidationRecordErrorDetails>[];
+	invalidRecords: SchemaRecordError<DictionaryValidationRecordErrorDetails>[];
 };
 
 export type DictionaryValidationError =

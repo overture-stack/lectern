@@ -21,12 +21,12 @@ import type { DataRecord, DataRecordValue, SchemaField } from 'dictionary';
 import { invalid, valid, type TestResult } from '../types';
 import { isValidValueType } from '../utils/isValidValueType';
 import type { FieldRestrictionRule } from './FieldRestrictionRule';
-import type { FieldValidationError, FieldValidationErrorRestrictionInfo } from './FieldValidationError';
+import { resolveFieldRestrictions } from './resolveFieldRestrictions';
 import { testCodeList } from './restrictions/testCodeList';
 import { testRange } from './restrictions/testRange';
 import { testRegex } from './restrictions/testRegex';
 import { testRequired } from './restrictions/testRequired';
-import { resolveFieldRestrictions } from './resolveFieldRestrictions';
+import type { FieldValidationError, FieldValidationErrorRestrictionInfo } from './FieldValidationError';
 
 const testRestriction = (value: DataRecordValue, restriction: FieldRestrictionRule) => {
 	switch (restriction.type) {

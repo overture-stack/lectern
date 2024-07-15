@@ -1,6 +1,6 @@
 import type { DataRecord, ForeignKeyRestriction } from 'dictionary';
 import type { SchemaDataReference } from './collectSchemaReferenceData';
-import type { DictionaryValidationRecordErrorForeignKey } from './DictionaryValidationError';
+import type { DictionaryValidationErrorRecordForeignKey } from './DictionaryValidationError';
 import { invalid, valid, type TestResult } from '../types';
 import { isDefined } from 'common';
 
@@ -19,7 +19,7 @@ export const testForeignKeyRestriction = (
 	record: DataRecord,
 	foreignKeyRestrictions: ForeignKeyRestriction[],
 	foreignSchemaReferenceData: Map<string, SchemaDataReference>,
-): TestResult<DictionaryValidationRecordErrorForeignKey[]> => {
+): TestResult<DictionaryValidationErrorRecordForeignKey[]> => {
 	if (foreignKeyRestrictions.length === 0) {
 		return valid();
 	}
@@ -27,9 +27,9 @@ export const testForeignKeyRestriction = (
 	// Loop over all foreign key rules -
 	// These are nested since we could have multiple foreign schema mappings and for each foreign schema we could have multiple fields.
 	// The result would be an array of arrays (array of schema results which are each an array of field mapping results) so we flatten the result.
-	const recordErrors = foreignKeyRestrictions.flatMap<DictionaryValidationRecordErrorForeignKey>((restriction) => {
-		const foreignKeyErrors: DictionaryValidationRecordErrorForeignKey[] = restriction.mappings
-			.map<DictionaryValidationRecordErrorForeignKey | undefined>((foreignKeyMapping) => {
+	const recordErrors = foreignKeyRestrictions.flatMap<DictionaryValidationErrorRecordForeignKey>((restriction) => {
+		const foreignKeyErrors: DictionaryValidationErrorRecordForeignKey[] = restriction.mappings
+			.map<DictionaryValidationErrorRecordForeignKey | undefined>((foreignKeyMapping) => {
 				// This is the actual test, taking the local value and looking up if that value exists in
 				const localValue = record[foreignKeyMapping.local];
 				if (localValue === undefined) {

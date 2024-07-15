@@ -17,24 +17,13 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecordValue } from 'dictionary';
-import type {
-	FieldValidationErrorRestrictions,
-	FieldValidationErrorValueType,
-} from '../validateField/FieldValidationError';
+import type { SchemaBooleanField } from 'dictionary';
 
-export type FieldDetails = {
-	fieldName: string;
-	value: DataRecordValue;
-};
-
-export type RecordValidationErrorInvalidValue = FieldDetails & FieldValidationErrorValueType;
-export type RecordValidationErrorRestrictions = FieldDetails & FieldValidationErrorRestrictions;
-export type RecordValidationErrorUnrecognizedField = FieldDetails & {
-	reason: 'UNRECOGNIZED_FIELD';
-};
-
-export type RecordValidationError =
-	| RecordValidationErrorInvalidValue
-	| RecordValidationErrorRestrictions
-	| RecordValidationErrorUnrecognizedField;
+export const fieldBooleanArrayRequired = {
+	name: 'boolean-array-required',
+	valueType: 'boolean',
+	isArray: true,
+	restrictions: {
+		required: true,
+	},
+} as const satisfies SchemaBooleanField;

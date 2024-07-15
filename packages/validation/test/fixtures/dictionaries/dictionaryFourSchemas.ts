@@ -17,24 +17,17 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecordValue } from 'dictionary';
-import type {
-	FieldValidationErrorRestrictions,
-	FieldValidationErrorValueType,
-} from '../validateField/FieldValidationError';
+import { Dictionary } from 'dictionary';
+import { validateFixture } from '../../testUtils/validateFixture';
+import { schemaSingleString } from '../schema/schemaSingleString';
+import { schemaAllDataTypes } from '../schema/schemaAllDataTypes';
+import { schemaAllDataTypesRequired } from '../schema/schemaAllDataTypesRequired';
+import { schemaUniqueKey } from '../schema/schemaUniqueKey';
 
-export type FieldDetails = {
-	fieldName: string;
-	value: DataRecordValue;
-};
+export const dictionaryFourSchemas = {
+	name: 'dictionary-four-restrictions',
+	schemas: [schemaSingleString, schemaAllDataTypes, schemaAllDataTypesRequired, schemaUniqueKey],
+	version: '1.0',
+} as const satisfies Dictionary;
 
-export type RecordValidationErrorInvalidValue = FieldDetails & FieldValidationErrorValueType;
-export type RecordValidationErrorRestrictions = FieldDetails & FieldValidationErrorRestrictions;
-export type RecordValidationErrorUnrecognizedField = FieldDetails & {
-	reason: 'UNRECOGNIZED_FIELD';
-};
-
-export type RecordValidationError =
-	| RecordValidationErrorInvalidValue
-	| RecordValidationErrorRestrictions
-	| RecordValidationErrorUnrecognizedField;
+validateFixture(dictionaryFourSchemas, Dictionary, 'dictionaryFourSchemas is not a valid Dictionary');

@@ -18,8 +18,8 @@
  */
 
 import type { SchemaFieldValueType } from 'dictionary';
-import type { FieldRestrictionRule } from './FieldRestrictionRule';
-import type { RestrictionTestInvalidInfo } from './FieldRestrictionTest';
+import type { FieldRestrictionRule } from '../validateField/FieldRestrictionRule';
+import type { RestrictionTestInvalidInfo } from '../validateField/FieldRestrictionTest';
 
 export type FieldValidationErrorRestrictionInfo = RestrictionTestInvalidInfo & {
 	restriction: FieldRestrictionRule;

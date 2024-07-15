@@ -20,21 +20,21 @@
 import { isDefined } from 'common';
 import { DataRecord, Dictionary } from 'dictionary';
 import { invalid, valid, type TestResult } from '../types';
-import { validateSchema, type SchemaRecordValidationError } from '../validateSchema';
+import { validateSchema, type SchemaRecordError } from '../validateSchema';
 import { collectSchemaReferenceData } from './collectSchemaReferenceData';
 import type {
 	DictionaryValidationError,
 	DictionaryValidationRecordErrorDetails,
-	DictionaryValidationRecordErrorForeignKey,
+	DictionaryValidationErrorRecordForeignKey,
 } from './DictionaryValidationError';
 import { testForeignKeyRestriction } from './testForeignKeyRestriction';
 import { testUnrecognizedSchema } from './testUnrecognizedSchema';
 
 const mergeSchemaRecordValidationErrors = <T>(
-	first: Array<SchemaRecordValidationError<T>>,
-	second: Array<SchemaRecordValidationError<T>>,
-): Array<SchemaRecordValidationError<T>> => {
-	const output: Array<SchemaRecordValidationError<T>> = [...first];
+	first: Array<SchemaRecordError<T>>,
+	second: Array<SchemaRecordError<T>>,
+): Array<SchemaRecordError<T>> => {
+	const output: Array<SchemaRecordError<T>> = [...first];
 	for (const error of second) {
 		const matchedError = output.find((outputError) => outputError.recordIndex === error.recordIndex);
 		if (matchedError) {
@@ -72,25 +72,24 @@ export const validateDictionary = (
 			const schemaValidationResult = validateSchema(records, schema);
 
 			const foreignKeyRestriction = schema.restrictions?.foreignKey;
-			const foreignKeyErrors: SchemaRecordValidationError<DictionaryValidationRecordErrorForeignKey>[] =
-				foreignKeyRestriction
-					? records
-							.map((record, recordIndex) => {
-								const foreignKeyTestResult = testForeignKeyRestriction(
-									record,
-									foreignKeyRestriction,
-									foreignSchemaReferenceData,
-								);
-								if (foreignKeyTestResult.valid) {
-									return undefined;
-								}
-								return {
-									recordIndex,
-									recordErrors: foreignKeyTestResult.info,
-								};
-							})
-							.filter(isDefined)
-					: [];
+			const foreignKeyErrors: SchemaRecordError<DictionaryValidationErrorRecordForeignKey>[] = foreignKeyRestriction
+				? records
+						.map((record, recordIndex) => {
+							const foreignKeyTestResult = testForeignKeyRestriction(
+								record,
+								foreignKeyRestriction,
+								foreignSchemaReferenceData,
+							);
+							if (foreignKeyTestResult.valid) {
+								return undefined;
+							}
+							return {
+								recordIndex,
+								recordErrors: foreignKeyTestResult.info,
+							};
+						})
+						.filter(isDefined)
+				: [];
 			const combinedErrors = mergeSchemaRecordValidationErrors<DictionaryValidationRecordErrorDetails>(
 				schemaValidationResult.valid ? [] : schemaValidationResult.info,
 				foreignKeyErrors,

@@ -23,7 +23,7 @@ import type { Singular } from 'common';
  * Represents a data record as taken from an input file. All values are the original strings and have not been validated into
  * numbers/bools or split into arrays.
  */
-export type UnprocessedDataRecord = Record<string, string | string[]>;
+export type UnprocessedDataRecord = Record<string, string>;
 
 /**
  * The available data types for a field in a Lectern Schema.

@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './schemaRestrictions/foreignKeysValidation';
+export * from './convertValues';
 export * from './validateDictionary';
 export * from './validateField';
 export * from './validateRecord';

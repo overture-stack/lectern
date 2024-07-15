@@ -21,10 +21,13 @@ import type { DataRecord, Schema } from 'dictionary';
 import { validateField } from '../validateField/validateField';
 import { invalid, valid, type TestResult } from '../types';
 import type {
+	FieldDetails,
 	RecordValidationError,
 	RecordValidationErrorInvalidValue,
+	RecordValidationErrorRestrictions,
 	RecordValidationErrorUnrecognizedField,
 } from './RecordValidationError';
+import type { FieldValidationError } from '../validateField';
 
 /**
  * Validate a DataRecord using the fields in a Schema. Will confirm that there are no unrecognized fields, all required fields have a
@@ -54,12 +57,13 @@ export const validateRecord = (record: DataRecord, schema: Schema): TestResult<R
 
 	// Now we can apply the validation rules for each field in the schema.
 	// If a field is missing in the record then the value will be `undefined`. This will fail a Required restriction but pass all others.
-	const fieldValidationErrors = schema.fields.reduce<RecordValidationErrorInvalidValue[]>((output, field) => {
+	const fieldValidationErrors = schema.fields.reduce<(FieldDetails & FieldValidationError)[]>((output, field) => {
 		const fieldName = field.name;
 		const value = record[fieldName];
 
 		const fieldValidationResult = validateField(value, record, field);
 		if (!fieldValidationResult.valid) {
+			fieldValidationResult.info;
 			output.push({
 				fieldName,
 				value,

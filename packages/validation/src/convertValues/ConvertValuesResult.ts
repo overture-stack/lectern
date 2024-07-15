@@ -18,27 +18,31 @@
  */
 
 import type { DataRecord } from 'dictionary';
-import type { RecordValidationError, FieldDetails } from '../validateRecord';
+import type { RecordValidationErrorInvalidValue, RecordValidationErrorUnrecognizedField } from '../validateRecord';
+import type { SchemaRecordError } from '../validateSchema';
+import type { Result } from 'common';
 
-export type SchemaValidationRecordErrorUniqueKey = {
-	reason: 'INVALID_BY_UNIQUE_KEY';
-	uniqueKey: DataRecord;
-	matchingRecords: number[];
+export type ConvertFieldError = RecordValidationErrorInvalidValue | RecordValidationErrorUnrecognizedField;
+
+export type ConvertRecordResult = Result<{ record: DataRecord }, { record: DataRecord; errors: ConvertFieldError[] }>;
+
+export type ConvertSchemaError = SchemaRecordError<ConvertFieldError>;
+export type ConvertSchemaResult = Result<
+	{ records: DataRecord[] },
+	{ records: DataRecord[]; errors: ConvertSchemaError[] }
+>;
+
+export type ConvertDictionaryErrorUnrecognizedSchema = { reason: 'UNRECOGNIZED_SCHEMA' };
+export type ConvertDictionaryErrorInvalidRecords = {
+	reason: 'INVALID_RECORDS';
+	errors: ConvertSchemaError[];
 };
 
-export type SchemaValidationRecordErrorUnique = FieldDetails & {
-	reason: 'INVALID_BY_UNIQUE';
-	matchingRecords: number[];
-};
+export type ConvertDictionaryFailure = { records: DataRecord[] } & (
+	| ConvertDictionaryErrorUnrecognizedSchema
+	| ConvertDictionaryErrorInvalidRecords
+);
 
-export type SchemaValidationRecordErrorDetails =
-	| RecordValidationError
-	| SchemaValidationRecordErrorUnique
-	| SchemaValidationRecordErrorUniqueKey;
+export type ConvertDictionaryData = Record<string, Result<{ records: DataRecord[] }, ConvertDictionaryFailure>>;
 
-export type SchemaRecordError<ErrorDetails> = {
-	recordIndex: number;
-	recordErrors: ErrorDetails[];
-};
-
-export type SchemaValidationError = SchemaRecordError<SchemaValidationRecordErrorDetails>;
+export type ConvertDictionaryResult = Result<ConvertDictionaryData, ConvertDictionaryData>;

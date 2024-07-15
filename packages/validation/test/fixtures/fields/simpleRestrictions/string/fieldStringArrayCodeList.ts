@@ -17,24 +17,15 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecordValue } from 'dictionary';
-import type {
-	FieldValidationErrorRestrictions,
-	FieldValidationErrorValueType,
-} from '../validateField/FieldValidationError';
+import type { SchemaStringField } from 'dictionary';
+import { codeListString } from '../../../restrictions/codeListsFixtures';
 
-export type FieldDetails = {
-	fieldName: string;
-	value: DataRecordValue;
-};
-
-export type RecordValidationErrorInvalidValue = FieldDetails & FieldValidationErrorValueType;
-export type RecordValidationErrorRestrictions = FieldDetails & FieldValidationErrorRestrictions;
-export type RecordValidationErrorUnrecognizedField = FieldDetails & {
-	reason: 'UNRECOGNIZED_FIELD';
-};
-
-export type RecordValidationError =
-	| RecordValidationErrorInvalidValue
-	| RecordValidationErrorRestrictions
-	| RecordValidationErrorUnrecognizedField;
+export const fieldStringArrayCodeList = {
+	name: 'favorite-foods',
+	valueType: 'string',
+	isArray: true,
+	description: 'Optional field. Values must be from the food code list (apple, banana, carrot, donut).',
+	restrictions: {
+		codeList: codeListString,
+	},
+} as const satisfies SchemaStringField;
