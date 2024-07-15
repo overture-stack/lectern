@@ -22,17 +22,12 @@ export type Success<T> = { success: true; data: T };
 export type Failure<T = void> = { success: false; message: string; data: T };
 
 /**
- * Represents a response that on success will include data of type A,
- * and on failure will return data of type B
- */
-export type Either<A, B> = Success<A> | Failure<B>;
-
-/**
  * Represents a response that on success will include data of type T,
  * otherwise a message will be returned in place of the data explaining the failure.
- * The failure object has data type of void.
+ *
+ * Optionally, a data type can be provided for the failure case.
  */
-export type Result<T> = Success<T> | Failure;
+export type Result<TSucceed, TFail = void> = Success<TSucceed> | Failure<TFail>;
 
 /* ******************* *
    Convenience Methods 
@@ -57,12 +52,12 @@ export const failure = (message: string): Failure => ({
 });
 
 /**
- * Create a Fallback response for the Either type which includes the fallback data
+ * Create a failure response with data. If the Result expects failure data, use this function instead of the default `failure`
  * @param {T} data
  * @returns {Failure<T>} `{success: false, message, data}`
  */
-export const alternate = <T>(data: T, message: string): Failure<T> => ({
+export const failWith = <T>(message: string, data: T): Failure<T> => ({
 	success: false,
-	data,
 	message,
+	data,
 });
