@@ -17,20 +17,73 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { SchemaValidationError } from '@overture-stack/lectern-validation';
+import {
+	SchemaValidationError,
+	type ConvertDictionaryData,
+	type ConvertRecordFailureData,
+	type ConvertSchemaFailureData,
+	type DictionaryValidationError,
+	type RecordValidationError,
+} from '@overture-stack/lectern-validation';
 import { DataRecord, Schema } from 'dictionary';
 
 export type ProcessingFunction = (schema: Schema, rec: Readonly<DataRecord>, index: number) => any;
 
-export type SchemaProcessingResult = {
-	validationErrors: SchemaValidationError[];
-	processedRecord: DataRecord;
+type RecordProcessingErrorSuccess = {
+	status: 'SUCCESS';
+	record: DataRecord;
+};
+type RecordProcessingErrorConversion = ConvertRecordFailureData & {
+	status: 'ERROR_CONVERSION';
+};
+type RecordProcessingErrorValidation = {
+	status: 'ERROR_VALIDATION';
+	record: DataRecord;
+	errors: RecordValidationError[];
+};
+export type RecordProcessingResult =
+	| RecordProcessingErrorSuccess
+	| RecordProcessingErrorConversion
+	| RecordProcessingErrorValidation;
+
+type SchemaProcessingErrorSuccess = {
+	status: 'SUCCESS';
+	records: DataRecord[];
+};
+type SchemaProcessingErrorConversion = ConvertSchemaFailureData & {
+	status: 'ERROR_CONVERSION';
+};
+type SchemaProcessingErrorValidation = {
+	status: 'ERROR_VALIDATION';
+	records: DataRecord[];
+	errors: SchemaValidationError[];
+};
+export type SchemaProcessingResult =
+	| SchemaProcessingErrorSuccess
+	| SchemaProcessingErrorConversion
+	| SchemaProcessingErrorValidation;
+
+type DictionaryProcessingErrorSuccess = {
+	status: 'SUCCESS';
+	data: Record<string, DataRecord[]>;
+};
+type DictionaryProcessingErrorConversion = {
+	status: 'ERROR_CONVERSION';
+	data: ConvertDictionaryData;
 };
 
-export type BatchProcessingResult = {
-	validationErrors: SchemaValidationError[];
-	processedRecords: DataRecord[];
+/**
+ * Includes all converted data plus the list of errors that occurred in validation.
+ */
+type DictionaryProcessingErrorValidation = {
+	status: 'ERROR_VALIDATION';
+	data: Record<string, DataRecord[]>;
+	errors: DictionaryValidationError[];
 };
+export type DictionaryProcessingResult =
+	| DictionaryProcessingErrorSuccess
+	| DictionaryProcessingErrorConversion
+	| DictionaryProcessingErrorValidation;
 
 export interface FieldNamesByPriorityMap {
 	required: string[];

@@ -24,13 +24,12 @@ import type { Result } from 'common';
 
 export type ConvertFieldError = RecordValidationErrorInvalidValue | RecordValidationErrorUnrecognizedField;
 
-export type ConvertRecordResult = Result<{ record: DataRecord }, { record: DataRecord; errors: ConvertFieldError[] }>;
+export type ConvertRecordFailureData = { record: DataRecord; errors: ConvertFieldError[] };
+export type ConvertRecordResult = Result<{ record: DataRecord }, ConvertRecordFailureData>;
 
 export type ConvertSchemaError = SchemaRecordError<ConvertFieldError>;
-export type ConvertSchemaResult = Result<
-	{ records: DataRecord[] },
-	{ records: DataRecord[]; errors: ConvertSchemaError[] }
->;
+export type ConvertSchemaFailureData = { records: DataRecord[]; errors: ConvertSchemaError[] };
+export type ConvertSchemaResult = Result<{ records: DataRecord[] }, ConvertSchemaFailureData>;
 
 export type ConvertDictionaryErrorUnrecognizedSchema = { reason: 'UNRECOGNIZED_SCHEMA' };
 export type ConvertDictionaryErrorInvalidRecords = {
