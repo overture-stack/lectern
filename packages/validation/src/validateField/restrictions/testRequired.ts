@@ -70,7 +70,7 @@ const testRequiredArray = (rule: boolean, values: ArrayDataValue): TestResult<Re
 /**
  * Validate if a value is valid based on the required restriction value.
  *
- * When a field has the restriciton `required: true`, it cannot be `undefined` or be an empty string. If
+ * When a field has the restriction `required: true`, it cannot be `undefined` or be an empty string. If
  * the field is an array it cannot be an empty array (length 0).
  *
  * When a field has the restriction `required: false` then this test will always return as `valid: true`

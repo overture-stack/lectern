@@ -42,7 +42,7 @@ import { testUniqueFieldRestriction } from './restrictions/uniqueField/testUniqu
  */
 export const validateSchema = (records: Array<DataRecord>, schema: Schema): TestResult<SchemaValidationError[]> => {
 	// Setup to improve performance of Schema validations that compare a record to every record in the data set.
-	// We build maps of uniqueKey and unique field values so that they can be used while testing these restricitons for each record
+	// We build maps of uniqueKey and unique field values so that they can be used while testing these restrictions for each record
 	const uniqueKeyRule = schema.restrictions?.uniqueKey;
 	const uniqueKeyMap =
 		uniqueKeyRule && uniqueKeyRule.length > 0 ? generateDataSetHashMap(records, uniqueKeyRule) : undefined;
