@@ -1,10 +1,12 @@
 import { expect } from 'chai';
-import { validateSchema } from '../../src';
-import { schemaUniqueString } from '../fixtures/schema/schemaUniqueString';
-import type { DataRecord, Schema } from 'dictionary';
+import type { DataRecord } from 'dictionary';
 import assert from 'node:assert';
-import { schemaUniqueKey } from '../fixtures/schema/schemaUniqueKey';
+import { validateSchema } from '../../src';
 import { schemaSingleStringRequired } from '../fixtures/schema/schemaSingleStringRequired';
+import { schemaUniqueKey } from '../fixtures/schema/schemaUniqueKey';
+import { schemaUniqueString } from '../fixtures/schema/schemaUniqueString';
+import { schemaUniqueStringArray } from '../fixtures/schema/schemaUniqueStringArray';
+import { schemaUniqueKeyWithArray } from '../fixtures/schema/schemaUniqueKeyWithArray';
 
 describe('Schema - validateSchema', () => {
 	describe('Restriction - unique', () => {
@@ -65,8 +67,76 @@ describe('Schema - validateSchema', () => {
 				'Every invalid record should have a unique restriction error',
 			).true;
 		});
+		// TODO: Test unique on array field
+		describe('Array fields', () => {
+			it('Valid when arrays have different values', () => {
+				const records: DataRecord[] = [
+					{ 'unique-string-array': ['qwerty', 'uiop[]'] },
+					{ 'unique-string-array': ['asdf'] },
+					{ 'unique-string-array': ['ghjkl'] },
+					{ 'unique-string-array': ['zxcv', 'bn', 'm,./'] },
+				];
+				const result = validateSchema(records, schemaUniqueStringArray);
+				expect(result.valid).true;
+			});
+			it('Valid for arrays with same values in different order', () => {
+				const records: DataRecord[] = [
+					{ 'unique-string-array': ['qwerty'] },
+					{ 'unique-string-array': ['uiop[]'] },
+					{ 'unique-string-array': ['qwerty', 'uiop[]'] },
+					{ 'unique-string-array': ['uiop[]', 'qwerty'] },
+					{ 'unique-string-array': ['qwerty', 'uiop[]', 'asdf'] },
+					{ 'unique-string-array': ['ghjkl', 'qwerty', 'uiop[]'] },
+				];
+				const result = validateSchema(records, schemaUniqueStringArray);
+				expect(result.valid).true;
+			});
+			it('Valid with multiple empty arrays', () => {
+				// empty arrays are used when no value is provided
+				// and records with no value provided should not fail a unique restriction
+				const records: DataRecord[] = [
+					{ 'unique-string-array': ['qwerty'] },
+					{ 'unique-string-array': [] },
+					{ 'unique-string-array': [] },
+				];
+				const result = validateSchema(records, schemaUniqueStringArray);
+				expect(result.valid).true;
+			});
+			it('Rejects arrays with same values in same order', () => {
+				const records: DataRecord[] = [
+					{ 'unique-string-array': ['qwerty'] },
+					{ 'unique-string-array': ['uiop[]'] },
+
+					// duplicate entry x3
+					{ 'unique-string-array': ['qwerty', 'uiop[]'] },
+					{ 'unique-string-array': ['qwerty', 'uiop[]'] },
+
+					{ 'unique-string-array': ['uiop[]', 'qwerty'] },
+					{ 'unique-string-array': ['qwerty', 'uiop[]', 'asdf'] },
+
+					// duplicate entry
+					{ 'unique-string-array': ['ghjkl', 'qwerty', 'uiop[]'] },
+					{ 'unique-string-array': ['ghjkl', 'qwerty', 'uiop[]'] },
+
+					// third copy of earlier entry
+					{ 'unique-string-array': ['qwerty', 'uiop[]'] },
+				];
+				const result = validateSchema(records, schemaUniqueStringArray);
+				expect(result.valid).false;
+				assert(result.valid === false);
+				expect(result.info.length).equal(5);
+
+				const failedIndices = [2, 3, 6, 7, 8];
+				const allIndicesListed = failedIndices.every(
+					(index) =>
+						result.info.find((error) => error.recordIndex === index)?.recordErrors[0]?.reason === 'INVALID_BY_UNIQUE',
+				);
+				expect(allIndicesListed).true;
+			});
+		});
 	});
 	describe('Restriction - uniqueKey', () => {
+		// TODO: Test uniqueKey when one or more fields is an array
 		it('Valid for empty data set', () => {
 			const records: DataRecord[] = [];
 			const result = validateSchema(records, schemaUniqueKey);
@@ -90,7 +160,7 @@ describe('Schema - validateSchema', () => {
 			const result = validateSchema(records, schemaUniqueKey);
 			expect(result.valid).true;
 		});
-		it('Valid when unique key value changes to undefined', () => {
+		it('Valid when one element of unique key value changes to undefined', () => {
 			const records: DataRecord[] = [
 				{ 'any-string': 'asdf', 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
 				{ 'any-string': undefined, 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
@@ -179,6 +249,48 @@ describe('Schema - validateSchema', () => {
 				result.info.every((invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_BY_UNIQUE_KEY'),
 				'Every invalid record should have a uniqueKey error',
 			).true;
+		});
+		describe('Array field in uniqueKey', () => {
+			it('Valid when unique key has an array field', () => {
+				const records: DataRecord[] = [
+					{ 'any-string-array': ['asdf'], 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
+					{ 'any-string-array': ['qwerty', 'asdf'], 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
+					{ 'any-string-array': ['asdf', 'qwerty'], 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
+					{ 'any-string-array': ['asdf'], 'any-number': 56.78, 'any-integer': 123, 'any-boolean': true },
+					{ 'any-string-array': ['asdf'], 'any-number': 12.34, 'any-integer': 456, 'any-boolean': true },
+					{ 'any-string-array': ['asdf'], 'any-number': 12.34, 'any-integer': 123, 'any-boolean': false },
+				];
+				const result = validateSchema(records, schemaUniqueKeyWithArray);
+				expect(result.valid).true;
+			});
+			it('Invalid when unique key has a repeated array field', () => {
+				// first two records are duplicates
+				const records: DataRecord[] = [
+					{ 'any-string-array': ['asdf'], 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
+					{ 'any-string-array': ['asdf'], 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
+					{ 'any-string-array': ['asdf'], 'any-number': 56.78, 'any-integer': 123, 'any-boolean': true },
+					{ 'any-string-array': ['asdf'], 'any-number': 12.34, 'any-integer': 456, 'any-boolean': true },
+					{ 'any-string-array': ['asdf'], 'any-number': 12.34, 'any-integer': 123, 'any-boolean': false },
+				];
+				const result = validateSchema(records, schemaUniqueKeyWithArray);
+				expect(result.valid).false;
+				assert(result.valid === false);
+				expect(result.info.length).equal(2);
+			});
+			it('Invalid when repeated value is empty array', () => {
+				// first two records are duplicates
+				const records: DataRecord[] = [
+					{ 'any-string-array': [], 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
+					{ 'any-string-array': [], 'any-number': 12.34, 'any-integer': 123, 'any-boolean': true },
+					{ 'any-string-array': [], 'any-number': 56.78, 'any-integer': 123, 'any-boolean': true },
+					{ 'any-string-array': [], 'any-number': 12.34, 'any-integer': 456, 'any-boolean': true },
+					{ 'any-string-array': [], 'any-number': 12.34, 'any-integer': 123, 'any-boolean': false },
+				];
+				const result = validateSchema(records, schemaUniqueKeyWithArray);
+				expect(result.valid).false;
+				assert(result.valid === false);
+				expect(result.info.length).equal(2);
+			});
 		});
 	});
 	describe('Record validations', () => {

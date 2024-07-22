@@ -37,7 +37,7 @@ export const testUniqueFieldRestriction = (
 	uniqueKeyMap: Map<string, number[]>,
 ): TestResult<SchemaValidationRecordErrorUnique> => {
 	// Only apply unique field restriction when a value is provided
-	if (value === undefined) {
+	if (value === undefined || (Array.isArray(value) && value.length === 0)) {
 		return valid();
 	}
 	// Build unique key for this record, based on the fields listed in the rule
