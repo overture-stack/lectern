@@ -113,14 +113,14 @@ describe('Field - Restrictions - testCodeList', () => {
 			expect(result.valid).false;
 			assert(!result.valid);
 
-			expect(Array.isArray(result.info.invalidItems)).true;
-			assert(Array.isArray(result.info.invalidItems));
+			expect(Array.isArray(result.details.invalidItems)).true;
+			assert(Array.isArray(result.details.invalidItems));
 
-			expect(result.info.invalidItems.length).equal(2);
-			expect(result.info.invalidItems[0]?.position).equal(0);
-			expect(result.info.invalidItems[0]?.value).equal('linux');
-			expect(result.info.invalidItems[1]?.position).equal(2);
-			expect(result.info.invalidItems[1]?.value).equal('turnip');
+			expect(result.details.invalidItems.length).equal(2);
+			expect(result.details.invalidItems[0]?.position).equal(0);
+			expect(result.details.invalidItems[0]?.value).equal('linux');
+			expect(result.details.invalidItems[1]?.position).equal(2);
+			expect(result.details.invalidItems[1]?.value).equal('turnip');
 		});
 	});
 });

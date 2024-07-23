@@ -55,15 +55,15 @@ describe('Schema - validateSchema', () => {
 			expect(result.valid).false;
 			assert(result.valid === false);
 
-			expect(result.info.length, 'There should be an invalid record for each field with a duplicate value').equal(
+			expect(result.details.length, 'There should be an invalid record for each field with a duplicate value').equal(
 				records.length,
 			);
 			expect(
-				result.info.every((invalidRecord) => invalidRecord.recordErrors.length === 1),
+				result.details.every((invalidRecord) => invalidRecord.recordErrors.length === 1),
 				'Each invalid record should have a single error',
 			).true;
 			expect(
-				result.info.every((invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_BY_UNIQUE'),
+				result.details.every((invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_BY_UNIQUE'),
 				'Every invalid record should have a unique restriction error',
 			).true;
 		});
@@ -124,12 +124,13 @@ describe('Schema - validateSchema', () => {
 				const result = validateSchema(records, schemaUniqueStringArray);
 				expect(result.valid).false;
 				assert(result.valid === false);
-				expect(result.info.length).equal(5);
+				expect(result.details.length).equal(5);
 
 				const failedIndices = [2, 3, 6, 7, 8];
 				const allIndicesListed = failedIndices.every(
 					(index) =>
-						result.info.find((error) => error.recordIndex === index)?.recordErrors[0]?.reason === 'INVALID_BY_UNIQUE',
+						result.details.find((error) => error.recordIndex === index)?.recordErrors[0]?.reason ===
+						'INVALID_BY_UNIQUE',
 				);
 				expect(allIndicesListed).true;
 			});
@@ -178,35 +179,35 @@ describe('Schema - validateSchema', () => {
 			expect(result.valid).false;
 			assert(result.valid === false);
 
-			expect(result.info.length, 'There should be an invalid record for each field with a duplicate value').equal(
+			expect(result.details.length, 'There should be an invalid record for each field with a duplicate value').equal(
 				records.length,
 			);
 			expect(
-				result.info.every((invalidRecord) => invalidRecord.recordErrors.length === 1),
+				result.details.every((invalidRecord) => invalidRecord.recordErrors.length === 1),
 				'Each invalid record should have a single error',
 			).true;
 			expect(
-				result.info.every((invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_BY_UNIQUE_KEY'),
+				result.details.every((invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_BY_UNIQUE_KEY'),
 				'Every invalid record should have a uniqueKey error',
 			).true;
 			assert(
-				result.info[0] !== undefined &&
-					result.info[0].recordErrors[0] !== undefined &&
-					result.info[0].recordErrors[0].reason === 'INVALID_BY_UNIQUE_KEY',
+				result.details[0] !== undefined &&
+					result.details[0].recordErrors[0] !== undefined &&
+					result.details[0].recordErrors[0].reason === 'INVALID_BY_UNIQUE_KEY',
 			);
 			assert(
-				result.info[1] !== undefined &&
-					result.info[1].recordErrors[0] !== undefined &&
-					result.info[1].recordErrors[0].reason === 'INVALID_BY_UNIQUE_KEY',
+				result.details[1] !== undefined &&
+					result.details[1].recordErrors[0] !== undefined &&
+					result.details[1].recordErrors[0].reason === 'INVALID_BY_UNIQUE_KEY',
 			);
 
-			expect(result.info[0].recordErrors[0].uniqueKey).deep.equal({ ...repeatedRecord });
-			expect(result.info[0].recordErrors[0].matchingRecords).include(0);
-			expect(result.info[0].recordErrors[0].matchingRecords).include(1);
+			expect(result.details[0].recordErrors[0].uniqueKey).deep.equal({ ...repeatedRecord });
+			expect(result.details[0].recordErrors[0].matchingRecords).include(0);
+			expect(result.details[0].recordErrors[0].matchingRecords).include(1);
 
-			expect(result.info[1].recordErrors[0].uniqueKey).deep.equal({ ...repeatedRecord });
-			expect(result.info[1].recordErrors[0].matchingRecords).include(0);
-			expect(result.info[1].recordErrors[0].matchingRecords).include(1);
+			expect(result.details[1].recordErrors[0].uniqueKey).deep.equal({ ...repeatedRecord });
+			expect(result.details[1].recordErrors[0].matchingRecords).include(0);
+			expect(result.details[1].recordErrors[0].matchingRecords).include(1);
 		});
 		it('Invalid for repeated key including an undefined', () => {
 			const records: DataRecord[] = [
@@ -217,15 +218,15 @@ describe('Schema - validateSchema', () => {
 			expect(result.valid).false;
 			assert(result.valid === false);
 
-			expect(result.info.length, 'There should be an invalid record for each field with a duplicate value').equal(
+			expect(result.details.length, 'There should be an invalid record for each field with a duplicate value').equal(
 				records.length,
 			);
 			expect(
-				result.info.every((invalidRecord) => invalidRecord.recordErrors.length === 1),
+				result.details.every((invalidRecord) => invalidRecord.recordErrors.length === 1),
 				'Each invalid record should have a single error',
 			).true;
 			expect(
-				result.info.every((invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_BY_UNIQUE_KEY'),
+				result.details.every((invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_BY_UNIQUE_KEY'),
 				'Every invalid record should have a uniqueKey error',
 			).true;
 		});
@@ -238,15 +239,15 @@ describe('Schema - validateSchema', () => {
 			expect(result.valid).false;
 			assert(result.valid === false);
 
-			expect(result.info.length, 'There should be an invalid record for each field with a duplicate value').equal(
+			expect(result.details.length, 'There should be an invalid record for each field with a duplicate value').equal(
 				records.length,
 			);
 			expect(
-				result.info.every((invalidRecord) => invalidRecord.recordErrors.length === 1),
+				result.details.every((invalidRecord) => invalidRecord.recordErrors.length === 1),
 				'Each invalid record should have a single error',
 			).true;
 			expect(
-				result.info.every((invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_BY_UNIQUE_KEY'),
+				result.details.every((invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_BY_UNIQUE_KEY'),
 				'Every invalid record should have a uniqueKey error',
 			).true;
 		});
@@ -275,7 +276,7 @@ describe('Schema - validateSchema', () => {
 				const result = validateSchema(records, schemaUniqueKeyWithArray);
 				expect(result.valid).false;
 				assert(result.valid === false);
-				expect(result.info.length).equal(2);
+				expect(result.details.length).equal(2);
 			});
 			it('Invalid when repeated value is empty array', () => {
 				// first two records are duplicates
@@ -289,7 +290,7 @@ describe('Schema - validateSchema', () => {
 				const result = validateSchema(records, schemaUniqueKeyWithArray);
 				expect(result.valid).false;
 				assert(result.valid === false);
-				expect(result.info.length).equal(2);
+				expect(result.details.length).equal(2);
 			});
 		});
 	});
@@ -300,12 +301,13 @@ describe('Schema - validateSchema', () => {
 			expect(result.valid).false;
 			assert(result.valid === false);
 
-			expect(result.info.length).equal(1);
-			expect(result.info[0]?.recordIndex, 'Invalid record needs to indicate the correct position in the array.').equal(
-				1,
-			);
+			expect(result.details.length).equal(1);
 			expect(
-				result.info[0]?.recordErrors[0]?.reason,
+				result.details[0]?.recordIndex,
+				'Invalid record needs to indicate the correct position in the array.',
+			).equal(1);
+			expect(
+				result.details[0]?.recordErrors[0]?.reason,
 				'Invalid record needs to indicate it failed by restriction.',
 			).equal('INVALID_BY_RESTRICTION');
 		});
@@ -319,12 +321,13 @@ describe('Schema - validateSchema', () => {
 			expect(result.valid).false;
 			assert(result.valid === false);
 
-			expect(result.info.length).equal(1);
-			expect(result.info[0]?.recordIndex, 'Invalid record needs to indicate the correct position in the array.').equal(
-				2,
-			);
+			expect(result.details.length).equal(1);
 			expect(
-				result.info[0]?.recordErrors[0]?.reason,
+				result.details[0]?.recordIndex,
+				'Invalid record needs to indicate the correct position in the array.',
+			).equal(2);
+			expect(
+				result.details[0]?.recordErrors[0]?.reason,
 				'Invalid record needs to indicate it failed by invalid value type.',
 			).equal('INVALID_VALUE_TYPE');
 		});
@@ -339,15 +342,15 @@ describe('Schema - validateSchema', () => {
 			expect(result.valid).false;
 			assert(result.valid === false);
 
-			expect(result.info.length).equal(3);
+			expect(result.details.length).equal(3);
 
-			const missingValueRecord = result.info.find(
+			const missingValueRecord = result.details.find(
 				(invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_BY_RESTRICTION',
 			);
-			const invalidValueTypeRecord = result.info.find(
+			const invalidValueTypeRecord = result.details.find(
 				(invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'INVALID_VALUE_TYPE',
 			);
-			const unrecognizedFieldRecord = result.info.find(
+			const unrecognizedFieldRecord = result.details.find(
 				(invalidRecord) => invalidRecord.recordErrors[0]?.reason === 'UNRECOGNIZED_FIELD',
 			);
 

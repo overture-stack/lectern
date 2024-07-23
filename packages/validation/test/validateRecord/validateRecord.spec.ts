@@ -56,10 +56,10 @@ describe('Record - validateRecord', () => {
 			expect(result.valid).false;
 			assert(result.valid === false);
 
-			expect(result.info.length).equal(1);
-			expect(result.info[0]?.reason).equal('UNRECOGNIZED_FIELD');
-			expect(result.info[0]?.fieldName).equal(unknownFieldName);
-			expect(result.info[0]?.fieldValue).equal(unknownFieldValue);
+			expect(result.details.length).equal(1);
+			expect(result.details[0]?.reason).equal('UNRECOGNIZED_FIELD');
+			expect(result.details[0]?.fieldName).equal(unknownFieldName);
+			expect(result.details[0]?.fieldValue).equal(unknownFieldValue);
 		});
 		it('Invalid with multiple unrecognized fields, reports each error', () => {
 			const unknownFieldNameA = 'unknown-field-name-a';
@@ -73,14 +73,14 @@ describe('Record - validateRecord', () => {
 			assert(result.valid === false);
 
 			// Confirmed result is invalid, make sure we have multiple unrecognized field errors with the correct info
-			expect(result.info.length).equal(2);
-			const fieldErrorA = result.info.find((error) => error.fieldName === unknownFieldNameA);
+			expect(result.details.length).equal(2);
+			const fieldErrorA = result.details.find((error) => error.fieldName === unknownFieldNameA);
 			expect(fieldErrorA).not.undefined;
 			assert(fieldErrorA !== undefined);
 			expect(fieldErrorA.reason).equal('UNRECOGNIZED_FIELD');
 			expect(fieldErrorA.fieldValue).equal(record[unknownFieldNameA]);
 
-			const fieldErrorB = result.info.find((error) => error.fieldName === unknownFieldNameB);
+			const fieldErrorB = result.details.find((error) => error.fieldName === unknownFieldNameB);
 			expect(fieldErrorB).not.undefined;
 			assert(fieldErrorB !== undefined);
 			expect(fieldErrorB.reason).equal('UNRECOGNIZED_FIELD');
@@ -94,10 +94,10 @@ describe('Record - validateRecord', () => {
 			expect(result.valid).false;
 			assert(result.valid === false);
 
-			expect(result.info.length).equal(1);
-			expect(result.info[0]?.reason).equal('INVALID_BY_RESTRICTION');
-			expect(result.info[0]?.fieldName).equal('string-required');
-			expect(result.info[0]?.fieldValue).equal(undefined);
+			expect(result.details.length).equal(1);
+			expect(result.details[0]?.reason).equal('INVALID_BY_RESTRICTION');
+			expect(result.details[0]?.fieldName).equal('string-required');
+			expect(result.details[0]?.fieldValue).equal(undefined);
 		});
 
 		it('Invalid with multiple missing required fields, reports each error', () => {
@@ -105,12 +105,12 @@ describe('Record - validateRecord', () => {
 			expect(result.valid).false;
 			assert(result.valid === false);
 
-			expect(result.info.length).equal(4);
+			expect(result.details.length).equal(4);
 
-			const fieldError0 = result.info.find((error) => error.fieldName === schemaAllDataTypesRequired.fields[0].name);
-			const fieldError1 = result.info.find((error) => error.fieldName === schemaAllDataTypesRequired.fields[1].name);
-			const fieldError2 = result.info.find((error) => error.fieldName === schemaAllDataTypesRequired.fields[2].name);
-			const fieldError3 = result.info.find((error) => error.fieldName === schemaAllDataTypesRequired.fields[3].name);
+			const fieldError0 = result.details.find((error) => error.fieldName === schemaAllDataTypesRequired.fields[0].name);
+			const fieldError1 = result.details.find((error) => error.fieldName === schemaAllDataTypesRequired.fields[1].name);
+			const fieldError2 = result.details.find((error) => error.fieldName === schemaAllDataTypesRequired.fields[2].name);
+			const fieldError3 = result.details.find((error) => error.fieldName === schemaAllDataTypesRequired.fields[3].name);
 			expect(fieldError0).not.undefined;
 			expect(fieldError1).not.undefined;
 			expect(fieldError2).not.undefined;
@@ -147,13 +147,15 @@ describe('Record - validateRecord', () => {
 			expect(result.valid).false;
 			assert(result.valid === false);
 
-			expect(result.info.length).equal(3);
+			expect(result.details.length).equal(3);
 
-			const fieldErrorStringMany = result.info.find((error) => error.fieldName === fieldStringManyRestrictions.name);
+			const fieldErrorStringMany = result.details.find((error) => error.fieldName === fieldStringManyRestrictions.name);
 			expect(fieldErrorStringMany).not.undefined;
-			const fieldErrorNumberCodeList = result.info.find((error) => error.fieldName === fieldNumberArrayCodeList.name);
+			const fieldErrorNumberCodeList = result.details.find(
+				(error) => error.fieldName === fieldNumberArrayCodeList.name,
+			);
 			expect(fieldErrorNumberCodeList).not.undefined;
-			const fieldErrorIntegerRequired = result.info.find((error) => error.fieldName === fieldIntegerRequired.name);
+			const fieldErrorIntegerRequired = result.details.find((error) => error.fieldName === fieldIntegerRequired.name);
 			expect(fieldErrorIntegerRequired).not.undefined;
 			assert(
 				fieldErrorStringMany !== undefined &&
@@ -184,10 +186,10 @@ describe('Record - validateRecord', () => {
 			expect(result.valid).false;
 			assert(result.valid === false);
 
-			expect(result.info.length).equal(2);
+			expect(result.details.length).equal(2);
 
-			const fieldValueError = result.info.find((error) => error.fieldName === 'number-code-list');
-			const unknownFieldError = result.info.find((error) => error.fieldName === 'unknown-field');
+			const fieldValueError = result.details.find((error) => error.fieldName === 'number-code-list');
+			const unknownFieldError = result.details.find((error) => error.fieldName === 'unknown-field');
 			expect(fieldValueError).not.undefined;
 			expect(unknownFieldError).not.undefined;
 			assert(fieldValueError !== undefined && unknownFieldError !== undefined);

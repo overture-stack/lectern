@@ -64,21 +64,21 @@ export const validateSchema = (records: Array<DataRecord>, schema: Schema): Test
 			const uniqueKeyResult =
 				uniqueKeyMap && uniqueKeyRule ? testUniqueKey(record, uniqueKeyRule, uniqueKeyMap) : valid();
 			if (!uniqueKeyResult.valid) {
-				recordErrors.push(uniqueKeyResult.info);
+				recordErrors.push(uniqueKeyResult.details);
 			}
 
 			// Unique Field Restriction Tests
 			uniqueFieldMaps.forEach((hashMap, fieldName) => {
 				const uniqueFieldResult = testUniqueFieldRestriction(record[fieldName], fieldName, hashMap);
 				if (!uniqueFieldResult.valid) {
-					recordErrors.push(uniqueFieldResult.info);
+					recordErrors.push(uniqueFieldResult.details);
 				}
 			});
 
 			// Data Record validation
 			const recordValidationResult = validateRecord(record, schema);
 			if (!recordValidationResult.valid) {
-				recordErrors.push(...recordValidationResult.info);
+				recordErrors.push(...recordValidationResult.details);
 			}
 			return recordErrors.length ? { recordIndex, recordErrors } : undefined;
 		})

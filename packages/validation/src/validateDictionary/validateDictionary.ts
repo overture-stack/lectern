@@ -62,7 +62,7 @@ export const validateDictionary = (
 	const unrecognizedSchemaErrors = Object.keys(data)
 		.map((schemaName) => testUnrecognizedSchema(schemaName, dictionary))
 		.filter((result) => !result.valid)
-		.map((result) => result.info);
+		.map((result) => result.details);
 
 	const foreignSchemaReferenceData = collectSchemaReferenceData(data, dictionary);
 
@@ -85,13 +85,13 @@ export const validateDictionary = (
 							}
 							return {
 								recordIndex,
-								recordErrors: foreignKeyTestResult.info,
+								recordErrors: foreignKeyTestResult.details,
 							};
 						})
 						.filter(isDefined)
 				: [];
 			const combinedErrors = mergeSchemaRecordValidationErrors<DictionaryValidationRecordErrorDetails>(
-				schemaValidationResult.valid ? [] : schemaValidationResult.info,
+				schemaValidationResult.valid ? [] : schemaValidationResult.details,
 				foreignKeyErrors,
 			);
 

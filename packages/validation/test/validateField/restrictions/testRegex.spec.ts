@@ -74,16 +74,16 @@ describe('Field - Restrictions - testRegex', () => {
 			expect(result.valid).false;
 			assert(!result.valid);
 
-			expect(Array.isArray(result.info.invalidItems)).true;
-			assert(Array.isArray(result.info.invalidItems));
+			expect(Array.isArray(result.details.invalidItems)).true;
+			assert(Array.isArray(result.details.invalidItems));
 
-			expect(result.info.invalidItems.length).equal(3);
-			expect(result.info.invalidItems[0]?.position).equal(validDateArray.length);
-			expect(result.info.invalidItems[0]?.value).equal('invalid');
-			expect(result.info.invalidItems[1]?.position).equal(validDateArray.length + 2);
-			expect(result.info.invalidItems[1]?.value).equal('another invalid');
-			expect(result.info.invalidItems[2]?.position).equal(validDateArray.length + 3);
-			expect(result.info.invalidItems[2]?.value).equal('third invalid');
+			expect(result.details.invalidItems.length).equal(3);
+			expect(result.details.invalidItems[0]?.position).equal(validDateArray.length);
+			expect(result.details.invalidItems[0]?.value).equal('invalid');
+			expect(result.details.invalidItems[1]?.position).equal(validDateArray.length + 2);
+			expect(result.details.invalidItems[1]?.value).equal('another invalid');
+			expect(result.details.invalidItems[2]?.position).equal(validDateArray.length + 3);
+			expect(result.details.invalidItems[2]?.value).equal('third invalid');
 		});
 	});
 });
