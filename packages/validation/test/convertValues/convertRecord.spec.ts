@@ -61,12 +61,12 @@ describe('Convert Values - convertRecordValues', () => {
 		const anyNumberError = result.data.errors.find((error) => error.fieldName === 'any-number');
 		expect(anyNumberError).not.undefined;
 		assert(anyNumberError !== undefined);
-		expect(anyNumberError.value).equal('NaN');
+		expect(anyNumberError.fieldValue).equal('NaN');
 
 		const anyIntegerError = result.data.errors.find((error) => error.fieldName === 'any-integer');
 		expect(anyIntegerError).not.undefined;
 		assert(anyIntegerError !== undefined);
-		expect(anyIntegerError.value).equal('12.34');
+		expect(anyIntegerError.fieldValue).equal('12.34');
 
 		const anyBooleanError = result.data.errors.find((error) => error.fieldName === 'any-boolean');
 		expect(anyBooleanError).not.undefined;
@@ -104,6 +104,6 @@ describe('Convert Values - convertRecordValues', () => {
 		assert(unrecognizedFieldError !== undefined);
 		expect(unrecognizedFieldError.reason).equal('UNRECOGNIZED_FIELD');
 		expect(unrecognizedFieldError.fieldName).equal('unrecognized-field');
-		expect(unrecognizedFieldError.value).equal('true');
+		expect(unrecognizedFieldError.fieldValue).equal('true');
 	});
 });

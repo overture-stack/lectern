@@ -32,16 +32,16 @@ import type { SchemaValidationRecordErrorUnique } from '../../SchemaValidationEr
  * @returns
  */
 export const testUniqueFieldRestriction = (
-	value: DataRecordValue,
+	fieldValue: DataRecordValue,
 	fieldName: string,
 	uniqueKeyMap: Map<string, number[]>,
 ): TestResult<SchemaValidationRecordErrorUnique> => {
 	// Only apply unique field restriction when a value is provided
-	if (value === undefined || (Array.isArray(value) && value.length === 0)) {
+	if (fieldValue === undefined || (Array.isArray(fieldValue) && fieldValue.length === 0)) {
 		return valid();
 	}
 	// Build unique key for this record, based on the fields listed in the rule
-	const hash = hashDataRecord({ [fieldName]: value });
+	const hash = hashDataRecord({ [fieldName]: fieldValue });
 
 	// Lookup the key in the provided map. Report errors when the map has more than one record index found for this hash
 	const matchingRecords = uniqueKeyMap.get(hash);
@@ -49,7 +49,7 @@ export const testUniqueFieldRestriction = (
 		return invalid({
 			reason: 'INVALID_BY_UNIQUE',
 			fieldName,
-			value,
+			fieldValue,
 			matchingRecords,
 		});
 	}

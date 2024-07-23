@@ -59,7 +59,7 @@ describe('Record - validateRecord', () => {
 			expect(result.info.length).equal(1);
 			expect(result.info[0]?.reason).equal('UNRECOGNIZED_FIELD');
 			expect(result.info[0]?.fieldName).equal(unknownFieldName);
-			expect(result.info[0]?.value).equal(unknownFieldValue);
+			expect(result.info[0]?.fieldValue).equal(unknownFieldValue);
 		});
 		it('Invalid with multiple unrecognized fields, reports each error', () => {
 			const unknownFieldNameA = 'unknown-field-name-a';
@@ -78,13 +78,13 @@ describe('Record - validateRecord', () => {
 			expect(fieldErrorA).not.undefined;
 			assert(fieldErrorA !== undefined);
 			expect(fieldErrorA.reason).equal('UNRECOGNIZED_FIELD');
-			expect(fieldErrorA.value).equal(record[unknownFieldNameA]);
+			expect(fieldErrorA.fieldValue).equal(record[unknownFieldNameA]);
 
 			const fieldErrorB = result.info.find((error) => error.fieldName === unknownFieldNameB);
 			expect(fieldErrorB).not.undefined;
 			assert(fieldErrorB !== undefined);
 			expect(fieldErrorB.reason).equal('UNRECOGNIZED_FIELD');
-			expect(fieldErrorB.value).equal(record[unknownFieldNameB]);
+			expect(fieldErrorB.fieldValue).equal(record[unknownFieldNameB]);
 		});
 	});
 
@@ -97,7 +97,7 @@ describe('Record - validateRecord', () => {
 			expect(result.info.length).equal(1);
 			expect(result.info[0]?.reason).equal('INVALID_BY_RESTRICTION');
 			expect(result.info[0]?.fieldName).equal('string-required');
-			expect(result.info[0]?.value).equal(undefined);
+			expect(result.info[0]?.fieldValue).equal(undefined);
 		});
 
 		it('Invalid with multiple missing required fields, reports each error', () => {
@@ -123,13 +123,13 @@ describe('Record - validateRecord', () => {
 			);
 
 			expect(fieldError0.reason).equal('INVALID_BY_RESTRICTION');
-			expect(fieldError0.value).equal(undefined);
+			expect(fieldError0.fieldValue).equal(undefined);
 			expect(fieldError1.reason).equal('INVALID_BY_RESTRICTION');
-			expect(fieldError1.value).equal(undefined);
+			expect(fieldError1.fieldValue).equal(undefined);
 			expect(fieldError2.reason).equal('INVALID_BY_RESTRICTION');
-			expect(fieldError2.value).equal(undefined);
+			expect(fieldError2.fieldValue).equal(undefined);
 			expect(fieldError3.reason).equal('INVALID_BY_RESTRICTION');
-			expect(fieldError3.value).equal(undefined);
+			expect(fieldError3.fieldValue).equal(undefined);
 
 			// each of these errors will have fieldValidationErrors inside them which are validated in validateField.spec.ts
 		});
@@ -162,11 +162,11 @@ describe('Record - validateRecord', () => {
 			);
 
 			expect(fieldErrorStringMany.reason).equal('INVALID_BY_RESTRICTION');
-			expect(fieldErrorStringMany.value).equal('this value is wrong');
+			expect(fieldErrorStringMany.fieldValue).equal('this value is wrong');
 			expect(fieldErrorNumberCodeList.reason).equal('INVALID_BY_RESTRICTION');
-			expect(fieldErrorNumberCodeList.value).deep.equal([1.61803, 2.41421, 0]);
+			expect(fieldErrorNumberCodeList.fieldValue).deep.equal([1.61803, 2.41421, 0]);
 			expect(fieldErrorIntegerRequired.reason).equal('INVALID_BY_RESTRICTION');
-			expect(fieldErrorIntegerRequired.value).equal(undefined);
+			expect(fieldErrorIntegerRequired.fieldValue).equal(undefined);
 		});
 	});
 	describe('Mixed Errors', () => {
@@ -193,10 +193,10 @@ describe('Record - validateRecord', () => {
 			assert(fieldValueError !== undefined && unknownFieldError !== undefined);
 
 			expect(fieldValueError.reason).equal('INVALID_VALUE_TYPE');
-			expect(fieldValueError.value).equal('should be a number');
+			expect(fieldValueError.fieldValue).equal('should be a number');
 
 			expect(unknownFieldError.reason).equal('UNRECOGNIZED_FIELD');
-			expect(unknownFieldError.value).equal(123);
+			expect(unknownFieldError.fieldValue).equal(123);
 		});
 	});
 });

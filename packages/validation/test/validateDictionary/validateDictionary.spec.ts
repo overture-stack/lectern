@@ -261,7 +261,7 @@ describe('Dictionary - validateDictionary', () => {
 			expect(result.info[0].invalidRecords[0]?.recordErrors[0]?.reason).equal('INVALID_BY_FOREIGNKEY');
 			assert(result.info[0].invalidRecords[0]?.recordErrors[0]?.reason === 'INVALID_BY_FOREIGNKEY');
 			expect(result.info[0].invalidRecords[0]?.recordErrors[0]?.fieldName).equal('string-with-foreign-key');
-			expect(result.info[0].invalidRecords[0]?.recordErrors[0]?.value).equal('invalid value');
+			expect(result.info[0].invalidRecords[0]?.recordErrors[0]?.fieldValue).equal('invalid value');
 			expect(result.info[0].invalidRecords[0]?.recordErrors[0]?.foreignSchema.schemaName).equal('all-data-types');
 			expect(result.info[0].invalidRecords[0]?.recordErrors[0]?.foreignSchema.fieldName).equal('any-string');
 		});
@@ -328,7 +328,7 @@ describe('Dictionary - validateDictionary', () => {
 			expect(errorIndex1.recordErrors[0].foreignSchema.schemaName).equal('all-data-types');
 			expect(errorIndex1.recordErrors[0].foreignSchema.fieldName).equal('any-string');
 			expect(errorIndex1.recordErrors[0].fieldName).equal('string-field');
-			expect(errorIndex1.recordErrors[0].value).equal('lkjh');
+			expect(errorIndex1.recordErrors[0].fieldValue).equal('lkjh');
 
 			const errorIndex2 = result.info[0].invalidRecords.find((invalidRecord) => invalidRecord.recordIndex === 2);
 			expect(errorIndex2).not.undefined;
@@ -360,7 +360,7 @@ describe('Dictionary - validateDictionary', () => {
 			expect(errorIndex3.recordErrors[0].foreignSchema.schemaName).equal('all-data-types');
 			expect(errorIndex3.recordErrors[0].foreignSchema.fieldName).equal('any-number');
 			expect(errorIndex3.recordErrors[0].fieldName).equal('number-field');
-			expect(errorIndex3.recordErrors[0].value).equal(0);
+			expect(errorIndex3.recordErrors[0].fieldValue).equal(0);
 		});
 		it('Invalid with mix of foreign key and field validation errors', () => {
 			const dataSet = {
