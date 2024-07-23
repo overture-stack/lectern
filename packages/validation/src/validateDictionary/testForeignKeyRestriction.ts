@@ -48,7 +48,7 @@ export const testForeignKeyRestriction = (
 							reason: 'INVALID_BY_FOREIGNKEY',
 							fieldName: foreignKeyMapping.local,
 							foreignSchema: { fieldName: foreignKeyMapping.foreign, schemaName: restriction.schema },
-							value: localValue,
+							fieldValue: localValue,
 						};
 			})
 			.filter(isDefined);

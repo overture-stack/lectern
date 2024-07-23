@@ -70,7 +70,7 @@ const applyFieldRestrictionTests = (
 		if (!result.valid) {
 			output.push({
 				restriction,
-				...result.info,
+				...result.details,
 			});
 		}
 		return output;

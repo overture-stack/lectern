@@ -25,7 +25,7 @@ import type {
 
 export type FieldDetails = {
 	fieldName: string;
-	value: DataRecordValue;
+	fieldValue: DataRecordValue;
 };
 
 export type RecordValidationErrorInvalidValue = FieldDetails & FieldValidationErrorValueType;

@@ -45,9 +45,8 @@ export const validateRecord = (record: DataRecord, schema: Schema): TestResult<R
 			if (!schema.fields.some((field) => field.name === fieldName)) {
 				output.push({
 					reason: 'UNRECOGNIZED_FIELD',
-
 					fieldName,
-					value,
+					fieldValue: value,
 				});
 			}
 			return output;
@@ -63,11 +62,11 @@ export const validateRecord = (record: DataRecord, schema: Schema): TestResult<R
 
 		const fieldValidationResult = validateField(value, record, field);
 		if (!fieldValidationResult.valid) {
-			fieldValidationResult.info;
+			fieldValidationResult.details;
 			output.push({
 				fieldName,
-				value,
-				...fieldValidationResult.info,
+				fieldValue: value,
+				...fieldValidationResult.details,
 			});
 		}
 		return output;

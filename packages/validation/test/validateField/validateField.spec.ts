@@ -69,11 +69,11 @@ describe('Field - validateField', () => {
 				expect(result.valid).false;
 				assert(!result.valid);
 
-				expect(result.info.reason).equal('INVALID_VALUE_TYPE');
-				assert(result.info.reason === 'INVALID_VALUE_TYPE');
+				expect(result.details.reason).equal('INVALID_VALUE_TYPE');
+				assert(result.details.reason === 'INVALID_VALUE_TYPE');
 
-				expect(result.info.isArray).equal(!!testField.isArray); // needs the !! to convert to boolean since `testField.isArray` is undefined
-				expect(result.info.valueType).equal(testField.valueType);
+				expect(result.details.isArray).equal(!!testField.isArray); // needs the !! to convert to boolean since `testField.isArray` is undefined
+				expect(result.details.valueType).equal(testField.valueType);
 			});
 		});
 		describe('Boolean type, no restrictions', () => {
@@ -162,14 +162,14 @@ describe('Field - validateField', () => {
 				expect(result.valid).false;
 				assert(result.valid === false);
 
-				expect(result.info.reason).equal('INVALID_BY_RESTRICTION');
-				assert(result.info.reason === 'INVALID_BY_RESTRICTION');
+				expect(result.details.reason).equal('INVALID_BY_RESTRICTION');
+				assert(result.details.reason === 'INVALID_BY_RESTRICTION');
 
-				expect(result.info.errors.length).equal(1);
-				expect(result.info.errors[0]?.invalidItems).undefined;
-				expect(result.info.errors[0]?.message).not.undefined;
-				expect(result.info.errors[0]?.restriction.type).equal('codeList');
-				expect(result.info.errors[0]?.restriction.rule).deep.equal(fieldStringCodeList.restrictions?.codeList);
+				expect(result.details.errors.length).equal(1);
+				expect(result.details.errors[0]?.invalidItems).undefined;
+				expect(result.details.errors[0]?.message).not.undefined;
+				expect(result.details.errors[0]?.restriction.type).equal('codeList');
+				expect(result.details.errors[0]?.restriction.rule).deep.equal(fieldStringCodeList.restrictions?.codeList);
 			});
 		});
 		describe('String with Regex', () => {
@@ -182,10 +182,10 @@ describe('Field - validateField', () => {
 				expect(result.valid).false;
 				assert(result.valid === false);
 
-				expect(result.info.reason).equal('INVALID_BY_RESTRICTION');
-				assert(result.info.reason === 'INVALID_BY_RESTRICTION');
-				expect(result.info.errors[0]?.restriction.type).equal('regex');
-				expect(result.info.errors[0]?.restriction.rule).equal(fieldStringRegex.restrictions?.regex);
+				expect(result.details.reason).equal('INVALID_BY_RESTRICTION');
+				assert(result.details.reason === 'INVALID_BY_RESTRICTION');
+				expect(result.details.errors[0]?.restriction.type).equal('regex');
+				expect(result.details.errors[0]?.restriction.rule).equal(fieldStringRegex.restrictions?.regex);
 			});
 		});
 		describe('String with Required', () => {
@@ -200,14 +200,14 @@ describe('Field - validateField', () => {
 				expect(result.valid).false;
 				assert(result.valid === false);
 
-				expect(result.info.reason).equal('INVALID_BY_RESTRICTION');
-				assert(result.info.reason === 'INVALID_BY_RESTRICTION');
+				expect(result.details.reason).equal('INVALID_BY_RESTRICTION');
+				assert(result.details.reason === 'INVALID_BY_RESTRICTION');
 
-				expect(result.info.errors.length).equal(1);
-				expect(result.info.errors[0]?.invalidItems).undefined;
-				expect(result.info.errors[0]?.message).not.undefined;
-				expect(result.info.errors[0]?.restriction.type).equal('required');
-				expect(result.info.errors[0]?.restriction.rule).equal(fieldStringRequired.restrictions?.required);
+				expect(result.details.errors.length).equal(1);
+				expect(result.details.errors[0]?.invalidItems).undefined;
+				expect(result.details.errors[0]?.message).not.undefined;
+				expect(result.details.errors[0]?.restriction.type).equal('required');
+				expect(result.details.errors[0]?.restriction.rule).equal(fieldStringRequired.restrictions?.required);
 			});
 		});
 		describe('Number with Range', () => {
@@ -229,14 +229,14 @@ describe('Field - validateField', () => {
 				expect(result.valid).false;
 				assert(result.valid === false);
 
-				expect(result.info.reason).equal('INVALID_BY_RESTRICTION');
-				assert(result.info.reason === 'INVALID_BY_RESTRICTION');
+				expect(result.details.reason).equal('INVALID_BY_RESTRICTION');
+				assert(result.details.reason === 'INVALID_BY_RESTRICTION');
 
-				expect(result.info.errors.length).equal(1);
-				expect(result.info.errors[0]?.invalidItems).undefined;
-				expect(result.info.errors[0]?.message).not.undefined;
-				expect(result.info.errors[0]?.restriction.type).equal('range');
-				expect(result.info.errors[0]?.restriction.rule).equal(fieldNumberRange.restrictions?.range);
+				expect(result.details.errors.length).equal(1);
+				expect(result.details.errors[0]?.invalidItems).undefined;
+				expect(result.details.errors[0]?.message).not.undefined;
+				expect(result.details.errors[0]?.restriction.type).equal('range');
+				expect(result.details.errors[0]?.restriction.rule).equal(fieldNumberRange.restrictions?.range);
 			});
 		});
 		describe('String Array with Required', () => {
@@ -251,14 +251,14 @@ describe('Field - validateField', () => {
 				expect(result.valid).false;
 				assert(result.valid === false);
 
-				expect(result.info.reason).equal('INVALID_BY_RESTRICTION');
-				assert(result.info.reason === 'INVALID_BY_RESTRICTION');
+				expect(result.details.reason).equal('INVALID_BY_RESTRICTION');
+				assert(result.details.reason === 'INVALID_BY_RESTRICTION');
 
-				expect(result.info.errors.length).equal(1);
-				expect(result.info.errors[0]?.invalidItems).undefined;
-				expect(result.info.errors[0]?.message).not.undefined;
-				expect(result.info.errors[0]?.restriction.type).equal('required');
-				expect(result.info.errors[0]?.restriction.rule).equal(fieldStringArrayRequired.restrictions?.required);
+				expect(result.details.errors.length).equal(1);
+				expect(result.details.errors[0]?.invalidItems).undefined;
+				expect(result.details.errors[0]?.message).not.undefined;
+				expect(result.details.errors[0]?.restriction.type).equal('required');
+				expect(result.details.errors[0]?.restriction.rule).equal(fieldStringArrayRequired.restrictions?.required);
 			});
 			it('Invalid when array has an empty string', () => {
 				const testValue = ['this array has an illegal value', ''];
@@ -266,18 +266,18 @@ describe('Field - validateField', () => {
 				expect(result.valid).false;
 				assert(result.valid === false);
 
-				expect(result.info.reason).equal('INVALID_BY_RESTRICTION');
-				assert(result.info.reason === 'INVALID_BY_RESTRICTION');
+				expect(result.details.reason).equal('INVALID_BY_RESTRICTION');
+				assert(result.details.reason === 'INVALID_BY_RESTRICTION');
 
-				expect(result.info.errors.length).equal(1);
-				expect(result.info.errors[0]?.message).not.undefined;
-				expect(result.info.errors[0]?.restriction.type).equal('required');
-				expect(result.info.errors[0]?.restriction.rule).equal(fieldStringArrayRequired.restrictions?.required);
-				expect(Array.isArray(result.info.errors[0]?.invalidItems)).true;
-				assert(Array.isArray(result.info.errors[0]?.invalidItems));
+				expect(result.details.errors.length).equal(1);
+				expect(result.details.errors[0]?.message).not.undefined;
+				expect(result.details.errors[0]?.restriction.type).equal('required');
+				expect(result.details.errors[0]?.restriction.rule).equal(fieldStringArrayRequired.restrictions?.required);
+				expect(Array.isArray(result.details.errors[0]?.invalidItems)).true;
+				assert(Array.isArray(result.details.errors[0]?.invalidItems));
 
-				expect(result.info.errors[0]?.invalidItems[0]?.position).equal(1);
-				expect(result.info.errors[0]?.invalidItems[0]?.value).equal('');
+				expect(result.details.errors[0]?.invalidItems[0]?.position).equal(1);
+				expect(result.details.errors[0]?.invalidItems[0]?.value).equal('');
 			});
 		});
 		describe('Number Array with codeList', () => {
@@ -300,19 +300,19 @@ describe('Field - validateField', () => {
 				expect(result.valid).false;
 				assert(result.valid === false);
 
-				expect(result.info.reason).equal('INVALID_BY_RESTRICTION');
-				assert(result.info.reason === 'INVALID_BY_RESTRICTION');
+				expect(result.details.reason).equal('INVALID_BY_RESTRICTION');
+				assert(result.details.reason === 'INVALID_BY_RESTRICTION');
 
-				expect(result.info.errors.length).equal(1);
-				expect(result.info.errors[0]?.message).not.undefined;
-				expect(result.info.errors[0]?.restriction.type).equal('codeList');
-				expect(result.info.errors[0]?.restriction.rule).deep.equal(fieldNumberArrayCodeList.restrictions?.codeList);
+				expect(result.details.errors.length).equal(1);
+				expect(result.details.errors[0]?.message).not.undefined;
+				expect(result.details.errors[0]?.restriction.type).equal('codeList');
+				expect(result.details.errors[0]?.restriction.rule).deep.equal(fieldNumberArrayCodeList.restrictions?.codeList);
 
-				expect(Array.isArray(result.info.errors[0]?.invalidItems)).true;
-				assert(Array.isArray(result.info.errors[0]?.invalidItems));
+				expect(Array.isArray(result.details.errors[0]?.invalidItems)).true;
+				assert(Array.isArray(result.details.errors[0]?.invalidItems));
 
-				expect(result.info.errors[0]?.invalidItems[0]?.position).equal(4);
-				expect(result.info.errors[0]?.invalidItems[0]?.value).equal(4);
+				expect(result.details.errors[0]?.invalidItems[0]?.position).equal(4);
+				expect(result.details.errors[0]?.invalidItems[0]?.value).equal(4);
 			});
 		});
 	});
@@ -328,55 +328,59 @@ describe('Field - validateField', () => {
 				expect(result.valid).false;
 				assert(result.valid === false);
 
-				expect(result.info.reason).equal('INVALID_BY_RESTRICTION');
-				assert(result.info.reason === 'INVALID_BY_RESTRICTION');
+				expect(result.details.reason).equal('INVALID_BY_RESTRICTION');
+				assert(result.details.reason === 'INVALID_BY_RESTRICTION');
 
-				expect(result.info.errors.length).equal(1);
-				expect(result.info.errors[0]?.message).not.undefined;
-				expect(result.info.errors[0]?.invalidItems).undefined;
-				expect(result.info.errors[0]?.restriction.type).equal('codeList');
-				expect(result.info.errors[0]?.restriction.rule).deep.equal(fieldStringManyRestrictions.restrictions?.codeList);
+				expect(result.details.errors.length).equal(1);
+				expect(result.details.errors[0]?.message).not.undefined;
+				expect(result.details.errors[0]?.invalidItems).undefined;
+				expect(result.details.errors[0]?.restriction.type).equal('codeList');
+				expect(result.details.errors[0]?.restriction.rule).deep.equal(
+					fieldStringManyRestrictions.restrictions?.codeList,
+				);
 			});
 			it('Invalid when failing regex condition', () => {
 				const result = validateField('April 4, 2004', emptyDataRecord, fieldStringManyRestrictions);
 				expect(result.valid).false;
 				assert(result.valid === false);
 
-				expect(result.info.reason).equal('INVALID_BY_RESTRICTION');
-				assert(result.info.reason === 'INVALID_BY_RESTRICTION');
+				expect(result.details.reason).equal('INVALID_BY_RESTRICTION');
+				assert(result.details.reason === 'INVALID_BY_RESTRICTION');
 
-				expect(result.info.errors.length).equal(1);
-				expect(result.info.errors[0]?.message).not.undefined;
-				expect(result.info.errors[0]?.invalidItems).undefined;
-				expect(result.info.errors[0]?.restriction.type).equal('regex');
-				expect(result.info.errors[0]?.restriction.rule).deep.equal(fieldStringManyRestrictions.restrictions?.regex);
+				expect(result.details.errors.length).equal(1);
+				expect(result.details.errors[0]?.message).not.undefined;
+				expect(result.details.errors[0]?.invalidItems).undefined;
+				expect(result.details.errors[0]?.restriction.type).equal('regex');
+				expect(result.details.errors[0]?.restriction.rule).deep.equal(fieldStringManyRestrictions.restrictions?.regex);
 			});
 			it('Invalid when failing required condition', () => {
 				const result = validateField(undefined, emptyDataRecord, fieldStringManyRestrictions);
 				expect(result.valid).false;
 				assert(result.valid === false);
 
-				expect(result.info.reason).equal('INVALID_BY_RESTRICTION');
-				assert(result.info.reason === 'INVALID_BY_RESTRICTION');
+				expect(result.details.reason).equal('INVALID_BY_RESTRICTION');
+				assert(result.details.reason === 'INVALID_BY_RESTRICTION');
 
-				expect(result.info.errors.length).equal(1);
-				expect(result.info.errors[0]?.message).not.undefined;
-				expect(result.info.errors[0]?.invalidItems).undefined;
-				expect(result.info.errors[0]?.restriction.type).equal('required');
-				expect(result.info.errors[0]?.restriction.rule).deep.equal(fieldStringManyRestrictions.restrictions?.required);
+				expect(result.details.errors.length).equal(1);
+				expect(result.details.errors[0]?.message).not.undefined;
+				expect(result.details.errors[0]?.invalidItems).undefined;
+				expect(result.details.errors[0]?.restriction.type).equal('required');
+				expect(result.details.errors[0]?.restriction.rule).deep.equal(
+					fieldStringManyRestrictions.restrictions?.required,
+				);
 			});
 			it('Invalid when failing regex and codeList restrictions', () => {
 				const result = validateField('this value is wrong', emptyDataRecord, fieldStringManyRestrictions);
 				expect(result.valid).false;
 				assert(result.valid === false);
 
-				expect(result.info.reason).equal('INVALID_BY_RESTRICTION');
-				assert(result.info.reason === 'INVALID_BY_RESTRICTION');
+				expect(result.details.reason).equal('INVALID_BY_RESTRICTION');
+				assert(result.details.reason === 'INVALID_BY_RESTRICTION');
 
-				expect(result.info.errors.length).equal(2);
-				expect(result.info.errors[0]?.message).not.undefined;
-				expect(result.info.errors[0]?.invalidItems).undefined;
-				const errors = result.info.errors;
+				expect(result.details.errors.length).equal(2);
+				expect(result.details.errors[0]?.message).not.undefined;
+				expect(result.details.errors[0]?.invalidItems).undefined;
+				const errors = result.details.errors;
 				const regexError = errors.find(
 					(error) =>
 						error.restriction.type === 'regex' &&

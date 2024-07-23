@@ -24,7 +24,7 @@ export const valid = (): TestResultValid => ({ valid: true });
 
 export type TestResultInvalid<T> = {
 	valid: false;
-	info: T;
+	details: T;
 };
 
 /**
@@ -35,7 +35,7 @@ export type TestResultInvalid<T> = {
  */
 export const invalid = <InvalidInfo>(info: InvalidInfo): TestResultInvalid<InvalidInfo> => ({
 	valid: false,
-	info,
+	details: info,
 });
 
 /**

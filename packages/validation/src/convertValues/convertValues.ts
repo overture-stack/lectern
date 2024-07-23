@@ -197,7 +197,7 @@ export function convertRecordValues(record: UnprocessedDataRecord, schema: Schem
 			errors.push({
 				reason: 'UNRECOGNIZED_FIELD',
 				fieldName,
-				value: stringValue,
+				fieldValue: stringValue,
 			});
 			continue;
 		}
@@ -209,7 +209,7 @@ export function convertRecordValues(record: UnprocessedDataRecord, schema: Schem
 			errors.push({
 				reason: 'INVALID_VALUE_TYPE',
 				fieldName,
-				value: stringValue,
+				fieldValue: stringValue,
 				isArray: !!fieldDefinition.isArray,
 				valueType: fieldDefinition.valueType,
 			});

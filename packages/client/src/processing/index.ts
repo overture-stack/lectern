@@ -37,7 +37,7 @@ export const processDictionary = (
 	if (!convertResult.success) {
 		return {
 			status: 'ERROR_CONVERSION',
-			data: convertResult.data,
+			data: convertResult.data, // TODO: data with errors, name needs to be better. details?
 		};
 	}
 
@@ -55,7 +55,7 @@ export const processDictionary = (
 		return {
 			status: 'ERROR_VALIDATION',
 			data: convertedData,
-			errors: validationResult.info,
+			errors: validationResult.details,
 		};
 	}
 
@@ -91,7 +91,7 @@ export const processSchema = (records: UnprocessedDataRecord[], schema: Schema):
 		return {
 			status: 'ERROR_VALIDATION',
 			records: convertedRecords,
-			errors: validationResult.info,
+			errors: validationResult.details,
 		};
 	}
 
@@ -125,7 +125,7 @@ export const processRecord = (schema: Schema, data: UnprocessedDataRecord): Reco
 		return {
 			status: 'ERROR_VALIDATION',
 			record,
-			errors: validationResult.info,
+			errors: validationResult.details,
 		};
 	}
 
