@@ -17,5 +17,5 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './ConvertValuesResult';
-export * from './convertValues';
+export * from './ParseValuesResult';
+export * from './parseValues';

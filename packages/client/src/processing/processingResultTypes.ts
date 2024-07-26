@@ -19,11 +19,11 @@
 
 import {
 	SchemaValidationError,
-	type ConvertDictionaryData,
-	type ConvertRecordFailureData,
-	type ConvertSchemaFailureData,
+	type ParseRecordFailureData,
 	type DictionaryValidationError,
 	type RecordValidationError,
+	type ParseSchemaFailureData,
+	type ParseDictionaryData,
 } from '@overture-stack/lectern-validation';
 import { DataRecord, Schema } from 'dictionary';
 
@@ -33,8 +33,8 @@ type RecordProcessingErrorSuccess = {
 	status: 'SUCCESS';
 	record: DataRecord;
 };
-type RecordProcessingErrorConversion = ConvertRecordFailureData & {
-	status: 'ERROR_CONVERSION';
+type RecordProcessingErrorParsing = ParseRecordFailureData & {
+	status: 'ERROR_PARSING';
 };
 type RecordProcessingErrorValidation = {
 	status: 'ERROR_VALIDATION';
@@ -43,15 +43,15 @@ type RecordProcessingErrorValidation = {
 };
 export type RecordProcessingResult =
 	| RecordProcessingErrorSuccess
-	| RecordProcessingErrorConversion
+	| RecordProcessingErrorParsing
 	| RecordProcessingErrorValidation;
 
 type SchemaProcessingErrorSuccess = {
 	status: 'SUCCESS';
 	records: DataRecord[];
 };
-type SchemaProcessingErrorConversion = ConvertSchemaFailureData & {
-	status: 'ERROR_CONVERSION';
+type SchemaProcessingErrorParsing = ParseSchemaFailureData & {
+	status: 'ERROR_PARSING';
 };
 type SchemaProcessingErrorValidation = {
 	status: 'ERROR_VALIDATION';
@@ -60,16 +60,16 @@ type SchemaProcessingErrorValidation = {
 };
 export type SchemaProcessingResult =
 	| SchemaProcessingErrorSuccess
-	| SchemaProcessingErrorConversion
+	| SchemaProcessingErrorParsing
 	| SchemaProcessingErrorValidation;
 
 type DictionaryProcessingErrorSuccess = {
 	status: 'SUCCESS';
 	data: Record<string, DataRecord[]>;
 };
-type DictionaryProcessingErrorConversion = {
-	status: 'ERROR_CONVERSION';
-	data: ConvertDictionaryData;
+type DictionaryProcessingErrorParsing = {
+	status: 'ERROR_PARSING';
+	data: ParseDictionaryData;
 };
 
 /**
@@ -82,7 +82,7 @@ type DictionaryProcessingErrorValidation = {
 };
 export type DictionaryProcessingResult =
 	| DictionaryProcessingErrorSuccess
-	| DictionaryProcessingErrorConversion
+	| DictionaryProcessingErrorParsing
 	| DictionaryProcessingErrorValidation;
 
 export interface FieldNamesByPriorityMap {

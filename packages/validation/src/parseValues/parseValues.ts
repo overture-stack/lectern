@@ -32,14 +32,14 @@ import {
 } from 'dictionary';
 import { isInteger, isNumber } from '../utils/typeUtils';
 import type {
-	ConvertFieldError,
-	ConvertDictionaryData,
-	ConvertDictionaryFailure,
-	ConvertDictionaryResult,
-	ConvertRecordResult,
-	ConvertSchemaResult,
-	ConvertSchemaError,
-} from './ConvertValuesResult';
+	ParseFieldError,
+	ParseDictionaryData,
+	ParseDictionaryFailure,
+	ParseDictionaryResult,
+	ParseRecordResult,
+	ParseSchemaResult,
+	ParseSchemaError,
+} from './ParseValuesResult';
 import { matchCodeListFormatting } from './matchCodeListFormatting';
 
 /* === Type Specific conversion functions === */
@@ -166,18 +166,18 @@ const convertArrayValue = (value: string, fieldDefinition: SchemaField): Result<
 };
 
 /**
- * Take a string value and convert it to the type defined in the fieldDefinition.
+ * Parse the string value for a field and convert it to the type defined in the fieldDefinition.
  *
  * If the field is an array, this will split the field into separate values and attempt to convert each of those values.
- * If any of the values in the array fails to convert, the entire value conversion will fail.
+ * If any of the values in the array cannot be converted, the entire value parsing process will fail.
  */
-export function convertFieldValue(value: string, fieldDefinition: SchemaField): Result<DataRecordValue> {
+export function parseFieldValue(value: string, fieldDefinition: SchemaField): Result<DataRecordValue> {
 	const { isArray } = fieldDefinition;
 	return isArray ? convertArrayValue(value, fieldDefinition) : convertValue(value, fieldDefinition);
 }
 
 /**
- * Convert string values to properly typed values for fields from their schema definition.
+ * Parse string values and convert them to properly typed values for fields from their schema definition.
  *
  * If there are any type errors found during conversion, this will return a failed `Result`
  * with a list of the `ConvertTypeErrors`.
@@ -185,8 +185,8 @@ export function convertFieldValue(value: string, fieldDefinition: SchemaField): 
  * If a field is in the record that is not found in the schema, this will return a faile `Result`
  * indicating the unrecognized field. Its value will remain a string without any conversion.
  */
-export function convertRecordValues(record: UnprocessedDataRecord, schema: Schema): ConvertRecordResult {
-	const errors: ConvertFieldError[] = [];
+export function parseRecordValues(record: UnprocessedDataRecord, schema: Schema): ParseRecordResult {
+	const errors: ParseFieldError[] = [];
 	const output: DataRecord = {};
 
 	for (const [fieldName, stringValue] of Object.entries(record)) {
@@ -201,7 +201,7 @@ export function convertRecordValues(record: UnprocessedDataRecord, schema: Schem
 			});
 			continue;
 		}
-		const convertResult = convertFieldValue(stringValue, fieldDefinition);
+		const convertResult = parseFieldValue(stringValue, fieldDefinition);
 
 		if (convertResult.success) {
 			output[fieldName] = convertResult.data;
@@ -218,7 +218,7 @@ export function convertRecordValues(record: UnprocessedDataRecord, schema: Schem
 		}
 	}
 	if (errors.length) {
-		return failWith(`Errors were found while converting record data.`, {
+		return failWith(`Errors were found while parsing record data.`, {
 			record: output,
 			errors,
 		});
@@ -229,12 +229,12 @@ export function convertRecordValues(record: UnprocessedDataRecord, schema: Schem
 /**
  *
  */
-export function convertSchemaValues(records: UnprocessedDataRecord[], schema: Schema): ConvertSchemaResult {
+export function parseSchemaValues(records: UnprocessedDataRecord[], schema: Schema): ParseSchemaResult {
 	const output: DataRecord[] = [];
-	const errors: ConvertSchemaError[] = [];
+	const errors: ParseSchemaError[] = [];
 
 	records.forEach((record, recordIndex) => {
-		const conversionResult = convertRecordValues(record, schema);
+		const conversionResult = parseRecordValues(record, schema);
 
 		output.push(conversionResult.data.record);
 		if (!conversionResult.success) {
@@ -246,35 +246,38 @@ export function convertSchemaValues(records: UnprocessedDataRecord[], schema: Sc
 	});
 
 	return errors.length
-		? failWith(`Errors were found while converting schema data.`, { records: output, errors })
+		? failWith(`Errors were found while parsing schema data.`, { records: output, errors })
 		: success({ records: output });
 }
 
-export function convertDictionaryValues(
+/**
+ *
+ */
+export function parseDictionaryValues(
 	schemaData: Record<string, UnprocessedDataRecord[]>,
 	dictionary: Dictionary,
-): ConvertDictionaryResult {
-	const output: ConvertDictionaryData = {};
+): ParseDictionaryResult {
+	const output: ParseDictionaryData = {};
 	for (const [schemaName, records] of Object.entries(schemaData)) {
 		const schema = dictionary.schemas.find((schema) => schema.name === schemaName);
 
 		if (schema) {
-			const result = convertSchemaValues(records, schema);
+			const result = parseSchemaValues(records, schema);
 			if (result.success) {
 				output[schemaName] = result;
 			} else {
-				output[schemaName] = failWith<ConvertDictionaryFailure>(result.message, {
+				output[schemaName] = failWith<ParseDictionaryFailure>(result.message, {
 					reason: 'INVALID_RECORDS',
 					...result.data,
 				});
 			}
 		} else {
-			output[schemaName] = failWith<ConvertDictionaryFailure>(`There is no schema of this name in the dictionary.`, {
+			output[schemaName] = failWith<ParseDictionaryFailure>(`There is no schema of this name in the dictionary.`, {
 				reason: 'UNRECOGNIZED_SCHEMA',
 				records,
 			});
 		}
 	}
 	const allSucceeded = Object.values(output).every((result) => result.success);
-	return allSucceeded ? success(output) : failWith(`Errors were found while converting dictionary data.`, output);
+	return allSucceeded ? success(output) : failWith(`Errors were found while parsing dictionary data.`, output);
 }

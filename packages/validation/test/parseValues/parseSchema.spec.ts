@@ -18,12 +18,12 @@
  */
 
 import { expect } from 'chai';
-import { convertRecordValues, convertSchemaValues } from '../../src';
+import { parseSchemaValues } from '../../src';
 import { schemaAllDataTypes } from '../fixtures/schema/schemaAllDataTypes';
 import assert from 'assert';
 
-describe('Convert Values - convertSchemaValues', () => {
-	it('Successfully converts all records in schema dataset', () => {
+describe('Parse Values - parseSchemaValues', () => {
+	it('Successfully parses all records in schema dataset', () => {
 		const records = [
 			{
 				'any-string': 'hello world 1',
@@ -44,7 +44,7 @@ describe('Convert Values - convertSchemaValues', () => {
 				'any-boolean': 'False',
 			},
 		];
-		const result = convertSchemaValues(records, schemaAllDataTypes);
+		const result = parseSchemaValues(records, schemaAllDataTypes);
 		expect(result.success).true;
 		assert(result.success === true);
 		expect(result.data.records[0]).deep.equal({
@@ -93,7 +93,7 @@ describe('Convert Values - convertSchemaValues', () => {
 				'any-boolean': 'not a boolean',
 			},
 		];
-		const result = convertSchemaValues(records, schemaAllDataTypes);
+		const result = parseSchemaValues(records, schemaAllDataTypes);
 		expect(result.success).false;
 		assert(result.success === false);
 		expect(result.data.errors.length).equal(3);

@@ -19,11 +19,11 @@
 
 import { expect } from 'chai';
 import assert from 'node:assert';
-import { convertDictionaryValues } from '../../src';
+import { parseDictionaryValues } from '../../src';
 import { dictionaryFourSchemas } from '../fixtures/dictionaries/dictionaryFourSchemas';
 
-describe('Convert Values - convertDictionaryValues', () => {
-	it('Successfully converts all records for all schemas in the dictionary dataset', () => {
+describe('Parse Values - parseDictionaryValues', () => {
+	it('Successfully parses all records for all schemas in the dictionary dataset', () => {
 		const singleStringRecords = [{ 'any-string': 'whatever' }];
 		const allDataTypeRecords = [
 			{
@@ -74,7 +74,7 @@ describe('Convert Values - convertDictionaryValues', () => {
 			'all-data-types-required': allDataRequiredRecords,
 			'unique-key': uniqueKeyRecords,
 		};
-		const result = convertDictionaryValues(dataset, dictionaryFourSchemas);
+		const result = parseDictionaryValues(dataset, dictionaryFourSchemas);
 		expect(result.success).true;
 		assert(result.success === true);
 	});
@@ -84,16 +84,16 @@ describe('Convert Values - convertDictionaryValues', () => {
 		const dataset = {
 			'unknown-schema': unknownSchemaRecords,
 		};
-		const result = convertDictionaryValues(dataset, dictionaryFourSchemas);
+		const result = parseDictionaryValues(dataset, dictionaryFourSchemas);
 		expect(result.success).false;
 		assert(result.success === false);
 
 		// Get the
-		const schemaConversionResult = result.data['unknown-schema'];
-		expect(schemaConversionResult?.success).false;
-		assert(schemaConversionResult?.success === false);
+		const parseConversionResult = result.data['unknown-schema'];
+		expect(parseConversionResult?.success).false;
+		assert(parseConversionResult?.success === false);
 
-		expect(schemaConversionResult.data.reason).equal('UNRECOGNIZED_SCHEMA');
+		expect(parseConversionResult.data.reason).equal('UNRECOGNIZED_SCHEMA');
 	});
 	it('Returns invalid when there is a mix of correct and incorrect schemas', () => {
 		const singleStringRecords = [{ 'any-string': 'whatever' }]; // valid
@@ -112,7 +112,7 @@ describe('Convert Values - convertDictionaryValues', () => {
 			'all-data-types-required': allDataRequiredRecords,
 			'unknown-schema': unrecognizedSchemaRecords,
 		};
-		const result = convertDictionaryValues(dataset, dictionaryFourSchemas);
+		const result = parseDictionaryValues(dataset, dictionaryFourSchemas);
 		expect(result.success).false;
 		assert(result.success === false);
 
