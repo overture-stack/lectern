@@ -18,19 +18,19 @@
  */
 
 import { expect } from 'chai';
-import { convertRecordValues } from '../../src';
+import { parseRecordValues } from '../../src';
 import { schemaAllDataTypes } from '../fixtures/schema/schemaAllDataTypes';
 import assert from 'assert';
 
-describe('Convert Values - convertRecordValues', () => {
-	it('Successfully converts all fields in record', () => {
+describe('Parse Values - parseRecordValues', () => {
+	it('Successfully parses all fields in record', () => {
 		const record = {
 			'any-string': 'hello world',
 			'any-number': '12.34',
 			'any-integer': '7890',
 			'any-boolean': 'true',
 		};
-		const result = convertRecordValues(record, schemaAllDataTypes);
+		const result = parseRecordValues(record, schemaAllDataTypes);
 		expect(result.success).true;
 		assert(result.success === true);
 		expect(result.data.record).deep.equal({
@@ -47,7 +47,7 @@ describe('Convert Values - convertRecordValues', () => {
 			'any-integer': '12.34',
 			'any-boolean': 'not a boolean',
 		};
-		const result = convertRecordValues(record, schemaAllDataTypes);
+		const result = parseRecordValues(record, schemaAllDataTypes);
 		expect(result.success).false;
 		assert(result.success === false);
 		expect(result.data.errors.length).equal(3);
@@ -71,28 +71,28 @@ describe('Convert Values - convertRecordValues', () => {
 		const anyBooleanError = result.data.errors.find((error) => error.fieldName === 'any-boolean');
 		expect(anyBooleanError).not.undefined;
 	});
-	it('Failed conversion result contains record with valid fields converted', () => {
+	it('Failed conversion result contains record with valid fields parsed', () => {
 		const record = {
 			'any-string': 'hello world',
 			'any-number': '12.34',
 			'any-integer': '12.34',
 			'any-boolean': 'true',
 		};
-		const result = convertRecordValues(record, schemaAllDataTypes);
+		const result = parseRecordValues(record, schemaAllDataTypes);
 		expect(result.success).false;
 		assert(result.success === false);
 		expect(result.data.record).deep.equal({
 			'any-string': 'hello world',
-			'any-number': 12.34, // number is converted
-			'any-integer': '12.34', // integer is invalid, not converted
-			'any-boolean': true, // boolean is converted
+			'any-number': 12.34, // number is parsed
+			'any-integer': '12.34', // integer is invalid, not parsed
+			'any-boolean': true, // boolean is parsed
 		});
 	});
 	it('Failed conversion result when record contains unrecognized fields', () => {
 		const record = {
 			'unrecognized-field': 'true',
 		};
-		const result = convertRecordValues(record, schemaAllDataTypes);
+		const result = parseRecordValues(record, schemaAllDataTypes);
 		expect(result.success).false;
 		assert(result.success === false);
 		expect(result.data.record).deep.equal({

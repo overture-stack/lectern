@@ -22,26 +22,26 @@ import type { RecordValidationErrorInvalidValue, RecordValidationErrorUnrecogniz
 import type { SchemaRecordError } from '../validateSchema';
 import type { Result } from 'common';
 
-export type ConvertFieldError = RecordValidationErrorInvalidValue | RecordValidationErrorUnrecognizedField;
+export type ParseFieldError = RecordValidationErrorInvalidValue | RecordValidationErrorUnrecognizedField;
 
-export type ConvertRecordFailureData = { record: DataRecord; errors: ConvertFieldError[] };
-export type ConvertRecordResult = Result<{ record: DataRecord }, ConvertRecordFailureData>;
+export type ParseRecordFailureData = { record: DataRecord; errors: ParseFieldError[] };
+export type ParseRecordResult = Result<{ record: DataRecord }, ParseRecordFailureData>;
 
-export type ConvertSchemaError = SchemaRecordError<ConvertFieldError>;
-export type ConvertSchemaFailureData = { records: DataRecord[]; errors: ConvertSchemaError[] };
-export type ConvertSchemaResult = Result<{ records: DataRecord[] }, ConvertSchemaFailureData>;
+export type ParseSchemaError = SchemaRecordError<ParseFieldError>;
+export type ParseSchemaFailureData = { records: DataRecord[]; errors: ParseSchemaError[] };
+export type ParseSchemaResult = Result<{ records: DataRecord[] }, ParseSchemaFailureData>;
 
-export type ConvertDictionaryErrorUnrecognizedSchema = { reason: 'UNRECOGNIZED_SCHEMA' };
-export type ConvertDictionaryErrorInvalidRecords = {
+export type ParseDictionaryErrorUnrecognizedSchema = { reason: 'UNRECOGNIZED_SCHEMA' };
+export type ParseDictionaryErrorInvalidRecords = {
 	reason: 'INVALID_RECORDS';
-	errors: ConvertSchemaError[];
+	errors: ParseSchemaError[];
 };
 
-export type ConvertDictionaryFailure = { records: DataRecord[] } & (
-	| ConvertDictionaryErrorUnrecognizedSchema
-	| ConvertDictionaryErrorInvalidRecords
+export type ParseDictionaryFailure = { records: DataRecord[] } & (
+	| ParseDictionaryErrorUnrecognizedSchema
+	| ParseDictionaryErrorInvalidRecords
 );
 
-export type ConvertDictionaryData = Record<string, Result<{ records: DataRecord[] }, ConvertDictionaryFailure>>;
+export type ParseDictionaryData = Record<string, Result<{ records: DataRecord[] }, ParseDictionaryFailure>>;
 
-export type ConvertDictionaryResult = Result<ConvertDictionaryData, ConvertDictionaryData>;
+export type ParseDictionaryResult = Result<ParseDictionaryData, ParseDictionaryData>;

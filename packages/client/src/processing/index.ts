@@ -32,16 +32,16 @@ export const processDictionary = (
 	data: Record<string, UnprocessedDataRecord[]>,
 	dictionary: Dictionary,
 ): DictionaryProcessingResult => {
-	const convertResult = validation.convertDictionaryValues(data, dictionary);
+	const parsedResult = validation.parseDictionaryValues(data, dictionary);
 
-	if (!convertResult.success) {
+	if (!parsedResult.success) {
 		return {
-			status: 'ERROR_CONVERSION',
-			data: convertResult.data, // TODO: data with errors, name needs to be better. details?
+			status: 'ERROR_PARSING',
+			data: parsedResult.data,
 		};
 	}
 
-	const convertedData = Object.entries(convertResult.data).reduce<Record<string, DataRecord[]>>(
+	const parsedData = Object.entries(parsedResult.data).reduce<Record<string, DataRecord[]>>(
 		(output, [schemaName, schemaConversionResult]) => {
 			// Expect all schemaResults to be successful, otherwise the conversion result would have failed.
 			output[schemaName] = schemaConversionResult.data.records;
@@ -49,76 +49,76 @@ export const processDictionary = (
 		},
 		{},
 	);
-	const validationResult = validation.validateDictionary(convertedData, dictionary);
+	const validationResult = validation.validateDictionary(parsedData, dictionary);
 
 	if (!validationResult.valid) {
 		return {
 			status: 'ERROR_VALIDATION',
-			data: convertedData,
+			data: parsedData,
 			errors: validationResult.details,
 		};
 	}
 
 	return {
 		status: 'SUCCESS',
-		data: convertedData,
+		data: parsedData,
 	};
 };
 
 /**
  * Process a list of records for a single schema.
  *
- * Convert and then validate each record in the list.
+ * Parse and then validate each record in the list.
  * @param dictionary
  * @param definition
  * @param records
  * @returns
  */
 export const processSchema = (records: UnprocessedDataRecord[], schema: Schema): SchemaProcessingResult => {
-	const convertResult = validation.convertSchemaValues(records, schema);
+	const parseResult = validation.parseSchemaValues(records, schema);
 
-	if (!convertResult.success) {
+	if (!parseResult.success) {
 		return {
-			status: 'ERROR_CONVERSION',
-			...convertResult.data,
+			status: 'ERROR_PARSING',
+			...parseResult.data,
 		};
 	}
 
-	const convertedRecords = convertResult.data.records;
-	const validationResult = validation.validateSchema(convertedRecords, schema);
+	const parsedRecords = parseResult.data.records;
+	const validationResult = validation.validateSchema(parsedRecords, schema);
 
 	if (!validationResult.valid) {
 		return {
 			status: 'ERROR_VALIDATION',
-			records: convertedRecords,
+			records: parsedRecords,
 			errors: validationResult.details,
 		};
 	}
 
 	return {
 		status: 'SUCCESS',
-		records: convertedRecords,
+		records: parsedRecords,
 	};
 };
 
 /**
  * Process a single data record.
  *
- * Convert and then validate a data record. If there are errors found during conversion,
+ * Parse and then validate a data record. If there are errors found during conversion,
  * those errors will be returned and validation will be skipped. The final result will indicate if the
  * data processing attempt was successful, or failed due to errors in conversion or validation.
  */
 export const processRecord = (schema: Schema, data: UnprocessedDataRecord): RecordProcessingResult => {
-	const convertResult = validation.convertRecordValues(data, schema);
+	const parseResult = validation.parseRecordValues(data, schema);
 
-	if (!convertResult.success) {
+	if (!parseResult.success) {
 		return {
-			status: 'ERROR_CONVERSION',
-			...convertResult.data,
+			status: 'ERROR_PARSING',
+			...parseResult.data,
 		};
 	}
 
-	const record = convertResult.data.record;
+	const record = parseResult.data.record;
 	const validationResult = validation.validateRecord(record, schema);
 
 	if (!validationResult.valid) {
