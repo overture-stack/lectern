@@ -17,16 +17,25 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import type { Singular } from 'common';
+
 /**
  * Represents a data record as taken from an input file. All values are the original strings and have not been validated into
  * numbers/bools or split into arrays.
  */
-export type UnprocessedDataRecord = Record<string, string | string[]>;
+export type UnprocessedDataRecord = Record<string, string>;
 
 /**
  * The available data types for a field in a Lectern Schema.
  */
 export type DataRecordValue = string | string[] | number | number[] | boolean | boolean[] | undefined;
+
+export type SingleDataValue = Singular<DataRecordValue>;
+export type ArrayDataValue = DataRecordValue extends infer T
+	? T extends undefined
+		? never
+		: Array<Singular<T>>
+	: never;
 
 /**
  * Represents a data record after processing, with the data checked to be a valid type for a Lectern schema.

@@ -19,24 +19,17 @@
 
 import { z as zod } from 'zod';
 import allUnique from '../utils/allUnique';
+import { NameString } from './commonTypes';
 import { ReferenceTag, References } from './referenceTypes';
-
-/**
- * String rules for all name fields used in dictionary, including Dictionary, Schema, and Fields.
- * This validates the format of the string since names are not allowed to have `.` characters.
- *
- * Example Values:
- * - `donors`
- * - `primary-site`
- * - `maximumVelocity`
- */
-export const NameString = zod
-	.string()
-	.min(1, 'Name fields cannot be empty.')
-	.regex(/^[^.]+$/, 'Name fields cannot have `.` characters.');
-export type NameString = zod.infer<typeof NameString>;
-
-export const Integer = zod.number().int();
+import {
+	RestrictionCodeListInteger,
+	RestrictionCodeListNumber,
+	RestrictionCodeListString,
+	RestrictionIntegerRange,
+	RestrictionNumberRange,
+	RestrictionRegex,
+	RestrictionScript,
+} from './restrictionsTypes';
 
 // Meta accepts as values only strings, numbers, booleans, arrays of numbers or arrays of strings
 // Another Meta object can be nested inside a Meta property
@@ -56,84 +49,12 @@ export const DictionaryMeta: zod.ZodType<DictionaryMeta> = zod.record(
 export const SchemaFieldValueType = zod.enum(['string', 'integer', 'number', 'boolean']);
 export type SchemaFieldValueType = zod.infer<typeof SchemaFieldValueType>;
 
-/* ************ *
- * Restrictions *
- * ************ */
-export const RestrictionScript = zod.array(zod.string().or(ReferenceTag)).min(1); //TODO: script formatting validation
-export type RestrictionScript = zod.infer<typeof RestrictionScript>;
-
-export const RestrictionNumberRange = zod
-	.object({
-		exclusiveMax: zod.number().optional(),
-		exclusiveMin: zod.number().optional(),
-		max: zod.number().optional(),
-		min: zod.number().optional(),
-	})
-	.refine(
-		(data) =>
-			data.exclusiveMax !== undefined ||
-			data.max !== undefined ||
-			data.exclusiveMin !== undefined ||
-			data.min !== undefined,
-		'Range restriction requires one of `exclusiveMax`, `exclusiveMin`, `max` or `min`.',
-	)
-	.refine(
-		(data) => !(data.exclusiveMin !== undefined && data.min !== undefined),
-		'Range restriction cannot have both `exclusiveMin` and `min`.',
-	)
-	.refine(
-		(data) => !(data.exclusiveMax !== undefined && data.max !== undefined),
-		'Range restriction cannot have both `exclusiveMax` and `max`.',
-	);
-
-export const RestrictionIntegerRange = zod
-	.object({
-		exclusiveMax: Integer.optional(),
-		exclusiveMin: Integer.optional(),
-		max: Integer.optional(),
-		min: Integer.optional(),
-	})
-	.refine(
-		(data) =>
-			data.exclusiveMax !== undefined ||
-			data.max !== undefined ||
-			data.exclusiveMin !== undefined ||
-			data.min !== undefined,
-		'Range restriction requires one of `exclusiveMax`, `exclusiveMin`, `max` or `min`.',
-	)
-	.refine(
-		(data) => !(data.exclusiveMin !== undefined && data.min !== undefined),
-		'Range restriction cannot have both `exclusiveMin` and `min`.',
-	)
-	.refine(
-		(data) => !(data.exclusiveMax !== undefined && data.max !== undefined),
-		'Range restriction cannot have both `exclusiveMax` and `max`.',
-	);
-
-export const RestrictionRange = RestrictionNumberRange;
-export type RestrictionRange = zod.infer<typeof RestrictionIntegerRange>;
-
-export const RestrictionRegex = zod.string().superRefine((data, context) => {
-	try {
-		// Attempt to build regexp from the value
-		RegExp(data);
-	} catch (e) {
-		// Thrown error creating regex, so we add validation issue.
-		const errorMessage = e instanceof Error ? e.message : `${e}`;
-		context.addIssue({
-			code: zod.ZodIssueCode.custom,
-			message: `Error converting expression to Regex: ${errorMessage}`,
-		});
-	}
-});
-export type RestrictionRegex = zod.infer<typeof RestrictionRegex>;
-
 /* ****************************** *
  * Field Type Restriction Objects *
  * ****************************** */
 export const StringFieldRestrictions = zod
 	.object({
-		codeList: zod.union([zod.string(), ReferenceTag]).array().min(1).or(ReferenceTag),
+		codeList: RestrictionCodeListString.or(ReferenceTag),
 		required: zod.boolean(),
 		script: RestrictionScript.or(ReferenceTag),
 		regex: RestrictionRegex.or(ReferenceTag),
@@ -144,7 +65,7 @@ export type StringFieldRestrictions = zod.infer<typeof StringFieldRestrictions>;
 
 export const NumberFieldRestrictions = zod
 	.object({
-		codeList: zod.array(zod.number()).min(1).or(ReferenceTag),
+		codeList: RestrictionCodeListNumber.or(ReferenceTag),
 		required: zod.boolean(),
 		script: RestrictionScript.or(ReferenceTag),
 		range: RestrictionNumberRange,
@@ -155,7 +76,7 @@ export type NumberFieldRestrictions = zod.infer<typeof NumberFieldRestrictions>;
 
 export const IntegerFieldRestrictions = zod
 	.object({
-		codeList: zod.array(Integer).min(1).or(ReferenceTag),
+		codeList: RestrictionCodeListInteger.or(ReferenceTag),
 		required: zod.boolean(),
 		script: RestrictionScript.or(ReferenceTag),
 		range: RestrictionIntegerRange,
@@ -227,7 +148,7 @@ export type SchemaRestrictions = SchemaField['restrictions'];
 /* ****** *
  * Schema *
  * ****** */
-export const ForeignKeyRestrictionMapping = zod.object({
+export const ForeignKeyRestriction = zod.object({
 	schema: NameString,
 	mappings: zod.array(
 		zod.object({
@@ -236,6 +157,7 @@ export const ForeignKeyRestrictionMapping = zod.object({
 		}),
 	),
 });
+export type ForeignKeyRestriction = zod.infer<typeof ForeignKeyRestriction>;
 
 export const Schema = zod
 	.object({
@@ -245,7 +167,7 @@ export const Schema = zod
 		meta: DictionaryMeta.optional(),
 		restrictions: zod
 			.object({
-				foreignKey: zod.array(ForeignKeyRestrictionMapping).min(1),
+				foreignKey: zod.array(ForeignKeyRestriction).min(1),
 				uniqueKey: zod.array(NameString).min(1),
 			})
 			.partial()

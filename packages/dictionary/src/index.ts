@@ -1,3 +1,4 @@
+export * from './constants';
 export * as DiffUtils from './diff';
 export * from './references';
 export * from './types';

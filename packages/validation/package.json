@@ -4,7 +4,7 @@
 	"description": "Logic for validating data using a Lectern dictionary",
 	"main": "dist/index.js",
 	"scripts": {
-		"build": "pnpm build:clean && tsc",
+		"build": "pnpm build:clean && tsc -p ./tsconfig.build.json",
 		"build:clean": "rimraf dist/ && mkdir dist",
 		"test": "nyc mocha"
 	},

@@ -280,6 +280,15 @@ importers:
         specifier: ^5.0.0
         version: 5.0.7
 
+  scripts/generate:
+    dependencies:
+      dictionary:
+        specifier: workspace:^
+        version: link:../../packages/dictionary
+      zod-to-json-schema:
+        specifier: ^3.21.3
+        version: 3.21.3(zod@3.21.4)
+
 packages:
 
   /@ampproject/remapping@2.3.0:
@@ -5651,7 +5660,6 @@ packages:
       zod: ^3.21.4
     dependencies:
       zod: 3.21.4
-    dev: true
 
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}

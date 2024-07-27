@@ -17,224 +17,120 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { SchemaValidationError } from '@overture-stack/lectern-validation';
 import * as validation from '@overture-stack/lectern-validation';
-import { NotFoundError } from 'common';
 import { DataRecord, Dictionary, Schema, UnprocessedDataRecord } from 'dictionary';
-import _ from 'lodash';
 import { loggerFor } from '../logger';
-import { convertToArray, isEmpty, isNotAbsent, isString, isStringArray, notEmpty } from '../utils';
-import { convertFromRawStrings } from './convertDataValueTypes';
-import { BatchProcessingResult, FieldNamesByPriorityMap, SchemaProcessingResult } from './processingResultTypes';
-import * as pipelines from './validationPipelines';
+import {
+	SchemaProcessingResult,
+	type DictionaryProcessingResult,
+	type RecordProcessingResult,
+} from './processingResultTypes';
 
 const L = loggerFor(__filename);
 
-export const processSchemas = (
+export const processDictionary = (
+	data: Record<string, UnprocessedDataRecord[]>,
 	dictionary: Dictionary,
-	schemasData: Record<string, UnprocessedDataRecord[]>,
-): Record<string, BatchProcessingResult> => {
-	const results: Record<string, BatchProcessingResult> = {};
+): DictionaryProcessingResult => {
+	const parsedResult = validation.parseDictionaryValues(data, dictionary);
 
-	Object.keys(schemasData).forEach((schemaName) => {
-		// Run validations at the record level
-		const recordLevelValidationResults = processRecords(dictionary, schemaName, schemasData[schemaName]);
-
-		// Run cross-schema validations
-		const schemaDef = getNotNullSchemaDefinitionFromDictionary(dictionary, schemaName);
-		const crossSchemaLevelValidationResults = pipelines
-			.runCrossSchemaValidationPipeline(schemaDef, schemasData, [validation.validateForeignKeys])
-			.filter(notEmpty);
-
-		const allErrorsBySchema: validation.SchemaValidationError[] = [
-			...recordLevelValidationResults.validationErrors,
-			...crossSchemaLevelValidationResults,
-		];
-
-		results[schemaName] = {
-			validationErrors: allErrorsBySchema,
-			processedRecords: recordLevelValidationResults.processedRecords,
+	if (!parsedResult.success) {
+		return {
+			status: 'ERROR_PARSING',
+			data: parsedResult.data,
 		};
-	});
+	}
 
-	return results;
-};
-
-export const processRecords = (
-	dictionary: Dictionary,
-	definition: string,
-	records: UnprocessedDataRecord[],
-): BatchProcessingResult => {
-	const schemaDef = getNotNullSchemaDefinitionFromDictionary(dictionary, definition);
-
-	let validationErrors: SchemaValidationError[] = [];
-	const processedRecords: DataRecord[] = [];
-
-	records.forEach((dataRecord, index) => {
-		const result = process(dictionary, definition, dataRecord, index);
-		validationErrors = validationErrors.concat(result.validationErrors);
-		processedRecords.push(_.cloneDeep(result.processedRecord));
-	});
-	// Record set level validations
-	const newErrors = validateRecordsSet(schemaDef, processedRecords);
-	validationErrors.push(...newErrors);
-	L.debug(
-		`done processing all rows, validationErrors: ${validationErrors.length}, validRecords: ${processedRecords.length}`,
+	const parsedData = Object.entries(parsedResult.data).reduce<Record<string, DataRecord[]>>(
+		(output, [schemaName, schemaConversionResult]) => {
+			// Expect all schemaResults to be successful, otherwise the conversion result would have failed.
+			output[schemaName] = schemaConversionResult.data.records;
+			return output;
+		},
+		{},
 	);
+	const validationResult = validation.validateDictionary(parsedData, dictionary);
+
+	if (!validationResult.valid) {
+		return {
+			status: 'ERROR_VALIDATION',
+			data: parsedData,
+			errors: validationResult.details,
+		};
+	}
 
 	return {
-		validationErrors,
-		processedRecords,
+		status: 'SUCCESS',
+		data: parsedData,
 	};
 };
 
-export const process = (
-	dictionary: Dictionary,
-	schemaName: string,
-	data: Readonly<UnprocessedDataRecord>,
-	index: number,
-): SchemaProcessingResult => {
-	const schemaDef = dictionary.schemas.find((e) => e.name === schemaName);
+/**
+ * Process a list of records for a single schema.
+ *
+ * Parse and then validate each record in the list.
+ * @param dictionary
+ * @param definition
+ * @param records
+ * @returns
+ */
+export const processSchema = (records: UnprocessedDataRecord[], schema: Schema): SchemaProcessingResult => {
+	const parseResult = validation.parseSchemaValues(records, schema);
 
-	if (!schemaDef) {
-		throw new Error(`no schema found for : ${schemaName}`);
+	if (!parseResult.success) {
+		return {
+			status: 'ERROR_PARSING',
+			...parseResult.data,
+		};
 	}
 
-	let validationErrors: SchemaValidationError[] = [];
+	const parsedRecords = parseResult.data.records;
+	const validationResult = validation.validateSchema(parsedRecords, schema);
 
-	const defaultedRecord = populateDefaults(schemaDef, data, index);
-	L.debug(`done populating defaults for record #${index}`);
-	const result = validateUnprocessedRecord(schemaDef, defaultedRecord, index);
-	L.debug(`done validation for record #${index}`);
-	if (result && result.length > 0) {
-		L.debug(`${result.length} validation errors for record #${index}`);
-		validationErrors = validationErrors.concat(result);
+	if (!validationResult.valid) {
+		return {
+			status: 'ERROR_VALIDATION',
+			records: parsedRecords,
+			errors: validationResult.details,
+		};
 	}
-	const convertedRecord = convertFromRawStrings(schemaDef, defaultedRecord, index, result);
-	L.debug(`converted row #${index} from raw strings`);
-	const postTypeConversionValidationResult = validateAfterTypeConversion(
-		schemaDef,
-		_.cloneDeep(convertedRecord),
-		index,
-	);
-
-	if (postTypeConversionValidationResult && postTypeConversionValidationResult.length > 0) {
-		validationErrors = validationErrors.concat(postTypeConversionValidationResult);
-	}
-
-	L.debug(`done processing all rows, validationErrors: ${validationErrors.length}, validRecords: ${convertedRecord}`);
 
 	return {
-		validationErrors,
-		processedRecord: convertedRecord,
+		status: 'SUCCESS',
+		records: parsedRecords,
 	};
 };
 
-const getNotNullSchemaDefinitionFromDictionary = (dictionary: Dictionary, schemaName: string): Schema => {
-	const schemaDef = dictionary.schemas.find((e) => e.name === schemaName);
-	if (!schemaDef) {
-		throw new Error(`no schema found for : ${schemaName}`);
-	}
-	return schemaDef;
-};
-
-export const getSchemaFieldNamesWithPriority = (schema: Dictionary, definition: string): FieldNamesByPriorityMap => {
-	const schemaDef = schema.schemas.find((schema) => schema.name === definition);
-	if (!schemaDef) {
-		throw new NotFoundError(`no schema found for : ${definition}`);
-	}
-	const fieldNamesMapped: FieldNamesByPriorityMap = { required: [], optional: [] };
-	schemaDef.fields.forEach((field) => {
-		if (field.restrictions?.required) {
-			fieldNamesMapped.required.push(field.name);
-		} else {
-			fieldNamesMapped.optional.push(field.name);
-		}
-	});
-	return fieldNamesMapped;
-};
-
 /**
- * Populate the passed records with the default value based on the field name if the field is
- * missing from the records it will NOT be added.
- * @param definition the name of the schema definition to use for these records
- * @param records the list of records to populate with the default values.
+ * Process a single data record.
+ *
+ * Parse and then validate a data record. If there are errors found during conversion,
+ * those errors will be returned and validation will be skipped. The final result will indicate if the
+ * data processing attempt was successful, or failed due to errors in conversion or validation.
  */
-const populateDefaults = (schemaDef: Schema, record: UnprocessedDataRecord, index: number): UnprocessedDataRecord => {
-	const clonedRecord = _.cloneDeep(record);
-	schemaDef.fields.forEach((field) => {
-		const defaultValue = field.meta && field.meta.default;
-		if (isEmpty(defaultValue)) return undefined;
+export const processRecord = (schema: Schema, data: UnprocessedDataRecord): RecordProcessingResult => {
+	const parseResult = validation.parseRecordValues(data, schema);
 
-		const value = record[field.name];
+	if (!parseResult.success) {
+		return {
+			status: 'ERROR_PARSING',
+			...parseResult.data,
+		};
+	}
 
-		// data record  value is (or is expected to be) just one string
-		if (isString(value) && !field.isArray) {
-			if (isNotAbsent(value) && value.trim() === '') {
-				L.debug(`populating Default: "${defaultValue}" for "${field.name}" of record at index ${index}`);
-				clonedRecord[field.name] = `${defaultValue}`;
-			}
-			return undefined;
-		}
+	const record = parseResult.data.record;
+	const validationResult = validation.validateRecord(record, schema);
 
-		// data record value is (or is expected to be) array of string
-		if (isStringArray(value) && field.isArray) {
-			if (notEmpty(value) && value.every((v) => v.trim() === '')) {
-				L.debug(`populating Default: "${defaultValue}" for ${field.name} of record at index ${index}`);
-				const arrayDefaultValue = convertToArray(defaultValue);
-				clonedRecord[field.name] = arrayDefaultValue.map((v) => `${v}`);
-			}
-			return undefined;
-		}
-	});
+	if (!validationResult.valid) {
+		return {
+			status: 'ERROR_VALIDATION',
+			record,
+			errors: validationResult.details,
+		};
+	}
 
-	return _.cloneDeep(clonedRecord);
+	return {
+		status: 'SUCCESS',
+		record,
+	};
 };
-
-/**
- * Run schema validation pipeline for a schema defintion on the list of records provided.
- * @param definition the schema definition name.
- * @param record the records to validate.
- */
-const validateUnprocessedRecord = (
-	schemaDef: Schema,
-	record: UnprocessedDataRecord,
-	index: number,
-): ReadonlyArray<SchemaValidationError> => {
-	const majorErrors = pipelines
-		.runUnprocessedRecordValidationPipeline(record, index, schemaDef.fields, [
-			validation.validateFieldNames,
-			validation.validateNonArrayFields,
-			validation.validateRequiredFields,
-			validation.validateValueTypes,
-		])
-		.filter(notEmpty);
-	return [...majorErrors];
-};
-
-const validateAfterTypeConversion = (
-	schemaDef: Schema,
-	record: DataRecord,
-	index: number,
-): ReadonlyArray<SchemaValidationError> => {
-	const validationErrors = pipelines
-		.runRecordValidationPipeline(record, index, schemaDef.fields, [
-			validation.validateRegex,
-			validation.validateRange,
-			validation.validateCodeList,
-			validation.validateScript,
-		])
-		.filter(notEmpty);
-
-	return [...validationErrors];
-};
-
-function validateRecordsSet(schemaDef: Schema, processedRecords: DataRecord[]) {
-	const validationErrors = pipelines
-		.runDatasetValidationPipeline(processedRecords, schemaDef, [
-			validation.validateUnique,
-			validation.validateUniqueKey,
-		])
-		.filter(notEmpty);
-	return validationErrors;
-}
