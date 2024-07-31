@@ -19,6 +19,16 @@
 
 import { RestrictionRange } from 'dictionary';
 
+/**
+ * Convert a RestrictionRange object to a simple string representation.
+ *
+ * @example
+ * const range = { exclusiveMin: 0, max: 10 };
+ * rangeToText(range); // "> 0 and <= 10"
+ *
+ * @param range
+ * @returns
+ */
 export const rangeToText = (range: RestrictionRange): string => {
 	let minString = '';
 	let maxString = '';

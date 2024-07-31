@@ -20,6 +20,14 @@
 import type { DataRecordValue, SchemaField } from 'dictionary';
 import { isBooleanArray, isInteger, isIntegerArray, isNumber, isNumberArray, isStringArray } from './typeUtils';
 
+/**
+ * Checks that a value matches the expected type for a given field, based on the value type specified in its field
+ * definition.
+ *
+ * @param value Value to check
+ * @param fieldDefinition Field definition that specifies the expected value type
+ * @returns `true` if value matches the expected type; `false` otherwise.
+ */
 export const isValidValueType = (value: DataRecordValue, fieldDefinition: SchemaField): boolean => {
 	switch (fieldDefinition.valueType) {
 		case 'boolean': {
