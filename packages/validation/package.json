@@ -14,10 +14,10 @@
 	"dependencies": {
 		"@overture-stack/lectern-dictionary": "workspace:^",
 		"lodash": "^4.17.21",
-		"zod": "^3.21.4"
+		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"@types/lodash": "^4.14.195",
-		"rimraf": "^5.0.0"
+		"@types/lodash": "^4.17.7",
+		"rimraf": "^5.0.9"
 	}
 }
