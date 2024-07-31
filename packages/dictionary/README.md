@@ -1,9 +1,10 @@
-# Lectern Dictionary Schema and Utilities
+# Lectern Dictionary Meta-Schema and Utilities
 
-## Schema Definition for Lectern Developers
+[![NPM Version](https://img.shields.io/npm/v/@overture-stack/lectern-dictionary?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-dictionary)
 
-The Lectern server uses a TypeScript native schema generated with [Zod](https://zod.dev/) that can be found in the [`./src/types/dictionaryTypes.ts`](./src/types/dictionaryTypes.ts) file. There is a custom script `npm run generate` that will regenerate the content in the `DictionaryMetaSchema.json`. The JSON Schema file is generated thanks to the libary [zod-to-JSON Schema](https://www.npmjs.com/package/zod-to-JSON Schema). 
+This package defines the structure of Lectern Dictionaries, including providing the TypeScript type definitions to use the dictionary in code and the schemas to validate that a given JSON object is a valid Lectern Dictionary.
 
-Whenever changes are made to the Zod Schemas in `./src/types` the generation script needs to be re-run and the updated Dictionary Meta Schema committed to the repository.
+The Lectern Dictionary meta-schema is formally defined in TypeScript and exported as the type `Dictionary`. This definition is created using `Zod` schemas, which are also exported from this package and available for use to confirm a given object is a valid Lectern Dictionary.
 
-If the generation script needs updating, it can be found at [`./scripts/buildMetaSchema.ts`](./scripts/buildMetaSchema.ts).
+A [JSON Schema definition](https://github.com/overture-stack/lectern/blob/develop/generated/DictionaryMetaSchema.json) of the Lectern Dictionary structure is also available if you are looking for a non-TypeScript mechanism for validating Lectern Dictionaries.
+
