@@ -17,7 +17,13 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary, DictionaryDiff, DictionaryDiffArray, FieldDiff, unknownToString } from 'dictionary';
+import {
+	Dictionary,
+	DictionaryDiff,
+	DictionaryDiffArray,
+	FieldDiff,
+	unknownToString,
+} from '@overture-stack/lectern-dictionary';
 import fetch from 'node-fetch';
 import promiseTools from 'promise-tools';
 import { loggerFor } from '../logger';

@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecord, DataRecordValue, SchemaField } from 'dictionary';
+import type { DataRecord, DataRecordValue, SchemaField } from '@overture-stack/lectern-dictionary';
 import type { FieldRestrictionRule } from './FieldRestrictionRule';
 
 /**

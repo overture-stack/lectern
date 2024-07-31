@@ -17,8 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecord, Schema } from 'dictionary';
-import { TypeUtils } from 'dictionary';
+import type { DataRecord, Schema } from '@overture-stack/lectern-dictionary';
+import { TypeUtils } from '@overture-stack/lectern-dictionary';
 import { invalid, valid, type TestResult } from '../types';
 import { validateRecord } from '../validateRecord';
 import { generateDataSetHashMap } from './restrictions/generateDataSetHashMap';

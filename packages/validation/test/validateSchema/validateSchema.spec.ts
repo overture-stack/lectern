@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import type { DataRecord } from 'dictionary';
+import type { DataRecord } from '@overture-stack/lectern-dictionary';
 import assert from 'node:assert';
 import { validateSchema } from '../../src';
 import { schemaSingleStringRequired } from '../fixtures/schema/schemaSingleStringRequired';

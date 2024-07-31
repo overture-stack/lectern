@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecordValue, SchemaField } from 'dictionary';
+import type { DataRecordValue, SchemaField } from '@overture-stack/lectern-dictionary';
 import { isBooleanArray, isInteger, isIntegerArray, isNumber, isNumberArray, isStringArray } from './typeUtils';
 
 /**

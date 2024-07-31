@@ -1,4 +1,4 @@
-import { Schema } from 'dictionary';
+import { Schema } from '@overture-stack/lectern-dictionary';
 import { fieldStringManyRestrictions } from '../fields/multipleRestrictions/fieldStringManyRestrictions';
 import { fieldBooleanNoRestriction } from '../fields/noRestrictions/fieldBooleanNoRestriction';
 import { fieldIntegerRequired } from '../fields/simpleRestrictions/integer/fieldIntegerRequired';

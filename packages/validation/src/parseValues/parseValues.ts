@@ -31,7 +31,7 @@ import {
 	type SchemaField,
 	type SchemaFieldValueType,
 	type UnprocessedDataRecord,
-} from 'dictionary';
+} from '@overture-stack/lectern-dictionary';
 import { isInteger, isNumber } from '../utils/typeUtils';
 import type {
 	ParseDictionaryData,

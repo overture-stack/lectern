@@ -1,4 +1,8 @@
-import type { RestrictionCodeListInteger, RestrictionCodeListNumber, RestrictionCodeListString } from 'dictionary';
+import type {
+	RestrictionCodeListInteger,
+	RestrictionCodeListNumber,
+	RestrictionCodeListString,
+} from '@overture-stack/lectern-dictionary';
 
 export const codeListString: RestrictionCodeListString = ['Apple  ', '    Banana', '  Carrot ', 'Donut']; // Food, extra whitespace on items in order to test that matching is being trimmed.
 export const codeListInteger: RestrictionCodeListInteger = [1, 1, 2, 3, 5, 8, 13, 24]; // Fibonacci

@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { SchemaIntegerField } from 'dictionary';
+import type { SchemaIntegerField } from '@overture-stack/lectern-dictionary';
 
 export const fieldIntegerArrayRequired = {
 	name: 'integer-array-required',

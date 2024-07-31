@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { SchemaBooleanField } from 'dictionary';
+import type { SchemaBooleanField } from '@overture-stack/lectern-dictionary';
 
 export const fieldBooleanArrayRequired = {
 	name: 'boolean-array-required',

@@ -1,4 +1,4 @@
-import { DictionaryDiffArray } from 'dictionary';
+import { DictionaryDiffArray } from '@overture-stack/lectern-dictionary';
 
 const diffResponse = [
 	[

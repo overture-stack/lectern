@@ -1,4 +1,4 @@
-import { Schema } from 'dictionary';
+import { Schema } from '@overture-stack/lectern-dictionary';
 import { fieldStringNoRestriction } from '../fields/noRestrictions/fieldStringNoRestriction';
 import { validateFixture } from '../../testUtils/validateFixture';
 

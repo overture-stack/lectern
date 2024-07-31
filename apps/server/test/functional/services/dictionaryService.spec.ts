@@ -19,7 +19,7 @@
 
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { DictionaryDocument, VersionUtils } from 'dictionary';
+import { VersionUtils } from '@overture-stack/lectern-dictionary';
 import * as immer from 'immer';
 import { Error as MongooseError } from 'mongoose';
 import sinon from 'sinon';
@@ -34,6 +34,7 @@ import SCHEMA_1_EXISTING from '../../fixtures/schemas/primitives';
 import SCHEMA_REFERENCES, { references } from '../../fixtures/schemas/references';
 import SCHEMA_2_ADD from '../../fixtures/schemas/schemaChangesBase';
 import SCHEMA_3_UPDATES from '../../fixtures/schemas/schemaChangesUpdated';
+import type { DictionaryDocument } from '../../../src/db/dbTypes';
 
 chai.use(chaiAsPromised);
 

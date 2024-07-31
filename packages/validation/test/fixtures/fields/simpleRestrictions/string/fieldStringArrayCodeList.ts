@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { SchemaStringField } from 'dictionary';
+import type { SchemaStringField } from '@overture-stack/lectern-dictionary';
 import { codeListString } from '../../../restrictions/codeListsFixtures';
 
 export const fieldStringArrayCodeList = {

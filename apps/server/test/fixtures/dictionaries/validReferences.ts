@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary } from 'dictionary';
+import { Dictionary } from '@overture-stack/lectern-dictionary';
 import referencesSchema, { references } from '../schemas/references';
 const dictionary: Dictionary = {
 	name: 'Valid References Dictionary',

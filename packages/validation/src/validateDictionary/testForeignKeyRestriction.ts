@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { TypeUtils, type DataRecord, type ForeignKeyRestriction } from 'dictionary';
+import { TypeUtils, type DataRecord, type ForeignKeyRestriction } from '@overture-stack/lectern-dictionary';
 import { invalid, valid, type TestResult } from '../types';
 import type { SchemaDataReference } from './collectSchemaReferenceData';
 import type { DictionaryValidationErrorRecordForeignKey } from './DictionaryValidationError';

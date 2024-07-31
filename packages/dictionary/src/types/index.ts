@@ -17,9 +17,9 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './diffTypes';
-
+export * from './dataRecord';
 export * from './defined';
+export * from './diffTypes';
 export * from './generics';
 export * from './result';
 export * from './singular';

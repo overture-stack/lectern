@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { SchemaField, ValueChangeTypeName } from 'dictionary';
+import { SchemaField, ValueChangeTypeName } from '@overture-stack/lectern-dictionary';
 
 type ChangeOnlyTypeNames = Exclude<ValueChangeTypeName, 'unchanged'>;
 

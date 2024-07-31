@@ -1,4 +1,4 @@
-import type { SchemaStringField } from 'dictionary';
+import type { SchemaStringField } from '@overture-stack/lectern-dictionary';
 import { regexYearMonthDay } from '../../../restrictions/regexFixtures';
 
 export const fieldStringRegex = {

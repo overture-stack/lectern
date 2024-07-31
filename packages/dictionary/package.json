@@ -1,6 +1,6 @@
 {
-	"name": "dictionary",
-	"version": "1.0.0",
+	"name": "@overture-stack/lectern-dictionary",
+	"version": "0.1.0-beta.1",
 	"description": "",
 	"main": "dist/index.js",
 	"scripts": {
@@ -12,12 +12,12 @@
 	"author": "Ontario Institute for Cancer Research",
 	"license": "AGPL-3.0",
 	"dependencies": {
-		"immer": "^10.0.2",
+		"immer": "^10.1.1",
 		"lodash": "^4.17.21",
-		"zod": "^3.21.4"
+		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"@types/lodash": "^4.14.195",
-		"rimraf": "^5.0.0"
+		"@types/lodash": "^4.17.7",
+		"rimraf": "^5.0.9"
 	}
 }

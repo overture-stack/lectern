@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"lib": ["ESNext"],
+		"module": "CommonJS",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"strict": true,
+		"noImplicitAny": true,
+		"noUnusedParameters": true,
+		"esModuleInterop": true,
+		"noEmit": true,
+		"outDir": "dist",
+		"skipLibCheck": true
+	},
+	"include": ["./src/**/*.ts", "./test/**/*.ts"]
+}

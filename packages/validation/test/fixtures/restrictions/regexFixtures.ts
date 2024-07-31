@@ -1,4 +1,4 @@
-import type { RestrictionRegex } from 'dictionary';
+import type { RestrictionRegex } from '@overture-stack/lectern-dictionary';
 
 export const regexYearMonthDay: RestrictionRegex = '^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$'; // Example: "1999-01-31"
 export const regexMTGMana: RestrictionRegex =

@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { RestrictionCodeList } from 'dictionary';
+import type { RestrictionCodeList } from '@overture-stack/lectern-dictionary';
 import { invalid, valid } from '../../types/testResult';
 import type { FieldRestrictionSingleValueTestFunction, FieldRestrictionTestFunction } from '../FieldRestrictionTest';
 import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';

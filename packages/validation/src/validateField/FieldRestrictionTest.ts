@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { ArrayDataValue, DataRecordValue, SingleDataValue } from 'dictionary';
+import type { ArrayDataValue, DataRecordValue, SingleDataValue } from '@overture-stack/lectern-dictionary';
 import type { TestResult } from '../types';
 
 export type RestrictionTestInvalidArrayItem = {

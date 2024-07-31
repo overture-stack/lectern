@@ -24,7 +24,7 @@ import {
 	type Dictionary,
 	type ForeignKeyRestriction,
 	type Schema,
-} from 'dictionary';
+} from '@overture-stack/lectern-dictionary';
 
 /**
  * This type alias is for a structure used to collect then lookup values from schemas. It is helpful
