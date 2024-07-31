@@ -18,7 +18,7 @@
  */
 
 import axios from 'axios';
-import { ForbiddenError, UnauthorizedError } from 'common';
+import { ForbiddenError, UnauthorizedError } from 'dictionary';
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import memoize from 'memoizee';

@@ -17,14 +17,16 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { failure, failWith, success, type Result } from 'common';
 import {
 	DEFAULT_DELIMITER,
+	failure,
+	failWith,
+	success,
 	type ArrayDataValue,
 	type DataRecord,
 	type DataRecordValue,
 	type Dictionary,
-	type RestrictionCodeListString,
+	type Result,
 	type Schema,
 	type SchemaField,
 	type SchemaFieldValueType,
@@ -32,13 +34,13 @@ import {
 } from 'dictionary';
 import { isInteger, isNumber } from '../utils/typeUtils';
 import type {
-	ParseFieldError,
 	ParseDictionaryData,
 	ParseDictionaryFailure,
 	ParseDictionaryResult,
+	ParseFieldError,
 	ParseRecordResult,
-	ParseSchemaResult,
 	ParseSchemaError,
+	ParseSchemaResult,
 } from './ParseValuesResult';
 import { matchCodeListFormatting } from './matchCodeListFormatting';
 

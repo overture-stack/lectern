@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { isDefined } from 'common';
+import { TypeUtils } from 'dictionary';
 import { invalid, valid } from '../../types';
 import type {
 	FieldRestrictionArrayTestFunction,
@@ -41,7 +41,7 @@ export const createFieldRestrictionTestForArrays =
 	(rule, values) => {
 		const invalidItems = values
 			.map((value, position) => (test(rule, value).valid ? undefined : { position, value }))
-			.filter(isDefined);
+			.filter(TypeUtils.isDefined);
 
 		if (invalidItems.length) {
 			const message = typeof errorMessage === 'function' ? errorMessage(rule) : errorMessage;

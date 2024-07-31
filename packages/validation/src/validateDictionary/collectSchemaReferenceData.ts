@@ -17,8 +17,14 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { isDefined } from 'common';
-import type { DataRecord, DataRecordValue, Dictionary, ForeignKeyRestriction, Schema } from 'dictionary';
+import {
+	TypeUtils,
+	type DataRecord,
+	type DataRecordValue,
+	type Dictionary,
+	type ForeignKeyRestriction,
+	type Schema,
+} from 'dictionary';
 
 /**
  * This type alias is for a structure used to collect then lookup values from schemas. It is helpful
@@ -94,7 +100,7 @@ export const collectSchemaReferenceData = (
 		.map((schema) =>
 			schema.restrictions?.foreignKey ? { schema, foreignKeyRestriction: schema.restrictions?.foreignKey } : undefined,
 		)
-		.filter(isDefined);
+		.filter(TypeUtils.isDefined);
 
 	const foreignKeyMappings = schemasWithForeignKeyRestrictions.flatMap(
 		({ foreignKeyRestriction: foreignKeyMappings }) => foreignKeyMappings,

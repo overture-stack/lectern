@@ -18,9 +18,9 @@
  */
 
 import { z as zod } from 'zod';
-import { ReferenceTag } from './referenceTypes';
-import { Integer } from './commonTypes';
-import type { Values } from 'common';
+import { ReferenceTag } from './referenceSchemas';
+import { Integer } from './dictionarySchemas';
+import type { Values } from '../types';
 
 export const FieldRestrictionTypes = {
 	codeList: 'codeList',

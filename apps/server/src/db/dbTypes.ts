@@ -17,7 +17,23 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './defined';
-export * from './generics';
-export * from './result';
-export * from './singular';
+import { DictionaryBase } from 'dictionary';
+import { z as zod } from 'zod';
+
+/**
+ * A Dictionary stored in the DB is represented as a document and gets an `_id` property
+ */
+export const DictionaryDocument = DictionaryBase.extend({
+	_id: zod.string(),
+	createdAt: zod.string(),
+	updatedAt: zod.string(),
+});
+export type DictionaryDocument = zod.infer<typeof DictionaryDocument>;
+
+export const DictionaryDocumentSummary = DictionaryDocument.pick({
+	name: true,
+	version: true,
+	description: true,
+	_id: true,
+});
+export type DictionaryDocumentSummary = zod.infer<typeof DictionaryDocumentSummary>;

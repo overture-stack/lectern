@@ -12,7 +12,6 @@
 	"author": "Ontario Institute for Cancer Research",
 	"license": "AGPL-3.0",
 	"dependencies": {
-		"common": "workspace:^",
 		"dictionary": "workspace:^",
 		"lodash": "^4.17.21",
 		"zod": "^3.21.4"

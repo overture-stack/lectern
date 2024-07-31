@@ -1,4 +1,4 @@
-import { Schema, SchemaField } from 'types';
+import type { Schema, SchemaField } from '../metaSchema';
 
 /**
  * Get an array of fields from this schema that have the required restriction set to true

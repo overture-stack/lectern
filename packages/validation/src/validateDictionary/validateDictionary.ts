@@ -17,15 +17,14 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { isDefined } from 'common';
-import { DataRecord, Dictionary } from 'dictionary';
+import { DataRecord, Dictionary, TypeUtils } from 'dictionary';
 import { invalid, valid, type TestResult } from '../types';
 import { validateSchema, type SchemaRecordError } from '../validateSchema';
 import { collectSchemaReferenceData } from './collectSchemaReferenceData';
 import type {
 	DictionaryValidationError,
-	DictionaryValidationRecordErrorDetails,
 	DictionaryValidationErrorRecordForeignKey,
+	DictionaryValidationRecordErrorDetails,
 } from './DictionaryValidationError';
 import { testForeignKeyRestriction } from './testForeignKeyRestriction';
 import { testUnrecognizedSchema } from './testUnrecognizedSchema';
@@ -88,7 +87,7 @@ export const validateDictionary = (
 								recordErrors: foreignKeyTestResult.details,
 							};
 						})
-						.filter(isDefined)
+						.filter(TypeUtils.isDefined)
 				: [];
 			const combinedErrors = mergeSchemaRecordValidationErrors<DictionaryValidationRecordErrorDetails>(
 				schemaValidationResult.valid ? [] : schemaValidationResult.details,
@@ -99,7 +98,7 @@ export const validateDictionary = (
 				? { reason: 'INVALID_RECORDS', schemaName: schema.name, invalidRecords: combinedErrors }
 				: undefined;
 		})
-		.filter(isDefined);
+		.filter(TypeUtils.isDefined);
 
 	const collectedResults: DictionaryValidationError[] = [...unrecognizedSchemaErrors, ...recognizedSchemaErrors];
 

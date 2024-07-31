@@ -17,9 +17,10 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary, DictionaryDocument, DictionaryDocumentSummary } from 'dictionary';
+import { Dictionary } from 'dictionary';
 import { omit } from 'lodash';
 import mongoose from 'mongoose';
+import type { DictionaryDocument, DictionaryDocumentSummary } from './dbTypes';
 
 export const DictionaryModel = mongoose.model(
 	'Dictionary',
