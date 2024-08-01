@@ -70,9 +70,7 @@ export const StringFieldRestrictions = zod
 	.object({
 		codeList: RestrictionCodeListString.or(ReferenceTag),
 		required: zod.boolean(),
-		script: RestrictionScript.or(ReferenceTag),
 		regex: RestrictionRegex.or(ReferenceTag),
-		unique: zod.boolean(),
 	})
 	.partial();
 export type StringFieldRestrictions = zod.infer<typeof StringFieldRestrictions>;
@@ -81,9 +79,7 @@ export const NumberFieldRestrictions = zod
 	.object({
 		codeList: RestrictionCodeListNumber.or(ReferenceTag),
 		required: zod.boolean(),
-		script: RestrictionScript.or(ReferenceTag),
 		range: RestrictionNumberRange,
-		unique: zod.boolean(),
 	})
 	.partial();
 export type NumberFieldRestrictions = zod.infer<typeof NumberFieldRestrictions>;
@@ -92,16 +88,12 @@ export const IntegerFieldRestrictions = zod
 	.object({
 		codeList: RestrictionCodeListInteger.or(ReferenceTag),
 		required: zod.boolean(),
-		script: RestrictionScript.or(ReferenceTag),
 		range: RestrictionIntegerRange,
-		unique: zod.boolean(),
 	})
 	.partial();
 export type IntegerFieldRestrictions = zod.infer<typeof IntegerFieldRestrictions>;
 
-export const BooleanFieldRestrictions = zod
-	.object({ required: zod.boolean(), script: RestrictionScript.or(ReferenceTag), unique: zod.boolean() })
-	.partial();
+export const BooleanFieldRestrictions = zod.object({ required: zod.boolean() }).partial();
 export type BooleanFieldRestrictions = zod.infer<typeof BooleanFieldRestrictions>;
 
 /* ***************** *
@@ -113,6 +105,7 @@ export const SchemaFieldBase = zod
 		description: zod.string().optional(),
 		isArray: zod.boolean().optional(),
 		meta: DictionaryMeta.optional(),
+		unique: zod.boolean().optional(),
 	})
 	.strict();
 export type SchemaFieldBase = zod.infer<typeof SchemaFieldBase>;

@@ -36,7 +36,7 @@ const DIFF_DICTIONARY_INITIAL: Dictionary = {
 						key: true,
 					},
 					restrictions: {
-						script: ['(field)=>field.length > 5'],
+						regex: '^[\\w]+$',
 					},
 				},
 				{
