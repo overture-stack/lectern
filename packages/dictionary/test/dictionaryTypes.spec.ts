@@ -125,6 +125,119 @@ describe('Dictionary Types', () => {
 			expect(BooleanFieldRestrictions.safeParse({ script: ['()=>true'] }).success).true;
 		});
 	});
+
+	describe('Fields', () => {
+		it('Can have no restrictions', () => {
+			const fieldString: SchemaField = {
+				name: 'some-name',
+				valueType: 'string',
+			};
+			expect(SchemaField.safeParse(fieldString).success, 'String field invalid.').true;
+			const fieldNumber: SchemaField = {
+				name: 'some-name',
+				valueType: 'number',
+			};
+			expect(SchemaField.safeParse(fieldNumber).success, 'Number field invalid.').true;
+			const fieldInteger: SchemaField = {
+				name: 'some-name',
+				valueType: 'integer',
+			};
+			expect(SchemaField.safeParse(fieldInteger).success, 'Integer field invalid.').true;
+			const fieldBoolean: SchemaField = {
+				name: 'some-name',
+				valueType: 'boolean',
+			};
+			expect(SchemaField.safeParse(fieldBoolean).success, 'Boolean field invalid.').true;
+		});
+		it('Can have a single object restriction', () => {
+			const fieldString: SchemaField = {
+				name: 'some-name',
+				valueType: 'string',
+				restrictions: {
+					codeList: ['a', 'b', 'c'],
+				},
+			};
+			expect(SchemaField.safeParse(fieldString).success, 'String field invalid.').true;
+			const fieldInteger: SchemaField = {
+				name: 'some-name',
+				valueType: 'integer',
+				restrictions: {
+					required: true,
+				},
+			};
+			expect(SchemaField.safeParse(fieldInteger).success, 'Integer field invalid.').true;
+			const fieldNumber: SchemaField = {
+				name: 'some-name',
+				valueType: 'number',
+				restrictions: {
+					required: true,
+				},
+			};
+			expect(SchemaField.safeParse(fieldNumber).success, 'Number field invalid.').true;
+			const fieldBoolean: SchemaField = {
+				name: 'some-name',
+				valueType: 'boolean',
+				restrictions: {
+					required: true,
+				},
+			};
+			expect(SchemaField.safeParse(fieldBoolean).success, 'Boolean field invalid.').true;
+		});
+		it('Can have an array of object restrictions', () => {
+			const fieldString: SchemaField = {
+				name: 'some-name',
+				valueType: 'string',
+				restrictions: [
+					{
+						regex: '^[\\w]+$',
+					},
+					{
+						regex: 'hello',
+					},
+				],
+			};
+			expect(SchemaField.safeParse(fieldString).success, 'String field invalid.').true;
+			const fieldInteger: SchemaField = {
+				name: 'some-name',
+				valueType: 'integer',
+				restrictions: [
+					{
+						required: true,
+					},
+					{
+						codeList: [1, 2, 3],
+					},
+				],
+			};
+			expect(SchemaField.safeParse(fieldInteger).success, 'Integer field invalid.').true;
+			const fieldNumber: SchemaField = {
+				name: 'some-name',
+				valueType: 'number',
+				restrictions: [
+					{
+						required: true,
+					},
+					{
+						codeList: [1, 2, 3],
+					},
+				],
+			};
+			expect(SchemaField.safeParse(fieldNumber).success, 'Number field invalid.').true;
+			const fieldBoolean: SchemaField = {
+				name: 'some-name',
+				valueType: 'boolean',
+				restrictions: [
+					{
+						required: true,
+					},
+					{
+						required: false,
+					},
+				],
+			};
+			expect(SchemaField.safeParse(fieldBoolean).success, 'Boolean field invalid.').true;
+		});
+	});
 	describe('Schema', () => {
 		it("Can't have repeated field names", () => {
 			const sharedName = 'schemaName';
