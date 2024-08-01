@@ -19,8 +19,8 @@
 
 import * as immer from 'immer';
 import { cloneDeep, get, isObject, omit } from 'lodash';
-import { Dictionary, ReferenceArray, ReferenceTag, ReferenceValue, References, Schema } from '.';
-import { InvalidReferenceError, asArray } from 'common';
+import { Dictionary, ReferenceArray, ReferenceTag, ReferenceValue, References, Schema, TypeUtils } from '.';
+import { InvalidReferenceError } from './errors';
 
 // This is the union of all schema sections that could have reference values
 type OutputReferenceValues = ReferenceArray | ReferenceValue;
@@ -83,23 +83,23 @@ const internalReplaceSchemaReferences = (
 				// All the checking for undefined prevents us from adding properties with value undefined into the field's ouput JSON
 				case 'string':
 					if (field.restrictions.codeList !== undefined) {
-						field.restrictions.codeList = asArray(resolveRestriction(field.restrictions.codeList));
+						field.restrictions.codeList = TypeUtils.asArray(resolveRestriction(field.restrictions.codeList));
 					}
 					if (field.restrictions.regex !== undefined) {
 						field.restrictions.regex = resolveNoArrays(field.restrictions.regex, 'regex');
 					}
 					if (field.restrictions.script !== undefined) {
-						field.restrictions.script = asArray(resolveRestriction(field.restrictions.script));
+						field.restrictions.script = TypeUtils.asArray(resolveRestriction(field.restrictions.script));
 					}
 					break;
 				case 'number':
 					if (field.restrictions.script !== undefined) {
-						field.restrictions.script = asArray(resolveRestriction(field.restrictions.script));
+						field.restrictions.script = TypeUtils.asArray(resolveRestriction(field.restrictions.script));
 					}
 					break;
 				case 'integer':
 					if (field.restrictions.script !== undefined) {
-						field.restrictions.script = asArray(resolveRestriction(field.restrictions.script));
+						field.restrictions.script = TypeUtils.asArray(resolveRestriction(field.restrictions.script));
 					}
 					break;
 				case 'boolean':

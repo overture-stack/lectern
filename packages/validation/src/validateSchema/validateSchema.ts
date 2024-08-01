@@ -17,14 +17,14 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecord, Schema } from 'dictionary';
+import type { DataRecord, Schema } from '@overture-stack/lectern-dictionary';
+import { TypeUtils } from '@overture-stack/lectern-dictionary';
 import { invalid, valid, type TestResult } from '../types';
-import type { SchemaValidationError, SchemaValidationRecordErrorDetails } from './SchemaValidationError';
 import { validateRecord } from '../validateRecord';
 import { generateDataSetHashMap } from './restrictions/generateDataSetHashMap';
-import { testUniqueKey } from './restrictions/uniqueKey/testUniqueKey';
-import { isDefined } from 'common';
 import { testUniqueFieldRestriction } from './restrictions/uniqueField/testUniqueFieldRestriction';
+import { testUniqueKey } from './restrictions/uniqueKey/testUniqueKey';
+import type { SchemaValidationError, SchemaValidationRecordErrorDetails } from './SchemaValidationError';
 
 /**
  * Validate a data set using a Lectern Schema. The data to validate is an array of DataRecords that contains all
@@ -82,6 +82,6 @@ export const validateSchema = (records: Array<DataRecord>, schema: Schema): Test
 			}
 			return recordErrors.length ? { recordIndex, recordErrors } : undefined;
 		})
-		.filter(isDefined);
+		.filter(TypeUtils.isDefined);
 	return schemaValidationErrors.length ? invalid(schemaValidationErrors) : valid();
 };

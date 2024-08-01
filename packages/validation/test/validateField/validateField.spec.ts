@@ -18,7 +18,7 @@
  */
 
 import { expect } from 'chai';
-import type { SchemaStringField } from 'dictionary';
+import type { SchemaStringField } from '@overture-stack/lectern-dictionary';
 import assert from 'node:assert';
 import { validateField } from '../../src';
 import { fieldStringManyRestrictions } from '../fixtures/fields/multipleRestrictions/fieldStringManyRestrictions';

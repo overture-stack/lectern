@@ -4,14 +4,15 @@
  */
 import {
 	Dictionary,
+	DictionaryBase,
 	DictionaryMeta,
-	NameString,
+	NameValue,
 	ReferenceArray,
 	ReferenceTag,
 	References,
 	Schema,
 	SchemaField,
-} from 'dictionary';
+} from '@overture-stack/lectern-dictionary';
 import fs from 'fs';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 
@@ -25,7 +26,7 @@ const jsonSchema = zodToJsonSchema(Dictionary, {
 		ReferenceArray,
 		References,
 		Meta: DictionaryMeta,
-		Name: NameString,
+		Name: NameValue,
 		Schema,
 		SchemaField,
 	},

@@ -17,8 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { DictionaryBase } from '@overture-stack/lectern-dictionary';
 import { z as zod } from 'zod';
-import { DictionaryBase } from './dictionaryTypes';
 
 /**
  * A Dictionary stored in the DB is represented as a document and gets an `_id` property

@@ -24,7 +24,7 @@ import {
 	DictionaryMeta,
 	Integer,
 	IntegerFieldRestrictions,
-	NameString,
+	NameValue,
 	NumberFieldRestrictions,
 	RestrictionIntegerRange,
 	RestrictionNumberRange,
@@ -35,22 +35,22 @@ import {
 } from '../src';
 
 describe('Dictionary Types', () => {
-	describe('NameString', () => {
+	describe('NameValue', () => {
 		it('Rejects empty string', () => {
-			expect(NameString.safeParse('').success).false;
+			expect(NameValue.safeParse('').success).false;
 		});
 		it('Can be string', () => {
-			expect(NameString.safeParse('any').success).true;
-			expect(NameString.safeParse('123').success).true;
-			expect(NameString.safeParse('_').success).true;
+			expect(NameValue.safeParse('any').success).true;
+			expect(NameValue.safeParse('123').success).true;
+			expect(NameValue.safeParse('_').success).true;
 			// NOTE: if we want to limit the property names we should explicitly declare those reules, right now all characters are valid and the strings dont have to start with a letter
 		});
 		it("Can't contain a `.`", () => {
-			expect(NameString.safeParse('asdf.asdf').success).false;
-			expect(NameString.safeParse('.').success).false;
-			expect(NameString.safeParse('.asdf').success).false;
-			expect(NameString.safeParse('adsf.').success).false;
-			expect(NameString.safeParse('\\.').success).false;
+			expect(NameValue.safeParse('asdf.asdf').success).false;
+			expect(NameValue.safeParse('.').success).false;
+			expect(NameValue.safeParse('.asdf').success).false;
+			expect(NameValue.safeParse('adsf.').success).false;
+			expect(NameValue.safeParse('\\.').success).false;
 		});
 	});
 

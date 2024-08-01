@@ -18,7 +18,7 @@
  */
 
 import * as validation from '@overture-stack/lectern-validation';
-import { DataRecord, Dictionary, Schema, UnprocessedDataRecord } from 'dictionary';
+import { DataRecord, Dictionary, Schema, UnprocessedDataRecord } from '@overture-stack/lectern-dictionary';
 import { loggerFor } from '../logger';
 import {
 	SchemaProcessingResult,

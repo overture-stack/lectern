@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecord } from 'dictionary';
+import type { DataRecord } from '@overture-stack/lectern-dictionary';
 /**
  * Extract from a data record an object with only the unique key field values.
  * @param record

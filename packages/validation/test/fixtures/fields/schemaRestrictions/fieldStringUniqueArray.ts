@@ -1,4 +1,4 @@
-import type { SchemaStringField } from 'dictionary';
+import type { SchemaStringField } from '@overture-stack/lectern-dictionary';
 
 export const fieldStringUniqueArray = {
 	name: 'unique-string-array',

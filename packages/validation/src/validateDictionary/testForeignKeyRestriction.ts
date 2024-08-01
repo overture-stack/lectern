@@ -17,11 +17,10 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecord, ForeignKeyRestriction } from 'dictionary';
+import { TypeUtils, type DataRecord, type ForeignKeyRestriction } from '@overture-stack/lectern-dictionary';
+import { invalid, valid, type TestResult } from '../types';
 import type { SchemaDataReference } from './collectSchemaReferenceData';
 import type { DictionaryValidationErrorRecordForeignKey } from './DictionaryValidationError';
-import { invalid, valid, type TestResult } from '../types';
-import { isDefined } from 'common';
 
 /**
  * Test foreignKey restrictions on a single DataRecord, checked against a pre-calculated `foreignSchemaRefereceData` with the values
@@ -70,7 +69,7 @@ export const testForeignKeyRestriction = (
 							fieldValue: localValue,
 						};
 			})
-			.filter(isDefined);
+			.filter(TypeUtils.isDefined);
 		return foreignKeyErrors;
 	});
 

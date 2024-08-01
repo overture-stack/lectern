@@ -1,4 +1,4 @@
-import type { SchemaBooleanField } from 'dictionary';
+import type { SchemaBooleanField } from '@overture-stack/lectern-dictionary';
 
 export const fieldBooleanNoRestriction = {
 	name: 'any-boolean',

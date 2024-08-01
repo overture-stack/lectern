@@ -17,13 +17,20 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { BadRequestError, ConflictError, NotFoundError } from 'common';
-import { Dictionary, DictionaryDocument, DictionaryDocumentSummary, Schema, VersionUtils } from 'dictionary';
+import {
+	BadRequestError,
+	ConflictError,
+	Dictionary,
+	NotFoundError,
+	Schema,
+	VersionUtils,
+} from '@overture-stack/lectern-dictionary';
 import * as immer from 'immer';
 import { omit } from 'lodash';
 import logger from '../config/logger';
 import * as DictionaryRepo from '../db/dictionary';
 import { normalizeSchema, validate } from '../services/schemaService';
+import type { DictionaryDocument, DictionaryDocumentSummary } from '../db/dbTypes';
 
 /**
  * Get latest version for all dictionaries with the provided name

@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { SchemaFieldValueType } from 'dictionary';
+import type { SchemaFieldValueType } from '@overture-stack/lectern-dictionary';
 import type { FieldRestrictionRule } from '../validateField/FieldRestrictionRule';
 import type { RestrictionTestInvalidInfo } from '../validateField/FieldRestrictionTest';
 

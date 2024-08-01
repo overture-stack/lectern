@@ -18,9 +18,10 @@
  */
 
 import { z as zod } from 'zod';
-import { ReferenceTag } from './referenceTypes';
-import { Integer } from './commonTypes';
-import type { Values } from 'common';
+import { ReferenceTag } from './referenceSchemas';
+import type { Values } from '../types';
+
+export const Integer = zod.number().int();
 
 export const FieldRestrictionTypes = {
 	codeList: 'codeList',

@@ -17,10 +17,9 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecord } from 'dictionary';
+import type { DataRecord, Result } from '@overture-stack/lectern-dictionary';
 import type { RecordValidationErrorInvalidValue, RecordValidationErrorUnrecognizedField } from '../validateRecord';
 import type { SchemaRecordError } from '../validateSchema';
-import type { Result } from 'common';
 
 export type ParseFieldError = RecordValidationErrorInvalidValue | RecordValidationErrorUnrecognizedField;
 

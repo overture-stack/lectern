@@ -1,4 +1,4 @@
-import { Dictionary, Schema } from 'dictionary';
+import { Dictionary, Schema } from '@overture-stack/lectern-dictionary';
 import { validateFixture } from '../../../testUtils/validateFixture';
 import { schemaAllDataTypes } from '../../schema/schemaAllDataTypes';
 

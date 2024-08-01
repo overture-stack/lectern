@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { RestrictionRange } from 'dictionary';
+import type { RestrictionRange } from '@overture-stack/lectern-dictionary';
 import { isWithinRange } from '../../src/utils/isWithinRange';
 import { expect } from 'chai';
 

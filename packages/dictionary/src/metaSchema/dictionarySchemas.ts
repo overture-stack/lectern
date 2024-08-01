@@ -19,8 +19,7 @@
 
 import { z as zod } from 'zod';
 import allUnique from '../utils/allUnique';
-import { NameString } from './commonTypes';
-import { ReferenceTag, References } from './referenceTypes';
+import { ReferenceTag, References } from './referenceSchemas';
 import {
 	RestrictionCodeListInteger,
 	RestrictionCodeListNumber,
@@ -29,7 +28,22 @@ import {
 	RestrictionNumberRange,
 	RestrictionRegex,
 	RestrictionScript,
-} from './restrictionsTypes';
+} from './restrictionsSchemas';
+
+/**
+ * String rules for all name fields used in dictionary, including Dictionary, Schema, and Fields.
+ * This validates the format of the string since names are not allowed to have `.` characters.
+ *
+ * Example Values:
+ * - `donors`
+ * - `primary-site`
+ * - `maximumVelocity`
+ */
+export const NameValue = zod
+	.string()
+	.min(1, 'Name fields cannot be empty.')
+	.regex(/^[^.]+$/, 'Name fields cannot have `.` characters.');
+export type NameValue = zod.infer<typeof NameValue>;
 
 // Meta accepts as values only strings, numbers, booleans, arrays of numbers or arrays of strings
 // Another Meta object can be nested inside a Meta property
@@ -95,7 +109,7 @@ export type BooleanFieldRestrictions = zod.infer<typeof BooleanFieldRestrictions
  * ***************** */
 export const SchemaFieldBase = zod
 	.object({
-		name: NameString,
+		name: NameValue,
 		description: zod.string().optional(),
 		isArray: zod.boolean().optional(),
 		meta: DictionaryMeta.optional(),
@@ -149,11 +163,11 @@ export type SchemaRestrictions = SchemaField['restrictions'];
  * Schema *
  * ****** */
 export const ForeignKeyRestriction = zod.object({
-	schema: NameString,
+	schema: NameValue,
 	mappings: zod.array(
 		zod.object({
-			local: NameString,
-			foreign: NameString,
+			local: NameValue,
+			foreign: NameValue,
 		}),
 	),
 });
@@ -161,14 +175,14 @@ export type ForeignKeyRestriction = zod.infer<typeof ForeignKeyRestriction>;
 
 export const Schema = zod
 	.object({
-		name: NameString,
+		name: NameValue,
 		description: zod.string().optional(),
 		fields: zod.array(SchemaField).min(1),
 		meta: DictionaryMeta.optional(),
 		restrictions: zod
 			.object({
 				foreignKey: zod.array(ForeignKeyRestriction).min(1),
-				uniqueKey: zod.array(NameString).min(1),
+				uniqueKey: zod.array(NameValue).min(1),
 			})
 			.partial()
 			.optional(),

@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary } from 'dictionary';
+import { Dictionary } from '@overture-stack/lectern-dictionary';
 import primitivesSchema from '../schemas/primitives';
 export default {
 	name: 'Simple Dictionary',

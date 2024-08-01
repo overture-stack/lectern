@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecord, DataRecordValue } from 'dictionary';
+import type { DataRecord, DataRecordValue } from '@overture-stack/lectern-dictionary';
 
 /**
  * Create a unique string out of an arbitrary array of data record values. This can be used

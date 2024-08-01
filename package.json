@@ -1,22 +1,20 @@
 {
-	"name": "lectern",
+	"name": "@overture-stack/lectern",
+	"private": true,
 	"version": "2.0.0-next.0",
-	"description": "Data Dictionary Schema Manager and Validator",
-	"main": "index.js",
+	"description": "Schema Manager and Validation for Data Dictionaries",
 	"scripts": {
 		"build:all": "pnpm nx run-many --all --target=build",
-		"build:common": "pnpm nx build common",
-		"build:dictionary": "pnpm nx build dictionary",
+		"build:dictionary": "pnpm nx build @overture-stack/lectern-dictionary",
 		"build:validation": "pnpm nx build @overture-stack/lectern-validation",
-		"build:server": "pnpm nx build server",
+		"build:server": "pnpm nx build @overture-stack/lectern-server",
 		"build:client": "pnpm nx build @overture-stack/lectern-client",
 		"test:all": "pnpm nx run-many --all --target=test",
-		"test:common": "pnpm nx test common",
-		"test:dictionary": "pnpm nx test dictionary",
+		"test:dictionary": "pnpm nx test @overture-stack/lectern-dictionary",
 		"test:validation": "pnpm nx test @overture-stack/lectern-validation",
-		"test:server": "pnpm nx test server",
+		"test:server": "pnpm nx test @overture-stack/lectern-server",
 		"test:client": "pnpm nx test @overture-stack/lectern-client",
-		"generate": "pnpm build:dictionary && pnpm -C generate generate"
+		"generate": "pnpm build:dictionary && pnpm -C scripts generate"
 	},
 	"keywords": [],
 	"author": "Ontario Institute for Cancer Research",
@@ -24,18 +22,18 @@
 	"devDependencies": {
 		"@types/chai": "^4.3.16",
 		"@types/chai-as-promised": "^7.1.8",
-		"@types/mocha": "^10.0.6",
-		"@types/node": "^20.14.7",
+		"@types/mocha": "^10.0.7",
+		"@types/node": "^20.14.13",
 		"@types/sinon": "^10.0.20",
-		"chai": "^4.4.1",
+		"chai": "^4.5.0",
 		"chai-as-promised": "^7.1.2",
 		"chai-http": "^4.4.0",
-		"mocha": "^10.4.0",
+		"mocha": "^10.7.0",
 		"nx": "^16.10.0",
 		"nyc": "^15.1.0",
-		"prettier": "^3.3.2",
+		"prettier": "^3.3.3",
 		"sinon": "^15.2.0",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.5.2"
+		"typescript": "^5.5.4"
 	}
 }

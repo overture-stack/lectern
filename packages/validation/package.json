@@ -1,6 +1,6 @@
 {
 	"name": "@overture-stack/lectern-validation",
-	"version": "0.1.0",
+	"version": "0.1.0-beta.1",
 	"description": "Logic for validating data using a Lectern dictionary",
 	"main": "dist/index.js",
 	"scripts": {
@@ -12,13 +12,12 @@
 	"author": "Ontario Institute for Cancer Research",
 	"license": "AGPL-3.0",
 	"dependencies": {
-		"common": "workspace:^",
-		"dictionary": "workspace:^",
+		"@overture-stack/lectern-dictionary": "workspace:^",
 		"lodash": "^4.17.21",
-		"zod": "^3.21.4"
+		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"@types/lodash": "^4.14.195",
-		"rimraf": "^5.0.0"
+		"@types/lodash": "^4.17.7",
+		"rimraf": "^5.0.9"
 	}
 }
