@@ -66,10 +66,10 @@ const internalReplaceSchemaReferences = (
 		// Process Field Restrictions:
 		if (field.restrictions !== undefined) {
 			// reusable functions to simplify converting
-			const resolveRestriction = (value: string | string[]) =>
+			const resolveSingleRestrictionReferences = (value: string | string[]) =>
 				resolveAllReferences(value, references, discovered, visited);
 			const resolveNoArrays = (value: string | string[], restrictionName: string) => {
-				const output = resolveRestriction(value);
+				const output = resolveSingleRestrictionReferences(value);
 				if (Array.isArray(output)) {
 					throw new InvalidReferenceError(
 						`Field '${field.name}' has restriction '${restrictionName}' with a reference '${value}' that resolves to an array. This restriction must be a string.`,
@@ -77,33 +77,34 @@ const internalReplaceSchemaReferences = (
 				}
 				return output;
 			};
+
 			switch (field.valueType) {
-				// Each field type has different allowed restriction types, we need to handle the reference replacement rules carefully
-				// to ensure the output schema adhers to the type rules.
-				// All the checking for undefined prevents us from adding properties with value undefined into the field's ouput JSON
-				case 'string':
-					if (field.restrictions.codeList !== undefined) {
-						field.restrictions.codeList = TypeUtils.asArray(resolveRestriction(field.restrictions.codeList));
-					}
-					if (field.restrictions.regex !== undefined) {
-						field.restrictions.regex = resolveNoArrays(field.restrictions.regex, 'regex');
-					}
-					if (field.restrictions.script !== undefined) {
-						field.restrictions.script = TypeUtils.asArray(resolveRestriction(field.restrictions.script));
-					}
+				// - Each field type has different allowed restriction types, we need to handle the reference replacement rules carefully
+				//   to ensure the output schema adhers to the type rules.
+				// - All the checking for undefined prevents us from adding properties with value undefined into the field's ouput JSON
+				// - Since the restrictions could be an array, we need to apply these changes to each restrictions object
+				case 'string': {
+					const restrictions = TypeUtils.asArray(field.restrictions).map((restrictions) => {
+						if (restrictions.codeList !== undefined) {
+							restrictions.codeList = TypeUtils.asArray(resolveSingleRestrictionReferences(restrictions.codeList));
+						}
+						if (restrictions.regex !== undefined) {
+							restrictions.regex = resolveNoArrays(restrictions.regex, 'regex');
+						}
+						return restrictions;
+					});
+					field.restrictions = Array.isArray(field.restrictions) ? restrictions : restrictions[0];
 					break;
-				case 'number':
-					if (field.restrictions.script !== undefined) {
-						field.restrictions.script = TypeUtils.asArray(resolveRestriction(field.restrictions.script));
-					}
+				}
+				case 'number': {
 					break;
-				case 'integer':
-					if (field.restrictions.script !== undefined) {
-						field.restrictions.script = TypeUtils.asArray(resolveRestriction(field.restrictions.script));
-					}
+				}
+				case 'integer': {
 					break;
-				case 'boolean':
+				}
+				case 'boolean': {
 					break;
+				}
 			}
 		}
 	});

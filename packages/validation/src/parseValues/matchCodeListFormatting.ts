@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { SchemaField } from '@overture-stack/lectern-dictionary';
+import { TypeUtils, type SchemaField } from '@overture-stack/lectern-dictionary';
 
 /**
  * Given a string value, look for any matching values in code list restrictions and return that
@@ -36,10 +36,14 @@ import type { SchemaField } from '@overture-stack/lectern-dictionary';
  * @returns
  */
 export function matchCodeListFormatting(value: string, fieldDefinition: SchemaField): string {
-	const { valueType, restrictions } = fieldDefinition;
-
+	const { valueType } = fieldDefinition;
 	if (valueType === 'string') {
-		const codeList = restrictions?.codeList;
+		// find all possible codeLists in the restrictions
+		const codeList = TypeUtils.asArray(fieldDefinition.restrictions)
+			.map((restrictionObject) => restrictionObject?.codeList)
+			.filter(TypeUtils.isDefined)
+			.flat();
+
 		if (Array.isArray(codeList)) {
 			// We have found a code list to compare to!
 

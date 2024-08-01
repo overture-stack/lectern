@@ -1,3 +1,4 @@
+import { TypeUtils } from '.';
 import type { Schema, SchemaField } from '../metaSchema';
 
 /**
@@ -6,7 +7,9 @@ import type { Schema, SchemaField } from '../metaSchema';
  * @returns
  */
 export const getRequiredFields = (schema: Schema): SchemaField[] =>
-	schema.fields.filter((field) => field.restrictions?.required);
+	schema.fields.filter((field) =>
+		TypeUtils.asArray(field.restrictions).some((restrictionObject) => restrictionObject?.required),
+	);
 
 /**
  * Get an array of fields from this schema that are optional,
@@ -15,4 +18,6 @@ export const getRequiredFields = (schema: Schema): SchemaField[] =>
  * @returns
  */
 export const getOptionalFields = (schema: Schema): SchemaField[] =>
-	schema.fields.filter((field) => !field.restrictions?.required);
+	schema.fields.filter((field) =>
+		TypeUtils.asArray(field.restrictions).every((restrictionObject) => !restrictionObject?.required),
+	);
