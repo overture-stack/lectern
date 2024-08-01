@@ -22,7 +22,6 @@ import type {
 	RestrictionCodeList,
 	RestrictionRange,
 	RestrictionRegex,
-	RestrictionScript,
 } from '@overture-stack/lectern-dictionary';
 
 export type FieldRestrictionRuleCodeList = {

@@ -35,7 +35,7 @@ const DIFF_DICTIONARY_UPDATED: Dictionary = {
 						key: true,
 					},
 					restrictions: {
-						script: ['(field)=>field.length > 6'],
+						regex: '^[\\w]*$',
 					},
 				},
 				{

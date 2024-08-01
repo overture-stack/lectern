@@ -167,73 +167,62 @@
             "meta": {
               "$ref": "#/definitions/Meta"
             },
+            "unique": {
+              "type": "boolean"
+            },
             "valueType": {
               "type": "string",
               "const": "string"
             },
             "restrictions": {
-              "type": "object",
-              "properties": {
-                "codeList": {
-                  "anyOf": [
-                    {
-                      "type": "array",
-                      "items": {
-                        "anyOf": [
-                          {
-                            "type": "string"
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "codeList": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "$ref": "#/definitions/ReferenceTag"
+                              }
+                            ]
                           },
-                          {
-                            "$ref": "#/definitions/ReferenceTag"
-                          }
-                        ]
-                      },
-                      "minItems": 1
+                          "minItems": 1
+                        },
+                        {
+                          "$ref": "#/definitions/ReferenceTag"
+                        }
+                      ]
                     },
-                    {
-                      "$ref": "#/definitions/ReferenceTag"
-                    }
-                  ]
-                },
-                "required": {
-                  "type": "boolean"
-                },
-                "script": {
-                  "anyOf": [
-                    {
-                      "type": "array",
-                      "items": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "$ref": "#/definitions/ReferenceTag"
-                          }
-                        ]
-                      },
-                      "minItems": 1
+                    "required": {
+                      "type": "boolean"
                     },
-                    {
-                      "$ref": "#/definitions/ReferenceTag"
+                    "regex": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "$ref": "#/definitions/ReferenceTag"
+                        }
+                      ]
                     }
-                  ]
+                  },
+                  "additionalProperties": false
                 },
-                "regex": {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "$ref": "#/definitions/ReferenceTag"
-                    }
-                  ]
-                },
-                "unique": {
-                  "type": "boolean"
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/anyOf/0"
+                  }
                 }
-              },
-              "additionalProperties": false
+              ]
             }
           },
           "required": [
@@ -256,64 +245,64 @@
             },
             "meta": {
               "$ref": "#/definitions/SchemaField/anyOf/0/properties/meta"
+            },
+            "unique": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/unique"
             },
             "valueType": {
               "type": "string",
               "const": "number"
             },
             "restrictions": {
-              "type": "object",
-              "properties": {
-                "codeList": {
-                  "anyOf": [
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "number"
-                      },
-                      "minItems": 1
-                    },
-                    {
-                      "$ref": "#/definitions/ReferenceTag"
-                    }
-                  ]
-                },
-                "required": {
-                  "type": "boolean"
-                },
-                "script": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/properties/script/anyOf/0"
-                    },
-                    {
-                      "$ref": "#/definitions/ReferenceTag"
-                    }
-                  ]
-                },
-                "range": {
+              "anyOf": [
+                {
                   "type": "object",
                   "properties": {
-                    "exclusiveMax": {
-                      "type": "number"
+                    "codeList": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          },
+                          "minItems": 1
+                        },
+                        {
+                          "$ref": "#/definitions/ReferenceTag"
+                        }
+                      ]
                     },
-                    "exclusiveMin": {
-                      "type": "number"
+                    "required": {
+                      "type": "boolean"
                     },
-                    "max": {
-                      "type": "number"
-                    },
-                    "min": {
-                      "type": "number"
+                    "range": {
+                      "type": "object",
+                      "properties": {
+                        "exclusiveMax": {
+                          "type": "number"
+                        },
+                        "exclusiveMin": {
+                          "type": "number"
+                        },
+                        "max": {
+                          "type": "number"
+                        },
+                        "min": {
+                          "type": "number"
+                        }
+                      },
+                      "additionalProperties": false
                     }
                   },
                   "additionalProperties": false
                 },
-                "unique": {
-                  "type": "boolean"
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/SchemaField/anyOf/1/properties/restrictions/anyOf/0"
+                  }
                 }
-              },
-              "additionalProperties": false
+              ]
             }
           },
           "required": [
@@ -336,64 +325,64 @@
             },
             "meta": {
               "$ref": "#/definitions/SchemaField/anyOf/0/properties/meta"
+            },
+            "unique": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/unique"
             },
             "valueType": {
               "type": "string",
               "const": "integer"
             },
             "restrictions": {
-              "type": "object",
-              "properties": {
-                "codeList": {
-                  "anyOf": [
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "integer"
-                      },
-                      "minItems": 1
-                    },
-                    {
-                      "$ref": "#/definitions/ReferenceTag"
-                    }
-                  ]
-                },
-                "required": {
-                  "type": "boolean"
-                },
-                "script": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/properties/script/anyOf/0"
-                    },
-                    {
-                      "$ref": "#/definitions/ReferenceTag"
-                    }
-                  ]
-                },
-                "range": {
+              "anyOf": [
+                {
                   "type": "object",
                   "properties": {
-                    "exclusiveMax": {
-                      "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/properties/codeList/anyOf/0/items"
+                    "codeList": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "integer"
+                          },
+                          "minItems": 1
+                        },
+                        {
+                          "$ref": "#/definitions/ReferenceTag"
+                        }
+                      ]
                     },
-                    "exclusiveMin": {
-                      "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/properties/codeList/anyOf/0/items"
+                    "required": {
+                      "type": "boolean"
                     },
-                    "max": {
-                      "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/properties/codeList/anyOf/0/items"
-                    },
-                    "min": {
-                      "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/properties/codeList/anyOf/0/items"
+                    "range": {
+                      "type": "object",
+                      "properties": {
+                        "exclusiveMax": {
+                          "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/anyOf/0/properties/codeList/anyOf/0/items"
+                        },
+                        "exclusiveMin": {
+                          "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/anyOf/0/properties/codeList/anyOf/0/items"
+                        },
+                        "max": {
+                          "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/anyOf/0/properties/codeList/anyOf/0/items"
+                        },
+                        "min": {
+                          "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/anyOf/0/properties/codeList/anyOf/0/items"
+                        }
+                      },
+                      "additionalProperties": false
                     }
                   },
                   "additionalProperties": false
                 },
-                "unique": {
-                  "type": "boolean"
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/anyOf/0"
+                  }
                 }
-              },
-              "additionalProperties": false
+              ]
             }
           },
           "required": [
@@ -417,31 +406,31 @@
             "meta": {
               "$ref": "#/definitions/SchemaField/anyOf/0/properties/meta"
             },
+            "unique": {
+              "$ref": "#/definitions/SchemaField/anyOf/0/properties/unique"
+            },
             "valueType": {
               "type": "string",
               "const": "boolean"
             },
             "restrictions": {
-              "type": "object",
-              "properties": {
-                "required": {
-                  "type": "boolean"
-                },
-                "script": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/properties/script/anyOf/0"
-                    },
-                    {
-                      "$ref": "#/definitions/ReferenceTag"
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "required": {
+                      "type": "boolean"
                     }
-                  ]
+                  },
+                  "additionalProperties": false
                 },
-                "unique": {
-                  "type": "boolean"
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/SchemaField/anyOf/3/properties/restrictions/anyOf/0"
+                  }
                 }
-              },
-              "additionalProperties": false
+              ]
             }
           },
           "required": [
