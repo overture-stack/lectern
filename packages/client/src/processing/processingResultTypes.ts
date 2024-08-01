@@ -29,7 +29,7 @@ import { DataRecord, Schema } from '@overture-stack/lectern-dictionary';
 
 export type ProcessingFunction = (schema: Schema, rec: Readonly<DataRecord>, index: number) => any;
 
-type RecordProcessingErrorSuccess = {
+type RecordProcessingSuccess = {
 	status: 'SUCCESS';
 	record: DataRecord;
 };
@@ -42,11 +42,11 @@ type RecordProcessingErrorValidation = {
 	errors: RecordValidationError[];
 };
 export type RecordProcessingResult =
-	| RecordProcessingErrorSuccess
+	| RecordProcessingSuccess
 	| RecordProcessingErrorParsing
 	| RecordProcessingErrorValidation;
 
-type SchemaProcessingErrorSuccess = {
+type SchemaProcessingSuccess = {
 	status: 'SUCCESS';
 	records: DataRecord[];
 };
@@ -59,11 +59,11 @@ type SchemaProcessingErrorValidation = {
 	errors: SchemaValidationError[];
 };
 export type SchemaProcessingResult =
-	| SchemaProcessingErrorSuccess
+	| SchemaProcessingSuccess
 	| SchemaProcessingErrorParsing
 	| SchemaProcessingErrorValidation;
 
-type DictionaryProcessingErrorSuccess = {
+type DictionaryProcessingSuccess = {
 	status: 'SUCCESS';
 	data: Record<string, DataRecord[]>;
 };
@@ -81,7 +81,7 @@ type DictionaryProcessingErrorValidation = {
 	errors: DictionaryValidationError[];
 };
 export type DictionaryProcessingResult =
-	| DictionaryProcessingErrorSuccess
+	| DictionaryProcessingSuccess
 	| DictionaryProcessingErrorParsing
 	| DictionaryProcessingErrorValidation;
 
