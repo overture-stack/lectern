@@ -17,8 +17,40 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecord, DataRecordValue, SchemaField } from '@overture-stack/lectern-dictionary';
+import {
+	TypeUtils,
+	type DataRecord,
+	type DataRecordValue,
+	type Defined,
+	type SchemaField,
+	type SchemaRestrictions,
+} from '@overture-stack/lectern-dictionary';
 import type { FieldRestrictionRule } from './FieldRestrictionRule';
+
+const extractRulesFromRestrictionObject = (restrictions: Defined<SchemaRestrictions>): FieldRestrictionRule[] => {
+	const output: FieldRestrictionRule[] = [];
+	if ('required' in restrictions) {
+		if (restrictions.required) {
+			output.push({ type: 'required', rule: restrictions.required });
+		}
+	}
+	if ('codeList' in restrictions) {
+		if (Array.isArray(restrictions.codeList)) {
+			output.push({ type: 'codeList', rule: restrictions.codeList });
+		}
+	}
+	if ('range' in restrictions) {
+		if (restrictions.range) {
+			output.push({ type: 'range', rule: restrictions.range });
+		}
+	}
+	if ('regex' in restrictions) {
+		if (restrictions.regex) {
+			output.push({ type: 'regex', rule: restrictions.regex });
+		}
+	}
+	return output;
+};
 
 /**
  * Convert the restrictions found in a SchemaField definition into a list of rules that apply for this specific value
@@ -35,64 +67,5 @@ export const resolveFieldRestrictions = (
 		return [];
 	}
 
-	switch (field.valueType) {
-		case 'boolean': {
-			const output: FieldRestrictionRule[] = [];
-			if (field.restrictions.required) {
-				output.push({ type: 'required', rule: field.restrictions.required });
-			}
-			// if (field.restrictions.script) {
-			// 	output.push({ type: 'script', rule: asArray(field.restrictions.script) });
-			// }
-			return output;
-		}
-		case 'integer': {
-			const output: FieldRestrictionRule[] = [];
-			if (Array.isArray(field.restrictions.codeList)) {
-				output.push({ type: 'codeList', rule: field.restrictions.codeList });
-			}
-			if (field.restrictions.range) {
-				output.push({ type: 'range', rule: field.restrictions.range });
-			}
-			if (field.restrictions.required) {
-				output.push({ type: 'required', rule: field.restrictions.required });
-			}
-			// if (field.restrictions.script) {
-			// 	output.push({ type: 'script', rule: asArray(field.restrictions.script) });
-			// }
-			return output;
-		}
-		case 'number': {
-			const output: FieldRestrictionRule[] = [];
-			if (Array.isArray(field.restrictions.codeList)) {
-				output.push({ type: 'codeList', rule: field.restrictions.codeList });
-			}
-			if (field.restrictions.range) {
-				output.push({ type: 'range', rule: field.restrictions.range });
-			}
-			if (field.restrictions.required) {
-				output.push({ type: 'required', rule: field.restrictions.required });
-			}
-			// if (field.restrictions.script) {
-			// 	output.push({ type: 'script', rule: asArray(field.restrictions.script) });
-			// }
-			return output;
-		}
-		case 'string': {
-			const output: FieldRestrictionRule[] = [];
-			if (Array.isArray(field.restrictions.codeList)) {
-				output.push({ type: 'codeList', rule: field.restrictions.codeList });
-			}
-			if (field.restrictions.regex) {
-				output.push({ type: 'regex', rule: field.restrictions.regex });
-			}
-			if (field.restrictions.required) {
-				output.push({ type: 'required', rule: field.restrictions.required });
-			}
-			// if (field.restrictions.script) {
-			// 	output.push({ type: 'script', rule: asArray(field.restrictions.script) });
-			// }
-			return output;
-		}
-	}
+	return TypeUtils.asArray(field.restrictions).flatMap(extractRulesFromRestrictionObject);
 };

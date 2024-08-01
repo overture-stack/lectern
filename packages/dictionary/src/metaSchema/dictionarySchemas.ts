@@ -113,7 +113,7 @@ export type SchemaFieldBase = zod.infer<typeof SchemaFieldBase>;
 export const SchemaStringField = SchemaFieldBase.merge(
 	zod.object({
 		valueType: zod.literal(SchemaFieldValueType.Values.string),
-		restrictions: StringFieldRestrictions.optional(),
+		restrictions: StringFieldRestrictions.or(StringFieldRestrictions.array()).optional(),
 	}),
 ).strict();
 export type SchemaStringField = zod.infer<typeof SchemaStringField>;
@@ -121,7 +121,7 @@ export type SchemaStringField = zod.infer<typeof SchemaStringField>;
 export const SchemaNumberField = SchemaFieldBase.merge(
 	zod.object({
 		valueType: zod.literal(SchemaFieldValueType.Values.number),
-		restrictions: NumberFieldRestrictions.optional(),
+		restrictions: NumberFieldRestrictions.or(NumberFieldRestrictions.array()).optional(),
 	}),
 ).strict();
 export type SchemaNumberField = zod.infer<typeof SchemaNumberField>;
@@ -129,7 +129,7 @@ export type SchemaNumberField = zod.infer<typeof SchemaNumberField>;
 export const SchemaIntegerField = SchemaFieldBase.merge(
 	zod.object({
 		valueType: zod.literal(SchemaFieldValueType.Values.integer),
-		restrictions: IntegerFieldRestrictions.optional(),
+		restrictions: IntegerFieldRestrictions.or(IntegerFieldRestrictions.array()).optional(),
 	}),
 ).strict();
 export type SchemaIntegerField = zod.infer<typeof SchemaIntegerField>;
@@ -137,7 +137,7 @@ export type SchemaIntegerField = zod.infer<typeof SchemaIntegerField>;
 export const SchemaBooleanField = SchemaFieldBase.merge(
 	zod.object({
 		valueType: zod.literal(SchemaFieldValueType.Values.boolean),
-		restrictions: BooleanFieldRestrictions.optional(),
+		restrictions: BooleanFieldRestrictions.or(BooleanFieldRestrictions.array()).optional(),
 	}),
 ).strict();
 export type SchemaBooleanField = zod.infer<typeof SchemaBooleanField>;
