@@ -640,4 +640,6 @@ describe('Dictionary Types', () => {
 			expect(DictionaryMeta.safeParse(meta).success).false;
 		});
 	});
+	// TODO: References spec
+	// TODO: Conditional Restrictions
 });

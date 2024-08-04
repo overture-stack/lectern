@@ -23,7 +23,7 @@ export const ReferenceTag = zod
 	.string()
 	.regex(
 		RegExp('^#(/[-_A-Za-z0-9]+)+$'),
-		'Not formatted as a valid reference tag. References must be formatted like `#/path/to/reference',
+		'Not formatted as a valid reference tag. References must be formatted like `#/path/to/reference`',
 	);
 export type ReferenceTag = zod.infer<typeof ReferenceValue>;
 

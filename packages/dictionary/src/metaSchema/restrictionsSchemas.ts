@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { z as zod } from 'zod';
+import { z as zod, type ZodSchema } from 'zod';
 import { ReferenceTag } from './referenceSchemas';
 import type { Values } from '../types';
 
@@ -45,7 +45,12 @@ export type RestrictionCodeListNumber = zod.infer<typeof RestrictionCodeListNumb
 export const RestrictionCodeListInteger = Integer.array().min(1);
 export type RestrictionCodeListInteger = zod.infer<typeof RestrictionCodeListInteger>;
 
-export type RestrictionCodeList = RestrictionCodeListString | RestrictionCodeListNumber | RestrictionCodeListInteger;
+export const RestrictionCodeList = zod.union([
+	RestrictionCodeListString,
+	RestrictionCodeListNumber,
+	RestrictionCodeListInteger,
+]);
+export type RestrictionCodeList = zod.infer<typeof RestrictionCodeList>;
 
 export const RestrictionNumberRange = zod
 	.object({
@@ -98,7 +103,7 @@ export const RestrictionIntegerRange = zod
 export const RestrictionRange = RestrictionNumberRange;
 export type RestrictionRange = zod.infer<typeof RestrictionIntegerRange>;
 
-export const RestrictionRegex = zod.string().superRefine((data, context) => {
+const RegexString = zod.string().superRefine((data, context) => {
 	try {
 		// Attempt to build regexp from the value
 		RegExp(data);
@@ -111,4 +116,103 @@ export const RestrictionRegex = zod.string().superRefine((data, context) => {
 		});
 	}
 });
+export const RestrictionRegex = RegexString.or(RegexString.array());
 export type RestrictionRegex = zod.infer<typeof RestrictionRegex>;
+
+/*
+ * Conditions for ConditionalRestrictionTest
+ */
+export const StringFieldValue = zod.string();
+export const StringArrayFieldValue = StringFieldValue.array();
+export const NumberFieldValue = zod.number();
+export const NumberArrayFieldValue = NumberFieldValue.array();
+export const IntegerFieldValue = zod.number().int();
+export const IntegerArrayFieldValue = IntegerFieldValue.array();
+export const BooleanFieldValue = zod.boolean();
+export const BooleanArrayFieldValue = BooleanFieldValue.array();
+
+export const FieldValue = zod.union([
+	BooleanFieldValue,
+	BooleanArrayFieldValue,
+	IntegerFieldValue,
+	IntegerArrayFieldValue,
+	NumberFieldValue,
+	NumberArrayFieldValue,
+	StringFieldValue,
+	StringArrayFieldValue,
+]);
+export type FieldValue = zod.infer<typeof FieldValue>;
+
+export const ArrayTestCase = zod.enum(['all', 'any', 'none']);
+export type ArrayTestCase = zod.infer<typeof ArrayTestCase>;
+
+export const ARRAY_TEST_CASE_DEFAULT = ArrayTestCase.Values.all;
+
+export const MatchRuleCodeList = RestrictionCodeList;
+export type MatchRuleCodeList = zod.infer<typeof MatchRuleCodeList>;
+
+export const MatchRuleCount = zod.number().or(RestrictionIntegerRange);
+export type MatchRuleCount = zod.infer<typeof MatchRuleCount>;
+
+export const MatchRuleExists = zod.boolean();
+export type MatchRuleExists = zod.infer<typeof MatchRuleExists>;
+
+export const MatchRuleRange = RestrictionRange;
+export type MatchRuleRange = zod.infer<typeof MatchRuleRange>;
+
+export const MatchRuleRegex = RestrictionRegex;
+export type MatchRuleRegex = zod.infer<typeof MatchRuleRegex>;
+
+export const MatchRuleValue = FieldValue;
+export type MatchRuleValue = zod.infer<typeof MatchRuleValue>;
+
+export const ConditionMatchRule = zod
+	.object({
+		codeList: MatchRuleCodeList,
+		count: MatchRuleCount,
+		exists: MatchRuleExists,
+		range: MatchRuleRange,
+		regex: MatchRuleRegex,
+		value: MatchRuleValue,
+	})
+	.partial();
+type ConditionMatchRule = zod.infer<typeof ConditionMatchRule>;
+
+export const RestrictionCondition = zod.object({
+	fields: zod.string().array(),
+	match: ConditionMatchRule.array(),
+	case: ArrayTestCase.optional(),
+	arrayFieldCase: ArrayTestCase.optional(),
+});
+export type RestrictionCondition = zod.infer<typeof RestrictionCondition>;
+
+export const ConditionalRestrictionTest = zod.object({
+	conditions: zod.array(RestrictionCondition),
+	case: ArrayTestCase,
+});
+export type ConditionalRestrictionTest = zod.infer<typeof ConditionalRestrictionTest>;
+
+export type ConditionalRestriction<TRestrictionObject> = {
+	if: ConditionalRestrictionTest;
+	then?:
+		| TRestrictionObject
+		| ConditionalRestriction<TRestrictionObject>
+		| (TRestrictionObject | ConditionalRestriction<TRestrictionObject>)[];
+	else?:
+		| TRestrictionObject
+		| ConditionalRestriction<TRestrictionObject>
+		| (TRestrictionObject | ConditionalRestriction<TRestrictionObject>)[];
+};
+export const ConditionalRestriction = <TRestrictionObject>(
+	restrictionsSchema: ZodSchema<TRestrictionObject>,
+): ZodSchema<ConditionalRestriction<TRestrictionObject>> => {
+	const restrictionOrConditional = zod.union([
+		restrictionsSchema,
+		zod.lazy(() => ConditionalRestriction(restrictionsSchema)),
+	]);
+	return zod.object({
+		if: ConditionalRestrictionTest,
+		then: restrictionOrConditional.or(restrictionOrConditional).optional(),
+		else: restrictionOrConditional.or(restrictionOrConditional).optional(),
+	});
+};

@@ -22,6 +22,7 @@ import {
 	failure,
 	failWith,
 	success,
+	TypeUtils,
 	type ArrayDataValue,
 	type DataRecord,
 	type DataRecordValue,
@@ -32,7 +33,6 @@ import {
 	type SchemaFieldValueType,
 	type UnprocessedDataRecord,
 } from '@overture-stack/lectern-dictionary';
-import { isInteger, isNumber } from '../utils/typeUtils';
 import type {
 	ParseDictionaryData,
 	ParseDictionaryFailure,
@@ -43,6 +43,8 @@ import type {
 	ParseSchemaResult,
 } from './ParseValuesResult';
 import { matchCodeListFormatting } from './matchCodeListFormatting';
+
+const { isInteger, isNumber } = TypeUtils;
 
 /* === Type Specific conversion functions === */
 // Note: These are intended to be passed only normalized values that have already passed through the

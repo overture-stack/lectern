@@ -17,30 +17,19 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { type DataRecordValue, type SchemaField, TypeUtils } from '@overture-stack/lectern-dictionary';
-const { isBooleanArray, isInteger, isIntegerArray, isNumber, isNumberArray, isStringArray } = TypeUtils;
+import { type DataRecordValue, type MatchRuleRegex } from '@overture-stack/lectern-dictionary';
+import { isStringArray } from '@overture-stack/lectern-dictionary/dist/utils/typeUtils';
+import { testRegex } from '../restrictions';
 
-/**
- * Checks that a value matches the expected type for a given field, based on the value type specified in its field
- * definition.
- *
- * @param value Value to check
- * @param fieldDefinition Field definition that specifies the expected value type
- * @returns `true` if value matches the expected type; `false` otherwise.
- */
-export const isValidValueType = (value: DataRecordValue, fieldDefinition: SchemaField): boolean => {
-	switch (fieldDefinition.valueType) {
-		case 'boolean': {
-			return fieldDefinition.isArray ? isBooleanArray(value) : typeof value === 'boolean';
-		}
-		case 'integer': {
-			return fieldDefinition.isArray ? isIntegerArray(value) : isInteger(value);
-		}
-		case 'number': {
-			return fieldDefinition.isArray ? isNumberArray(value) : isNumber(value);
-		}
-		case 'string': {
-			return fieldDefinition.isArray ? isStringArray(value) : typeof value === 'string';
-		}
+export const testMatchRegex = (regex: MatchRuleRegex, value: DataRecordValue): boolean => {
+	if (typeof value === 'string') {
+		return testRegex(regex, value).valid;
 	}
+
+	if (isStringArray(value)) {
+		return value.some((item) => testRegex(regex, item).valid);
+	}
+
+	// value is not a type that can match the regex rule, we return false;
+	return false;
 };

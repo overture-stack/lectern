@@ -21,7 +21,7 @@ import type { DataRecord, DataRecordValue, SchemaField } from '@overture-stack/l
 import { invalid, valid, type TestResult } from '../types';
 import { isValidValueType } from '../utils/isValidValueType';
 import type { FieldRestrictionRule } from './FieldRestrictionRule';
-import { resolveFieldRestrictions } from './resolveFieldRestrictions';
+import { resolveFieldRestrictions } from './restrictions/resolveFieldRestrictions';
 import { testCodeList } from './restrictions/testCodeList';
 import { testRange } from './restrictions/testRange';
 import { testRegex } from './restrictions/testRegex';

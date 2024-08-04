@@ -17,30 +17,32 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { type DataRecordValue, type SchemaField, TypeUtils } from '@overture-stack/lectern-dictionary';
-const { isBooleanArray, isInteger, isIntegerArray, isNumber, isNumberArray, isStringArray } = TypeUtils;
+import type { DataRecordValue, MatchRuleCount } from '@overture-stack/lectern-dictionary';
+import { testRange } from '../restrictions';
 
 /**
- * Checks that a value matches the expected type for a given field, based on the value type specified in its field
- * definition.
+ * Test if the number of elements in an array value is an exact number, or within a range.
  *
- * @param value Value to check
- * @param fieldDefinition Field definition that specifies the expected value type
- * @returns `true` if value matches the expected type; `false` otherwise.
+ * Note: This test is only meant to match on array fields. It is counting the number of elements in an array.
+ *       This will always return false for non-array values, it does not count the character length of strings
+ *       or numbers.
+ * @param count
+ * @param value
+ * @returns
  */
-export const isValidValueType = (value: DataRecordValue, fieldDefinition: SchemaField): boolean => {
-	switch (fieldDefinition.valueType) {
-		case 'boolean': {
-			return fieldDefinition.isArray ? isBooleanArray(value) : typeof value === 'boolean';
-		}
-		case 'integer': {
-			return fieldDefinition.isArray ? isIntegerArray(value) : isInteger(value);
-		}
-		case 'number': {
-			return fieldDefinition.isArray ? isNumberArray(value) : isNumber(value);
-		}
-		case 'string': {
-			return fieldDefinition.isArray ? isStringArray(value) : typeof value === 'string';
-		}
+export const testMatchCount = (count: MatchRuleCount, value: DataRecordValue): boolean => {
+	if (!Array.isArray(value)) {
+		// can only match with arrays
+		return false;
 	}
+
+	// count match rule is either a range object or a number
+	if (typeof count === 'object') {
+		// here it is the range object so we can use the testRange fuctionality to determine if we have
+		// the correct number of elements
+		return testRange(count, value.length).valid;
+	}
+
+	// whats left
+	return value.length >= count;
 };
