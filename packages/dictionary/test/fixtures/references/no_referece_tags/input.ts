@@ -17,7 +17,7 @@ const content: Dictionary = {
 						key: true,
 					},
 					restrictions: {
-						regex: '^[\\w\\s\\W]{5,}$',
+						regex: '^[\\w]*$',
 					},
 				},
 				{
@@ -35,10 +35,21 @@ const content: Dictionary = {
 					meta: {
 						default: 'Unknown',
 					},
-					restrictions: { codeList: ['this'] },
+					restrictions: {},
 				},
 			],
 		},
 	],
+	references: {
+		regex: {
+			REPEATED_TEXT: '(\\w+).*\\1',
+			ALPHA_ONLY: '^[A-Za-z]*$',
+			COMBINED: ['#/regex/ID_REG_EXP', '#/regex/ALPHA_ONLY'],
+		},
+		enums: {
+			SEX: ['Male', 'Female', 'Other'],
+		},
+	},
 };
+
 export default content;

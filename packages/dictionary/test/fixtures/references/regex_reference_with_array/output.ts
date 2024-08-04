@@ -11,16 +11,11 @@ const content: Dictionary = {
 					name: 'some_id',
 					valueType: 'string',
 					restrictions: {
-						regex: '#/regex/ID_FORMAT',
+						regex: ['good', 'reference'],
 					},
 				},
 			],
 		},
 	],
-	references: {
-		regex: {
-			ID_FORMAT: ['bad', 'reference'],
-		},
-	},
 };
 export default content;

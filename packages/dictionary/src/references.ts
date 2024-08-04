@@ -224,11 +224,6 @@ const replaceReferencesInStringRestrictionsObject = (
 		}
 		if (restrictionsObject.regex !== undefined) {
 			const updatedRegex = resolveAllReferences(restrictionsObject.regex, references, discovered, visited);
-			if (Array.isArray(updatedRegex)) {
-				throw new InvalidReferenceError(
-					`Regex restriction with reference '${restrictionsObject.regex}' resolves to an array. This restriction must be a string.`,
-				);
-			}
 			restrictionsObject.regex = updatedRegex;
 		}
 	}

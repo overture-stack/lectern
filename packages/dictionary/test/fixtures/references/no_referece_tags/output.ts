@@ -17,7 +17,7 @@ const content: Dictionary = {
 						key: true,
 					},
 					restrictions: {
-						regex: '^[\\w\\s\\W]{5,}$',
+						regex: '^[\\w]*$',
 					},
 				},
 				{
@@ -35,7 +35,7 @@ const content: Dictionary = {
 					meta: {
 						default: 'Unknown',
 					},
-					restrictions: { codeList: ['this'] },
+					restrictions: {},
 				},
 			],
 		},
