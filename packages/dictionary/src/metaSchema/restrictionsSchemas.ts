@@ -188,7 +188,7 @@ export type RestrictionCondition = zod.infer<typeof RestrictionCondition>;
 
 export const ConditionalRestrictionTest = zod.object({
 	conditions: zod.array(RestrictionCondition),
-	case: ArrayTestCase,
+	case: ArrayTestCase.optional(),
 });
 export type ConditionalRestrictionTest = zod.infer<typeof ConditionalRestrictionTest>;
 
