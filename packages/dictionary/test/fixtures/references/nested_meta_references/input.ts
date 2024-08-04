@@ -14,31 +14,16 @@ const content: Dictionary = {
 					description: 'Unique identifier for donor; assigned by data provider',
 					meta: {
 						displayName: 'Submitter Donor ID',
-						key: true,
+						exampleReference: '#/meta/example',
+						nested1: { nested2: { nested3: ['#/meta/nestedMeta/example', 'array'] } },
 					},
-					restrictions: {
-						regex: '^[\\w\\s\\W]{5,}$',
-					},
-				},
-				{
-					name: 'gender',
-					valueType: 'string',
-					description: 'Donor Biological Sex',
-					restrictions: {
-						codeList: ['Male', 'Female', 'Other'],
-					},
-				},
-				{
-					name: 'ethnicity',
-					valueType: 'string',
-					description: 'Self described',
-					meta: {
-						default: 'Unknown',
-					},
-					restrictions: { codeList: ['this'] },
 				},
 			],
 		},
 	],
+	references: {
+		text: 'text',
+		meta: { example: 'This is an example', nestedMeta: { example: ['some', '#/text', 'in an'] } },
+	},
 };
 export default content;
