@@ -17,30 +17,4 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { type DataRecordValue, type SchemaField, TypeUtils } from '@overture-stack/lectern-dictionary';
-const { isBooleanArray, isInteger, isIntegerArray, isNumber, isNumberArray, isStringArray } = TypeUtils;
-
-/**
- * Checks that a value matches the expected type for a given field, based on the value type specified in its field
- * definition.
- *
- * @param value Value to check
- * @param fieldDefinition Field definition that specifies the expected value type
- * @returns `true` if value matches the expected type; `false` otherwise.
- */
-export const isValidValueType = (value: DataRecordValue, fieldDefinition: SchemaField): boolean => {
-	switch (fieldDefinition.valueType) {
-		case 'boolean': {
-			return fieldDefinition.isArray ? isBooleanArray(value) : typeof value === 'boolean';
-		}
-		case 'integer': {
-			return fieldDefinition.isArray ? isIntegerArray(value) : isInteger(value);
-		}
-		case 'number': {
-			return fieldDefinition.isArray ? isNumberArray(value) : isNumber(value);
-		}
-		case 'string': {
-			return fieldDefinition.isArray ? isStringArray(value) : typeof value === 'string';
-		}
-	}
-};
+export * from './testMatchCodeList';

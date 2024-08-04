@@ -10,6 +10,7 @@ The release of Lectern 2.0 brings some important upgrades to the Lectern service
 - The `unique` restriction has been moved to be a property of the field, not a restriction.
 - Conditional restrictions have been added.
 - Fields now accept an array of restrictions, allowing multiple regex and codeList restrictions applied to a specific field.
+- Regex restrictions can be a single string or array of strings, allowing multiple regular expressions to be applied to a field's value(s).
 
 ### Lectern JS Client Updates
 
@@ -20,6 +21,7 @@ The release of Lectern 2.0 brings some important upgrades to the Lectern service
   - Processing functions renamed to match validation and parsing functions
   - Updated interface for Lectern Server REST client
   - Exposes dictionary meta-schema validation, data parsing, and data validation functions
+
 
 ### New Published Lectern TS Packages
 

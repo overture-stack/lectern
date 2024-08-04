@@ -17,30 +17,33 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { type DataRecordValue, type SchemaField, TypeUtils } from '@overture-stack/lectern-dictionary';
-const { isBooleanArray, isInteger, isIntegerArray, isNumber, isNumberArray, isStringArray } = TypeUtils;
+import type { DataRecordValue, MatchRuleCodeList } from '@overture-stack/lectern-dictionary';
+import { isNumberArray, isStringArray } from '@overture-stack/lectern-dictionary/dist/utils/typeUtils';
 
 /**
- * Checks that a value matches the expected type for a given field, based on the value type specified in its field
- * definition.
- *
- * @param value Value to check
- * @param fieldDefinition Field definition that specifies the expected value type
- * @returns `true` if value matches the expected type; `false` otherwise.
+ * Check if the value (or at least one value from an array) is found in the code list.
  */
-export const isValidValueType = (value: DataRecordValue, fieldDefinition: SchemaField): boolean => {
-	switch (fieldDefinition.valueType) {
-		case 'boolean': {
-			return fieldDefinition.isArray ? isBooleanArray(value) : typeof value === 'boolean';
+export const testMatchCodeList = (codeList: MatchRuleCodeList, value: DataRecordValue): boolean => {
+	if (isStringArray(codeList)) {
+		if (isStringArray(value)) {
+			// If we can find at least one match from our codeList inside the array of values then we return true
+			return value.some((singleValue) => codeList.includes(singleValue));
 		}
-		case 'integer': {
-			return fieldDefinition.isArray ? isIntegerArray(value) : isInteger(value);
-		}
-		case 'number': {
-			return fieldDefinition.isArray ? isNumberArray(value) : isNumber(value);
-		}
-		case 'string': {
-			return fieldDefinition.isArray ? isStringArray(value) : typeof value === 'string';
+		if (typeof value === 'string') {
+			return codeList.includes(value);
 		}
 	}
+	if (isNumberArray(codeList)) {
+		if (isNumberArray(value)) {
+			return value.some((singleValue) => codeList.includes(singleValue));
+		}
+		if (typeof value === 'number') {
+			return codeList.includes(value);
+		}
+	}
+
+	// If the code reaches here, we have a mismatch between the type of the codeList and the value, for example
+	// the code list is an array of strings but the value is a number. Since these mismatched types will never match
+	// we return false.
+	return false;
 };

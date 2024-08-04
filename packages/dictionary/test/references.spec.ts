@@ -20,31 +20,71 @@
 import { expect } from 'chai';
 import { replaceReferences } from '../src/references';
 
-import noReferencesSectionInput from './fixtures/references/no_references_section/input';
-import noReferencesSectionOutput from './fixtures/references/no_references_section/output';
-import emptyReferencesInput from './fixtures/references/empty_references_section/input';
-import emptyReferencesOutput from './fixtures/references/empty_references_section/output';
-import simpleReferencesInput from './fixtures/references/simple_references/input';
-import simpleReferencesOutput from './fixtures/references/simple_references/output';
+import assert from 'assert';
 import codeListReferencesInput from './fixtures/references/codeList_references/input';
 import codeListReferencesOutput from './fixtures/references/codeList_references/output';
+import cyclicReferencesInput from './fixtures/references/cyclic_references/input';
+import emptyReferencesInput from './fixtures/references/empty_references_section/input';
+import emptyReferencesOutput from './fixtures/references/empty_references_section/output';
+import noReferencesSectionInput from './fixtures/references/no_references_section/input';
+import noReferencesSectionOutput from './fixtures/references/no_references_section/output';
+import nonExistingReferencesInput from './fixtures/references/non_existing_references/input';
 import referencesWithinReferencesInput from './fixtures/references/references_within_references/input';
 import referencesWithinReferencesOutput from './fixtures/references/references_within_references/output';
 import regexReferencesInput from './fixtures/references/regex_reference/input';
-import regexReferencesOutput from './fixtures/references/regex_reference/output';
 import regexArrayReferencesInput from './fixtures/references/regex_reference/input_with_array';
-import nonExistingReferencesInput from './fixtures/references/non_existing_references/input';
-import cyclicReferencesInput from './fixtures/references/cyclic_references/input';
+import regexReferencesOutput from './fixtures/references/regex_reference/output';
 import selfReferencesInput from './fixtures/references/self_references/input';
+import simpleReferencesInput from './fixtures/references/simple_references/input';
+import simpleReferencesOutput from './fixtures/references/simple_references/output';
 
 describe('Replace References', () => {
-	it('Should return the same original schema if dictionary does not contain a references section', () => {
+	it('Returns unmodified schema when dictionary does not contain a references section', () => {
 		const replacedDictionary = replaceReferences(noReferencesSectionInput);
 		expect(replacedDictionary).to.deep.eq(noReferencesSectionOutput);
 	});
-	it('Should return the same original schema if dictionary contains an empty references section', () => {
+	it('Returns unmodified schema when dictionary contains an empty references section', () => {
 		const replacedDictionary = replaceReferences(emptyReferencesInput);
 		expect(replacedDictionary).to.deep.eq(emptyReferencesOutput);
+	});
+	it('Returns unmodified schema when no ReferenceTag values are used', () => {
+		assert(false, 'unimplemented test');
+	});
+	it('Throws an error when a ReferenceTag to an unknown path is provided', () => {
+		expect(() => replaceReferences(nonExistingReferencesInput)).to.throw(
+			"No reference found for provided tag '#/NON_EXISTING_REFERENCE'",
+		);
+	});
+	it('Throws an error if cyclic references are found', () => {
+		expect(() => replaceReferences(cyclicReferencesInput)).to.throw("Cyclical references found for '#/OTHER'");
+	});
+	it('Throws an error if self references are found', () => {
+		expect(() => replaceReferences(selfReferencesInput)).to.throw("Cyclical references found for '#/SELF_REFERENCE'");
+	});
+	describe('Meta', () => {
+		it('Replaces reference tag value in meta root', () => {
+			assert(false, 'unimplemented test');
+		});
+		it('Replaces reference tag value in meta nested properties', () => {
+			assert(false, 'unimplemented test');
+		});
+		it('Replaces reference tag value in meta string array', () => {
+			assert(false, 'unimplemented test');
+		});
+	});
+	describe('String Restrictions', () => {
+		it('CodeList with ReferenceTag to single value is replaced with an array with the single value', () => {
+			assert(false, 'unimplemented test');
+		});
+		it('CodeList with array containing ReferenceTag is replaced by array with reference values added to array', () => {
+			assert(false, 'unimplemented test');
+		});
+		it('Regex with ReferenceTag is replaced by single value', () => {
+			assert(false, 'unimplemented test');
+		});
+		it('Regex with ReferenceTag to array value throws an error', () => {
+			assert(false, 'unimplemented test');
+		});
 	});
 	// TODO: Check reference replacement in meta
 	it('Should return the schema with simple references replaced', () => {
@@ -65,18 +105,7 @@ describe('Replace References', () => {
 	});
 	it('Regex Reference cannot be an array', () => {
 		expect(() => replaceReferences(regexArrayReferencesInput)).to.throw(
-			`Field 'some_id' has restriction 'regex' with a reference '#/regex/ID_FORMAT' that resolves to an array. This restriction must be a string.`,
+			`Regex restriction with reference '#/regex/ID_FORMAT' resolves to an array. This restriction must be a string.`,
 		);
-	});
-	it('Should throw exception if reference does not exist', () => {
-		expect(() => replaceReferences(nonExistingReferencesInput)).to.throw(
-			"No reference found for provided tag '#/NON_EXISTING_REFERENCE'",
-		);
-	});
-	it('Should throw exception if cyclic references are found', () => {
-		expect(() => replaceReferences(cyclicReferencesInput)).to.throw("Cyclical references found for '#/OTHER'");
-	});
-	it('Should throw exception if self references are found', () => {
-		expect(() => replaceReferences(selfReferencesInput)).to.throw("Cyclical references found for '#/SELF_REFERENCE'");
 	});
 });

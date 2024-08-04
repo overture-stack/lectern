@@ -18,10 +18,10 @@
  */
 
 import { expect } from 'chai';
-import { resolveFieldRestrictions } from '../../src/validateField/resolveFieldRestrictions';
+import { resolveFieldRestrictions } from '../../src/validateField/restrictions/resolveFieldRestrictions';
+import { fieldStringArrayMultipleRegex } from '../fixtures/fields/multipleRestrictions/fieldStringArrayMultipleRegex';
 import { fieldStringManyRestrictions } from '../fixtures/fields/multipleRestrictions/fieldStringManyRestrictions';
 import { fieldStringNoRestriction } from '../fixtures/fields/noRestrictions/fieldStringNoRestriction';
-import { fieldStringArrayMultipleRegex } from '../fixtures/fields/multipleRestrictions/fieldStringArrayMultipleRegex';
 
 describe('Field - resolveFieldRestrictions', () => {
 	it('Returns empty array when there are no restrictions', () => {

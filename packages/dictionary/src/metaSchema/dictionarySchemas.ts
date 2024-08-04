@@ -21,13 +21,13 @@ import { z as zod } from 'zod';
 import allUnique from '../utils/allUnique';
 import { ReferenceTag, References } from './referenceSchemas';
 import {
+	ConditionalRestriction,
 	RestrictionCodeListInteger,
 	RestrictionCodeListNumber,
 	RestrictionCodeListString,
 	RestrictionIntegerRange,
 	RestrictionNumberRange,
 	RestrictionRegex,
-	RestrictionScript,
 } from './restrictionsSchemas';
 
 /**
@@ -66,23 +66,11 @@ export type SchemaFieldValueType = zod.infer<typeof SchemaFieldValueType>;
 /* ****************************** *
  * Field Type Restriction Objects *
  * ****************************** */
-export const StringFieldRestrictions = zod
-	.object({
-		codeList: RestrictionCodeListString.or(ReferenceTag),
-		required: zod.boolean(),
-		regex: RestrictionRegex.or(ReferenceTag),
-	})
-	.partial();
-export type StringFieldRestrictions = zod.infer<typeof StringFieldRestrictions>;
+export const BooleanFieldRestrictions = zod.object({ required: zod.boolean() }).partial();
+export type BooleanFieldRestrictions = zod.infer<typeof BooleanFieldRestrictions>;
 
-export const NumberFieldRestrictions = zod
-	.object({
-		codeList: RestrictionCodeListNumber.or(ReferenceTag),
-		required: zod.boolean(),
-		range: RestrictionNumberRange,
-	})
-	.partial();
-export type NumberFieldRestrictions = zod.infer<typeof NumberFieldRestrictions>;
+const BooleanFieldRestrictionsObject = BooleanFieldRestrictions.or(ConditionalRestriction(BooleanFieldRestrictions));
+export type BooleanFieldRestrictionsObject = zod.infer<typeof BooleanFieldRestrictionsObject>;
 
 export const IntegerFieldRestrictions = zod
 	.object({
@@ -93,8 +81,41 @@ export const IntegerFieldRestrictions = zod
 	.partial();
 export type IntegerFieldRestrictions = zod.infer<typeof IntegerFieldRestrictions>;
 
-export const BooleanFieldRestrictions = zod.object({ required: zod.boolean() }).partial();
-export type BooleanFieldRestrictions = zod.infer<typeof BooleanFieldRestrictions>;
+const IntegerFieldRestrictionsObject = IntegerFieldRestrictions.or(ConditionalRestriction(IntegerFieldRestrictions));
+export type IntegerFieldRestrictionsObject = zod.infer<typeof IntegerFieldRestrictionsObject>;
+
+export const NumberFieldRestrictions = zod
+	.object({
+		codeList: RestrictionCodeListNumber.or(ReferenceTag),
+		required: zod.boolean(),
+		range: RestrictionNumberRange,
+	})
+	.partial();
+export type NumberFieldRestrictions = zod.infer<typeof NumberFieldRestrictions>;
+
+const NumberFieldRestrictionsObject = NumberFieldRestrictions.or(ConditionalRestriction(NumberFieldRestrictions));
+export type NumberFieldRestrictionsObject = zod.infer<typeof NumberFieldRestrictionsObject>;
+
+export const StringFieldRestrictions = zod
+	.object({
+		codeList: RestrictionCodeListString.or(ReferenceTag),
+		required: zod.boolean(),
+		regex: RestrictionRegex.or(ReferenceTag),
+		// TODO: regex can be optionally be an array. this would simplify resolving references and allow multiple regex conditions in a single object
+	})
+	.partial();
+export type StringFieldRestrictions = zod.infer<typeof StringFieldRestrictions>;
+
+const StringFieldRestrictionsObject = StringFieldRestrictions.or(ConditionalRestriction(StringFieldRestrictions));
+export type StringFieldRestrictionsObject = zod.infer<typeof StringFieldRestrictionsObject>;
+
+export const AnyFieldRestrictions = zod.union([
+	BooleanFieldRestrictions,
+	IntegerFieldRestrictions,
+	NumberFieldRestrictions,
+	StringFieldRestrictions,
+]);
+export type AnyFieldRestrictions = zod.infer<typeof AnyFieldRestrictions>;
 
 /* ***************** *
  * Field Definitions *
@@ -110,18 +131,18 @@ export const SchemaFieldBase = zod
 	.strict();
 export type SchemaFieldBase = zod.infer<typeof SchemaFieldBase>;
 
-export const SchemaStringField = SchemaFieldBase.merge(
+export const SchemaBooleanField = SchemaFieldBase.merge(
 	zod.object({
-		valueType: zod.literal(SchemaFieldValueType.Values.string),
-		restrictions: StringFieldRestrictions.or(StringFieldRestrictions.array()).optional(),
+		valueType: zod.literal(SchemaFieldValueType.Values.boolean),
+		restrictions: BooleanFieldRestrictionsObject.or(BooleanFieldRestrictionsObject.array()).optional(),
 	}),
 ).strict();
-export type SchemaStringField = zod.infer<typeof SchemaStringField>;
+export type SchemaBooleanField = zod.infer<typeof SchemaBooleanField>;
 
 export const SchemaNumberField = SchemaFieldBase.merge(
 	zod.object({
 		valueType: zod.literal(SchemaFieldValueType.Values.number),
-		restrictions: NumberFieldRestrictions.or(NumberFieldRestrictions.array()).optional(),
+		restrictions: NumberFieldRestrictionsObject.or(NumberFieldRestrictionsObject.array()).optional(),
 	}),
 ).strict();
 export type SchemaNumberField = zod.infer<typeof SchemaNumberField>;
@@ -129,18 +150,18 @@ export type SchemaNumberField = zod.infer<typeof SchemaNumberField>;
 export const SchemaIntegerField = SchemaFieldBase.merge(
 	zod.object({
 		valueType: zod.literal(SchemaFieldValueType.Values.integer),
-		restrictions: IntegerFieldRestrictions.or(IntegerFieldRestrictions.array()).optional(),
+		restrictions: IntegerFieldRestrictionsObject.or(IntegerFieldRestrictionsObject.array()).optional(),
 	}),
 ).strict();
 export type SchemaIntegerField = zod.infer<typeof SchemaIntegerField>;
 
-export const SchemaBooleanField = SchemaFieldBase.merge(
+export const SchemaStringField = SchemaFieldBase.merge(
 	zod.object({
-		valueType: zod.literal(SchemaFieldValueType.Values.boolean),
-		restrictions: BooleanFieldRestrictions.or(BooleanFieldRestrictions.array()).optional(),
+		valueType: zod.literal(SchemaFieldValueType.Values.string),
+		restrictions: StringFieldRestrictionsObject.or(StringFieldRestrictionsObject.array()).optional(),
 	}),
 ).strict();
-export type SchemaBooleanField = zod.infer<typeof SchemaBooleanField>;
+export type SchemaStringField = zod.infer<typeof SchemaStringField>;
 
 export const SchemaField = zod.discriminatedUnion('valueType', [
 	SchemaStringField,

@@ -17,30 +17,44 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { type DataRecordValue, type SchemaField, TypeUtils } from '@overture-stack/lectern-dictionary';
-const { isBooleanArray, isInteger, isIntegerArray, isNumber, isNumberArray, isStringArray } = TypeUtils;
+import {
+	TypeUtils,
+	type DataRecordValue,
+	type MatchRuleExists,
+	type SingleDataValue,
+} from '@overture-stack/lectern-dictionary';
 
-/**
- * Checks that a value matches the expected type for a given field, based on the value type specified in its field
- * definition.
- *
- * @param value Value to check
- * @param fieldDefinition Field definition that specifies the expected value type
- * @returns `true` if value matches the expected type; `false` otherwise.
- */
-export const isValidValueType = (value: DataRecordValue, fieldDefinition: SchemaField): boolean => {
-	switch (fieldDefinition.valueType) {
-		case 'boolean': {
-			return fieldDefinition.isArray ? isBooleanArray(value) : typeof value === 'boolean';
-		}
-		case 'integer': {
-			return fieldDefinition.isArray ? isIntegerArray(value) : isInteger(value);
+const valueExists = (value: SingleDataValue) => {
+	if (value === undefined) {
+		return false;
+	}
+	switch (typeof value) {
+		case 'string': {
+			// empty string, and all whitespace, are treated as empty values
+			return value.trim() !== '';
 		}
 		case 'number': {
-			return fieldDefinition.isArray ? isNumberArray(value) : isNumber(value);
+			// Treate NaN and Infinity values as missing values
+			return Number.isFinite(value);
 		}
-		case 'string': {
-			return fieldDefinition.isArray ? isStringArray(value) : typeof value === 'string';
+		case 'boolean': {
+			return true;
 		}
 	}
+};
+
+/**
+ * Test if the value exists, ie. that it is not undefined or an empty array. When the rule is true, this will
+ * return true when the value exists, and when the rule is false this will return true only when the value does
+ * not exist.
+ *
+ * Notes:
+ *   - Boolean value `false` is an existing value
+ *   - Empty strings represent a missing value, so empty string value is not teated as an existing value
+ */
+export const testMatchExists = (exists: MatchRuleExists, value: DataRecordValue): boolean => {
+	const isEmptyArray = Array.isArray(value) && value.length === 0;
+	const isValueExists = !isEmptyArray && TypeUtils.asArray(value).every(valueExists);
+
+	return exists === isValueExists;
 };
