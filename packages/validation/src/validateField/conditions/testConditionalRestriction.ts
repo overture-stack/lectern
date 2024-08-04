@@ -107,5 +107,5 @@ export const testConditionalRestriction = (
 	record: DataRecord,
 ): boolean => {
 	const results = conditionalTest.conditions.map((condition) => testCondition(condition, value, record));
-	return resultForArrayTestCase(results, conditionalTest.case);
+	return resultForArrayTestCase(results, conditionalTest.case || ARRAY_TEST_CASE_DEFAULT);
 };
