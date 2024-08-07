@@ -166,7 +166,17 @@ export type MatchRuleRegex = zod.infer<typeof MatchRuleRegex>;
 export const MatchRuleValue = FieldValue;
 export type MatchRuleValue = zod.infer<typeof MatchRuleValue>;
 
-export const ConditionMatchRule = zod
+export const MatchRule = zod.union([
+	MatchRuleCodeList,
+	MatchRuleCount,
+	MatchRuleExists,
+	MatchRuleRange,
+	MatchRuleRegex,
+	MatchRuleValue,
+]);
+export type MatchRule = zod.infer<typeof MatchRule>;
+
+export const ConditionMatch = zod
 	.object({
 		codeList: MatchRuleCodeList,
 		count: MatchRuleCount,
@@ -176,11 +186,11 @@ export const ConditionMatchRule = zod
 		value: MatchRuleValue,
 	})
 	.partial();
-type ConditionMatchRule = zod.infer<typeof ConditionMatchRule>;
+type ConditionMatch = zod.infer<typeof ConditionMatch>;
 
 export const RestrictionCondition = zod.object({
 	fields: zod.string().array(),
-	match: ConditionMatchRule.array(),
+	match: ConditionMatch,
 	case: ArrayTestCase.optional(),
 	arrayFieldCase: ArrayTestCase.optional(),
 });

@@ -143,7 +143,6 @@ describe('Record - validateRecord', () => {
 				},
 				schemaAllDataTypesMixedRestrictions,
 			);
-			console.log(JSON.stringify(result, null, 2));
 			expect(result.valid).false;
 			assert(result.valid === false);
 

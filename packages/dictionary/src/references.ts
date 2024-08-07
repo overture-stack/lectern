@@ -193,18 +193,20 @@ const replaceReferencesInStringRestrictionsObject = (
 	if ('if' in restrictionsObject) {
 		// Do replacements inside the if conditions
 		restrictionsObject.if.conditions = restrictionsObject.if.conditions.map((condition) => {
-			condition.match = condition.match.map((match) => {
-				if (match.codeList && !isNumberArray(match.codeList)) {
-					match.codeList = TypeUtils.asArray(resolveAllReferences(match.codeList, references, discovered, visited));
-				}
-				if (typeof match.value === 'string' || isStringArray(match.value)) {
-					match.value = resolveAllReferences(match.value, references, discovered, visited);
-				}
-				if (match.regex) {
-					match.regex = TypeUtils.asArray(resolveAllReferences(match.regex, references, discovered, visited));
-				}
-				return match;
-			});
+			if (condition.match.codeList && !isNumberArray(condition.match.codeList)) {
+				condition.match.codeList = TypeUtils.asArray(
+					resolveAllReferences(condition.match.codeList, references, discovered, visited),
+				);
+			}
+			if (typeof condition.match.value === 'string' || isStringArray(condition.match.value)) {
+				condition.match.value = resolveAllReferences(condition.match.value, references, discovered, visited);
+			}
+			if (condition.match.regex) {
+				condition.match.regex = TypeUtils.asArray(
+					resolveAllReferences(condition.match.regex, references, discovered, visited),
+				);
+			}
+
 			return condition;
 		});
 
