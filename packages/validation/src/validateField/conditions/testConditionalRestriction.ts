@@ -45,41 +45,38 @@ const testConditionForSingularValue = (
 	_value: SingleDataValue,
 	fieldValues: DataRecordValue[],
 ): boolean => {
-	const results = condition.match.map((match) => {
-		if (match.codeList) {
-			if (!allValuesPassMatchTest(fieldValues, match.codeList, testMatchCodeList)) {
-				return false;
-			}
+	if (condition.match.codeList) {
+		if (!allValuesPassMatchTest(fieldValues, condition.match.codeList, testMatchCodeList)) {
+			return false;
 		}
-		// count rule can have value of 0 so we need to directly check for undefined
-		if (match.count !== undefined) {
-			if (!allValuesPassMatchTest(fieldValues, match.count, testMatchCount)) {
-				return false;
-			}
+	}
+	// count rule can have value of 0 so we need to directly check for undefined
+	if (condition.match.count !== undefined) {
+		if (!allValuesPassMatchTest(fieldValues, condition.match.count, testMatchCount)) {
+			return false;
 		}
-		if (match.exists) {
-			if (!allValuesPassMatchTest(fieldValues, match.exists, testMatchExists)) {
-				return false;
-			}
+	}
+	if (condition.match.exists) {
+		if (!allValuesPassMatchTest(fieldValues, condition.match.exists, testMatchExists)) {
+			return false;
 		}
-		if (match.range) {
-			if (!allValuesPassMatchTest(fieldValues, match.range, testMatchRange)) {
-				return false;
-			}
+	}
+	if (condition.match.range) {
+		if (!allValuesPassMatchTest(fieldValues, condition.match.range, testMatchRange)) {
+			return false;
 		}
-		if (match.regex) {
-			if (!allValuesPassMatchTest(fieldValues, match.regex, testMatchRegex)) {
-				return false;
-			}
+	}
+	if (condition.match.regex) {
+		if (!allValuesPassMatchTest(fieldValues, condition.match.regex, testMatchRegex)) {
+			return false;
 		}
-		if (match.value) {
-			if (!allValuesPassMatchTest(fieldValues, match.value, testMatchValue)) {
-				return false;
-			}
+	}
+	if (condition.match.value) {
+		if (!allValuesPassMatchTest(fieldValues, condition.match.value, testMatchValue)) {
+			return false;
 		}
-		return true;
-	});
-	return resultForArrayTestCase(results, condition.case || ARRAY_TEST_CASE_DEFAULT);
+	}
+	return true;
 };
 
 const testConditionForArray = (
