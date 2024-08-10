@@ -18,23 +18,9 @@
  */
 
 import { expect } from 'chai';
-import {
-	BooleanFieldRestrictions,
-	Dictionary,
-	DictionaryMeta,
-	Integer,
-	IntegerFieldRestrictions,
-	NameValue,
-	NumberFieldRestrictions,
-	RestrictionIntegerRange,
-	RestrictionNumberRange,
-	Schema,
-	SchemaField,
-	StringFieldRestrictions,
-	VersionString,
-} from '../src';
+import { Dictionary, DictionaryMeta, NameValue, Schema, SchemaField, VersionString } from '../../src';
 
-describe('Dictionary Types', () => {
+describe('Dictionary Schemas', () => {
 	describe('NameValue', () => {
 		it('Rejects empty string', () => {
 			expect(NameValue.safeParse('').success).false;
@@ -51,78 +37,6 @@ describe('Dictionary Types', () => {
 			expect(NameValue.safeParse('.asdf').success).false;
 			expect(NameValue.safeParse('adsf.').success).false;
 			expect(NameValue.safeParse('\\.').success).false;
-		});
-	});
-
-	describe('Integer', () => {
-		it("Can't be float", () => {
-			expect(Integer.safeParse(1.3).success).false;
-			expect(Integer.safeParse(2.0000001).success).false;
-			// Note: float precision issues, if the float resolves to a whole number the value will be accepted.
-		});
-		it("Can't be string, boolean, object, array", () => {
-			expect(Integer.safeParse('1').success).false;
-			expect(Integer.safeParse(true).success).false;
-			expect(Integer.safeParse([1]).success).false;
-			expect(Integer.safeParse({}).success).false;
-			expect(Integer.safeParse({ thing: 1 }).success).false;
-		});
-		it('Can be integer', () => {
-			expect(Integer.safeParse(1).success).true;
-			expect(Integer.safeParse(0).success).true;
-			expect(Integer.safeParse(-1).success).true;
-			expect(Integer.safeParse(1123).success).true;
-		});
-	});
-	describe('RangeRestriction', () => {
-		it("Integer Range Can't have exclusiveMin and Min", () => {
-			expect(RestrictionIntegerRange.safeParse({ exclusiveMin: 0, min: 0 }).success).false;
-			expect(RestrictionIntegerRange.safeParse({ min: 0 }).success).true;
-			expect(RestrictionIntegerRange.safeParse({ exclusiveMin: 0 }).success).true;
-		});
-		it("Integer Range Can't have exclusiveMax and Max", () => {
-			expect(RestrictionIntegerRange.safeParse({ exclusiveMax: 0, max: 0 }).success).false;
-			expect(RestrictionIntegerRange.safeParse({ max: 0 }).success).true;
-			expect(RestrictionIntegerRange.safeParse({ exclusiveMax: 0 }).success).true;
-		});
-		it("Number Range Can't have exclusiveMin and Min", () => {
-			expect(RestrictionNumberRange.safeParse({ exclusiveMin: 0, min: 0 }).success).false;
-			expect(RestrictionNumberRange.safeParse({ min: 0 }).success).true;
-			expect(RestrictionNumberRange.safeParse({ exclusiveMin: 0 }).success).true;
-		});
-		it("Number Range Can't have exclusiveMax and Max", () => {
-			expect(RestrictionNumberRange.safeParse({ exclusiveMax: 0, max: 0 }).success).false;
-			expect(RestrictionNumberRange.safeParse({ max: 0 }).success).true;
-			expect(RestrictionNumberRange.safeParse({ exclusiveMax: 0 }).success).true;
-		});
-	});
-	describe('RegexRestriction', () => {
-		it('Accepts valid regex', () => {
-			expect(StringFieldRestrictions.safeParse({ regex: '[a-zA-Z]' }).success).true;
-			expect(
-				StringFieldRestrictions.safeParse({
-					regex: '^({((([WUBRG]|([0-9]|[1-9][0-9]*))(/[WUBRG])?)|(X)|([WUBRG](/[WUBRG])?/[P]))})+$',
-				}).success,
-			).true;
-		});
-		it('Rejects invalid regex', () => {
-			expect(StringFieldRestrictions.safeParse({ regex: '[' }).success).false;
-		});
-	});
-	describe('UniqueRestriction', () => {
-		it('All fields accept unique restriction', () => {
-			expect(StringFieldRestrictions.safeParse({ unique: true }).success).true;
-			expect(NumberFieldRestrictions.safeParse({ unique: true }).success).true;
-			expect(IntegerFieldRestrictions.safeParse({ unique: true }).success).true;
-			expect(BooleanFieldRestrictions.safeParse({ unique: true }).success).true;
-		});
-	});
-	describe('ScriptRestriction', () => {
-		it('All fields accept script restriction', () => {
-			expect(StringFieldRestrictions.safeParse({ script: ['()=>true'] }).success).true;
-			expect(NumberFieldRestrictions.safeParse({ script: ['()=>true'] }).success).true;
-			expect(IntegerFieldRestrictions.safeParse({ script: ['()=>true'] }).success).true;
-			expect(BooleanFieldRestrictions.safeParse({ script: ['()=>true'] }).success).true;
 		});
 	});
 

@@ -66,47 +66,57 @@ export type SchemaFieldValueType = zod.infer<typeof SchemaFieldValueType>;
 /* ****************************** *
  * Field Type Restriction Objects *
  * ****************************** */
-export const BooleanFieldRestrictions = zod.object({ required: zod.boolean() }).partial();
+export const BooleanFieldRestrictions = zod.object({ empty: zod.boolean(), required: zod.boolean() }).partial();
 export type BooleanFieldRestrictions = zod.infer<typeof BooleanFieldRestrictions>;
 
-const BooleanFieldRestrictionsObject = BooleanFieldRestrictions.or(ConditionalRestriction(BooleanFieldRestrictions));
+const BooleanFieldRestrictionsObject = BooleanFieldRestrictions.strict().or(
+	ConditionalRestriction(BooleanFieldRestrictions.strict()),
+);
 export type BooleanFieldRestrictionsObject = zod.infer<typeof BooleanFieldRestrictionsObject>;
 
 export const IntegerFieldRestrictions = zod
 	.object({
 		codeList: RestrictionCodeListInteger.or(ReferenceTag),
+		empty: zod.boolean(),
 		required: zod.boolean(),
 		range: RestrictionIntegerRange,
 	})
 	.partial();
 export type IntegerFieldRestrictions = zod.infer<typeof IntegerFieldRestrictions>;
 
-const IntegerFieldRestrictionsObject = IntegerFieldRestrictions.or(ConditionalRestriction(IntegerFieldRestrictions));
+const IntegerFieldRestrictionsObject = IntegerFieldRestrictions.strict().or(
+	ConditionalRestriction(IntegerFieldRestrictions.strict()),
+);
 export type IntegerFieldRestrictionsObject = zod.infer<typeof IntegerFieldRestrictionsObject>;
 
 export const NumberFieldRestrictions = zod
 	.object({
 		codeList: RestrictionCodeListNumber.or(ReferenceTag),
+		empty: zod.boolean(),
 		required: zod.boolean(),
 		range: RestrictionNumberRange,
 	})
 	.partial();
 export type NumberFieldRestrictions = zod.infer<typeof NumberFieldRestrictions>;
 
-const NumberFieldRestrictionsObject = NumberFieldRestrictions.or(ConditionalRestriction(NumberFieldRestrictions));
+const NumberFieldRestrictionsObject = NumberFieldRestrictions.strict().or(
+	ConditionalRestriction(NumberFieldRestrictions.strict()),
+);
 export type NumberFieldRestrictionsObject = zod.infer<typeof NumberFieldRestrictionsObject>;
 
 export const StringFieldRestrictions = zod
 	.object({
 		codeList: RestrictionCodeListString.or(ReferenceTag),
+		empty: zod.boolean(),
 		required: zod.boolean(),
 		regex: RestrictionRegex.or(ReferenceTag),
-		// TODO: regex can be optionally be an array. this would simplify resolving references and allow multiple regex conditions in a single object
 	})
 	.partial();
 export type StringFieldRestrictions = zod.infer<typeof StringFieldRestrictions>;
 
-const StringFieldRestrictionsObject = StringFieldRestrictions.or(ConditionalRestriction(StringFieldRestrictions));
+const StringFieldRestrictionsObject = StringFieldRestrictions.strict().or(
+	ConditionalRestriction(StringFieldRestrictions.strict()),
+);
 export type StringFieldRestrictionsObject = zod.infer<typeof StringFieldRestrictionsObject>;
 
 export const AnyFieldRestrictions = zod.union([
