@@ -25,6 +25,7 @@ export const Integer = zod.number().int();
 
 export const FieldRestrictionTypes = {
 	codeList: 'codeList',
+	empty: 'empty',
 	range: 'range',
 	required: 'required',
 	regex: 'regex',
@@ -32,9 +33,6 @@ export const FieldRestrictionTypes = {
 	unique: 'unique',
 } as const;
 export type FieldRestrictionType = Values<typeof FieldRestrictionTypes>;
-
-export const RestrictionScript = zod.array(zod.string().or(ReferenceTag)).min(1); //TODO: script formatting validation
-export type RestrictionScript = zod.infer<typeof RestrictionScript>;
 
 export const RestrictionCodeListString = zod.union([zod.string(), ReferenceTag]).array().min(1);
 export type RestrictionCodeListString = zod.infer<typeof RestrictionCodeListString>;
@@ -213,16 +211,16 @@ export type ConditionalRestriction<TRestrictionObject> = {
 		| ConditionalRestriction<TRestrictionObject>
 		| (TRestrictionObject | ConditionalRestriction<TRestrictionObject>)[];
 };
-export const ConditionalRestriction = <TRestrictionObject>(
-	restrictionsSchema: ZodSchema<TRestrictionObject>,
-): ZodSchema<ConditionalRestriction<TRestrictionObject>> => {
+export const ConditionalRestriction = <TRestrictionObjectSchema extends zod.ZodTypeAny>(
+	restrictionsSchema: TRestrictionObjectSchema,
+): ZodSchema<ConditionalRestriction<zod.infer<TRestrictionObjectSchema>>> => {
 	const restrictionOrConditional = zod.union([
 		restrictionsSchema,
 		zod.lazy(() => ConditionalRestriction(restrictionsSchema)),
 	]);
 	return zod.object({
 		if: ConditionalRestrictionTest,
-		then: restrictionOrConditional.or(restrictionOrConditional).optional(),
-		else: restrictionOrConditional.or(restrictionOrConditional).optional(),
+		then: restrictionOrConditional.or(restrictionOrConditional.array()).optional(),
+		else: restrictionOrConditional.or(restrictionOrConditional.array()).optional(),
 	});
 };
