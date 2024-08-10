@@ -26,7 +26,7 @@ import {
 	type RestrictionCondition,
 	type SingleDataValue,
 } from '@overture-stack/lectern-dictionary';
-import { resultForArrayTestCase } from '../../utils/resultForArayTestCase';
+import { resultForArrayTestCase } from '../../utils/resultForArrayTestCase';
 import { testMatchCount } from './testMatchCount';
 import { testMatchCodeList } from './testMatchCodeList';
 import { testMatchExists } from './testMatchExists';
