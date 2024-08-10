@@ -19,6 +19,7 @@
 
 export * from './resolveFieldRestrictions';
 export * from './testCodeList';
+export * from './testEmpty';
 export * from './testRange';
 export * from './testRegex';
 export * from './testRequired';

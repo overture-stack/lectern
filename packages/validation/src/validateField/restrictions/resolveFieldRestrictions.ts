@@ -31,14 +31,14 @@ import { testConditionalRestriction } from '../conditions/testConditionalRestric
 const extractRulesFromRestriction = (restrictions: AnyFieldRestrictions): FieldRestrictionRule[] => {
 	const rules: FieldRestrictionRule[] = [];
 
-	if ('required' in restrictions) {
-		if (restrictions.required) {
-			rules.push({ type: 'required', rule: restrictions.required });
-		}
-	}
 	if ('codeList' in restrictions) {
 		if (Array.isArray(restrictions.codeList)) {
 			rules.push({ type: 'codeList', rule: restrictions.codeList });
+		}
+	}
+	if ('empty' in restrictions) {
+		if (restrictions.empty) {
+			rules.push({ type: 'empty', rule: restrictions.empty });
 		}
 	}
 	if ('range' in restrictions) {
@@ -49,6 +49,11 @@ const extractRulesFromRestriction = (restrictions: AnyFieldRestrictions): FieldR
 	if ('regex' in restrictions) {
 		if (restrictions.regex) {
 			rules.push({ type: 'regex', rule: restrictions.regex });
+		}
+	}
+	if ('required' in restrictions) {
+		if (restrictions.required) {
+			rules.push({ type: 'required', rule: restrictions.required });
 		}
 	}
 
