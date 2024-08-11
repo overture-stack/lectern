@@ -554,6 +554,4 @@ describe('Dictionary Schemas', () => {
 			expect(DictionaryMeta.safeParse(meta).success).false;
 		});
 	});
-	// TODO: References spec
-	// TODO: Conditional Restrictions
 });
