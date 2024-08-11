@@ -19,6 +19,7 @@
 
 import {
 	ARRAY_TEST_CASE_DEFAULT,
+	ArrayTestCase,
 	type ArrayDataValue,
 	type ConditionalRestrictionTest,
 	type DataRecord,
@@ -34,45 +35,66 @@ import { testMatchRange } from './testMatchRange';
 import { testMatchRegex } from './testMatchRegex';
 import { testMatchValue } from './testMatchValue';
 
-const allValuesPassMatchTest = <TMatchRule>(
+/**
+ * Test values extracted from other fields vs a match test. This function should be passed the
+ *
+ * @param values
+ * @param rule
+ * @param matchTest
+ * @param arrayCase  Intentionally using `| undefined` vs `/?: arrayCase` to ensure that this argument is provided when this function is called
+ * @returns
+ */
+const fieldsPassMatchTest = (
 	values: DataRecordValue[],
-	rule: TMatchRule,
-	matchTest: (rule: TMatchRule, value: DataRecordValue) => boolean,
-): boolean => values.every((value) => matchTest(rule, value));
+	matchTest: (value: DataRecordValue) => boolean,
+	arrayCase: ArrayTestCase | undefined,
+): boolean => {
+	const fieldTestResults = values.map((value) => matchTest(value));
+	return resultForArrayTestCase(fieldTestResults, arrayCase || ARRAY_TEST_CASE_DEFAULT);
+};
 
 const testConditionForSingularValue = (
 	condition: RestrictionCondition,
 	_value: SingleDataValue,
 	fieldValues: DataRecordValue[],
 ): boolean => {
-	if (condition.match.codeList) {
-		if (!allValuesPassMatchTest(fieldValues, condition.match.codeList, testMatchCodeList)) {
+	const matchCodeList = condition.match.codeList;
+	if (matchCodeList !== undefined) {
+		if (!fieldsPassMatchTest(fieldValues, (value) => testMatchCodeList(matchCodeList, value), condition.case)) {
 			return false;
 		}
 	}
-	// count rule can have value of 0 so we need to directly check for undefined
-	if (condition.match.count !== undefined) {
-		if (!allValuesPassMatchTest(fieldValues, condition.match.count, testMatchCount)) {
+	const matchCount = condition.match.count;
+	if (matchCount !== undefined) {
+		if (!fieldsPassMatchTest(fieldValues, (value) => testMatchCount(matchCount, value), condition.case)) {
 			return false;
 		}
 	}
-	if (condition.match.exists) {
-		if (!allValuesPassMatchTest(fieldValues, condition.match.exists, testMatchExists)) {
+
+	const matchExists = condition.match.exists;
+	if (matchExists !== undefined) {
+		if (!fieldsPassMatchTest(fieldValues, (value) => testMatchExists(matchExists, value), condition.case)) {
 			return false;
 		}
 	}
-	if (condition.match.range) {
-		if (!allValuesPassMatchTest(fieldValues, condition.match.range, testMatchRange)) {
+
+	const matchRange = condition.match.range;
+	if (matchRange !== undefined) {
+		if (!fieldsPassMatchTest(fieldValues, (value) => testMatchRange(matchRange, value), condition.case)) {
 			return false;
 		}
 	}
-	if (condition.match.regex) {
-		if (!allValuesPassMatchTest(fieldValues, condition.match.regex, testMatchRegex)) {
+
+	const matchRegex = condition.match.regex;
+	if (matchRegex !== undefined) {
+		if (!fieldsPassMatchTest(fieldValues, (value) => testMatchRegex(matchRegex, value), condition.case)) {
 			return false;
 		}
 	}
-	if (condition.match.value) {
-		if (!allValuesPassMatchTest(fieldValues, condition.match.value, testMatchValue)) {
+
+	const matchValue = condition.match.value;
+	if (matchValue !== undefined) {
+		if (!fieldsPassMatchTest(fieldValues, (value) => testMatchValue(matchValue, value), condition.case)) {
 			return false;
 		}
 	}

@@ -18,3 +18,8 @@
  */
 
 export * from './testMatchCodeList';
+export * from './testMatchCount';
+export * from './testMatchExists';
+export * from './testMatchRange';
+export * from './testMatchRegex';
+export * from './testMatchValue';
