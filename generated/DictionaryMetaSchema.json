@@ -1,39 +1,723 @@
 {
   "$ref": "#/definitions/Dictionary",
   "definitions": {
-    "ReferenceTag": {
-      "type": "string",
-      "pattern": "^#(\\/[-_A-Za-z0-9]+)+$"
-    },
-    "ReferenceArray": {
-      "type": "array",
-      "items": {
-        "anyOf": [
-          {
-            "type": "string"
-          },
-          {
-            "$ref": "#/definitions/ReferenceTag"
-          }
-        ]
-      },
-      "minItems": 1
-    },
-    "References": {
+    "SchemaBooleanField": {
       "type": "object",
-      "additionalProperties": {
-        "anyOf": [
-          {
-            "$ref": "#/definitions/ReferenceArray/items/anyOf/0"
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/Name"
+        },
+        "description": {
+          "type": "string"
+        },
+        "isArray": {
+          "type": "boolean"
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        },
+        "unique": {
+          "type": "boolean"
+        },
+        "valueType": {
+          "type": "string",
+          "const": "boolean"
+        },
+        "restrictions": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BooleanFieldRestrictions"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "if": {
+                      "$ref": "#/definitions/ConditionalRestrictionTest"
+                    },
+                    "then": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "$ref": "#/definitions/BooleanFieldRestrictions"
+                            },
+                            {
+                              "$ref": "#/definitions/SchemaBooleanField/properties/restrictions/anyOf/0/anyOf/1"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/definitions/BooleanFieldRestrictions"
+                              },
+                              {
+                                "$ref": "#/definitions/SchemaBooleanField/properties/restrictions/anyOf/0/anyOf/1"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "else": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "$ref": "#/definitions/BooleanFieldRestrictions"
+                            },
+                            {
+                              "$ref": "#/definitions/SchemaBooleanField/properties/restrictions/anyOf/0/anyOf/1"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/definitions/BooleanFieldRestrictions"
+                              },
+                              {
+                                "$ref": "#/definitions/SchemaBooleanField/properties/restrictions/anyOf/0/anyOf/1"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "if"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SchemaBooleanField/properties/restrictions/anyOf/0"
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "valueType"
+      ],
+      "additionalProperties": false
+    },
+    "SchemaIntegerField": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/Name"
+        },
+        "description": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/description"
+        },
+        "isArray": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/isArray"
+        },
+        "meta": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/meta"
+        },
+        "unique": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/unique"
+        },
+        "valueType": {
+          "type": "string",
+          "const": "integer"
+        },
+        "restrictions": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IntegerFieldRestrictions"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "if": {
+                      "$ref": "#/definitions/ConditionalRestrictionTest"
+                    },
+                    "then": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "$ref": "#/definitions/IntegerFieldRestrictions"
+                            },
+                            {
+                              "$ref": "#/definitions/SchemaIntegerField/properties/restrictions/anyOf/0/anyOf/1"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/definitions/IntegerFieldRestrictions"
+                              },
+                              {
+                                "$ref": "#/definitions/SchemaIntegerField/properties/restrictions/anyOf/0/anyOf/1"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "else": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "$ref": "#/definitions/IntegerFieldRestrictions"
+                            },
+                            {
+                              "$ref": "#/definitions/SchemaIntegerField/properties/restrictions/anyOf/0/anyOf/1"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/definitions/IntegerFieldRestrictions"
+                              },
+                              {
+                                "$ref": "#/definitions/SchemaIntegerField/properties/restrictions/anyOf/0/anyOf/1"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "if"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SchemaIntegerField/properties/restrictions/anyOf/0"
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "valueType"
+      ],
+      "additionalProperties": false
+    },
+    "SchemaNumberField": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/Name"
+        },
+        "description": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/description"
+        },
+        "isArray": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/isArray"
+        },
+        "meta": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/meta"
+        },
+        "unique": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/unique"
+        },
+        "valueType": {
+          "type": "string",
+          "const": "number"
+        },
+        "restrictions": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NumberFieldRestrictions"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "if": {
+                      "$ref": "#/definitions/ConditionalRestrictionTest"
+                    },
+                    "then": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "$ref": "#/definitions/NumberFieldRestrictions"
+                            },
+                            {
+                              "$ref": "#/definitions/SchemaNumberField/properties/restrictions/anyOf/0/anyOf/1"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/definitions/NumberFieldRestrictions"
+                              },
+                              {
+                                "$ref": "#/definitions/SchemaNumberField/properties/restrictions/anyOf/0/anyOf/1"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "else": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "$ref": "#/definitions/NumberFieldRestrictions"
+                            },
+                            {
+                              "$ref": "#/definitions/SchemaNumberField/properties/restrictions/anyOf/0/anyOf/1"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/definitions/NumberFieldRestrictions"
+                              },
+                              {
+                                "$ref": "#/definitions/SchemaNumberField/properties/restrictions/anyOf/0/anyOf/1"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "if"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SchemaNumberField/properties/restrictions/anyOf/0"
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "valueType"
+      ],
+      "additionalProperties": false
+    },
+    "SchemaStringField": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/Name"
+        },
+        "description": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/description"
+        },
+        "isArray": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/isArray"
+        },
+        "meta": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/meta"
+        },
+        "unique": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/unique"
+        },
+        "valueType": {
+          "type": "string",
+          "const": "string"
+        },
+        "restrictions": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StringFieldRestrictions"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "if": {
+                      "$ref": "#/definitions/ConditionalRestrictionTest"
+                    },
+                    "then": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "$ref": "#/definitions/StringFieldRestrictions"
+                            },
+                            {
+                              "$ref": "#/definitions/SchemaStringField/properties/restrictions/anyOf/0/anyOf/1"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/definitions/StringFieldRestrictions"
+                              },
+                              {
+                                "$ref": "#/definitions/SchemaStringField/properties/restrictions/anyOf/0/anyOf/1"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "else": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "$ref": "#/definitions/StringFieldRestrictions"
+                            },
+                            {
+                              "$ref": "#/definitions/SchemaStringField/properties/restrictions/anyOf/0/anyOf/1"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/definitions/StringFieldRestrictions"
+                              },
+                              {
+                                "$ref": "#/definitions/SchemaStringField/properties/restrictions/anyOf/0/anyOf/1"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "if"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SchemaStringField/properties/restrictions/anyOf/0"
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "valueType"
+      ],
+      "additionalProperties": false
+    },
+    "BooleanFieldRestrictions": {
+      "type": "object",
+      "properties": {
+        "empty": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "IntegerFieldRestrictions": {
+      "type": "object",
+      "properties": {
+        "codeList": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "minItems": 1
+            },
+            {
+              "$ref": "#/definitions/ReferenceTag"
+            }
+          ]
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "range": {
+          "type": "object",
+          "properties": {
+            "exclusiveMax": {
+              "$ref": "#/definitions/IntegerFieldRestrictions/properties/codeList/anyOf/0/items"
+            },
+            "exclusiveMin": {
+              "$ref": "#/definitions/IntegerFieldRestrictions/properties/codeList/anyOf/0/items"
+            },
+            "max": {
+              "$ref": "#/definitions/IntegerFieldRestrictions/properties/codeList/anyOf/0/items"
+            },
+            "min": {
+              "$ref": "#/definitions/IntegerFieldRestrictions/properties/codeList/anyOf/0/items"
+            }
           },
-          {
-            "$ref": "#/definitions/ReferenceArray"
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "NumberFieldRestrictions": {
+      "type": "object",
+      "properties": {
+        "codeList": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 1
+            },
+            {
+              "$ref": "#/definitions/ReferenceTag"
+            }
+          ]
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "range": {
+          "type": "object",
+          "properties": {
+            "exclusiveMax": {
+              "type": "number"
+            },
+            "exclusiveMin": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            },
+            "min": {
+              "type": "number"
+            }
           },
-          {
-            "$ref": "#/definitions/References"
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "StringFieldRestrictions": {
+      "type": "object",
+      "properties": {
+        "codeList": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/definitions/ReferenceTag"
+                  }
+                ]
+              },
+              "minItems": 1
+            },
+            {
+              "$ref": "#/definitions/ReferenceTag"
+            }
+          ]
+        },
+        "empty": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "regex": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/StringFieldRestrictions/properties/regex/anyOf/0/anyOf/0"
+                  }
+                }
+              ]
+            },
+            {
+              "$ref": "#/definitions/ReferenceTag"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "ConditionalRestrictionTest": {
+      "type": "object",
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "match": {
+                "type": "object",
+                "properties": {
+                  "codeList": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions/StringFieldRestrictions/properties/codeList/anyOf/0"
+                      },
+                      {
+                        "$ref": "#/definitions/NumberFieldRestrictions/properties/codeList/anyOf/0"
+                      },
+                      {
+                        "$ref": "#/definitions/IntegerFieldRestrictions/properties/codeList/anyOf/0"
+                      }
+                    ]
+                  },
+                  "count": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "$ref": "#/definitions/IntegerFieldRestrictions/properties/range"
+                      }
+                    ]
+                  },
+                  "exists": {
+                    "type": "boolean"
+                  },
+                  "range": {
+                    "$ref": "#/definitions/NumberFieldRestrictions/properties/range"
+                  },
+                  "regex": {
+                    "$ref": "#/definitions/StringFieldRestrictions/properties/regex/anyOf/0"
+                  },
+                  "value": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/definitions/ConditionalRestrictionTest/properties/conditions/items/properties/match/properties/value/anyOf/0"
+                        }
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/definitions/ConditionalRestrictionTest/properties/conditions/items/properties/match/properties/value/anyOf/2"
+                        }
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/definitions/ConditionalRestrictionTest/properties/conditions/items/properties/match/properties/value/anyOf/4"
+                        }
+                      },
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/definitions/ConditionalRestrictionTest/properties/conditions/items/properties/match/properties/value/anyOf/6"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "case": {
+                "type": "string",
+                "enum": [
+                  "all",
+                  "any",
+                  "none"
+                ]
+              }
+            },
+            "required": [
+              "fields",
+              "match"
+            ],
+            "additionalProperties": false
           }
-        ]
-      }
+        },
+        "case": {
+          "$ref": "#/definitions/ConditionalRestrictionTest/properties/conditions/items/properties/case"
+        }
+      },
+      "required": [
+        "conditions"
+      ],
+      "additionalProperties": false
     },
     "Meta": {
       "type": "object",
@@ -74,6 +758,40 @@
       "type": "string",
       "minLength": 1,
       "pattern": "^[^.]+$"
+    },
+    "ReferenceArray": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "#/definitions/ReferenceTag"
+          }
+        ]
+      },
+      "minItems": 1
+    },
+    "ReferenceTag": {
+      "type": "string",
+      "pattern": "^#(\\/[-_A-Za-z0-9]+)+$"
+    },
+    "References": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/ReferenceArray/items/anyOf/0"
+          },
+          {
+            "$ref": "#/definitions/ReferenceArray"
+          },
+          {
+            "$ref": "#/definitions/References"
+          }
+        ]
+      }
     },
     "Schema": {
       "type": "object",
@@ -153,291 +871,16 @@
     "SchemaField": {
       "anyOf": [
         {
-          "type": "object",
-          "properties": {
-            "name": {
-              "$ref": "#/definitions/Name"
-            },
-            "description": {
-              "type": "string"
-            },
-            "isArray": {
-              "type": "boolean"
-            },
-            "meta": {
-              "$ref": "#/definitions/Meta"
-            },
-            "unique": {
-              "type": "boolean"
-            },
-            "valueType": {
-              "type": "string",
-              "const": "string"
-            },
-            "restrictions": {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "codeList": {
-                      "anyOf": [
-                        {
-                          "type": "array",
-                          "items": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "$ref": "#/definitions/ReferenceTag"
-                              }
-                            ]
-                          },
-                          "minItems": 1
-                        },
-                        {
-                          "$ref": "#/definitions/ReferenceTag"
-                        }
-                      ]
-                    },
-                    "required": {
-                      "type": "boolean"
-                    },
-                    "regex": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "$ref": "#/definitions/ReferenceTag"
-                        }
-                      ]
-                    }
-                  },
-                  "additionalProperties": false
-                },
-                {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/SchemaField/anyOf/0/properties/restrictions/anyOf/0"
-                  }
-                }
-              ]
-            }
-          },
-          "required": [
-            "name",
-            "valueType"
-          ],
-          "additionalProperties": false
+          "$ref": "#/definitions/SchemaStringField"
         },
         {
-          "type": "object",
-          "properties": {
-            "name": {
-              "$ref": "#/definitions/Name"
-            },
-            "description": {
-              "$ref": "#/definitions/SchemaField/anyOf/0/properties/description"
-            },
-            "isArray": {
-              "$ref": "#/definitions/SchemaField/anyOf/0/properties/isArray"
-            },
-            "meta": {
-              "$ref": "#/definitions/SchemaField/anyOf/0/properties/meta"
-            },
-            "unique": {
-              "$ref": "#/definitions/SchemaField/anyOf/0/properties/unique"
-            },
-            "valueType": {
-              "type": "string",
-              "const": "number"
-            },
-            "restrictions": {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "codeList": {
-                      "anyOf": [
-                        {
-                          "type": "array",
-                          "items": {
-                            "type": "number"
-                          },
-                          "minItems": 1
-                        },
-                        {
-                          "$ref": "#/definitions/ReferenceTag"
-                        }
-                      ]
-                    },
-                    "required": {
-                      "type": "boolean"
-                    },
-                    "range": {
-                      "type": "object",
-                      "properties": {
-                        "exclusiveMax": {
-                          "type": "number"
-                        },
-                        "exclusiveMin": {
-                          "type": "number"
-                        },
-                        "max": {
-                          "type": "number"
-                        },
-                        "min": {
-                          "type": "number"
-                        }
-                      },
-                      "additionalProperties": false
-                    }
-                  },
-                  "additionalProperties": false
-                },
-                {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/SchemaField/anyOf/1/properties/restrictions/anyOf/0"
-                  }
-                }
-              ]
-            }
-          },
-          "required": [
-            "name",
-            "valueType"
-          ],
-          "additionalProperties": false
+          "$ref": "#/definitions/SchemaNumberField"
         },
         {
-          "type": "object",
-          "properties": {
-            "name": {
-              "$ref": "#/definitions/Name"
-            },
-            "description": {
-              "$ref": "#/definitions/SchemaField/anyOf/0/properties/description"
-            },
-            "isArray": {
-              "$ref": "#/definitions/SchemaField/anyOf/0/properties/isArray"
-            },
-            "meta": {
-              "$ref": "#/definitions/SchemaField/anyOf/0/properties/meta"
-            },
-            "unique": {
-              "$ref": "#/definitions/SchemaField/anyOf/0/properties/unique"
-            },
-            "valueType": {
-              "type": "string",
-              "const": "integer"
-            },
-            "restrictions": {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "codeList": {
-                      "anyOf": [
-                        {
-                          "type": "array",
-                          "items": {
-                            "type": "integer"
-                          },
-                          "minItems": 1
-                        },
-                        {
-                          "$ref": "#/definitions/ReferenceTag"
-                        }
-                      ]
-                    },
-                    "required": {
-                      "type": "boolean"
-                    },
-                    "range": {
-                      "type": "object",
-                      "properties": {
-                        "exclusiveMax": {
-                          "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/anyOf/0/properties/codeList/anyOf/0/items"
-                        },
-                        "exclusiveMin": {
-                          "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/anyOf/0/properties/codeList/anyOf/0/items"
-                        },
-                        "max": {
-                          "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/anyOf/0/properties/codeList/anyOf/0/items"
-                        },
-                        "min": {
-                          "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/anyOf/0/properties/codeList/anyOf/0/items"
-                        }
-                      },
-                      "additionalProperties": false
-                    }
-                  },
-                  "additionalProperties": false
-                },
-                {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/SchemaField/anyOf/2/properties/restrictions/anyOf/0"
-                  }
-                }
-              ]
-            }
-          },
-          "required": [
-            "name",
-            "valueType"
-          ],
-          "additionalProperties": false
+          "$ref": "#/definitions/SchemaIntegerField"
         },
         {
-          "type": "object",
-          "properties": {
-            "name": {
-              "$ref": "#/definitions/Name"
-            },
-            "description": {
-              "$ref": "#/definitions/SchemaField/anyOf/0/properties/description"
-            },
-            "isArray": {
-              "$ref": "#/definitions/SchemaField/anyOf/0/properties/isArray"
-            },
-            "meta": {
-              "$ref": "#/definitions/SchemaField/anyOf/0/properties/meta"
-            },
-            "unique": {
-              "$ref": "#/definitions/SchemaField/anyOf/0/properties/unique"
-            },
-            "valueType": {
-              "type": "string",
-              "const": "boolean"
-            },
-            "restrictions": {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "required": {
-                      "type": "boolean"
-                    }
-                  },
-                  "additionalProperties": false
-                },
-                {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/SchemaField/anyOf/3/properties/restrictions/anyOf/0"
-                  }
-                }
-              ]
-            }
-          },
-          "required": [
-            "name",
-            "valueType"
-          ],
-          "additionalProperties": false
+          "$ref": "#/definitions/SchemaBooleanField"
         }
       ]
     },
