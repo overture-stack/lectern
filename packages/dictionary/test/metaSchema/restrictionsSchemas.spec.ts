@@ -17,21 +17,21 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import assert from 'assert';
 import { expect } from 'chai';
 import {
-	BooleanFieldRestrictions,
 	Integer,
-	IntegerFieldRestrictions,
-	NumberFieldRestrictions,
 	RestrictionIntegerRange,
 	RestrictionNumberRange,
+	SchemaBooleanField,
 	SchemaField,
+	SchemaIntegerField,
+	SchemaNumberField,
+	SchemaStringField,
 	StringFieldRestrictions,
 	type ConditionalRestriction,
-	type SchemaStringField,
 	type StringFieldRestrictionsObject,
 } from '../../src';
-import assert from 'assert';
 
 describe('Restriction Schemas', () => {
 	describe('Integer', () => {
@@ -90,19 +90,11 @@ describe('Restriction Schemas', () => {
 		});
 	});
 	describe('UniqueRestriction', () => {
-		it('All fields accept unique restriction', () => {
-			expect(StringFieldRestrictions.safeParse({ unique: true }).success).true;
-			expect(NumberFieldRestrictions.safeParse({ unique: true }).success).true;
-			expect(IntegerFieldRestrictions.safeParse({ unique: true }).success).true;
-			expect(BooleanFieldRestrictions.safeParse({ unique: true }).success).true;
-		});
-	});
-	describe('ScriptRestriction', () => {
-		it('All fields accept script restriction', () => {
-			expect(StringFieldRestrictions.safeParse({ script: ['()=>true'] }).success).true;
-			expect(NumberFieldRestrictions.safeParse({ script: ['()=>true'] }).success).true;
-			expect(IntegerFieldRestrictions.safeParse({ script: ['()=>true'] }).success).true;
-			expect(BooleanFieldRestrictions.safeParse({ script: ['()=>true'] }).success).true;
+		it('All fields accept unique property', () => {
+			expect(SchemaBooleanField.safeParse({ name: 'name', valueType: 'boolean', unique: true }).success).true;
+			expect(SchemaIntegerField.safeParse({ name: 'name', valueType: 'integer', unique: true }).success).true;
+			expect(SchemaNumberField.safeParse({ name: 'name', valueType: 'number', unique: true }).success).true;
+			expect(SchemaStringField.safeParse({ name: 'name', valueType: 'string', unique: true }).success).true;
 		});
 	});
 
@@ -133,56 +125,66 @@ describe('Restriction Schemas', () => {
 
 			expect(parseResult.data).deep.equal(field);
 		});
-	});
-	it('Parses conditional restrictions in an array', () => {
-		const restrictions: Array<StringFieldRestrictionsObject> = [
-			{ codeList: ['value1', 'value2'] },
-			{
-				if: {
-					conditions: [{ fields: ['another-field'], match: { value: 'asdf' } }],
-				},
-				then: { required: true },
-				else: { empty: true },
-			},
-		];
-		const field: SchemaStringField = {
-			name: 'example-string',
-			valueType: 'string',
-			restrictions,
-		};
-		const parseResult = SchemaField.safeParse(field);
-		expect(parseResult.success).true;
-		assert(parseResult.success === true);
 
-		expect(parseResult.data).deep.equal(field);
-	});
-
-	it('Parses nested conditional restrictions', () => {
-		const restrictions: Array<StringFieldRestrictionsObject> = [
-			{ codeList: ['value1', 'value2'] },
-			{
-				if: {
-					conditions: [{ fields: ['first-dependent-field'], match: { value: 'asdf' } }],
-				},
-				then: {
+		it('Parses conditional restrictions in an array', () => {
+			const restrictions: Array<StringFieldRestrictionsObject> = [
+				{ codeList: ['value1', 'value2'] },
+				{
 					if: {
-						conditions: [{ fields: ['second-dependent-field'], match: { range: { max: 10, min: 0 } } }],
+						conditions: [{ fields: ['another-field'], match: { value: 'asdf' } }],
 					},
 					then: { required: true },
 					else: { empty: true },
 				},
-				else: { empty: true },
-			},
-		];
-		const field: SchemaStringField = {
-			name: 'example-string',
-			valueType: 'string',
-			restrictions,
-		};
-		const parseResult = SchemaField.safeParse(field);
-		expect(parseResult.success).true;
-		assert(parseResult.success === true);
+			];
+			const field: SchemaStringField = {
+				name: 'example-string',
+				valueType: 'string',
+				restrictions,
+			};
+			const parseResult = SchemaField.safeParse(field);
+			expect(parseResult.success).true;
+			assert(parseResult.success === true);
 
-		expect(parseResult.data).deep.equal(field);
+			expect(parseResult.data).deep.equal(field);
+		});
+
+		it('Parses nested conditional restrictions', () => {
+			const restrictions: Array<StringFieldRestrictionsObject> = [
+				{ codeList: ['value1', 'value2'] },
+				{
+					if: {
+						conditions: [{ fields: ['first-dependent-field'], match: { value: 'asdf' } }],
+					},
+					then: [
+						{
+							if: {
+								conditions: [{ fields: ['second-dependent-field'], match: { range: { max: 10, min: 0 } } }],
+							},
+							then: { required: true },
+							else: { empty: true },
+						},
+						{
+							if: {
+								conditions: [{ fields: ['third-dependent-field'], match: { range: { max: 10, min: 0 } } }],
+							},
+							then: { regex: 'asdf' },
+							else: { codeList: ['a', 's', 'd', 'f'] },
+						},
+					],
+					else: { empty: true },
+				},
+			];
+			const field: SchemaStringField = {
+				name: 'example-string',
+				valueType: 'string',
+				restrictions,
+			};
+			const parseResult = SchemaField.safeParse(field);
+			expect(parseResult.success).true;
+			assert(parseResult.success === true);
+
+			expect(parseResult.data).deep.equal(field);
+		});
 	});
 });

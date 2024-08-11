@@ -190,7 +190,6 @@ export const RestrictionCondition = zod.object({
 	fields: zod.string().array(),
 	match: ConditionMatch,
 	case: ArrayTestCase.optional(),
-	arrayFieldCase: ArrayTestCase.optional(),
 });
 export type RestrictionCondition = zod.infer<typeof RestrictionCondition>;
 
@@ -210,17 +209,4 @@ export type ConditionalRestriction<TRestrictionObject> = {
 		| TRestrictionObject
 		| ConditionalRestriction<TRestrictionObject>
 		| (TRestrictionObject | ConditionalRestriction<TRestrictionObject>)[];
-};
-export const ConditionalRestriction = <TRestrictionObjectSchema extends zod.ZodTypeAny>(
-	restrictionsSchema: TRestrictionObjectSchema,
-): ZodSchema<ConditionalRestriction<zod.infer<TRestrictionObjectSchema>>> => {
-	const restrictionOrConditional = zod.union([
-		restrictionsSchema,
-		zod.lazy(() => ConditionalRestriction(restrictionsSchema)),
-	]);
-	return zod.object({
-		if: ConditionalRestrictionTest,
-		then: restrictionOrConditional.or(restrictionOrConditional.array()).optional(),
-		else: restrictionOrConditional.or(restrictionOrConditional.array()).optional(),
-	});
 };
