@@ -18,50 +18,56 @@
  */
 
 import { expect } from 'chai';
-import { testMatchExists } from '../../../src/validateField/conditions/testMatchExists';
+import { testMatchExists } from '../../../src/validateField/conditions';
 
 describe('ConditionalRestriction - testMatchExists', () => {
-	it('Primitive values all found to exist', () => {
+	it('Tests true with all primitive values', () => {
 		expect(testMatchExists(true, 'hello')).true;
 		expect(testMatchExists(true, 123)).true;
+		expect(testMatchExists(true, 0)).true;
 		expect(testMatchExists(true, true)).true;
 	});
-	it('Array values with some elements all found to exist', () => {
+	it('Tests true with array values with some elements', () => {
 		expect(testMatchExists(true, ['hello'])).true;
 		expect(testMatchExists(true, ['hello', 'world', 'how are you?'])).true;
 		expect(testMatchExists(true, [123, 456, 789])).true;
 		expect(testMatchExists(true, [true, false, true, false])).true;
 	});
-	it('`false` values treated as existing', () => {
+	it('Tests true for value `false`', () => {
 		expect(testMatchExists(true, false)).true;
 	});
-	it('`undefined` values treated as not existing', () => {
+	it('Tests false for `undefined`', () => {
 		expect(testMatchExists(true, undefined)).false;
 	});
-	it('Empty string values treated as not existing', () => {
+	it('Tests false for empty string values', () => {
 		expect(testMatchExists(true, '')).false;
 	});
-	it('All whitespacce string values treated as not existing', () => {
+	it('Tests false for string values with only whitespace', () => {
 		expect(testMatchExists(true, '       ')).false;
 	});
-	it('Non-finite numbers (NaN, Infinity) values are treated as not existing.', () => {
+	it('Tests false for non-finite numbers (NaN, Infinity)', () => {
 		expect(testMatchExists(true, NaN)).false;
 		expect(testMatchExists(true, Infinity)).false;
 		expect(testMatchExists(true, -Infinity)).false;
 	});
-	it('Empty array value treated as not existing', () => {
+	it('Tests false for empty array value', () => {
 		expect(testMatchExists(true, [])).false;
 	});
-	it('Array with only non existing elements treated as not existing', () => {
+	it('Tests false for arrays with only non existing elements', () => {
 		expect(testMatchExists(true, [''])).false;
 		expect(testMatchExists(true, ['', '         '])).false;
 		expect(testMatchExists(true, [NaN, Infinity])).false;
 	});
-
-	it('Inverse rule - Exist rule `false` resolves `true` when value does not exist', () => {
-		expect(testMatchExists(false, undefined)).true;
-	});
-	it('Inverse rule - Exist rule `false` resolves `false` when value exists', () => {
-		expect(testMatchExists(false, 'hello')).false;
+	describe('Inverse rule - exists = false', () => {
+		it('Tests true when value is missing and exists=false', () => {
+			expect(testMatchExists(false, undefined)).true;
+			expect(testMatchExists(false, '')).true;
+			expect(testMatchExists(false, [])).true;
+		});
+		it('Exist rule `false` resolves `false` when value is provided and exists=false', () => {
+			expect(testMatchExists(false, 'hello')).false;
+			expect(testMatchExists(false, true)).false;
+			expect(testMatchExists(false, 123)).false;
+		});
 	});
 });

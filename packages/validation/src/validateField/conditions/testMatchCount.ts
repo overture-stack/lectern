@@ -44,5 +44,5 @@ export const testMatchCount = (count: MatchRuleCount, value: DataRecordValue): b
 	}
 
 	// whats left
-	return value.length >= count;
+	return value.length === count;
 };
