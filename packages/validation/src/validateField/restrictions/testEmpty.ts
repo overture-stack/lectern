@@ -57,7 +57,6 @@ const internalTestEmptyArray = createFieldRestrictionTestForArrays(
  * @returns
  */
 const testEmptyArray = (rule: boolean, values: ArrayDataValue): TestResult<RestrictionTestInvalidInfo> => {
-	// Note: This doesn't apply the
 	if (rule === false) {
 		return valid();
 	}
