@@ -53,11 +53,8 @@ const fieldsPassMatchTest = (
 	return resultForArrayTestCase(fieldTestResults, arrayCase || ARRAY_TEST_CASE_DEFAULT);
 };
 
-const testConditionForSingularValue = (
-	condition: RestrictionCondition,
-	_value: SingleDataValue,
-	fieldValues: DataRecordValue[],
-): boolean => {
+const testCondition = (condition: RestrictionCondition, _value: DataRecordValue, record: DataRecord): boolean => {
+	const fieldValues = condition.fields.map((fieldName) => record[fieldName]);
 	const matchCodeList = condition.match.codeList;
 	if (matchCodeList !== undefined) {
 		if (!fieldsPassMatchTest(fieldValues, (value) => testMatchCodeList(matchCodeList, value), condition.case)) {
@@ -99,21 +96,6 @@ const testConditionForSingularValue = (
 		}
 	}
 	return true;
-};
-
-const testConditionForArray = (
-	_condition: RestrictionCondition,
-	_value: ArrayDataValue,
-	_fieldValues: DataRecordValue[],
-): boolean => {
-	throw new Error('Unimplemented.');
-};
-
-const testCondition = (condition: RestrictionCondition, value: DataRecordValue, record: DataRecord): boolean => {
-	const recordValues = condition.fields.map((fieldName) => record[fieldName]);
-	return Array.isArray(value)
-		? testConditionForArray(condition, value, recordValues)
-		: testConditionForSingularValue(condition, value, recordValues);
 };
 
 /**
