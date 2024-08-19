@@ -17,8 +17,25 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { SchemaField } from '@overture-stack/lectern-dictionary';
+import { TypeUtils, type SchemaField, type StringFieldRestrictionsObject } from '@overture-stack/lectern-dictionary';
 
+/**
+ * Loop through restrictins and nested conditional restrictions finding every codeList restriction and collect all their
+ * values into a single array. This is used to format data values during parsing.
+ */
+const collectAllNestedCodeLists = (
+	restrictions: StringFieldRestrictionsObject | StringFieldRestrictionsObject[],
+): string[] => {
+	return TypeUtils.asArray(restrictions).flatMap((restrictionsObject) => {
+		if ('if' in restrictionsObject) {
+			const thenCodeLists = restrictionsObject.then ? collectAllNestedCodeLists(restrictionsObject.then) : [];
+			const elseCodeLists = restrictionsObject.else ? collectAllNestedCodeLists(restrictionsObject) : [];
+			return [...thenCodeLists, ...elseCodeLists];
+		} else {
+			return restrictionsObject.codeList ? restrictionsObject.codeList : [];
+		}
+	});
+};
 /**
  * Given a string value, look for any matching values in code list restrictions and return that
  * value. This is used by the convertValue functions to ensure the value returned matches the letter
@@ -36,10 +53,10 @@ import type { SchemaField } from '@overture-stack/lectern-dictionary';
  * @returns
  */
 export function matchCodeListFormatting(value: string, fieldDefinition: SchemaField): string {
-	const { valueType, restrictions } = fieldDefinition;
-
+	const { valueType } = fieldDefinition;
 	if (valueType === 'string') {
-		const codeList = restrictions?.codeList;
+		const codeList = fieldDefinition.restrictions && collectAllNestedCodeLists(fieldDefinition.restrictions);
+
 		if (Array.isArray(codeList)) {
 			// We have found a code list to compare to!
 

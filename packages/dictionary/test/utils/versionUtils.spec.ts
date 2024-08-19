@@ -18,7 +18,7 @@
  */
 
 import { expect } from 'chai';
-import { VersionUtils } from '../';
+import { VersionUtils } from '../../dist';
 
 const { isValidVersion, incrementMinor, incrementMajor, isGreater } = VersionUtils;
 

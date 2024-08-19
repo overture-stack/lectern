@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { type RestrictionRegex } from '@overture-stack/lectern-dictionary';
+import { TypeUtils, type RestrictionRegex } from '@overture-stack/lectern-dictionary';
 import { invalid, valid } from '../../types/testResult';
 import type { FieldRestrictionSingleValueTestFunction, FieldRestrictionTestFunction } from '../FieldRestrictionTest';
 import { createFieldRestrictionTestForArrays } from './createFieldRestrictionTestForArrays';
@@ -34,18 +34,25 @@ const testRegexSingleValue: FieldRestrictionSingleValueTestFunction<RestrictionR
 		return valid();
 	}
 
-	const regexPattern = new RegExp(rule);
+	const regexResult = TypeUtils.asArray(rule).every((regexRule) => {
+		const regexPattern = new RegExp(regexRule);
 
-	if (regexPattern.test(value)) {
-		return valid();
-	}
-	return invalid({ message: `The value must match the regular expression.` });
+		if (!regexPattern.test(value)) {
+			return false;
+		}
+		return true;
+	});
+	return regexResult ? valid() : invalid({ message: `The value must match the regular expression.` });
+	// TODO: update message to communicate which regex failed (if array)
 };
 
 const testRegexArray = createFieldRestrictionTestForArrays(
 	testRegexSingleValue,
 	(_rule) => `All values in the array must match the regular expression.`,
 );
+
+// TODO: The error messages returned here don't inform which regular expressions failed, if there is a list.
+//       ...The message doesnt even acknowledge that there could be a list
 
 export const testRegex: FieldRestrictionTestFunction<RestrictionRegex> = (rule, value) =>
 	Array.isArray(value) ? testRegexArray(rule, value) : testRegexSingleValue(rule, value);

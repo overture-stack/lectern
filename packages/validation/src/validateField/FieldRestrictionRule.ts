@@ -22,12 +22,15 @@ import type {
 	RestrictionCodeList,
 	RestrictionRange,
 	RestrictionRegex,
-	RestrictionScript,
 } from '@overture-stack/lectern-dictionary';
 
 export type FieldRestrictionRuleCodeList = {
 	type: typeof FieldRestrictionTypes.codeList;
 	rule: RestrictionCodeList;
+};
+export type FieldRestrictionRuleEmpty = {
+	type: typeof FieldRestrictionTypes.empty;
+	rule: boolean;
 };
 
 export type FieldRestrictionRuleRange = {
@@ -45,18 +48,9 @@ export type FieldRestrictionRuleRegex = {
 	rule: RestrictionRegex;
 };
 
-// export type FieldRestrictionRuleScript = {
-// 	type: typeof FieldRestrictionTypes.script;
-// 	rule: RestrictionScript;
-// };
-
-// export type FieldRestrictionRuleUnique = {
-// 	type: typeof FieldRestrictionTypes.unique;
-// 	rule: boolean;
-// };
-
 export type FieldRestrictionRule =
 	| FieldRestrictionRuleCodeList
+	| FieldRestrictionRuleEmpty
 	| FieldRestrictionRuleRange
 	| FieldRestrictionRuleRequired
 	| FieldRestrictionRuleRegex;

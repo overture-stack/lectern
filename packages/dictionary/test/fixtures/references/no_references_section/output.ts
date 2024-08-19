@@ -17,7 +17,7 @@ const content: Dictionary = {
 						key: true,
 					},
 					restrictions: {
-						script: ['() => field.length > 5'],
+						regex: '^[\\w]*$',
 					},
 				},
 				{

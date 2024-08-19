@@ -18,7 +18,7 @@
  */
 
 import { expect } from 'chai';
-import { REGEXP_BOOLEAN_VALUE } from '../src';
+import { REGEXP_BOOLEAN_VALUE } from '../../src';
 
 describe('Data Types', () => {
 	describe('Boolean RegExp', () => {

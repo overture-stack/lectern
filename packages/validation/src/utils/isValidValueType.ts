@@ -17,8 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DataRecordValue, SchemaField } from '@overture-stack/lectern-dictionary';
-import { isBooleanArray, isInteger, isIntegerArray, isNumber, isNumberArray, isStringArray } from './typeUtils';
+import { type DataRecordValue, type SchemaField, TypeUtils } from '@overture-stack/lectern-dictionary';
+const { isBooleanArray, isInteger, isIntegerArray, isNumber, isNumberArray, isStringArray } = TypeUtils;
 
 /**
  * Checks that a value matches the expected type for a given field, based on the value type specified in its field

@@ -3,15 +3,23 @@
  * It will be output into the file ./generated/DictionaryMetaSchema.json
  */
 import {
+	BooleanFieldRestrictions,
+	ConditionalRestrictionTest,
 	Dictionary,
-	DictionaryBase,
 	DictionaryMeta,
+	IntegerFieldRestrictions,
 	NameValue,
+	NumberFieldRestrictions,
 	ReferenceArray,
 	ReferenceTag,
 	References,
 	Schema,
+	SchemaBooleanField,
 	SchemaField,
+	SchemaIntegerField,
+	SchemaNumberField,
+	SchemaStringField,
+	StringFieldRestrictions,
 } from '@overture-stack/lectern-dictionary';
 import fs from 'fs';
 import { zodToJsonSchema } from 'zod-to-json-schema';
@@ -22,11 +30,20 @@ console.log('Generating JSON Schema Meta-Schema...');
 const jsonSchema = zodToJsonSchema(Dictionary, {
 	name: 'Dictionary',
 	definitions: {
-		ReferenceTag,
-		ReferenceArray,
-		References,
+		SchemaBooleanField,
+		SchemaIntegerField,
+		SchemaNumberField,
+		SchemaStringField,
+		BooleanFieldRestrictions,
+		IntegerFieldRestrictions,
+		NumberFieldRestrictions,
+		StringFieldRestrictions,
+		ConditionalRestrictionTest,
 		Meta: DictionaryMeta,
 		Name: NameValue,
+		ReferenceArray,
+		ReferenceTag,
+		References,
 		Schema,
 		SchemaField,
 	},

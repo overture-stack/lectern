@@ -49,7 +49,7 @@ export const validateSchema = (records: Array<DataRecord>, schema: Schema): Test
 
 	const uniqueFieldMaps = new Map<string, Map<string, number[]>>();
 	schema.fields.forEach((field) => {
-		if (field.restrictions?.unique) {
+		if (field.unique) {
 			uniqueFieldMaps.set(field.name, generateDataSetHashMap(records, [field.name]));
 		}
 	});

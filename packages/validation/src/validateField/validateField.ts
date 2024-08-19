@@ -21,17 +21,25 @@ import type { DataRecord, DataRecordValue, SchemaField } from '@overture-stack/l
 import { invalid, valid, type TestResult } from '../types';
 import { isValidValueType } from '../utils/isValidValueType';
 import type { FieldRestrictionRule } from './FieldRestrictionRule';
-import { resolveFieldRestrictions } from './resolveFieldRestrictions';
+import { resolveFieldRestrictions } from './restrictions/resolveFieldRestrictions';
 import { testCodeList } from './restrictions/testCodeList';
 import { testRange } from './restrictions/testRange';
 import { testRegex } from './restrictions/testRegex';
 import { testRequired } from './restrictions/testRequired';
 import type { FieldValidationError, FieldValidationErrorRestrictionInfo } from './FieldValidationError';
+import type { RestrictionTestInvalidInfo } from './FieldRestrictionTest';
+import { testEmpty } from './restrictions/testEmpty';
 
-const testRestriction = (value: DataRecordValue, restriction: FieldRestrictionRule) => {
+const testRestriction = (
+	value: DataRecordValue,
+	restriction: FieldRestrictionRule,
+): TestResult<RestrictionTestInvalidInfo> => {
 	switch (restriction.type) {
 		case 'codeList': {
 			return testCodeList(restriction.rule, value);
+		}
+		case 'empty': {
+			return testEmpty(restriction.rule, value);
 		}
 		case 'range': {
 			return testRange(restriction.rule, value);
@@ -42,12 +50,6 @@ const testRestriction = (value: DataRecordValue, restriction: FieldRestrictionRu
 		case 'required': {
 			return testRequired(restriction.rule, value);
 		}
-		// case 'unique': {
-		// 	return testRequired(restriction.rule, value);
-		// }
-		// case 'script': {
-		// 	return valid();
-		// }
 	}
 };
 

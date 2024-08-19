@@ -30,9 +30,9 @@ describe('Compute diff report between dictionary versions', () => {
 		expect(diffReport.get('donor.donor_submitter_id')?.diff).to.deep.eq({
 			meta: { displayName: { type: 'deleted', data: 'Submitter Donor ID' } },
 			restrictions: {
-				script: {
+				regex: {
 					type: 'updated',
-					data: { added: ['(field)=>field.length > 6'], deleted: ['(field)=>field.length > 5'] },
+					data: '^[\\w]*$',
 				},
 			},
 		});

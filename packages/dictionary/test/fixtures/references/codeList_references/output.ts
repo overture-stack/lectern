@@ -35,7 +35,7 @@ const content: Dictionary = {
 					meta: {
 						default: 'Unknown',
 					},
-					restrictions: {},
+					restrictions: { codeList: ['this'] },
 				},
 			],
 		},

@@ -35,7 +35,9 @@ const content: Dictionary = {
 					meta: {
 						default: 'Unknown',
 					},
-					restrictions: {},
+					restrictions: {
+						codeList: '#/SINGLE_VALUE',
+					},
 				},
 			],
 		},
@@ -43,6 +45,7 @@ const content: Dictionary = {
 	references: {
 		ID_REG_EXP: '^[\\w\\s\\W]{5,}$',
 		SEX: ['Male', 'Female'],
+		SINGLE_VALUE: 'this',
 	},
 };
 export default content;

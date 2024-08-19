@@ -32,6 +32,7 @@ import { fieldStringArrayRequired } from '../fixtures/fields/simpleRestrictions/
 import { fieldStringCodeList } from '../fixtures/fields/simpleRestrictions/string/fieldStringCodeList';
 import { fieldStringRegex } from '../fixtures/fields/simpleRestrictions/string/fieldStringRegex';
 import { fieldStringRequired } from '../fixtures/fields/simpleRestrictions/string/fieldStringRequired';
+import { fieldStringArrayMultipleRegex } from '../fixtures/fields/multipleRestrictions/fieldStringArrayMultipleRegex';
 
 const emptyDataRecord = {};
 
@@ -393,6 +394,21 @@ describe('Field - validateField', () => {
 						error.restriction.rule === fieldStringManyRestrictions.restrictions?.codeList,
 				);
 				expect(codeListError).exist;
+			});
+		});
+
+		describe('String with array of restrictions, multiple regex', () => {
+			it('Valid with value that matches both regexs', () => {
+				// from examples in field: ['hello', 'byebye', 'thisandthat']
+				expect(validateField('hello', emptyDataRecord, fieldStringArrayMultipleRegex).valid).true;
+				expect(validateField('byebye', emptyDataRecord, fieldStringArrayMultipleRegex).valid).true;
+				expect(validateField('thisandthat', emptyDataRecord, fieldStringArrayMultipleRegex).valid).true;
+			});
+			it('Invalid with value that one or both regexes', () => {
+				// has non alpha characters
+				expect(validateField('hello123', emptyDataRecord, fieldStringArrayMultipleRegex).valid).false;
+				// no repeated characters
+				expect(validateField('asdf', emptyDataRecord, fieldStringArrayMultipleRegex).valid).false;
 			});
 		});
 	});

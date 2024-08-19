@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2024 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,19 +17,19 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { expect } from 'chai';
-import { normalizeSchema } from '../../src/services/schemaService';
-import DICTIONARY_RN_LINEBREAKS from '../fixtures/dictionaries/linebreak/rnLinebreaks';
-import DICTIONARY_N_LINEBREAKS from '../fixtures/dictionaries/linebreak/nLinebreaks';
-import DICTIONARY_NORMALIZED_LINEBREAKS from '../fixtures/dictionaries/linebreak/normalizedLinebreaks';
+import { type DataRecordValue, type MatchRuleRegex } from '@overture-stack/lectern-dictionary';
+import { isStringArray } from '@overture-stack/lectern-dictionary/dist/utils/typeUtils';
+import { testRegex } from '../restrictions';
 
-describe('New Line symbol normalization', () => {
-	it('Should convert \\r\\n to \\n in scripts', () => {
-		const normalizedSchema = normalizeSchema(DICTIONARY_N_LINEBREAKS.schemas[0]);
-		expect(normalizedSchema).to.deep.eq(DICTIONARY_NORMALIZED_LINEBREAKS.schemas[0]);
-	});
-	it('Should not alter already formatted files', () => {
-		const normalizedSchema = normalizeSchema(DICTIONARY_RN_LINEBREAKS.schemas[0]);
-		expect(normalizedSchema).to.deep.eq(DICTIONARY_NORMALIZED_LINEBREAKS.schemas[0]);
-	});
-});
+export const testMatchRegex = (regex: MatchRuleRegex, value: DataRecordValue): boolean => {
+	if (typeof value === 'string') {
+		return testRegex(regex, value).valid;
+	}
+
+	if (isStringArray(value)) {
+		return value.some((item) => testRegex(regex, item).valid);
+	}
+
+	// value is not a type that can match the regex rule, we return false;
+	return false;
+};

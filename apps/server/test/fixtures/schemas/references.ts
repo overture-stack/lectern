@@ -35,12 +35,5 @@ export default {
 				codeList: '#/listA',
 			},
 		},
-		{
-			name: 'script_as_reference',
-			valueType: 'number',
-			restrictions: {
-				script: '#/scriptA',
-			},
-		},
 	],
 } satisfies Schema;

@@ -9,18 +9,23 @@ const content: Dictionary = {
 			description: 'Donor Entity',
 			fields: [
 				{
-					name: 'count',
-					valueType: 'number',
+					name: 'donor_submitter_id',
+					valueType: 'string',
+					description: 'Unique identifier for donor; assigned by data provider',
+					meta: {
+						displayName: 'Submitter Donor ID',
+						key: true,
+					},
 					restrictions: {
-						script: '#/IS_EVEN',
+						regex: '^[\\w]*$',
 					},
 				},
 				{
-					name: 'score',
+					name: 'gender',
 					valueType: 'string',
 					description: 'Donor Biological Sex',
 					restrictions: {
-						script: ['(value) => value/1000 > 9', '#/IS_EVEN'],
+						codeList: ['Male', 'Female', 'Other'],
 					},
 				},
 				{
@@ -35,8 +40,5 @@ const content: Dictionary = {
 			],
 		},
 	],
-	references: {
-		IS_EVEN: '(value) => value % 2',
-	},
 };
 export default content;

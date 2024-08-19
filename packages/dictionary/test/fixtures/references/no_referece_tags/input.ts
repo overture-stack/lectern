@@ -9,18 +9,23 @@ const content: Dictionary = {
 			description: 'Donor Entity',
 			fields: [
 				{
-					name: 'count',
-					valueType: 'number',
+					name: 'donor_submitter_id',
+					valueType: 'string',
+					description: 'Unique identifier for donor; assigned by data provider',
+					meta: {
+						displayName: 'Submitter Donor ID',
+						key: true,
+					},
 					restrictions: {
-						script: ['(value) => value % 2'],
+						regex: '^[\\w]*$',
 					},
 				},
 				{
-					name: 'score',
+					name: 'gender',
 					valueType: 'string',
 					description: 'Donor Biological Sex',
 					restrictions: {
-						script: ['(value) => value/1000 > 9', '(value) => value % 2'],
+						codeList: ['Male', 'Female', 'Other'],
 					},
 				},
 				{
@@ -35,5 +40,16 @@ const content: Dictionary = {
 			],
 		},
 	],
+	references: {
+		regex: {
+			REPEATED_TEXT: '(\\w+).*\\1',
+			ALPHA_ONLY: '^[A-Za-z]*$',
+			COMBINED: ['#/regex/ID_REG_EXP', '#/regex/ALPHA_ONLY'],
+		},
+		enums: {
+			SEX: ['Male', 'Female', 'Other'],
+		},
+	},
 };
+
 export default content;

@@ -17,101 +17,45 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import * as immer from 'immer';
 import { cloneDeep, get, isObject, omit } from 'lodash';
-import { Dictionary, ReferenceArray, ReferenceTag, ReferenceValue, References, Schema, TypeUtils } from '.';
+import {
+	Dictionary,
+	DictionaryMeta,
+	ReferenceArray,
+	ReferenceTag,
+	ReferenceValue,
+	References,
+	Schema,
+	TypeUtils,
+	type SchemaField,
+	type StringFieldRestrictionsObject,
+} from '.';
 import { InvalidReferenceError } from './errors';
+import { isNumberArray, isStringArray } from './utils/typeUtils';
 
 // This is the union of all schema sections that could have reference values
 type OutputReferenceValues = ReferenceArray | ReferenceValue;
 
 type DiscoveredMap = Map<ReferenceTag, OutputReferenceValues>;
+const createDiscoveredMap = () => new Map<ReferenceTag, OutputReferenceValues>();
+
 type VisitedSet = Set<ReferenceTag>;
-
-/**
- * Logic for replacing references in an individual schema.
- *
- * This is used by the replaceReferences method that replaces references in ALL schemas. By allowing the caller
- * to provide the discovered/visited objects that are used in the recursive logic we can let the replaceReferences
- * method reuse the same dictionaries across all schemas.
- * @param schema
- * @param references
- * @param discovered
- * @param visited
- * @returns
- */
-const internalReplaceSchemaReferences = (
-	schema: Schema,
-	references: References,
-	discovered: DiscoveredMap,
-	visited: VisitedSet,
-): Schema => {
-	const clone = cloneDeep(schema);
-
-	clone.fields.forEach((field) => {
-		// Process Field Meta:
-		if (field.meta !== undefined) {
-			for (const key in field.meta) {
-				const value = field.meta[key];
-				if (isReferenceTag(value)) {
-					const replacement = resolveReference(value, references, discovered, visited);
-					if (Array.isArray(replacement)) {
-						throw new InvalidReferenceError(
-							`Field '${field.name}' has meta field '${key}' with a reference '${value}' that resolves to an array. Meta fields must be string, number, or boolean.`,
-						);
-					}
-				}
-			}
-		}
-		// Process Field Restrictions:
-		if (field.restrictions !== undefined) {
-			// reusable functions to simplify converting
-			const resolveRestriction = (value: string | string[]) =>
-				resolveAllReferences(value, references, discovered, visited);
-			const resolveNoArrays = (value: string | string[], restrictionName: string) => {
-				const output = resolveRestriction(value);
-				if (Array.isArray(output)) {
-					throw new InvalidReferenceError(
-						`Field '${field.name}' has restriction '${restrictionName}' with a reference '${value}' that resolves to an array. This restriction must be a string.`,
-					);
-				}
-				return output;
-			};
-			switch (field.valueType) {
-				// Each field type has different allowed restriction types, we need to handle the reference replacement rules carefully
-				// to ensure the output schema adhers to the type rules.
-				// All the checking for undefined prevents us from adding properties with value undefined into the field's ouput JSON
-				case 'string':
-					if (field.restrictions.codeList !== undefined) {
-						field.restrictions.codeList = TypeUtils.asArray(resolveRestriction(field.restrictions.codeList));
-					}
-					if (field.restrictions.regex !== undefined) {
-						field.restrictions.regex = resolveNoArrays(field.restrictions.regex, 'regex');
-					}
-					if (field.restrictions.script !== undefined) {
-						field.restrictions.script = TypeUtils.asArray(resolveRestriction(field.restrictions.script));
-					}
-					break;
-				case 'number':
-					if (field.restrictions.script !== undefined) {
-						field.restrictions.script = TypeUtils.asArray(resolveRestriction(field.restrictions.script));
-					}
-					break;
-				case 'integer':
-					if (field.restrictions.script !== undefined) {
-						field.restrictions.script = TypeUtils.asArray(resolveRestriction(field.restrictions.script));
-					}
-					break;
-				case 'boolean':
-					break;
-			}
-		}
-	});
-
-	return clone;
-};
+const createVisitedSet = () => new Set<ReferenceTag>();
 
 const isReferenceTag = (input: unknown): input is ReferenceTag => ReferenceTag.safeParse(input).success;
+
+/**
+ * Convert a ReferenceTag value into a dot separated path that can be used by lodash _.get to find the value
+ * in the references object.
+ *
+ * @example
+ * const referenceTag = `#/some/path`;
+ *
+ * const path = referenceTagToObjectPath(referenceTag);
+ * // some.path
+ *
+ * const referenceValue = _.get(references, path);
+ */
 const referenceTagToObjectPath = (value: ReferenceTag): string => {
 	try {
 		return value.split('/').slice(1).join('.');
@@ -120,6 +64,33 @@ const referenceTagToObjectPath = (value: ReferenceTag): string => {
 	}
 };
 
+/**
+ * For an array of strings, replace all values that are ReferenceTags with the corresponding reference value.
+ */
+const resolveArrayReferences = (
+	value: string[],
+	references: References,
+	discovered: DiscoveredMap,
+	visited: VisitedSet,
+): string[] =>
+	value.flatMap((item) => (isReferenceTag(item) ? resolveReference(item, references, discovered, visited) : item));
+
+const transformOneOrMany = <TInput, TOutput>(data: TInput | TInput[], transform: (item: TInput) => TOutput) => {
+	if (Array.isArray(data)) {
+		return data.map(transform);
+	} else {
+		return transform(data);
+	}
+};
+
+/**
+ *
+ * @param value
+ * @param references
+ * @param discovered
+ * @param visited
+ * @returns
+ */
 const resolveAllReferences = (
 	value: string | string[],
 	references: References,
@@ -127,9 +98,7 @@ const resolveAllReferences = (
 	visited: VisitedSet,
 ): string | string[] => {
 	if (Array.isArray(value)) {
-		return value.flatMap((item) =>
-			isReferenceTag(item) ? resolveReference(item, references, discovered, visited) : item,
-		);
+		return resolveArrayReferences(value, references, discovered, visited);
 	}
 	if (isReferenceTag(value)) {
 		return resolveReference(value, references, discovered, visited);
@@ -170,9 +139,7 @@ const resolveReference = (
 		throw new InvalidReferenceError(`No reference found for provided tag '${tag}'.`);
 	}
 	if (Array.isArray(replacement)) {
-		const output = replacement.flatMap((item) =>
-			isReferenceTag(item) ? resolveReference(item, references, discovered, visited) : item,
-		);
+		const output = resolveArrayReferences(replacement, references, discovered, visited);
 		discovered.set(tag, output);
 		return output;
 	} else if (isReferenceTag(replacement)) {
@@ -187,19 +154,184 @@ const resolveReference = (
 };
 
 /**
+ * Warning:  This mutates the meta argument object. This is meant for use within this module only and should not be exported.
+ */
+const recursiveReplaceMetaReferences = (
+	meta: DictionaryMeta,
+	references: References,
+	discovered: DiscoveredMap,
+	visited: VisitedSet,
+): DictionaryMeta => {
+	for (const [key, value] of Object.entries(meta)) {
+		if (isStringArray(value)) {
+			// value is an array of strings, we want to check if any of the values are reference tags and replace them if they are.
+			const replacement = resolveArrayReferences(value, references, discovered, visited);
+			meta[key] = replacement;
+		} else if (isReferenceTag(value)) {
+			// value is a reference tag, we replace it with the corresponding reference.
+			const replacement = resolveReference(value, references, discovered, visited);
+			meta[key] = replacement;
+		} else if (typeof value === 'object' && !Array.isArray(value)) {
+			// value is a nested meta object, send it into this function! recursion!
+			const replacement = recursiveReplaceMetaReferences(value, references, discovered, visited);
+			meta[key] = replacement;
+		}
+	}
+
+	return meta;
+};
+
+/**
+ * Warning:  This mutates the restrictionsObject argument object. This is meant for use within this module only and should not be exported.
+ */
+const replaceReferencesInStringRestrictionsObject = (
+	restrictionsObject: StringFieldRestrictionsObject,
+	references: References,
+	discovered: DiscoveredMap,
+	visited: VisitedSet,
+) => {
+	if ('if' in restrictionsObject) {
+		// Do replacements inside the if conditions
+		restrictionsObject.if.conditions = restrictionsObject.if.conditions.map((condition) => {
+			if (condition.match.codeList && !isNumberArray(condition.match.codeList)) {
+				condition.match.codeList = TypeUtils.asArray(
+					resolveAllReferences(condition.match.codeList, references, discovered, visited),
+				);
+			}
+			if (typeof condition.match.value === 'string' || isStringArray(condition.match.value)) {
+				condition.match.value = resolveAllReferences(condition.match.value, references, discovered, visited);
+			}
+			if (condition.match.regex) {
+				condition.match.regex = TypeUtils.asArray(
+					resolveAllReferences(condition.match.regex, references, discovered, visited),
+				);
+			}
+
+			return condition;
+		});
+
+		const transform = (data: StringFieldRestrictionsObject) =>
+			replaceReferencesInStringRestrictionsObject(data, references, discovered, visited);
+		if (restrictionsObject.then) {
+			restrictionsObject.then = transformOneOrMany(restrictionsObject.then, transform);
+		}
+		if (restrictionsObject.else) {
+			restrictionsObject.else = transformOneOrMany(restrictionsObject.else, transform);
+		}
+	} else {
+		if (restrictionsObject.codeList !== undefined) {
+			restrictionsObject.codeList = TypeUtils.asArray(
+				resolveAllReferences(restrictionsObject.codeList, references, discovered, visited),
+			);
+		}
+		if (restrictionsObject.regex !== undefined) {
+			const updatedRegex = resolveAllReferences(restrictionsObject.regex, references, discovered, visited);
+			restrictionsObject.regex = updatedRegex;
+		}
+	}
+	return restrictionsObject;
+};
+
+/**
+ * Warning:  This mutates the field argument object. This is meant for use within this module only and should not be exported.
+ */
+const internalReplaceFieldReferences = (
+	field: SchemaField,
+	references: References,
+	discovered: DiscoveredMap,
+	visited: VisitedSet,
+): SchemaField => {
+	// Process Field Meta:
+	if (field.meta !== undefined) {
+		field.meta = recursiveReplaceMetaReferences(field.meta, references, discovered, visited);
+	}
+
+	// Process Field Restrictions:
+	if (field.restrictions !== undefined) {
+		// Each field type has different allowed restriction types,
+		// we need to handle the reference replacement rules carefully
+		// to ensure the output schema adheres to the type rules.
+		switch (field.valueType) {
+			case 'string': {
+				field.restrictions = transformOneOrMany(field.restrictions, (restriction) =>
+					replaceReferencesInStringRestrictionsObject(restriction, references, discovered, visited),
+				);
+				break;
+			}
+			case 'number': {
+				break;
+			}
+			case 'integer': {
+				break;
+			}
+			case 'boolean': {
+				break;
+			}
+		}
+	}
+	return field;
+};
+
+/**
+ * Logic for replacing references in a schema.
+ *
+ * This is used by the replaceReferences method that replaces references in ALL schemas. By allowing the caller
+ * to provide the discovered/visited objects that are used in the recursive logic we can let the replaceReferences
+ * method reuse the same dictionaries across all schemas.
+ *
+ * Warning: This mutates the schema argument object. This is meant for use within this module only and should not be exported.
+ * @param schema
+ * @param references
+ * @param discovered
+ * @param visited
+ * @returns
+ */
+const internalReplaceSchemaReferences = (
+	schema: Schema,
+	references: References,
+	discovered: DiscoveredMap,
+	visited: VisitedSet,
+): Schema => {
+	if (schema.meta) {
+		schema.meta = recursiveReplaceMetaReferences(schema.meta, references, discovered, visited);
+	}
+
+	schema.fields.forEach((field) => {
+		internalReplaceFieldReferences(field, references, discovered, visited);
+	});
+
+	return schema;
+};
+
+/**
+ * Replace all ReferenceTags in in the restrictions and meta sections of the field definition object with
+ * values retrieved from the `references` object.
+ */
+export const replaceMetaReferences = (meta: DictionaryMeta, references: References): DictionaryMeta => {
+	const clone = cloneDeep(meta);
+	return recursiveReplaceMetaReferences(clone, references, createDiscoveredMap(), createVisitedSet());
+};
+
+/**
+ * Replace all ReferenceTags in in the restrictions and meta sections of the field definition object with
+ * values retrieved from the `references` object.
+ */
+export const replaceFieldReferences = (field: SchemaField, references: References): SchemaField => {
+	const clone = cloneDeep(field);
+	return internalReplaceFieldReferences(clone, references, createDiscoveredMap(), createVisitedSet());
+};
+
+/**
  * Replace all Reference Tags in the restrictions and meta sections of the schema with values retrieved from
  * the `references` argument.
  * @param schema
  * @param references
  * @return schema clone with references replaced
  */
-export const replaceSchemaReferences = (schema: Schema, references: References) =>
-	internalReplaceSchemaReferences(
-		schema,
-		references,
-		new Map<ReferenceTag, OutputReferenceValues>(),
-		new Set<ReferenceTag>(),
-	);
+export const replaceSchemaReferences = (schema: Schema, references: References) => {
+	const clone = cloneDeep(schema);
+	return internalReplaceSchemaReferences(clone, references, createDiscoveredMap(), createVisitedSet());
+};
 
 /**
  * Replace all ReferenceTags found in dictionary schemas with the values retrieved from the dictionary's references.
@@ -207,15 +339,14 @@ export const replaceSchemaReferences = (schema: Schema, references: References) 
  * @returns Clone of dictionary with reference replacements
  */
 export const replaceReferences = (dictionary: Dictionary): Dictionary => {
+	const clone = cloneDeep(omit(dictionary, 'references'));
 	const references = dictionary.references || {};
-	const discovered: DiscoveredMap = new Map<ReferenceTag, OutputReferenceValues>();
-	const visited: VisitedSet = new Set<ReferenceTag>();
+	const discovered = createDiscoveredMap();
+	const visited = createVisitedSet();
 
-	const updatedDictionary = immer.produce(dictionary, (draft) => {
-		draft.schemas = draft.schemas.map((schema) =>
-			internalReplaceSchemaReferences(schema, references, discovered, visited),
-		);
-	});
+	clone.schemas = dictionary.schemas.map((schema) =>
+		internalReplaceSchemaReferences(schema, references, discovered, visited),
+	);
 
-	return omit(updatedDictionary, 'references');
+	return clone;
 };

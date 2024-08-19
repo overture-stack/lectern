@@ -20,69 +20,88 @@
 import { expect } from 'chai';
 import { replaceReferences } from '../src/references';
 
-import noReferencesSectionInput from './fixtures/references/no_references_section/input';
-import noReferencesSectionOutput from './fixtures/references/no_references_section/output';
-import emptyReferencesInput from './fixtures/references/empty_references_section/input';
-import emptyReferencesOutput from './fixtures/references/empty_references_section/output';
-import simpleReferencesInput from './fixtures/references/simple_references/input';
-import simpleReferencesOutput from './fixtures/references/simple_references/output';
+import assert from 'assert';
 import codeListReferencesInput from './fixtures/references/codeList_references/input';
 import codeListReferencesOutput from './fixtures/references/codeList_references/output';
+import cyclicReferencesInput from './fixtures/references/cyclic_references/input';
+import emptyReferencesInput from './fixtures/references/empty_references_section/input';
+import emptyReferencesOutput from './fixtures/references/empty_references_section/output';
+import nestedMetaReferencesInput from './fixtures/references/nested_meta_references/input';
+import nestedMetaReferencesOutput from './fixtures/references/nested_meta_references/output';
+import noReferencesSectionInput from './fixtures/references/no_references_section/input';
+import noReferencesSectionOutput from './fixtures/references/no_references_section/output';
+import noReferencesTagsInput from './fixtures/references/no_referece_tags/input';
+import noReferencesTagsOutput from './fixtures/references/no_referece_tags/output';
+import nonExistingReferencesInput from './fixtures/references/non_existing_references/input';
 import referencesWithinReferencesInput from './fixtures/references/references_within_references/input';
 import referencesWithinReferencesOutput from './fixtures/references/references_within_references/output';
-import scriptReferencesInput from './fixtures/references/script_references/input';
-import scriptReferencesOutput from './fixtures/references/script_references/output';
 import regexReferencesInput from './fixtures/references/regex_reference/input';
 import regexReferencesOutput from './fixtures/references/regex_reference/output';
-import regexArrayReferencesInput from './fixtures/references/regex_reference/input_with_array';
-import nonExistingReferencesInput from './fixtures/references/non_existing_references/input';
-import cyclicReferencesInput from './fixtures/references/cyclic_references/input';
+import regexArrayReferencesInput from './fixtures/references/regex_reference_with_array/input';
+import regexArrayReferencesOutput from './fixtures/references/regex_reference_with_array/output';
+import restrictionsArrayWithReferencesInput from './fixtures/references/restrictions_array_with_references/input';
+import restrictionsArrayWithReferencesOutput from './fixtures/references/restrictions_array_with_references/output';
 import selfReferencesInput from './fixtures/references/self_references/input';
+import simpleReferencesInput from './fixtures/references/simple_references/input';
+import simpleReferencesOutput from './fixtures/references/simple_references/output';
 
 describe('Replace References', () => {
-	it('Should return the same original schema if dictionary does not contain a references section', () => {
+	it('Returns unmodified schema when dictionary does not contain a references section', () => {
 		const replacedDictionary = replaceReferences(noReferencesSectionInput);
 		expect(replacedDictionary).to.deep.eq(noReferencesSectionOutput);
 	});
-	it('Should return the same original schema if dictionary contains an empty references section', () => {
+	it('Returns unmodified schema when dictionary contains an empty references section', () => {
 		const replacedDictionary = replaceReferences(emptyReferencesInput);
 		expect(replacedDictionary).to.deep.eq(emptyReferencesOutput);
+	});
+	it('Returns unmodified schema when no ReferenceTag values are used', () => {
+		const replacedDictionary = replaceReferences(noReferencesTagsInput);
+		expect(replacedDictionary).to.deep.eq(noReferencesTagsOutput);
+	});
+	it('Throws an error when a ReferenceTag to an unknown path is provided', () => {
+		expect(() => replaceReferences(nonExistingReferencesInput)).to.throw(
+			"No reference found for provided tag '#/NON_EXISTING_REFERENCE'",
+		);
+	});
+	it('Throws an error if cyclic references are found', () => {
+		expect(() => replaceReferences(cyclicReferencesInput)).to.throw("Cyclical references found for '#/OTHER'");
+	});
+	it('Throws an error if self references are found', () => {
+		expect(() => replaceReferences(selfReferencesInput)).to.throw("Cyclical references found for '#/SELF_REFERENCE'");
+	});
+	it('Replaces references when restrictions are in arrays', () => {
+		restrictionsArrayWithReferencesInput;
+		const replacedDictionary = replaceReferences(restrictionsArrayWithReferencesInput);
+		expect(replacedDictionary).to.deep.eq(restrictionsArrayWithReferencesOutput);
 	});
 	// TODO: Check reference replacement in meta
 	it('Should return the schema with simple references replaced', () => {
 		const replacedDictionary = replaceReferences(simpleReferencesInput);
 		expect(replacedDictionary).to.deep.eq(simpleReferencesOutput);
 	});
-	it('Should return the schema where references inside codeLists are replaced', () => {
-		const replacedDictionary = replaceReferences(codeListReferencesInput);
-		expect(replacedDictionary).to.deep.eq(codeListReferencesOutput);
-	});
 	it('Should return the schema where references inside references are replaced', () => {
 		const output = replaceReferences(referencesWithinReferencesInput);
 		expect(output).to.deep.eq(referencesWithinReferencesOutput);
 	});
-	it('Should return the schema where references inside scripts arrays are replaced', () => {
-		const output = replaceReferences(scriptReferencesInput);
-		expect(output).to.deep.eq(scriptReferencesOutput);
+	it('Replaces reference tag value in meta nested properties', () => {
+		const replacedDictionary = replaceReferences(nestedMetaReferencesInput);
+		expect(replacedDictionary).to.deep.eq(nestedMetaReferencesOutput);
 	});
-	it('Regex Reference replaced successfully', () => {
-		const output = replaceReferences(regexReferencesInput);
-		expect(output).to.deep.eq(regexReferencesOutput);
-	});
-	it('Regex Reference cannot be an array', () => {
-		expect(() => replaceReferences(regexArrayReferencesInput)).to.throw(
-			`Field 'some_id' has restriction 'regex' with a reference '#/regex/ID_FORMAT' that resolves to an array. This restriction must be a string.`,
-		);
-	});
-	it('Should throw exception if reference does not exist', () => {
-		expect(() => replaceReferences(nonExistingReferencesInput)).to.throw(
-			"No reference found for provided tag '#/NON_EXISTING_REFERENCE'",
-		);
-	});
-	it('Should throw exception if cyclic references are found', () => {
-		expect(() => replaceReferences(cyclicReferencesInput)).to.throw("Cyclical references found for '#/OTHER'");
-	});
-	it('Should throw exception if self references are found', () => {
-		expect(() => replaceReferences(selfReferencesInput)).to.throw("Cyclical references found for '#/SELF_REFERENCE'");
+	describe('String Restrictions', () => {
+		it('CodeList with references are replaced', () => {
+			// has a couple test cases in the test fixture dictionary:
+			// - array containing ReferenceTag is replaced by array with reference values added to array
+			// - CodeList with ReferenceTag to single value is replaced with an array with the single value
+			const replacedDictionary = replaceReferences(codeListReferencesInput);
+			expect(replacedDictionary).to.deep.eq(codeListReferencesOutput);
+		});
+		it('Regex with ReferenceTag is replaced by single value', () => {
+			const output = replaceReferences(regexReferencesInput);
+			expect(output).to.deep.eq(regexReferencesOutput);
+		});
+		it('Regex with ReferenceTag to array value throws an error', () => {
+			const output = replaceReferences(regexArrayReferencesInput);
+			expect(output).to.deep.eq(regexArrayReferencesOutput);
+		});
 	});
 });
