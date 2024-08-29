@@ -61,13 +61,13 @@ export * as rest from './rest';
  * - processDicitonary: will process multiple collecitons of data records, each vs a different
  *     schema definition that is found in a dictionary definition.
  */
-export const processing = _processing;
+export const process = _processing;
 
 /**
  * Validation functions will perform all restriction tests on data objects. The result will indicate
  * if all tests passed or if there were some failures, and return a list of the failures that occurred.
  */
-export const validation = {
+export const validate = {
 	validateField: _validation.validateField,
 	validateRecord: _validation.validateRecord,
 	validateSchema: _validation.validateSchema,

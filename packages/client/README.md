@@ -31,8 +31,8 @@ const dictionaryName = 'dictionary-name';
 const currentVersion = "2.3";
 const previousVersion = "2.1";
 
-const dictionary = lectern.restClient.fetchSchema(lecternUrl, dictionaryName, currentVersion);
-const versionUpdates = lectern.restClient.fetchDiff(lecternUrl, dictionaryName, currentVersion, previousVersion);
+const dictionary = lectern.rest.fetchSchema(lecternUrl, dictionaryName, currentVersion);
+const versionUpdates = lectern.rest.fetchDiff(lecternUrl, dictionaryName, currentVersion, previousVersion);
 ```
 
 ### Data Processing
@@ -49,7 +49,7 @@ const dictionary = await getLecternDictionary();
 
 const donorData = [{submitter_donor_id: "abc123", gender: "Male", age: "28"}, {submitter_donor_id: "def456", gender: "Female", age: "37"}]
 
-const schemaProcessingResult = lectern.functions.processSchema(dictionary, "donors", donorData);
+const schemaProcessingResult = lectern.process.processSchema(dictionary, "donors", donorData);
 
 switch (schemaProcessingResult.status) {
 	case 'SUCCESS': {
