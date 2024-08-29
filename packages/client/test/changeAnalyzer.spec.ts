@@ -17,10 +17,9 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import chai from 'chai';
 import { DiffUtils } from '@overture-stack/lectern-dictionary';
-import { analyzer } from '../src';
-import { ChangeAnalysis } from '../src/changeAnalysis';
+import chai from 'chai';
+import { analyzeChanges, ChangeAnalysis } from '../src/changeAnalysis';
 import diffResponse from './fixtures/diffResponse';
 chai.should();
 
@@ -107,7 +106,7 @@ const expectedResult: ChangeAnalysis = {
 
 describe('changeAnalyzer', () => {
 	it('categorize changes correctly', () => {
-		const result = analyzer.analyzeChanges(diffFixture);
+		const result = analyzeChanges(diffFixture);
 		result.should.deep.eq(expectedResult);
 	});
 });

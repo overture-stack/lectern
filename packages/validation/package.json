@@ -2,6 +2,9 @@
 	"name": "@overture-stack/lectern-validation",
 	"version": "0.1.0-beta.1",
 	"description": "Logic for validating data using a Lectern dictionary",
+	"files": [
+		"dist/"
+	],
 	"main": "dist/index.js",
 	"scripts": {
 		"build": "pnpm build:clean && tsc -p ./tsconfig.build.json",

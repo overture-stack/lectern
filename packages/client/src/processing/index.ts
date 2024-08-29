@@ -28,6 +28,18 @@ import {
 
 const L = loggerFor(__filename);
 
+/**
+ * Process data from multiple schemas for a dictionary.
+ *
+ * Parse and then validate collections of data records, with each collection belonging to a different schema.
+ * The data argument is an object where each key is a schema name and each element an array of data records
+ * that belong to that schema type. If there are errors found during conversion,
+ * those errors will be returned and validation will be skipped. The final result will indicate if the
+ * data processing attempt was successful, or failed due to errors during parsing or validation.
+ * @param data
+ * @param dictionary
+ * @returns
+ */
 export const processDictionary = (
 	data: Record<string, UnprocessedDataRecord[]>,
 	dictionary: Dictionary,
@@ -68,7 +80,9 @@ export const processDictionary = (
 /**
  * Process a list of records for a single schema.
  *
- * Parse and then validate each record in the list.
+ * Parse and then validate each record in the list. If there are errors found during conversion,
+ * those errors will be returned and validation will be skipped. The final result will indicate if the
+ * data processing attempt was successful, or failed due to errors during parsing or validation.
  * @param dictionary
  * @param definition
  * @param records
@@ -106,9 +120,9 @@ export const processSchema = (records: UnprocessedDataRecord[], schema: Schema):
  *
  * Parse and then validate a data record. If there are errors found during conversion,
  * those errors will be returned and validation will be skipped. The final result will indicate if the
- * data processing attempt was successful, or failed due to errors in conversion or validation.
+ * data processing attempt was successful, or failed due to errors during parsing or validation.
  */
-export const processRecord = (schema: Schema, data: UnprocessedDataRecord): RecordProcessingResult => {
+export const processRecord = (data: UnprocessedDataRecord, schema: Schema): RecordProcessingResult => {
 	const parseResult = validation.parseRecordValues(data, schema);
 
 	if (!parseResult.success) {
