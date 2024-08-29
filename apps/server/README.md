@@ -4,11 +4,11 @@
 [<img hspace="5" src="https://img.shields.io/badge/chat--with--developers-overture--slack-blue?style=for-the-badge">](http://slack.overture.bio)
 [<img hspace="5" src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge">](https://github.com/overture-stack/lectern/blob/develop/LICENSE)
 
-Lectern Server is a standalone web service for Lectern. It provides an API to create, manage, and share Lectern Dictionary schemas.
+Lectern Server is a standalone web service that provides an REST API to manage and share Data Dictionary schemas.
 
 ## Technology
 
-Lectern is a NodeJS service written in TypeScript.
+Lectern Server is a NodeJS service written in TypeScript.
 
 It is published as a container on ghcr.io: [Lectern Container Registry](https://github.com/overture-stack/lectern/pkgs/container/lectern)
 
