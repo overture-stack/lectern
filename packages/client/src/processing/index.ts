@@ -17,17 +17,23 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import * as validation from '@overture-stack/lectern-validation';
 import { DataRecord, Dictionary, Schema, UnprocessedDataRecord } from '@overture-stack/lectern-dictionary';
-import { loggerFor } from '../logger';
+import * as validation from '@overture-stack/lectern-validation';
 import {
 	SchemaProcessingResult,
 	type DictionaryProcessingResult,
 	type RecordProcessingResult,
 } from './processingResultTypes';
 
-const L = loggerFor(__filename);
-
+/**
+ * Process data from multiple schemas for a dictionary.
+ *
+ * Parse and then validate collections of data records, with each collection belonging to a different schema.
+ * The data argument is an object where each key is a schema name and each element an array of data records
+ * that belong to that schema type. If there are errors found during conversion,
+ * those errors will be returned and validation will be skipped. The final result will indicate if the
+ * data processing attempt was successful, or failed due to errors during parsing or validation.
+ */
 export const processDictionary = (
 	data: Record<string, UnprocessedDataRecord[]>,
 	dictionary: Dictionary,
@@ -68,11 +74,9 @@ export const processDictionary = (
 /**
  * Process a list of records for a single schema.
  *
- * Parse and then validate each record in the list.
- * @param dictionary
- * @param definition
- * @param records
- * @returns
+ * Parse and then validate each record in the list. If there are errors found during conversion,
+ * those errors will be returned and validation will be skipped. The final result will indicate if the
+ * data processing attempt was successful, or failed due to errors during parsing or validation.
  */
 export const processSchema = (records: UnprocessedDataRecord[], schema: Schema): SchemaProcessingResult => {
 	const parseResult = validation.parseSchemaValues(records, schema);
@@ -106,9 +110,9 @@ export const processSchema = (records: UnprocessedDataRecord[], schema: Schema):
  *
  * Parse and then validate a data record. If there are errors found during conversion,
  * those errors will be returned and validation will be skipped. The final result will indicate if the
- * data processing attempt was successful, or failed due to errors in conversion or validation.
+ * data processing attempt was successful, or failed due to errors during parsing or validation.
  */
-export const processRecord = (schema: Schema, data: UnprocessedDataRecord): RecordProcessingResult => {
+export const processRecord = (data: UnprocessedDataRecord, schema: Schema): RecordProcessingResult => {
 	const parseResult = validation.parseRecordValues(data, schema);
 
 	if (!parseResult.success) {

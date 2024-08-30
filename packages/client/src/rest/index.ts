@@ -27,57 +27,8 @@ import {
 import fetch from 'node-fetch';
 import promiseTools from 'promise-tools';
 import { loggerFor } from '../logger';
+
 const L = loggerFor(__filename);
-
-export interface SchemaServiceRestClient {
-	fetchSchema(schemaSvcUrl: string, name: string, version: string): Promise<Dictionary>;
-	fetchDiff(schemaSvcUrl: string, name: string, fromVersion: string, toVersion: string): Promise<DictionaryDiff>;
-}
-
-export const restClient: SchemaServiceRestClient = {
-	fetchSchema: async (schemaSvcUrl: string, name: string, version: string): Promise<Dictionary> => {
-		// for testing where we need to work against stub schema
-		if (schemaSvcUrl.startsWith('file://')) {
-			return await loadSchemaFromFile(version, schemaSvcUrl, name);
-		}
-
-		if (!schemaSvcUrl) {
-			throw new Error('please configure a valid url to get schema from');
-		}
-		const url = `${schemaSvcUrl}/dictionaries?name=${name}&version=${version}`;
-		try {
-			L.debug(`in fetch live schema ${version}`);
-			const schemaDictionary = await doRequest(url);
-			// todo validate response and map it to a schema
-			return schemaDictionary[0] as Dictionary;
-		} catch (error: unknown) {
-			L.error(`failed to fetch schema at url: ${url} - ${unknownToString(error)}`);
-			throw error;
-		}
-	},
-	fetchDiff: async (
-		schemaSvcBaseUrl: string,
-		name: string,
-		fromVersion: string,
-		toVersion: string,
-	): Promise<DictionaryDiff> => {
-		// TODO: Error handling (return result?)
-		const url = `${schemaSvcBaseUrl}/diff?name=${name}&left=${fromVersion}&right=${toVersion}`;
-		const diffResponse = await doRequest(url);
-
-		const diffArray = DictionaryDiffArray.parse(diffResponse);
-
-		const result: DictionaryDiff = new Map();
-		for (const entry of diffArray) {
-			const fieldName = entry[0];
-			if (entry[1]) {
-				const fieldDiff: FieldDiff = entry[1];
-				result.set(fieldName, fieldDiff);
-			}
-		}
-		return result;
-	},
-};
 
 const doRequest = async (url: string) => {
 	let response: any;
@@ -94,55 +45,37 @@ const doRequest = async (url: string) => {
 	}
 };
 
-async function loadSchemaFromFile(version: string, schemaSvcUrl: string, name: string) {
-	L.debug(`in fetch stub schema ${version}`);
-	const result = delay<Dictionary>(1000);
-	const dictionary = await result(() => {
-		const dictionaries: Dictionary[] = require(schemaSvcUrl.substring(7, schemaSvcUrl.length))
-			.dictionaries as Dictionary[];
-		if (!dictionaries) {
-			throw new Error('your mock json is not structured correctly, see sampleFiles/sample-schema.json');
-		}
-		const dic = dictionaries.find((d: any) => d.version === version && d.name === name);
-		if (!dic) {
-			return undefined;
-		}
-		return dic;
-	});
-	if (dictionary === undefined) {
-		throw new Error("couldn't load stub dictionary with the criteria specified");
+export const fetchSchema = async (schemaSvcUrl: string, name: string, version: string): Promise<Dictionary> => {
+	const url = `${schemaSvcUrl}/dictionaries?name=${name}&version=${version}`;
+	try {
+		L.debug(`in fetch live schema ${version}`);
+		const schemaDictionary = await doRequest(url);
+		// todo validate response and map it to a schema
+		return schemaDictionary[0] as Dictionary;
+	} catch (error: unknown) {
+		L.error(`failed to fetch schema at url: ${url} - ${unknownToString(error)}`);
+		throw error;
 	}
-	L.debug(`schema found ${dictionary.version}`);
-	return dictionary;
-}
+};
+export const fetchDiff = async (
+	schemaSvcBaseUrl: string,
+	name: string,
+	fromVersion: string,
+	toVersion: string,
+): Promise<DictionaryDiff> => {
+	// TODO: Error handling (return result?)
+	const url = `${schemaSvcBaseUrl}/diff?name=${name}&left=${fromVersion}&right=${toVersion}`;
+	const diffResponse = await doRequest(url);
 
-async function loadDiffFromFile(schemaSvcBaseUrl: string, name: string, fromVersion: string, toVersion: string) {
-	L.debug(`in fetch stub diffs ${name} ${fromVersion} ${toVersion}`);
-	const result = delay<any>(1000);
-	const diff = await result(() => {
-		const diffResponse = require(schemaSvcBaseUrl.substring(7, schemaSvcBaseUrl.length)).diffs as any[];
-		if (!diffResponse) {
-			throw new Error('your mock json is not structured correctly, see sampleFiles/sample-schema.json');
-		}
+	const diffArray = DictionaryDiffArray.parse(diffResponse);
 
-		const diff = diffResponse.find(
-			(d) => d.fromVersion === fromVersion && d.toVersion === toVersion && d.name === name,
-		);
-		if (!diff) {
-			return undefined;
+	const result: DictionaryDiff = new Map();
+	for (const entry of diffArray) {
+		const fieldName = entry[0];
+		if (entry[1]) {
+			const fieldDiff: FieldDiff = entry[1];
+			result.set(fieldName, fieldDiff);
 		}
-		return diff;
-	});
-	if (diff === undefined) {
-		throw new Error("couldn't load stub diff with the criteria specified, check your stub file");
 	}
-	return diff.data;
-}
-
-function delay<T>(milliseconds: number) {
-	return async (result: () => T | undefined) => {
-		return new Promise<T | undefined>((resolve, reject) => {
-			setTimeout(() => resolve(result()), milliseconds);
-		});
-	};
-}
+	return result;
+};

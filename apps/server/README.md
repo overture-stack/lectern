@@ -1,16 +1,19 @@
 # Lectern Server
 
-[<img alt="Container Registry Badge" src="https://img.shields.io/badge/GCHR.io-overture--stack%2Flectern-blue?style=for-the-badge&color=blue&cacheSeconds=0" />](https://github.com/overture-stack/lectern/pkgs/container/lectern)
+[<img alt="Container Registry Badge" src="https://img.shields.io/badge/Docker--Image-ghcr.io-blue?style=for-the-badge&color=blue&cacheSeconds=0" />](https://github.com/overture-stack/lectern/pkgs/container/lectern)
+[<img hspace="5" src="https://img.shields.io/badge/chat--with--developers-overture--slack-blue?style=for-the-badge">](http://slack.overture.bio)
+[<img hspace="5" src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge">](https://github.com/overture-stack/lectern/blob/develop/LICENSE)
 
-Lectern Server is the standalone web service for Lectern. It provides an API to create, manage, and share Data Dictionary schemas.
+Lectern Server is a standalone web service that provides a REST API to manage and share Data Dictionary schemas.
 
 ## Technology
 
-Lectern is a NodeJS service written in TypeScript. It is published as a container on ghcr.io: [Lectern Container Registry](https://github.com/overture-stack/lectern/pkgs/container/lectern)
+Lectern Server is a NodeJS service written in TypeScript.
 
-To run the application from source, follow the [Development](#development) instructions below.
+It is published as a container on ghcr.io: [Lectern Container Registry](https://github.com/overture-stack/lectern/pkgs/container/lectern)
 
 ## Development
+
 ### PNPM Monorepo Package Manager
 This project uses `pnpm` instead of `npm` to facilitate a monorepo workspace.
 

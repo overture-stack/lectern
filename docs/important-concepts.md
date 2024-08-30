@@ -48,6 +48,11 @@ Placeholder
 
 ## Common Types
 
+### DataRecord and UnprocessedDataRecord
+The `DataRecord` type represents a single record from some Schema. They are objects with keys that match the [fields](#field) from a [schema](#schema) and a value that should be one of the valid Lectern data types. There is no guarantee that a `DataRecord` is "valid", it could have values that fail some restrictions from the schema.
+
+An `UnprocessedDataRecord` is very similar, but all values are raw string values. These represent a single record as it would be submitted in a test file, for example all the data from a single line in a TSV. These string values will need to be [parsed](#parsing) to be converted to their proper types as defined in a schema.
+
 ### TestResult
 
 Reference: [validation/src/types/testResult.ts](../packages/validation/src/types/testResult.ts)
@@ -81,3 +86,17 @@ Example Invalid `TestResult`, for a field validation that failed due to CodeList
 	}
 }
 ```
+
+## Data Processing Verbs
+
+### Parsing
+
+Placeholder
+
+### Validating
+
+Placeholder
+
+### Processing
+
+Placeholder

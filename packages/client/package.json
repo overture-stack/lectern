@@ -1,11 +1,11 @@
 {
 	"name": "@overture-stack/lectern-client",
-	"version": "1.5.0",
+	"version": "2.0.0-beta.1",
 	"files": [
 		"dist/"
 	],
 	"main": "./dist/index.js",
-	"typings": "./dist/index.d.ts",
+	"types": "./dist/index.d.ts",
 	"description": "TypeScript client to interact with Lectern servers and perform data validation versus Lectern dictionaries.",
 	"scripts": {
 		"build": "rimraf dist && tsc -p tsconfig.build.json",

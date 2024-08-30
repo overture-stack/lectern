@@ -17,14 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {
-	DictionaryDiff,
-	FieldChanges,
-	RestrictionRange,
-	SchemaField,
-	ValueChange,
-} from '@overture-stack/lectern-dictionary';
-import { restClient } from '../rest';
+import { DictionaryDiff, FieldChanges, SchemaField, ValueChange } from '@overture-stack/lectern-dictionary';
+import * as restClient from '../rest';
 import { ChangeAnalysis, RestrictionChanges } from './changeAnalysisTypes';
 
 const isValueChange = (input: FieldChanges): input is ValueChange => ValueChange.safeParse(input).success;
