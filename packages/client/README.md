@@ -1,10 +1,10 @@
 # Lectern Client
 
-![Typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 [<img hspace="5" src="https://img.shields.io/badge/chat--with--developers-overture--slack-blue?style=for-the-badge">](http://slack.overture.bio)
 [<img hspace="5" src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge">](https://github.com/overture-stack/lectern/blob/develop/LICENSE)
 
-The Lectern Client provides developers TypeScript code tools to interact with Lectern servers and [Lectern Dictionaries](https://github.com/overture-stack/lectern). This package provides data processing functions that will parse submitted data and validatet that it adheres to the structure defined by the Dictionary. It also provides a REST client to fetch Lectern Dictionary data from a Lectern server.
+The Lectern Client provides developers TypeScript code tools to interact with Lectern servers and [Lectern Dictionaries](https://github.com/overture-stack/lectern). This package provides data processing functions that will parse and validate submitted data, ensuring that it adheres to the structure defined by the Dictionary. It also provides a REST client to fetch Lectern Dictionary data from a Lectern Server.
 
 ## Features
 - REST client to interact with Lectern servers:
@@ -73,5 +73,5 @@ The Lectern Client is a wrapper around Lectern submodules that allow functionali
 
 | Package            | Description                                                                                                                                                                                                                                               |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [lectern-dictionary](https://www.npmjs.com/package/@overture-stack/lectern-dictionary) | Definition of the Lectern Dictionary structure. Includes TS types and schemas for validating the content of Lectern dictionary. Also includes functionality for comapring mulitple Lectern Dictionary versions and computing the difference between them. |
+| [lectern-dictionary](https://www.npmjs.com/package/@overture-stack/lectern-dictionary) | Definition of the Lectern Dictionary structure. Includes TS types and schemas for validating the content of Lectern dictionary. Also includes functionality to comparing multiple Lectern Dictionary versions, and to analyze the differences between them. |
 | [lectern-validation](https://www.npmjs.com/package/@overture-stack/lectern-validation) | Provides functionality for validating data against a Lectern dictionary.                                                                                                                                                                                  |
