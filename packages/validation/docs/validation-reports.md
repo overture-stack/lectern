@@ -7,7 +7,7 @@ Restrictions apply to multiple different levels, differentiated by what data is 
 #### Dictionary
 Considers all records for all schemas of the dictionary.
 
-- ForeignKey
+- foreignKey
 - schemaNames (look at schemas provided in a data set, flag any that have an invalid name)
 
 #### Schema

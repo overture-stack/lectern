@@ -16,7 +16,7 @@
 This package provides tools to parse and validate data based on the schemas in Lectern Dictionaries.
 
 ## Parsing Data
-Parsing data involves reading string values for fields defined in a Lectern Schema and converting the that value into properly typed data. For example, if a field has `"dataType": "number"` and the provided value `"123"` this will be converted from the string value into the numeric `123`. A more complicated example would take a comma separated array value and convert each element and return the final array. If any values cannot be properly parsed and converted based on the schema's rules, an error is returned instead.
+Parsing data involves reading string values for fields defined in a Lectern Schema and converting the values into properly typed data. For example, if a field has `"dataType": "number"` and the provided value `"123"` this will be converted from the string value into the numeric `123`. A more complicated example would take a comma-separated array value, convert each element, and return the final array. If any values cannot be properly parsed and converted based on the schema's rules, an error is returned instead.
 
 There are four separate parsing functions exported, mapping to different collections of data to be processed together:
 

@@ -58,7 +58,7 @@ export * as rest from './rest';
  * The available processing functions are concerned with data at different scales:
  * - processRecord: will process a single data record using schema definition
  * - processSchema: will process a collection of data records using a single schema definition
- * - processDicitonary: will process multiple collecitons of data records, each vs a different
+ * - processDictionary: will process multiple collecitons of data records, each vs a different
  *     schema definition that is found in a dictionary definition.
  */
 export const process = _processing;
