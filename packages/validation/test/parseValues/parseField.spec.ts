@@ -300,5 +300,24 @@ describe('Parse Values - parseFieldValue', () => {
 			it('Boolean array field, rejects array where value is missing (two delimiters are adjacent)');
 			expect(parseFieldValue(',true,false,TRUE', fieldBooleanArrayRequired).success).false;
 		});
+		describe('Custom delimiter', () => {
+			it('Uses a `,` as the delimiter when none is defined', () => {
+				const result = parseFieldValue(':,_,|,/', fieldStringArrayRequired);
+				expect(result.success).true;
+				expect(result.data).deep.equal([':', '_', '|', '/']);
+			});
+			it('Splits array on the delimiter when defined', () => {
+				const customDelimiterField = { ...fieldStringArrayRequired, delimiter: '|' };
+				const result = parseFieldValue(':,_,|,/', customDelimiterField);
+				expect(result.success).true;
+				expect(result.data).deep.equal([':,_,', ',/']);
+			});
+			it('Splits arrays with delimiters with more than 1 character', () => {
+				const customDelimiterField = { ...fieldStringArrayRequired, delimiter: '-/-' };
+				const result = parseFieldValue('a-/-b-/-c-/-d', customDelimiterField);
+				expect(result.success).true;
+				expect(result.data).deep.equal(['a', 'b', 'c', 'd']);
+			});
+		});
 	});
 });
