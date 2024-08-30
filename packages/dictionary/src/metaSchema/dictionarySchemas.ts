@@ -181,7 +181,7 @@ export const SchemaFieldBase = zod
 	.object({
 		name: NameValue,
 		description: zod.string().optional(),
-		delimiter: zod.string().trim().min(1).optional(),
+		delimiter: zod.string().min(1).optional(),
 		isArray: zod.boolean().optional(),
 		meta: DictionaryMeta.optional(),
 		unique: zod.boolean().optional(),

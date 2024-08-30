@@ -311,10 +311,20 @@ describe('Parse Values - parseFieldValue', () => {
 				const result = parseFieldValue(':,_,|,/', customDelimiterField);
 				expect(result.success).true;
 				expect(result.data).deep.equal([':,_,', ',/']);
+
+				const result2 = parseFieldValue('abc|def|ghi', customDelimiterField);
+				expect(result2.success).true;
+				expect(result2.data).deep.equal(['abc', 'def', 'ghi']);
 			});
 			it('Splits arrays with delimiters with more than 1 character', () => {
 				const customDelimiterField = { ...fieldStringArrayRequired, delimiter: '-/-' };
 				const result = parseFieldValue('a-/-b-/-c-/-d', customDelimiterField);
+				expect(result.success).true;
+				expect(result.data).deep.equal(['a', 'b', 'c', 'd']);
+			});
+			it('Splits arrays with delimiters that are entirely whitespace', () => {
+				const customDelimiterField = { ...fieldStringArrayRequired, delimiter: '   ' };
+				const result = parseFieldValue('a   b   c   d', customDelimiterField);
 				expect(result.success).true;
 				expect(result.data).deep.equal(['a', 'b', 'c', 'd']);
 			});

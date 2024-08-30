@@ -179,6 +179,15 @@ describe('Dictionary Schemas', () => {
 				};
 				expect(SchemaField.safeParse(field).success).true;
 			});
+			it('Delimiter value can be whitespace', () => {
+				const field: SchemaField = {
+					name: 'some-name',
+					valueType: 'string',
+					isArray: true,
+					delimiter: '   ',
+				};
+				expect(SchemaField.safeParse(field).success).true;
+			});
 		});
 	});
 	describe('Schema', () => {
