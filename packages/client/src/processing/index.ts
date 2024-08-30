@@ -17,16 +17,13 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import * as validation from '@overture-stack/lectern-validation';
 import { DataRecord, Dictionary, Schema, UnprocessedDataRecord } from '@overture-stack/lectern-dictionary';
-import { loggerFor } from '../logger';
+import * as validation from '@overture-stack/lectern-validation';
 import {
 	SchemaProcessingResult,
 	type DictionaryProcessingResult,
 	type RecordProcessingResult,
 } from './processingResultTypes';
-
-const L = loggerFor(__filename);
 
 /**
  * Process data from multiple schemas for a dictionary.
@@ -36,9 +33,6 @@ const L = loggerFor(__filename);
  * that belong to that schema type. If there are errors found during conversion,
  * those errors will be returned and validation will be skipped. The final result will indicate if the
  * data processing attempt was successful, or failed due to errors during parsing or validation.
- * @param data
- * @param dictionary
- * @returns
  */
 export const processDictionary = (
 	data: Record<string, UnprocessedDataRecord[]>,
@@ -83,10 +77,6 @@ export const processDictionary = (
  * Parse and then validate each record in the list. If there are errors found during conversion,
  * those errors will be returned and validation will be skipped. The final result will indicate if the
  * data processing attempt was successful, or failed due to errors during parsing or validation.
- * @param dictionary
- * @param definition
- * @param records
- * @returns
  */
 export const processSchema = (records: UnprocessedDataRecord[], schema: Schema): SchemaProcessingResult => {
 	const parseResult = validation.parseSchemaValues(records, schema);
