@@ -136,7 +136,7 @@ describe('Dictionary Routes', () => {
 				});
 		});
 
-		it('Should 400 with meta fields that are not string/boolean/integer/number', (done: Mocha.Done) => {
+		it('Should 400 with meta fields that are arrays of objects', (done: Mocha.Done) => {
 			const dictRequest = require('./fixtures/createKeyValueBad.json');
 			chai
 				.request(app)

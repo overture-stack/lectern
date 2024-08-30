@@ -16,8 +16,7 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import { BadRequestError } from 'common';
-import { DictionaryDiffArray, DiffUtils, replaceReferences } from 'dictionary';
+import { BadRequestError, DictionaryDiffArray, DiffUtils, replaceReferences } from '@overture-stack/lectern-dictionary';
 import { Router } from 'express';
 import * as dictionaryService from '../services/dictionaryService';
 import { wrapAsync } from './wrappers';

@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"module": "CommonJS",
+		"target": "ESNext",
+		"lib": ["ESNext", "DOM"],
+		"strict": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"strictNullChecks": true,
+		"noImplicitAny": true,
+		"allowJs": true,
+		"moduleResolution": "node",
+		"experimentalDecorators": true,
+		"sourceMap": true,
+		"declaration": true,
+		"outDir": "dist",
+		"skipLibCheck": true,
+		"noUncheckedIndexedAccess": true
+	},
+	"include": ["./src/**/*.ts", "./test/**/*.ts"],
+	"exclude": ["node_modules/"]
+}

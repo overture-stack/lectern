@@ -1,17 +1,16 @@
 {
-	"name": "scripts",
+	"name": "lectern-scripts",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"private": true,
+	"description": "Scripts for managing the Lectern monorepo.",
 	"scripts": {
-		"generate": "npm run generate:metaschema",
-		"generate:metaschema": "node -r ts-node/register ./src/generateMetaSchema.ts"
+		"generate": "node -r ts-node/register ./src/generateMetaSchema.ts"
 	},
 	"keywords": [],
-	"author": "",
 	"license": "AGPL-3.0",
 	"dependencies": {
-		"dictionary": "workspace:^",
-		"zod-to-json-schema": "^3.21.3"
+		"@overture-stack/lectern-dictionary": "workspace:^",
+		"zod": "^3.23.8",
+		"zod-to-json-schema": "^3.23.2"
 	}
 }

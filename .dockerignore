@@ -3,7 +3,6 @@
 
 # Allow select paths
 !apps/*
-!libraries/*
 !packages/*
 !package.json
 !pnpm-lock.yaml
