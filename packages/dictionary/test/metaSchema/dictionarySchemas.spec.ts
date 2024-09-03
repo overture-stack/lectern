@@ -151,6 +151,44 @@ describe('Dictionary Schemas', () => {
 			};
 			expect(SchemaField.safeParse(fieldBoolean).success, 'Boolean field invalid.').true;
 		});
+		describe('Delimiter', () => {
+			it('Field can have delimiter', () => {
+				const field: SchemaField = {
+					name: 'some-name',
+					valueType: 'string',
+					isArray: true,
+					delimiter: '|',
+				};
+				expect(SchemaField.safeParse(field).success).true;
+			});
+			it('Delimiter values must have minimum length 1', () => {
+				const field: SchemaField = {
+					name: 'some-name',
+					valueType: 'string',
+					isArray: true,
+					delimiter: '',
+				};
+				expect(SchemaField.safeParse(field).success).false;
+			});
+			it('Delimiter value can have multiple characters', () => {
+				const field: SchemaField = {
+					name: 'some-name',
+					valueType: 'string',
+					isArray: true,
+					delimiter: '-/-',
+				};
+				expect(SchemaField.safeParse(field).success).true;
+			});
+			it('Delimiter value can be whitespace', () => {
+				const field: SchemaField = {
+					name: 'some-name',
+					valueType: 'string',
+					isArray: true,
+					delimiter: '   ',
+				};
+				expect(SchemaField.safeParse(field).success).true;
+			});
+		});
 	});
 	describe('Schema', () => {
 		it("Can't have repeated field names", () => {
