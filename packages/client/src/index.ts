@@ -37,6 +37,7 @@ export type {
 	TestResultValid,
 	TestResultInvalid,
 	SchemaRecordError,
+	DictionaryValidationRecordErrorDetails,
 	DictionaryValidationError,
 	FieldValidationError,
 	ParseDictionaryData,
