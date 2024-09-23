@@ -10,6 +10,7 @@
 		"build:server": "pnpm nx build @overture-stack/lectern-server",
 		"build:client": "pnpm nx build @overture-stack/lectern-client",
 		"test:all": "pnpm nx run-many --all --target=test",
+		"integration-test:all": "pnpm nx run-many --all --target=integration-test",
 		"test:dictionary": "pnpm nx test @overture-stack/lectern-dictionary",
 		"test:validation": "pnpm nx test @overture-stack/lectern-validation",
 		"test:server": "pnpm nx test @overture-stack/lectern-server",
