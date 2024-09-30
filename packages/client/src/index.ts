@@ -36,8 +36,11 @@ export type {
 	TestResult,
 	TestResultValid,
 	TestResultInvalid,
+	SchemaValidationRecordErrorDetails,
 	SchemaRecordError,
+	DictionaryValidationRecordErrorDetails,
 	DictionaryValidationError,
+	FieldValidationErrorRestrictionInfo,
 	FieldValidationError,
 	ParseDictionaryData,
 	ParseDictionaryFailure,
@@ -45,6 +48,7 @@ export type {
 	ParseSchemaError,
 	ParseSchemaFailureData,
 	ParseSchemaResult,
+	ParseRecordFailureData,
 	ParseRecordResult,
 } from '@overture-stack/lectern-validation';
 
