@@ -138,7 +138,7 @@ const convertArrayValue = (value: string, fieldDefinition: SchemaField): Result<
 
 	/* === Start of convertArrayValue logic === */
 	const { valueType } = fieldDefinition;
-	const delimiter = DEFAULT_DELIMITER;
+	const delimiter = fieldDefinition.delimiter !== undefined ? fieldDefinition.delimiter : DEFAULT_DELIMITER;
 
 	const normalizedValue = normalizeValue(value);
 	if (normalizedValue === '') {

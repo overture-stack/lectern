@@ -1,7 +1,6 @@
 {
 	"extension": ["ts"],
 	"require": "ts-node/register",
-	"spec": "test/**/*.spec.ts",
-	"ignore": ["test/integration/**/*"],
+	"spec": "test/integration/**/*.spec.ts",
 	"timeout": 35000
 }
