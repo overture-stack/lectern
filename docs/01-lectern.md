@@ -1,6 +1,6 @@
 # Lectern
 
-Lectern is Overture's Data Dictionary Schema Manager. It provides a system for defining, validating, and managing collections of schemas that specify the expected structure and syntax of data upon submission (data dictionaries). Lectern supports version control and can compute differences between schema versions. It is designed to integrate with and support data submission and validation processes, which are handled by separate services such as Overtures Song & Lyric components.
+Lectern is Overture's Data Dictionary Schema Manager, designed to manage collections of data dictionaries (schemas specifying expected data structure and syntax). Lectern support version control for these schemas, can compute differences between schema versions and integrates with and validates data submissions processed by other Overture services (Song & Lyric).
 
 ## Key Features
 
@@ -8,7 +8,7 @@ Lectern is Overture's Data Dictionary Schema Manager. It provides a system for d
 - **Dictionary Management:** Maintain collections of schemas (data dictionaries) with multiple versions.
 - **Version Control:** Track changes and evolution of data structures over time.
 - **Difference Computation:** Compare versions to understand changes in data requirements.
-- **Schema Validation:** Validate structure and syntax of data dictionaries.
+- **Schema Validation:** Validate structure and syntax of submissions against data dictionary schema.
 - **Integration:** includes an API for integration with larger data management systems.
 
 ## System Architecture
