@@ -1,6 +1,7 @@
 # Lectern
 
-Lectern is Overture's Data Dictionary Schema Manager, designed to manage and validate collections of data dictionaries (schemas specifying expected data structure and syntax). Lectern support version control for these schemas, can compute differences between schema versions and integrates with the tabular data submission service Lyric.
+Lectern is Overture's Data Dictionary Schema Manager, designed to validate, store, and manage collections of data dictionaries. These dictionaries define schemas that specify expected data structure and syntax for tabular (TSV) data submissions. With built-in version control capabilities, Lectern can track schema evolution and compute differences between versions, while integrating seamlessly with the Lyric data submission service.
+
 
 ## Key Features
 
@@ -8,23 +9,14 @@ Lectern is Overture's Data Dictionary Schema Manager, designed to manage and val
 - **Dictionary Management:** Maintain collections of schemas (data dictionaries) with multiple versions.
 - **Version Control:** Track changes and evolution of data structures over time.
 - **Difference Computation:** Compare versions to understand changes in data requirements.
-- **Schema Validation:** Validate the structure and syntax of data dictionary schema against Lecterns base metaschema.
-- **Integration:** includes an API for integration with larger data management systems.
+- **Schema Validation:** Validate the structure and syntax of data dictionary schema against Lecterns base meta-schema.
+- **Integration:** includes a RESTful API (Swagger) for integration with larger data management systems.
 
 ## System Architecture
 
-Explanation of the system's architecture
+Lectern operates as a central Dictionary Schema repository within the Overture ecosystem, providing dictionary management and validation services through its RESTful API. The service maintains schemas in a database, tracking versions and relationships between different schema elements. Lectern's schemas are primarily consumed by Lyric, which stores and uses them to validate incoming tabular data submissions. Through this integration, Lectern plays a crucial role in ensuring data quality and consistency in the Overture submission workflow.
 
-![Submission System Architecture](../images/submission-system.svg 'Updated Overture Submission System')
-
-:::warning
-This diagram needs to be updated for Lectern specifically
-:::
-
-As part of the Overture platform, Lectern will typically integrate with:
-
-- **Lyric:** Brief description of integration 2
-
+![Submission System Architecture](./images/submission-system.svg 'Updated Overture Submission System')
 
 ## Repository Structure
 
@@ -50,7 +42,7 @@ The modules in the monorepo are organized into three categories:
    - `packages/`: Reusable packages shared between applications and other packages. Packages are published to [NPM](https://npmjs.com).
    - `scripts`: Utility scripts for use within this repo.
 
-### Lectern Components
+#### Lectern Components
 
 Each component serves a specific purpose within Lectern, providing functionality for server operations, client interactions, dictionary management, and data validation. Below is a detailed breakdown of the core components:
 
