@@ -30,6 +30,8 @@ import { fieldBooleanArrayRequired } from '../fixtures/fields/simpleRestrictions
 import { fieldStringCodeList } from '../fixtures/fields/simpleRestrictions/string/fieldStringCodeList';
 import { codeListString } from '../fixtures/restrictions/codeListsFixtures';
 import { fieldStringArrayCodeList } from '../fixtures/fields/simpleRestrictions/string/fieldStringArrayCodeList';
+import { fieldStringConditionalExists } from '../fixtures/fields/conditionalRestrictions/fieldStringConditionalExists';
+import { fieldStringConditionalExistsWithouthThenElse } from '../fixtures/fields/conditionalRestrictions/fieldStringConditionalExistsWithouthThenElse';
 
 describe('Parse Values - parseFieldValue', () => {
 	describe('Single Value Fields', () => {
@@ -164,6 +166,34 @@ describe('Parse Values - parseFieldValue', () => {
 				expect(parseFieldValue('false   ', fieldStringNoRestriction).data).equals('false');
 				expect(parseFieldValue('     !@#$%^&* ()_+      ', fieldStringNoRestriction).success).true;
 				expect(parseFieldValue('     !@#$%^&* ()_+      ', fieldStringNoRestriction).data).equals('!@#$%^&* ()_+');
+			});
+			it('Successfuly parses strings, with conditional restrictions', () => {
+				const value = 'any random string value!!!';
+				const result = parseFieldValue(value, fieldStringConditionalExists);
+				expect(result.success).true;
+				expect(result.data).equal(value);
+
+				expect(parseFieldValue('    123', fieldStringConditionalExists).success).true;
+				expect(parseFieldValue('    123', fieldStringConditionalExists).data).equals('123');
+				expect(parseFieldValue('false   ', fieldStringConditionalExists).success).true;
+				expect(parseFieldValue('false   ', fieldStringConditionalExists).data).equals('false');
+				expect(parseFieldValue('     !@#$%^&* ()_+      ', fieldStringConditionalExists).success).true;
+				expect(parseFieldValue('     !@#$%^&* ()_+      ', fieldStringConditionalExists).data).equals('!@#$%^&* ()_+');
+			});
+			it('Successfuly parses strings, with conditional restrictions without then or else', () => {
+				const value = 'any random string value!!!';
+				const result = parseFieldValue(value, fieldStringConditionalExistsWithouthThenElse);
+				expect(result.success).true;
+				expect(result.data).equal(value);
+
+				expect(parseFieldValue('    123', fieldStringConditionalExistsWithouthThenElse).success).true;
+				expect(parseFieldValue('    123', fieldStringConditionalExistsWithouthThenElse).data).equals('123');
+				expect(parseFieldValue('false   ', fieldStringConditionalExistsWithouthThenElse).success).true;
+				expect(parseFieldValue('false   ', fieldStringConditionalExistsWithouthThenElse).data).equals('false');
+				expect(parseFieldValue('     !@#$%^&* ()_+      ', fieldStringConditionalExistsWithouthThenElse).success).true;
+				expect(parseFieldValue('     !@#$%^&* ()_+      ', fieldStringConditionalExistsWithouthThenElse).data).equals(
+					'!@#$%^&* ()_+',
+				);
 			});
 			it('Updates string to match formatting of codeList value', () => {
 				const value = 'banana';

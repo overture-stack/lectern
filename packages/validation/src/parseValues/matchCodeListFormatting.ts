@@ -29,7 +29,7 @@ const collectAllNestedCodeLists = (
 	return TypeUtils.asArray(restrictions).flatMap((restrictionsObject) => {
 		if ('if' in restrictionsObject) {
 			const thenCodeLists = restrictionsObject.then ? collectAllNestedCodeLists(restrictionsObject.then) : [];
-			const elseCodeLists = restrictionsObject.else ? collectAllNestedCodeLists(restrictionsObject) : [];
+			const elseCodeLists = restrictionsObject.else ? collectAllNestedCodeLists(restrictionsObject.else) : [];
 			return [...thenCodeLists, ...elseCodeLists];
 		} else {
 			return restrictionsObject.codeList ? restrictionsObject.codeList : [];
