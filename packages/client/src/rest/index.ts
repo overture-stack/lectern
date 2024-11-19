@@ -24,11 +24,22 @@ import {
 	FieldDiff,
 	unknownToString,
 } from '@overture-stack/lectern-dictionary';
-import fetch from 'node-fetch';
 import promiseTools from 'promise-tools';
-import { loggerFor } from '../logger';
+import { Logger } from '../logger';
 
-const L = loggerFor(__filename);
+const consoleLogger: Logger = {
+	debug: (msg) => null,
+	error: (msg) => null,
+	info: (msg) => null,
+	profile: (msg) => null,
+};
+let L = consoleLogger;
+if (typeof process !== 'undefined') {
+	import('../logger').then((logger) => {
+		console.log('logger', logger);
+		L = logger.loggerFor(__filename);
+	});
+}
 
 const doRequest = async (url: string) => {
 	let response: any;
