@@ -45,6 +45,7 @@ export type {
 	ParseDictionaryData,
 	ParseDictionaryFailure,
 	ParseDictionaryResult,
+	ParseFieldError,
 	ParseSchemaError,
 	ParseSchemaFailureData,
 	ParseSchemaResult,
