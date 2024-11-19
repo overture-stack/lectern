@@ -33,6 +33,7 @@ import { fieldBooleanNoRestriction } from '../fixtures/fields/noRestrictions/fie
 import { fieldNumberNoRestriction } from '../fixtures/fields/noRestrictions/fieldNumberNoRestriction';
 import { fieldStringNoRestriction } from '../fixtures/fields/noRestrictions/fieldStringNoRestriction';
 import { regexAlphaOnly } from '../fixtures/restrictions/regexFixtures';
+import { fieldStringConditionalExistsWithouthThenElse } from '../fixtures/fields/conditionalRestrictions/fieldStringConditionalExistsWithoutThenElse';
 
 describe('Field - resolveFieldRestrictions', () => {
 	it('Returns empty array when there are no restrictions', () => {
@@ -102,6 +103,18 @@ describe('Field - resolveFieldRestrictions', () => {
 			// one of the restrictions is 'codeList'
 			const codeListRestriction = restrictions.find((restriction) => restriction.type === 'codeList');
 			expect(codeListRestriction).not.undefined;
+		});
+		it('Does not add any restriction when condition is true and there is no `then`', () => {
+			const record: DataRecord = {
+				[fieldStringNoRestriction.name]: 'anything',
+				[fieldStringConditionalExistsWithouthThenElse.name]: 'anything goes',
+			};
+			const restrictions = resolveFieldRestrictions(
+				record[fieldStringConditionalExistsWithouthThenElse.name],
+				record,
+				fieldStringConditionalExistsWithouthThenElse,
+			);
+			expect(restrictions.length).equal(0);
 		});
 		it('Does not add any restriction when condition fails and there is no `else`', () => {
 			const record: DataRecord = {
