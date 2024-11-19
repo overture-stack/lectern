@@ -31,7 +31,7 @@ import { fieldStringCodeList } from '../fixtures/fields/simpleRestrictions/strin
 import { codeListString } from '../fixtures/restrictions/codeListsFixtures';
 import { fieldStringArrayCodeList } from '../fixtures/fields/simpleRestrictions/string/fieldStringArrayCodeList';
 import { fieldStringConditionalExists } from '../fixtures/fields/conditionalRestrictions/fieldStringConditionalExists';
-import { fieldStringConditionalExistsWithouthThenElse } from '../fixtures/fields/conditionalRestrictions/fieldStringConditionalExistsWithouthThenElse';
+import { fieldStringConditionalExistsWithouthThenElse } from '../fixtures/fields/conditionalRestrictions/fieldStringConditionalExistsWithoutThenElse';
 
 describe('Parse Values - parseFieldValue', () => {
 	describe('Single Value Fields', () => {
