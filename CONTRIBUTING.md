@@ -86,7 +86,7 @@ Guidelines for Draft Pull Requests:
    - Highlight areas where feedback is specifically needed
 3. **Updates**:
    - Regularly update the description or provide comments following commits with progress notes
-- Use task lists (using `- [ ]` in Markdown) to track completion of sub-tasks
+   - Use task lists (using `- [ ]` in Markdown) to track completion of sub-tasks
 4. **Collaboration**:
    - Encourage early feedback and discussion
    - Use the pull request comments for design discussions
