@@ -24,6 +24,7 @@ export interface AppConfig {
 	// Express
 	serverPort(): string;
 	openApiPath(): string;
+	corsAllowedOrigins(): string[];
 
 	// Mongo
 	mongoHost(): string;
@@ -64,6 +65,10 @@ const buildAppContext = async (secrets: any): Promise<AppConfig> => {
 
 		openApiPath(): string {
 			return process.env.OPENAPI_PATH || '/api-docs';
+		},
+
+		corsAllowedOrigins(): string[] {
+			return process.env.CORS_ALLOWED_ORIGINS ? process.env.CORS_ALLOWED_ORIGINS.split(',') : [];
 		},
 
 		mongoHost(): string {
