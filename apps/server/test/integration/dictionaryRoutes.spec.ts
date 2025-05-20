@@ -93,7 +93,7 @@ describe('Dictionary Routes', () => {
 				CORS_ALLOWED_DOMAINS.map((domain) => {
 					chai
 						.request(app)
-						.options('/') // Adjust the endpoint path if needed
+						.options('/')
 						.set('Origin', domain)
 						.set('Access-Control-Request-Method', 'GET')
 						.end((_err, res) => {
@@ -109,7 +109,7 @@ describe('Dictionary Routes', () => {
 		it('CORS should reject preflight OPTIONS request from non-allowed domains', (done) => {
 			chai
 				.request(app)
-				.options('/') // Adjust the endpoint path if needed
+				.options('/')
 				.set('Origin', 'http://evil.com')
 				.set('Access-Control-Request-Method', 'GET')
 				.end((_err, res) => {
