@@ -40,11 +40,10 @@
 	"dependencies": {
 		"@overture-stack/lectern-dictionary": "workspace:^",
 		"@overture-stack/lectern-validation": "workspace:^",
+		"axios": "^1.7.2",
 		"cd": "^0.3.3",
 		"lodash": "^4.17.21",
-		"node-fetch": "^2.7.0",
-		"promise-tools": "^2.1.0",
-		"winston": "^3.13.1"
+		"zod": "^3.23.8"
 	},
 	"author": "Ontario Institute for Cancer Research"
 }

@@ -30,7 +30,7 @@ const isNestedChange = (input: FieldChanges): input is NestedChanges => {
 };
 
 export const fetchDiffAndAnalyze = async (serviceUrl: string, name: string, fromVersion: string, toVersion: string) => {
-	const changes = await restClient.fetchDiff(serviceUrl, name, fromVersion, toVersion);
+	// const changes = await restClient.fetchDiff(serviceUrl, name, fromVersion, toVersion);
 	return analyzeChanges(changes);
 };
 
