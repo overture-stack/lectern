@@ -17,17 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {
-	Dictionary,
-	DictionaryDiff,
-	DictionaryDiffArray,
-	failure,
-	FieldDiff,
-	success,
-	type Result,
-} from '@overture-stack/lectern-dictionary';
-import axios, { AxiosError } from 'axios';
-import promiseTools from 'promise-tools';
+import { AxiosError } from 'axios';
 
 /**
  * Stanardize message string for an error thrown by Axios.
