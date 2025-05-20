@@ -133,9 +133,7 @@ export const create = async (newDict: Dictionary): Promise<Dictionary> => {
 
 	// Save new dictionary version
 	const result = await DictionaryRepo.addDictionary({
-		name: newDict.name,
-		version: newDict.version,
-		schemas: newDict.schemas,
+		...newDict,
 		references: newDict.references || {},
 	});
 	return result;

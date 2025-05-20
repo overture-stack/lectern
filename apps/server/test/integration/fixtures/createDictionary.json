@@ -1,6 +1,11 @@
 {
 	"name": "Test Dictionary",
 	"version": "1.2",
+	"description": "Some generic description",
+	"meta": {
+		"a": 1,
+		"b": "two"
+	},
 	"schemas": [
 		{
 			"name": "registration",

@@ -28,6 +28,8 @@ import App from '../../src/app';
 import { AppConfig } from '../../src/config/appConfig';
 import { constructTestUri } from '../../src/utils/mongo';
 
+import createDictionaryFixture from './fixtures/createDictionary.json';
+
 const testConfig: AppConfig = {
 	serverPort(): string {
 		return process.env.PORT || '3000';
@@ -86,7 +88,7 @@ describe('Dictionary Routes', () => {
 			chai
 				.request(app)
 				.post('/dictionaries')
-				.send(require('./fixtures/createDictionary.json'))
+				.send(createDictionaryFixture)
 				.end((err: Error, res: Response) => {
 					expect(err).to.be.null;
 					expect(res).to.have.status(200);
@@ -98,11 +100,10 @@ describe('Dictionary Routes', () => {
 		// It cannot be tested individually, and this is likely true of several tests in this section.
 		// Tests should be independent (units) and not have side-effects that could impact other tests.
 		it('Should 400 on creating same dictionary due to same version number', (done: Mocha.Done) => {
-			const dictRequest = require('./fixtures/createDictionary.json');
 			chai
 				.request(app)
 				.post('/dictionaries')
-				.send(dictRequest)
+				.send(createDictionaryFixture)
 				.end((err: Error, res: Response) => {
 					expect(err).to.be.null;
 					expect(res).to.have.status(400);
@@ -111,12 +112,11 @@ describe('Dictionary Routes', () => {
 		});
 
 		it('Should 400 new dictionary of lower version number', (done: Mocha.Done) => {
-			const dictRequest = require('./fixtures/createDictionary.json');
-			dictRequest.version = '0.1';
+			const badDict = { ...createDictionaryFixture, version: '0.1' };
 			chai
 				.request(app)
 				.post('/dictionaries')
-				.send(dictRequest)
+				.send(badDict)
 				.end((err: Error, res: Response) => {
 					expect(err).to.be.null;
 					expect(res).to.have.status(400);
@@ -216,6 +216,15 @@ describe('Dictionary Routes', () => {
 					expect(err).to.be.null;
 					expect(res).to.have.status(200);
 					expect(res.body.version).to.equal(testVersion);
+					expect(res.body).to.have.property(
+						'description',
+						createDictionaryFixture.description,
+						'Did not return dictionary `description` properly',
+					);
+					expect(res.body).to.have.property('meta');
+					expect(res.body.meta).to.have.property('a', createDictionaryFixture.meta.a);
+					expect(res.body.meta).to.have.property('b', createDictionaryFixture.meta.b);
+
 					setImmediate(done);
 				});
 		});
