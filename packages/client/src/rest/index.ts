@@ -18,4 +18,5 @@
  */
 
 export * from './getDictionary';
+export * from './getDiff';
 export * from './listDictionaries';
