@@ -17,10 +17,10 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary, failure, success, type Result } from '@overture-stack/lectern-dictionary';
+import { failure, success, type Result } from '@overture-stack/lectern-dictionary';
 import axios, { AxiosError } from 'axios';
-import formatAxiosError from './formatAxiosError';
 import { z as zod } from 'zod';
+import formatAxiosError from './formatAxiosError';
 
 const dictionarySummarySchema = zod.object({
 	_id: zod.string(),

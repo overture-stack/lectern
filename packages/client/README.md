@@ -30,17 +30,21 @@ import * as lectern from '@overture-stack/lectern-client';
 
 const lecternUrl = 'http://lectern.example.com';
 const dictionaryName = 'my-example-schemas';
-const dictionaryVersion = "2.3";
+const dictionaryVersion = '2.3';
 
 const allAvailableDictionariesResult = await lectern.rest.listDictionaries(lecternUrl);
-const filteredByNameDictionariesResult = await lectern.rest.listDictionaries(lecternUrl, {name: dictionaryName});
+const filteredByNameDictionariesResult = await lectern.rest.listDictionaries(lecternUrl, { name: dictionaryName });
 
-const exampleDicionaryResult = await lectern.rest.fetchDiff(lecternUrl, {name: dictionaryName, version: dictionaryVersion});
+const exampleDicionaryResult = await lectern.rest.getDictionary(lecternUrl, {
+	name: dictionaryName,
+	version: dictionaryVersion,
+});
 
-if(exampleDicionaryResult.success) {
+if (exampleDicionaryResult.success) {
 	// use the data:
 	console.log(JSON.stringify(exampleDicionaryResult.data));
 }
+
 ```
 
 Responses from the rest calls will be [`Result`](../dictionary/src/types/result.ts) objects. Before using the data, check that `exampleDicionaryResult.success` is true, and if so, you can get the fully typed response data in `exampleDicionaryResult.data`.
