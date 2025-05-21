@@ -17,5 +17,22 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './changeAnalysisTypes';
-export * from './changeAnalyzer';
+import { AxiosError } from 'axios';
+
+/**
+ * Stanardize message string for an error thrown by Axios.
+ *
+ * @param error
+ * @returns
+ */
+function formatAxiosError(error: AxiosError): string {
+	const axiosMessage = error.message;
+	const status = error.status;
+
+	const message: string = [error.status ? `Network response: ${status}` : undefined, axiosMessage]
+		.filter((item) => item !== undefined)
+		.join(' - ');
+
+	return message;
+}
+export default formatAxiosError;

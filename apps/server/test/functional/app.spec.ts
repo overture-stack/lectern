@@ -30,6 +30,9 @@ describe('Test injection of config into Express App', () => {
 			openApiPath(): string {
 				return '/test-path';
 			},
+			corsAllowedOrigins(): string[] {
+				return [];
+			},
 			mongoHost(): string {
 				return 'localhost';
 			},
@@ -51,8 +54,11 @@ describe('Test injection of config into Express App', () => {
 		};
 
 		const app = App(testConfig);
-		const swaggerRoute = app._router.stack.filter((layer: any) => layer.name == 'swaggerInitFn')[0];
-		expect(String(swaggerRoute.regexp)).to.contain('/test-path');
+
+		// Types for app.router are not correctly reported by Express. This was working as of version `5.1.0` .
+		const router = app.router as any;
+		const swaggerRoute = router.stack.filter((layer: any) => layer.name == 'swaggerInitFn')[0];
+		expect(swaggerRoute.matchers.some((matcher: Function) => matcher(`/test-path`))).true;
 		expect(app.get('port')).to.be.equal('54321');
 	});
 });

@@ -36,13 +36,21 @@ docker-compose up -d
 To build the server, and all modules it depends on:
 
 ```shell
-pnpm nx build server
+pnpm nx build @overture-stack/lectern-server
+```
+or
+```shell
+pnpm build
 ```
 
 To run the server:
 
 ```shell
-pnpm nx start server
+pnpm nx start @overture-stack/lectern-server
+```
+or
+```shell
+pnpm start
 ```
 
 To run the server in development mode, with hot reloading and exposing the node debugger:
@@ -87,25 +95,26 @@ The .env file you pass to this command can follow the formatting of the template
 
 All available configurations can be found in the example .env file: [`./.env.example`](./.env.example)
 
-| Variable Name      | Required                       | Type         | Default     | Description                                                                                                                                 |
-| ------------------ | ------------------------------ | ------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| OPENAPI_PATH       | No                             | String       | `/api-docs` | Path to Swagger UI with API documentation.                                                                                                  |
-| PORT               | No                             | Number       | `3000`      | Port Lectern Server API will listen to.                                                                                                     |
-|                    |                                |              |             |                                                                                                                                             |
-| AUTH_ENABLED       | No                             | Boolean      | `false`     | Set to `true` to enable Authorization restrictions on all endpoints that modify data. For more details see [Authorization](#authorization). |
-| EGO_API            | When `AUTH_ENABLED` is `true`  | String (URL) | -           | URL to the EGO API root. See [Auth Configuration](#auth-configuration).                                                                     |
-| SCOPE              | When `AUTH_ENABLED` is `true`  | String       | -           | Policy name to look for in JWT Scope. See [Auth Configuration](#auth-configuration).                                                        |
-|                    |                                |              |             |                                                                                                                                             |
-| MONGO_DB           | No                             | String       | `lectern`   | Name of Database to connect with in MongoDB                                                                                                 |
-| MONGO_HOST         | No                             | String       | `localhost` | Host of MongoDB                                                                                                                             |
-| MONGO_PASS         | No                             | String       | `password`  | Password used for MongoDB Connection                                                                                                        |
-| MONGO_HOST         | No                             | Number       | `27017`     | Port of MongoDB                                                                                                                             |
-| MONGO_USER         | No                             | String       | `admin`     | User name for MongoDB Connection                                                                                                            |
-|                    |                                |              |             |                                                                                                                                             |
-| VAULT_ENABLED      | No                             | Boolean      | `false`     | Set to true to enable reading secret values from Vault. See [Vault for Secret Storage](#vault-for-secret-storage).                          |
-| VAULT_ROLE         | When `VAULT_ENABLED` is `true` | String       | -           | Role to use for Vault connection, needs permission to read from `VAULT_SECRETS_PATH`                                                        |
-| VAULT_SECRETS_PATH | When `VAULT_ENABLED` is `true` | String       | -           | Path to location in Vault that holds Lectern relevant secrets                                                                               |
-| VAULT_TOKEN        | When `VAULT_ENABLED` is `true` | String       | -           | Access Token to read from Vault using specified `VAULT_ROLE`                                                                                |
+| Variable Name        | Required                       | Type         | Default     | Description                                                                                                                                             |
+| -------------------- | ------------------------------ | ------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OPENAPI_PATH         | No                             | String       | `/api-docs` | Path to Swagger UI with API documentation.                                                                                                              |
+| PORT                 | No                             | Number       | `3000`      | Port Lectern Server API will listen to.                                                                                                                 |
+| CORS_ALLOWED_ORIGINS | No                             | String[]     | -           | List of domains that will be allowed by CORS. Multiple domains can be listed, separated by commas. Example: `http://localhost:5173,https://example.com` |
+|                      |                                |              |             |                                                                                                                                                         |
+| AUTH_ENABLED         | No                             | Boolean      | `false`     | Set to `true` to enable Authorization restrictions on all endpoints that modify data. For more details see [Authorization](#authorization).             |
+| EGO_API              | When `AUTH_ENABLED` is `true`  | String (URL) | -           | URL to the EGO API root. See [Auth Configuration](#auth-configuration).                                                                                 |
+| SCOPE                | When `AUTH_ENABLED` is `true`  | String       | -           | Policy name to look for in JWT Scope. See [Auth Configuration](#auth-configuration).                                                                    |
+|                      |                                |              |             |                                                                                                                                                         |
+| MONGO_DB             | No                             | String       | `lectern`   | Name of Database to connect with in MongoDB                                                                                                             |
+| MONGO_HOST           | No                             | String       | `localhost` | Host of MongoDB                                                                                                                                         |
+| MONGO_PASS           | No                             | String       | `password`  | Password used for MongoDB Connection                                                                                                                    |
+| MONGO_HOST           | No                             | Number       | `27017`     | Port of MongoDB                                                                                                                                         |
+| MONGO_USER           | No                             | String       | `admin`     | User name for MongoDB Connection                                                                                                                        |
+|                      |                                |              |             |                                                                                                                                                         |
+| VAULT_ENABLED        | No                             | Boolean      | `false`     | Set to true to enable reading secret values from Vault. See [Vault for Secret Storage](#vault-for-secret-storage).                                      |
+| VAULT_ROLE           | When `VAULT_ENABLED` is `true` | String       | -           | Role to use for Vault connection, needs permission to read from `VAULT_SECRETS_PATH`                                                                    |
+| VAULT_SECRETS_PATH   | When `VAULT_ENABLED` is `true` | String       | -           | Path to location in Vault that holds Lectern relevant secrets                                                                                           |
+| VAULT_TOKEN          | When `VAULT_ENABLED` is `true` | String       | -           | Access Token to read from Vault using specified `VAULT_ROLE`                                                                                            |
 
 ### Vault for Secret Storage
 
