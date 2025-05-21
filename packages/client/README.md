@@ -23,17 +23,32 @@ The Lectern Client provides developers TypeScript code tools to interact with Le
 ## Developer Examples
 ### Data Fetching
 
+Data fetching from a lectern service can be perfromed through the `rest` module:
+
 ```ts
 import * as lectern from '@overture-stack/lectern-client';
 
 const lecternUrl = 'http://lectern.example.com';
-const dictionaryName = 'dictionary-name';
-const currentVersion = "2.3";
-const previousVersion = "2.1";
+const dictionaryName = 'my-example-schemas';
+const dictionaryVersion = '2.3';
 
-const dictionary = lectern.rest.fetchSchema(lecternUrl, dictionaryName, currentVersion);
-const versionUpdates = lectern.rest.fetchDiff(lecternUrl, dictionaryName, currentVersion, previousVersion);
+const allAvailableDictionariesResult = await lectern.rest.listDictionaries(lecternUrl);
+const filteredByNameDictionariesResult = await lectern.rest.listDictionaries(lecternUrl, { name: dictionaryName });
+
+const exampleDicionaryResult = await lectern.rest.getDictionary(lecternUrl, {
+	name: dictionaryName,
+	version: dictionaryVersion,
+});
+
+if (exampleDicionaryResult.success) {
+	// use the data:
+	console.log(JSON.stringify(exampleDicionaryResult.data));
+}
+
 ```
+
+Responses from the rest calls will be [`Result`](../dictionary/src/types/result.ts) objects. Before using the data, check that `exampleDicionaryResult.success` is true, and if so, you can get the fully typed response data in `exampleDicionaryResult.data`.
+
 
 ### Data Processing
 
