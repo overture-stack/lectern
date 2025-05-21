@@ -27,13 +27,15 @@ router.get('/', (_req, res) => {
 			appStatus: 'Up',
 			dbStatus: dbHealth.status,
 		};
-		return res.status(200).send(resBody);
+		res.status(200).send(resBody);
+		return;
 	} else {
 		const resBody = {
 			appStatus: 'Error/Unknown',
 			dbStatus: dbHealth.status,
 		};
-		return res.status(500).send(resBody);
+		res.status(500).send(resBody);
+		return;
 	}
 });
 

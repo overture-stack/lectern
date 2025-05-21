@@ -15,7 +15,8 @@
 		"declaration": true,
 		"outDir": "dist",
 		"skipLibCheck": true,
-		"noUncheckedIndexedAccess": true
+		"noUncheckedIndexedAccess": true,
+		"noErrorTruncation": true
 	},
 	"include": ["./src/**/*.ts", "./test/**/*.ts"],
 	"exclude": ["node_modules/"]

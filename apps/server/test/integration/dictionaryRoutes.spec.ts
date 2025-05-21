@@ -27,8 +27,10 @@ import { StartedTestContainer } from 'testcontainers/dist/test-container';
 import App from '../../src/app';
 import { AppConfig } from '../../src/config/appConfig';
 import { constructTestUri } from '../../src/utils/mongo';
-
 import createDictionaryFixture from './fixtures/createDictionary.json';
+
+const CORS_ALLOWED_DOMAINS = [`http://localhost:5173`, `https://example.com`];
+
 
 const testConfig: AppConfig = {
 	serverPort(): string {
@@ -37,6 +39,10 @@ const testConfig: AppConfig = {
 
 	openApiPath(): string {
 		return process.env.OPENAPI_PATH || '/api-docs';
+	},
+
+	corsAllowedOrigins(): string[] {
+		return CORS_ALLOWED_DOMAINS;
 	},
 
 	mongoHost(): string {
@@ -81,6 +87,39 @@ describe('Dictionary Routes', () => {
 				console.log('MongoDB connection error. Please make sure MongoDB is running. ' + err);
 				process.exit();
 			});
+	});
+
+	describe('CORS', () => {
+		it('CORS preflight request should respond OK for allowed domains', (done) => {
+			Promise.allSettled(
+				CORS_ALLOWED_DOMAINS.map((domain) => {
+					chai
+						.request(app)
+						.options('/')
+						.set('Origin', domain)
+						.set('Access-Control-Request-Method', 'GET')
+						.end((_err, res) => {
+							console.log(res.headers);
+							expect(res.headers).to.have.property('access-control-allow-origin', domain);
+							expect(res).to.have.status(204);
+						});
+				}),
+			).then(() => {
+				setImmediate(done);
+			});
+		});
+		it('CORS should reject preflight OPTIONS request from non-allowed domains', (done) => {
+			chai
+				.request(app)
+				.options('/')
+				.set('Origin', 'http://evil.com')
+				.set('Access-Control-Request-Method', 'GET')
+				.end((_err, res) => {
+					expect(res).to.have.status(204);
+					expect(res.header).to.not.have.property('access-control-allow-origin');
+					setImmediate(done);
+				});
+		});
 	});
 
 	describe('Create', () => {

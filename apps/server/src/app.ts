@@ -17,8 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import bodyParser from 'body-parser';
 import express, { Express } from 'express';
+import cors from 'cors';
 import * as swaggerUi from 'swagger-ui-express';
 
 import { AppConfig } from './config/appConfig';
@@ -37,9 +37,10 @@ const App = (config: AppConfig): Express => {
 
 	app.set('port', serverPort);
 
-	app.use(bodyParser.json({ limit: '10mb' }));
+	app.use(cors({ origin: config.corsAllowedOrigins() }));
+	app.use(express.json({ limit: '10mb' }));
 	app.use(
-		bodyParser.urlencoded({
+		express.urlencoded({
 			extended: true,
 		}),
 	);
