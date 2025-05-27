@@ -22,6 +22,7 @@ import {
 	ConflictError,
 	Dictionary,
 	NotFoundError,
+	replaceReferences,
 	Schema,
 	VersionUtils,
 } from '@overture-stack/lectern-dictionary';
@@ -210,4 +211,9 @@ export const updateSchema = async (id: string, schema: Schema, major: boolean): 
 
 	// Save new dictionary version
 	return await DictionaryRepo.addDictionary(omit(updatedDictionary, '_id'));
+};
+
+export const downloadDictionaryByNameAndVersion = async (name: string, version: string) => {
+	const dict = await getOneByNameAndVersion(name, version);
+	return replaceReferences(dict);
 };

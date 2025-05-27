@@ -26,6 +26,8 @@ import {
 } from '@overture-stack/lectern-dictionary';
 import { Request, Response } from 'express';
 import * as dictionaryService from '../services/dictionaryService';
+import JSZip from 'jszip';
+import { Parser as Json2tsv } from 'json2csv';
 
 export const listDictionaries = async (
 	req: Request<{}, {}, {}, Partial<{ name: string; version: string; references: string }>>,
@@ -148,4 +150,41 @@ export const getSchemaField = async (
 		);
 	}
 	res.send(field);
+};
+
+export const downloadTemplates = async (req: Request<{}, {}, {}, { name: string; version: string }>, res: Response) => {
+	const { name, version } = req.query;
+
+	if (!name || !version) {
+		throw new BadRequestError('Missing dictionary name or version in query.');
+	}
+
+	const dictionary = await dictionaryService.downloadDictionaryByNameAndVersion(name, version);
+
+	const zip = new JSZip();
+
+	for (const schema of dictionary.schemas) {
+		const fields = schema.fields || [];
+		const templateRow = fields.reduce(
+			(acc, field) => {
+				acc[field.name] = '';
+				return acc;
+			},
+			{} as Record<string, string>,
+		);
+
+		const tsvParser = new Json2tsv({ delimiter: '\t', quote: '' });
+		const tsv = tsvParser.parse([templateRow]);
+
+		zip.file(`${schema.name}.tsv`, tsv);
+	}
+
+	const zipContent = await zip.generateAsync({ type: 'nodebuffer' });
+
+	res.set({
+		'Content-Disposition': `attachment; filename=${name}_${version}_templates.zip`,
+		'Content-Type': 'application/zip',
+	});
+
+	res.status(200).send(zipContent);
 };
