@@ -1,0 +1,1 @@
+export { EntitiesDiagram } from './EntitiesDiagram';

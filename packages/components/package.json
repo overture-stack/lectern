@@ -1,0 +1,60 @@
+{
+	"name": "@overture-stack/lectern-ui",
+	"version": "0.0.0",
+	"private": true,
+	"description": "React components for exploring Lectern dictionaries",
+	"files": [
+		"dist/"
+	],
+	"exports": {
+		"./data-validator": "./dist/data-validator/index.js",
+		"./editor": "./dist/editor/index.js"
+	},
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "pnpm build:clean && tsc -p ./tsconfig.build.json",
+		"build:clean": "rimraf dist/ && mkdir dist",
+		"storybook": "storybook dev -p 6006"
+	},
+	"keywords": [],
+	"author": "Ontario Institute for Cancer Research",
+	"license": "AGPL-3.0",
+	"dependencies": {
+		"@emotion/react": "^11.14.0",
+		"@emotion/styled": "^11.14.0",
+		"@overture-stack/lectern-dictionary": "workspace:*",
+		"@overture-stack/lectern-validation": "workspace:*",
+		"react": "^19.1.0",
+		"react-dom": "^19.1.0",
+		"react-loading-skeleton": "^3.5.0",
+		"reactflow": "^11.11.4",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"@chromatic-com/storybook": "^3.2.6",
+		"@storybook/addon-essentials": "^8.6.14",
+		"@storybook/blocks": "^8.6.14",
+		"@storybook/experimental-addon-test": "^8.6.14",
+		"@storybook/manager-api": "^8.6.14",
+		"@storybook/react": "^8.6.14",
+		"@storybook/react-vite": "^8.6.14",
+		"@storybook/test": "^8.6.14",
+		"@storybook/theming": "^8.6.14",
+		"@types/lodash": "^4.17.7",
+		"@types/react": "^19.1.5",
+		"@types/react-dom": "^19.1.5",
+		"@vitejs/plugin-react": "^4.5.0",
+		"@vitest/browser": "^3.1.4",
+		"@vitest/coverage-v8": "^3.1.4",
+		"immer": "^10.1.1",
+		"lodash": "^4.17.21",
+		"playwright": "^1.52.0",
+		"prop-types": "^15.8.1",
+		"storybook": "^8.6.14",
+		"tsconfig-paths": "^4.2.0",
+		"typescript": "^5.8.3",
+		"vite": "^6.3.5",
+		"vite-tsconfig-paths": "^5.1.4",
+		"vitest": "^3.1.4"
+	}
+}
