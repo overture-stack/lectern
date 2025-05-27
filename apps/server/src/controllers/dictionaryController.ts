@@ -107,7 +107,7 @@ export const getSchema = async (req: Request<{ dictId: string; schemaName: strin
 	const dictionary = await dictionaryService.getOneById(dictId);
 	const formattedDictionary = replaceReferences(dictionary);
 
-	const schema = formattedDictionary.schemas.find((schema) => schema.name === schemaName);
+	const schema = formattedDictionary.schemas.find((schema: { name: string }) => schema.name === schemaName);
 
 	if (!schema) {
 		throw new NotFoundError(
@@ -135,7 +135,7 @@ export const getSchemaField = async (
 	const dictionary = await dictionaryService.getOneById(dictId);
 	const formattedDictionary = replaceReferences(dictionary);
 
-	const schema = formattedDictionary.schemas.find((schema) => schema.name === schemaName);
+	const schema = formattedDictionary.schemas.find((schema: { name: string }) => schema.name === schemaName);
 
 	if (!schema) {
 		throw new NotFoundError(
@@ -143,7 +143,7 @@ export const getSchemaField = async (
 		);
 	}
 
-	const field = schema.fields.find((field) => field.name === fieldName);
+	const field = schema.fields.find((field: { name: string }) => field.name === fieldName);
 	if (!field) {
 		throw new NotFoundError(
 			`Schema '${schemaName}' from Dictionary '${dictionary.name} ${dictionary.version}' does not have a field named '${fieldName}'`,
@@ -166,7 +166,7 @@ export const downloadTemplates = async (req: Request<{}, {}, {}, { name: string;
 	for (const schema of dictionary.schemas) {
 		const fields = schema.fields || [];
 		const templateRow = fields.reduce(
-			(acc, field) => {
+			(acc: { [x: string]: string }, field: { name: string | number }) => {
 				acc[field.name] = '';
 				return acc;
 			},
