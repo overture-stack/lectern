@@ -107,7 +107,7 @@ export const getSchema = async (req: Request<{ dictId: string; schemaName: strin
 	const dictionary = await dictionaryService.getOneById(dictId);
 	const formattedDictionary = replaceReferences(dictionary);
 
-	const schema = formattedDictionary.schemas.find((schema: { name: string }) => schema.name === schemaName);
+	const schema = formattedDictionary.schemas.find((schema) => schema.name === schemaName);
 
 	if (!schema) {
 		throw new NotFoundError(
@@ -159,19 +159,21 @@ export const downloadTemplates = async (req: Request<{}, {}, {}, { name: string;
 		throw new BadRequestError('Missing dictionary name or version in query.');
 	}
 
+	try {
 	const dictionary = await dictionaryService.downloadDictionaryByNameAndVersion(name, version);
+
+		if (!dictionary) {
+			throw new NotFoundError(`Dictionary with name "${name}" and version "${version}" not found.`);
+		}
 
 	const zip = new JSZip();
 
-	for (const schema of dictionary.schemas) {
+		for (const schema of dictionary.schemas || []) {
 		const fields = schema.fields || [];
-		const templateRow = fields.reduce(
-			(acc: { [x: string]: string }, field: { name: string | number }) => {
+			const templateRow = fields.reduce((acc: { [x: string]: string }, field: { name: string | number }) => {
 				acc[field.name] = '';
 				return acc;
-			},
-			{} as Record<string, string>,
-		);
+			}, {});
 
 		const tsvParser = new Json2tsv({ delimiter: '\t', quote: '' });
 		const tsv = tsvParser.parse([templateRow]);
@@ -187,4 +189,13 @@ export const downloadTemplates = async (req: Request<{}, {}, {}, { name: string;
 	});
 
 	res.status(200).send(zipContent);
+	} catch (error: any) {
+		console.error('Error generating dictionary templates:', error);
+
+		if (error instanceof NotFoundError || error instanceof BadRequestError) {
+			res.status(500).json({ message: error.message });
+		} else {
+			res.status(500).json({ message: 'Failed to generate template zip.' });
+		}
+	}
 };

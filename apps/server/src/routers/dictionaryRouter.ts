@@ -57,4 +57,9 @@ router.get('/:dictId/schemas/:schemaName', wrapAsync(dictionaryController.getSch
  */
 router.get('/:dictId/schemas/:schemaName/fields/:fieldName', wrapAsync(dictionaryController.getSchemaField));
 
+/**
+ * Download Dictionary
+ */
+router.get('/download', wrapAsync(dictionaryController.downloadTemplates));
+
 export default router;

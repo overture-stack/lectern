@@ -321,6 +321,60 @@
 				},
 				"tags": ["Dictionaries"]
 			}
+		},
+		"/dictionaries/download": {
+			"get": {
+				"summary": "Download dictionary templates",
+				"description": "Downloads a ZIP file containing TSV template files for each schema in a dictionary, given its name and version.",
+				"tags": ["Dictionaries"],
+				"parameters": [
+					{
+						"name": "name",
+						"in": "query",
+						"description": "Name of the dictionary to download",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "version",
+						"in": "query",
+						"description": "Version of the dictionary to download",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "ZIP file containing dictionary templates",
+						"content": {
+							"application/zip": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing dictionary name or version"
+					},
+					"404": {
+						"description": "Dictionary not found"
+					},
+					"500": {
+						"description": "Failed to generate template zip"
+					}
+				},
+				"security": [
+					{
+						"Bearer": []
+					}
+				]
+			}
 		}
 	},
 	"servers": [
