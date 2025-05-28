@@ -60,6 +60,6 @@ router.get('/:dictId/schemas/:schemaName/fields/:fieldName', wrapAsync(dictionar
 /**
  * Download Dictionary
  */
-router.get('/download', wrapAsync(dictionaryController.downloadTemplates));
+router.get('/template/download', wrapAsync(dictionaryController.downloadTemplates));
 
 export default router;

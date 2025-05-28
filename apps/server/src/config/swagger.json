@@ -322,7 +322,7 @@
 				"tags": ["Dictionaries"]
 			}
 		},
-		"/dictionaries/download": {
+		"/dictionaries/template/download": {
 			"get": {
 				"summary": "Download dictionary templates",
 				"description": "Downloads a ZIP file containing TSV template files for each schema in a dictionary, given its name and version.",
