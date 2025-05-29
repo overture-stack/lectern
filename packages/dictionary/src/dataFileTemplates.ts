@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -16,12 +16,31 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import { Json2tsv } from 'json2tsv';
+import { Schema } from './types';
 
-export * from './constants';
-export * from './errors';
-export * as DiffUtils from './diff';
-export * from './metaSchema';
-export * from './references';
-export * from './types';
-export * from './utils';
-export * from './dataFileTemplates/';
+interface CreateDataFileTemplateOptions {
+	delimiter?: string;
+	quote?: string;
+}
+
+export const createDataFileTemplate = (
+	schema: Schema,
+	options?: { delimiter?: string },
+): { fileName: string; content: string } => {
+	const delimiter = options?.delimiter ?? '\t';
+	const fields = schema.fields || [];
+
+	const templateRow = fields.reduce((acc: { [key: string]: string }, field: { name: string }) => {
+		acc[field.name] = '';
+		return acc;
+	}, {});
+
+	const tsvParser = new Json2tsv({ delimiter, quote: '' });
+	const tsv = tsvParser.parse([templateRow]);
+
+	return {
+		fileName: `${schema.name}.tsv`,
+		content: tsv,
+	};
+};

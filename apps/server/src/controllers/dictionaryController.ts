@@ -23,6 +23,7 @@ import {
 	NotFoundError,
 	Schema,
 	replaceReferences,
+	createDataFileTemplate,
 } from '@overture-stack/lectern-dictionary';
 import { Request, Response } from 'express';
 import * as dictionaryService from '../services/dictionaryService';
@@ -160,7 +161,7 @@ export const downloadTemplates = async (req: Request<{}, {}, {}, { name: string;
 	}
 
 	try {
-	const dictionary = await dictionaryService.downloadDictionaryByNameAndVersion(name, version);
+		const dictionary = replaceReferences(await dictionaryService.getOneByNameAndVersion(name, version));
 
 		if (!dictionary) {
 			throw new NotFoundError(`Dictionary with name "${name}" and version "${version}" not found.`);
@@ -169,15 +170,7 @@ export const downloadTemplates = async (req: Request<{}, {}, {}, { name: string;
 	const zip = new JSZip();
 
 		for (const schema of dictionary.schemas || []) {
-		const fields = schema.fields || [];
-			const templateRow = fields.reduce((acc: { [x: string]: string }, field: { name: string | number }) => {
-				acc[field.name] = '';
-				return acc;
-			}, {});
-
-		const tsvParser = new Json2tsv({ delimiter: '\t', quote: '' });
-		const tsv = tsvParser.parse([templateRow]);
-
+			const tsv = createDataFileTemplate(schema);
 		zip.file(`${schema.name}.tsv`, tsv);
 	}
 
