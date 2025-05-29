@@ -36,7 +36,7 @@ export const createDataFileTemplate = (
 		return acc;
 	}, {});
 
-	const tsvParser = new Json2tsv({ delimiter, quote: '' });
+	const tsvParser = new Json2tsv({ delimiter });
 	const tsv = tsvParser.parse([templateRow]);
 
 	return {
