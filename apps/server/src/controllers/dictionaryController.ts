@@ -28,7 +28,6 @@ import {
 import { Request, Response } from 'express';
 import * as dictionaryService from '../services/dictionaryService';
 import JSZip from 'jszip';
-import { Parser as Json2tsv } from 'json2csv';
 
 export const listDictionaries = async (
 	req: Request<{}, {}, {}, Partial<{ name: string; version: string; references: string }>>,
@@ -167,21 +166,21 @@ export const downloadTemplates = async (req: Request<{}, {}, {}, { name: string;
 			throw new NotFoundError(`Dictionary with name "${name}" and version "${version}" not found.`);
 		}
 
-	const zip = new JSZip();
+		const zip = new JSZip();
 
 		for (const schema of dictionary.schemas || []) {
 			const tsv = createDataFileTemplate(schema);
-		zip.file(`${schema.name}.tsv`, tsv);
-	}
+			zip.file(`${schema.name}.tsv`, tsv);
+		}
 
-	const zipContent = await zip.generateAsync({ type: 'nodebuffer' });
+		const zipContent = await zip.generateAsync({ type: 'nodebuffer' });
 
-	res.set({
-		'Content-Disposition': `attachment; filename=${name}_${version}_templates.zip`,
-		'Content-Type': 'application/zip',
-	});
+		res.set({
+			'Content-Disposition': `attachment; filename=${name}_${version}_templates.zip`,
+			'Content-Type': 'application/zip',
+		});
 
-	res.status(200).send(zipContent);
+		res.status(200).send(zipContent);
 	} catch (error: any) {
 		console.error('Error generating dictionary templates:', error);
 

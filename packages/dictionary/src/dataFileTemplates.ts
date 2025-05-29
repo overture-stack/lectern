@@ -21,7 +21,6 @@ import { Schema } from './types';
 
 interface CreateDataFileTemplateOptions {
 	delimiter?: string;
-	quote?: string;
 }
 
 export const createDataFileTemplate = (
