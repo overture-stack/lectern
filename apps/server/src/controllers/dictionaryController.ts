@@ -169,8 +169,8 @@ export const downloadTemplates = async (req: Request<{}, {}, {}, { name: string;
 		const zip = new JSZip();
 
 		for (const schema of dictionary.schemas || []) {
-			const tsv = createDataFileTemplate(schema);
-			zip.file(`${schema.name}.tsv`, tsv);
+			const template = createDataFileTemplate(schema);
+			zip.file(template.fileName, template.content);
 		}
 
 		const zipContent = await zip.generateAsync({ type: 'nodebuffer' });

@@ -16,6 +16,7 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 import { Schema } from './metaSchema/index';
 
 interface CreateDataFileTemplateOptions {
@@ -24,18 +25,21 @@ interface CreateDataFileTemplateOptions {
 
 export const createDataFileTemplate = (
 	schema: Schema,
-	options?: { delimiter?: string },
+	options?: CreateDataFileTemplateOptions,
 ): { fileName: string; content: string } => {
 	const delimiter = options?.delimiter ?? '\t';
 	const fields = schema.fields || [];
 
-	const templateRow = fields.reduce((acc: { [key: string]: string }, field: { name: string }) => {
-		acc[field.name] = '';
-		return acc;
-	}, {});
+	// Build header row from field names
+	const header = fields.map((field) => field.name);
 
-	const tsvParser = new Json2tsv({ delimiter });
-	const tsv = tsvParser.parse([templateRow]);
+	// Build a single empty data row (just placeholders)
+	const dataRow = fields.map(() => '');
+
+	// Join header and row into TSV string
+	const tsvLines = [header.join(delimiter), dataRow.join(delimiter)];
+
+	const tsv = tsvLines.join('\n') + '\n';
 
 	return {
 		fileName: `${schema.name}.tsv`,
