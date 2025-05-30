@@ -22,6 +22,7 @@ import {
 	ConflictError,
 	Dictionary,
 	NotFoundError,
+	replaceReferences,
 	Schema,
 	VersionUtils,
 } from '@overture-stack/lectern-dictionary';

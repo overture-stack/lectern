@@ -1,6 +1,6 @@
 {
 	"name": "lectern-scripts",
-	"version": "1.0.0",
+	"version": "0.0.0",
 	"private": true,
 	"description": "Scripts for managing the Lectern monorepo.",
 	"scripts": {

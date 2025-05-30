@@ -10,6 +10,10 @@
         "description": {
           "type": "string"
         },
+        "delimiter": {
+          "type": "string",
+          "minLength": 1
+        },
         "isArray": {
           "type": "boolean"
         },
@@ -121,6 +125,9 @@
         },
         "description": {
           "$ref": "#/definitions/SchemaBooleanField/properties/description"
+        },
+        "delimiter": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/delimiter"
         },
         "isArray": {
           "$ref": "#/definitions/SchemaBooleanField/properties/isArray"
@@ -234,6 +241,9 @@
         "description": {
           "$ref": "#/definitions/SchemaBooleanField/properties/description"
         },
+        "delimiter": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/delimiter"
+        },
         "isArray": {
           "$ref": "#/definitions/SchemaBooleanField/properties/isArray"
         },
@@ -345,6 +355,9 @@
         },
         "description": {
           "$ref": "#/definitions/SchemaBooleanField/properties/description"
+        },
+        "delimiter": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/delimiter"
         },
         "isArray": {
           "$ref": "#/definitions/SchemaBooleanField/properties/isArray"
