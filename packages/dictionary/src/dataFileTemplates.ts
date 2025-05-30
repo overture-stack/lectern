@@ -52,11 +52,11 @@ export type DataFileTemplate = { fileName: string; content: string };
  * @returns
  */
 export function createDataFileTemplate(schema: Schema, options?: CreateDataFileTemplateOptions): DataFileTemplate {
-	const config = !options
-		? SeparatedValueFileConfigs.tsv
-		: 'fileType' in options
+	const config = options
+		? 'fileType' in options
 			? SeparatedValueFileConfigs[options.fileType]
-			: options;
+			: options
+		: SeparatedValueFileConfigs.tsv;
 
 	// Build header row from field names
 	const header = schema.fields.map((field) => field.name);
