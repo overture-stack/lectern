@@ -28,7 +28,9 @@ export {
 	Schema,
 	SchemaField,
 	Result,
+	createDataFileTemplate,
 } from '@overture-stack/lectern-dictionary';
+
 import * as _validation from '@overture-stack/lectern-validation';
 
 // Exporting all result types used in the parsing and validation functions
