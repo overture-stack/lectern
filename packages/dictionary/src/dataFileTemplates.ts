@@ -16,8 +16,7 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import { Json2tsv } from 'json2tsv';
-import { Schema } from './types';
+import { Schema } from './metaSchema/index';
 
 interface CreateDataFileTemplateOptions {
 	delimiter?: string;
