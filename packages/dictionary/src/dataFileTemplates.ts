@@ -43,7 +43,7 @@ export type DataFileTemplate = { fileName: string; content: string };
  * either specify the `fileType` as `tsv` or `csv`. Selecting `csv` will provide a comma separated value file
  * (`.csv`) instead.
  *
- * If you do not specify a file type, the options also yout to directly specify the file extension and delimiter value
+ * If you do not specify a file type, the options also you to directly specify the file extension and delimiter value
  * that is used.
  *
  * @param schema
