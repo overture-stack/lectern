@@ -22,9 +22,12 @@ import {
 	Dictionary,
 	NotFoundError,
 	Schema,
+	createDataFileTemplate,
 	replaceReferences,
+	separatedValueFileTypeSchema,
 } from '@overture-stack/lectern-dictionary';
 import { Request, Response } from 'express';
+import JSZip from 'jszip';
 import * as dictionaryService from '../services/dictionaryService';
 
 export const listDictionaries = async (
@@ -133,7 +136,7 @@ export const getSchemaField = async (
 	const dictionary = await dictionaryService.getOneById(dictId);
 	const formattedDictionary = replaceReferences(dictionary);
 
-	const schema = formattedDictionary.schemas.find((schema) => schema.name === schemaName);
+	const schema = formattedDictionary.schemas.find((schema: { name: string }) => schema.name === schemaName);
 
 	if (!schema) {
 		throw new NotFoundError(
@@ -141,11 +144,60 @@ export const getSchemaField = async (
 		);
 	}
 
-	const field = schema.fields.find((field) => field.name === fieldName);
+	const field = schema.fields.find((field: { name: string }) => field.name === fieldName);
 	if (!field) {
 		throw new NotFoundError(
 			`Schema '${schemaName}' from Dictionary '${dictionary.name} ${dictionary.version}' does not have a field named '${fieldName}'`,
 		);
 	}
 	res.send(field);
+};
+
+export const downloadTemplates = async (
+	req: Request<{}, {}, {}, { name: string; version: string; fileType: string }>,
+	res: Response,
+) => {
+	const { name, version } = req.query;
+
+	if (!name || !version) {
+		throw new BadRequestError('Missing dictionary name or version in query.');
+	}
+
+	const fileTypeQueryParse = separatedValueFileTypeSchema.optional().safeParse(req.query.fileType);
+	if (!fileTypeQueryParse) {
+		throw new BadRequestError('Invalid fileType requested.');
+	}
+	const fileType = fileTypeQueryParse.data;
+
+	try {
+		const dictionary = replaceReferences(await dictionaryService.getOneByNameAndVersion(name, version));
+
+		if (!dictionary) {
+			throw new NotFoundError(`Dictionary with name "${name}" and version "${version}" not found.`);
+		}
+
+		const zip = new JSZip();
+
+		for (const schema of dictionary.schemas || []) {
+			const template = createDataFileTemplate(schema, fileType ? { fileType } : undefined);
+			zip.file(template.fileName, template.content);
+		}
+
+		const zipContent = await zip.generateAsync({ type: 'nodebuffer' });
+
+		res.set({
+			'Content-Disposition': `attachment; filename=${name}_${version}_templates.zip`,
+			'Content-Type': 'application/zip',
+		});
+
+		res.status(200).send(zipContent);
+	} catch (error: any) {
+		console.error('Error generating dictionary templates:', error);
+
+		if (error instanceof NotFoundError || error instanceof BadRequestError) {
+			res.status(500).json({ message: error.message });
+		} else {
+			res.status(500).json({ message: 'Failed to generate template zip.' });
+		}
+	}
 };
