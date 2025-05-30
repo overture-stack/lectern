@@ -1,7 +1,7 @@
 {
 	"name": "@overture-stack/lectern",
 	"private": true,
-	"version": "2.0.0-beta.4",
+	"version": "2.0.0-beta.5",
 	"description": "Schema Manager and Validation for Data Dictionaries",
 	"scripts": {
 		"build:all": "pnpm nx run-many --all --target=build",
