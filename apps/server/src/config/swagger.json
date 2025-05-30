@@ -345,6 +345,16 @@
 						"schema": {
 							"type": "string"
 						}
+					},
+					{
+						"name": "fileType",
+						"in": "query",
+						"description": "Select the format of the file to download - either `tsv` or `csv`. Defaults to `tsv` if not provided.",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": ["tsv", "csv"]
+						}
 					}
 				],
 				"responses": {

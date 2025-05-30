@@ -22,12 +22,13 @@ import {
 	Dictionary,
 	NotFoundError,
 	Schema,
-	replaceReferences,
 	createDataFileTemplate,
+	replaceReferences,
+	separatedValueFileTypeSchema,
 } from '@overture-stack/lectern-dictionary';
 import { Request, Response } from 'express';
-import * as dictionaryService from '../services/dictionaryService';
 import JSZip from 'jszip';
+import * as dictionaryService from '../services/dictionaryService';
 
 export const listDictionaries = async (
 	req: Request<{}, {}, {}, Partial<{ name: string; version: string; references: string }>>,
@@ -152,12 +153,21 @@ export const getSchemaField = async (
 	res.send(field);
 };
 
-export const downloadTemplates = async (req: Request<{}, {}, {}, { name: string; version: string }>, res: Response) => {
+export const downloadTemplates = async (
+	req: Request<{}, {}, {}, { name: string; version: string; fileType: string }>,
+	res: Response,
+) => {
 	const { name, version } = req.query;
 
 	if (!name || !version) {
 		throw new BadRequestError('Missing dictionary name or version in query.');
 	}
+
+	const fileTypeQueryParse = separatedValueFileTypeSchema.optional().safeParse(req.query.fileType);
+	if (!fileTypeQueryParse) {
+		throw new BadRequestError('Invalid fileType requested.');
+	}
+	const fileType = fileTypeQueryParse.data;
 
 	try {
 		const dictionary = replaceReferences(await dictionaryService.getOneByNameAndVersion(name, version));
@@ -169,7 +179,7 @@ export const downloadTemplates = async (req: Request<{}, {}, {}, { name: string;
 		const zip = new JSZip();
 
 		for (const schema of dictionary.schemas || []) {
-			const template = createDataFileTemplate(schema);
+			const template = createDataFileTemplate(schema, fileType ? { fileType } : undefined);
 			zip.file(template.fileName, template.content);
 		}
 

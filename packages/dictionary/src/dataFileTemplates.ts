@@ -17,32 +17,60 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { z } from 'zod';
 import { Schema } from './metaSchema/index';
 
-interface CreateDataFileTemplateOptions {
-	delimiter?: string;
-}
+export const separatedValueFileTypeSchema = z.enum(['tsv', 'csv']);
+export type SeparatedValueFileType = z.infer<typeof separatedValueFileTypeSchema>;
 
-export const createDataFileTemplate = (
-	schema: Schema,
-	options?: CreateDataFileTemplateOptions,
-): { fileName: string; content: string } => {
-	const delimiter = options?.delimiter ?? '\t';
-	const fields = schema.fields || [];
+export type DataFileTemplateConfig = { delimiter: string; extension: string };
+
+const SeparatedValueFileConfigs = {
+	csv: { delimiter: ',', extension: 'csv' },
+	tsv: { delimiter: '\t', extension: 'tsv' },
+} as const satisfies Record<SeparatedValueFileType, DataFileTemplateConfig>;
+
+export type CreateDataFileTemplateOptions = { fileType: SeparatedValueFileType } | DataFileTemplateConfig;
+export type DataFileTemplate = { fileName: string; content: string };
+
+/**
+ * Create the contents of a file that can be used to store data that will be validated with the provided Schema.
+ * The file will be a separated values file with a header row. The headers correspond to the fields in the schema.
+ * An empty row with placeholder delimiters for each field is also included. Also returned is the lectern standard
+ * filename for the file, which will use the schema name.
+ *
+ * By default this file will be a tab separated value file (`.tsv`). If an options object is provided, you can
+ * either specify the `fileType` as `tsv` or `csv`. Selecting `csv` will provide a comma separated value file
+ * (`.csv`) instead.
+ *
+ * If you do not specify a file type, the options also yout to directly specify the file extension and delimiter value
+ * that is used.
+ *
+ * @param schema
+ * @param options - `{ fileType: 'csv' | 'tsv' }` OR `{ delimiter: string; extension: string; } `
+ * - default if not provided will use 'tsv'
+ * @returns
+ */
+export function createDataFileTemplate(schema: Schema, options?: CreateDataFileTemplateOptions): DataFileTemplate {
+	const config = !options
+		? SeparatedValueFileConfigs.tsv
+		: 'fileType' in options
+			? SeparatedValueFileConfigs[options.fileType]
+			: options;
 
 	// Build header row from field names
-	const header = fields.map((field) => field.name);
+	const header = schema.fields.map((field) => field.name);
 
 	// Build a single empty data row (just placeholders)
-	const dataRow = fields.map(() => '');
+	const dataRow = schema.fields.map(() => '');
 
 	// Join header and row into TSV string
-	const tsvLines = [header.join(delimiter), dataRow.join(delimiter)];
+	const lines = [header.join(config.delimiter), dataRow.join(config.delimiter)];
 
-	const tsv = tsvLines.join('\n') + '\n';
+	const content = lines.join('\n') + '\n';
 
 	return {
-		fileName: `${schema.name}.tsv`,
-		content: tsv,
+		fileName: `${schema.name}.${config.extension}`,
+		content,
 	};
-};
+}
