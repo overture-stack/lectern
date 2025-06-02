@@ -1,10 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import React from 'react';
-import { Handle, NodeTypes, Position } from 'reactflow';
-import 'reactflow/dist/style.css';
-import { buildSchemaNode, type SchemaFlowNode } from './SchemaFlowNode';
 import type { Schema } from '@overture-stack/lectern-dictionary';
+import { Handle, Position } from 'reactflow';
+import 'reactflow/dist/style.css';
 import { isFieldRequired } from '../utils/isFieldRequired';
 
 // TODO: Colors and styling constants taken from theme instead of hardcoded
