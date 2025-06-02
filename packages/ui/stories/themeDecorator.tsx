@@ -11,7 +11,7 @@ const themeDecorator =
 	(Story, { globals: { theme } }) => {
 		const baseTheme = theme === 'custom' ? globalCustomTheme : {};
 		return (
-			<ThemeProvider theme={recursiveMerge(defaultTheme, baseTheme, customTheme)}>
+			<ThemeProvider theme={recursiveMerge(baseTheme, customTheme)}>
 				<Story />
 			</ThemeProvider>
 		);
