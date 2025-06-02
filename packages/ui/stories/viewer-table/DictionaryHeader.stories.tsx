@@ -1,13 +1,18 @@
-import { DictionaryHeader } from '#/viewer-table/DictionaryHeader';
-import type { SchemaField } from '@overture-stack/lectern-dictionary';
+/** @jsxImportSource @emotion/react */
+
+// import { DictionaryHeader } from '#/viewer-table/DictionaryHeader';
 import type { Meta, StoryObj } from '@storybook/react';
 import { pick } from 'lodash';
+import type { PartialTheme } from '../../src/theme';
+import { DictionaryHeader } from '../../src/viewer-table/DictionaryHeader';
 import biosampleDictionary from '../fixtures/minimalBiosampleModel';
+import themeDecorator from '../themeDecorator';
 
 const meta = {
 	component: DictionaryHeader,
 	title: 'Viewer - Table/Dictionary Header',
 	tags: ['autodocs'],
+	decorators: [themeDecorator()],
 } satisfies Meta<typeof DictionaryHeader>;
 
 export default meta;
@@ -20,4 +25,11 @@ export const AllHeaderProperties: Story = {
 
 export const NoDescription: Story = {
 	args: { ...pick(biosampleDictionary, 'name', 'version') },
+};
+
+export const LongName: Story = {
+	args: {
+		...pick(biosampleDictionary, 'name', 'version', 'description'),
+		name: 'This is a really really reallt reallty long dictionary name! wow!',
+	},
 };
