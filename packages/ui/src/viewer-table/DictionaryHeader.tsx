@@ -20,24 +20,26 @@
  */
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { ComponentType } from 'react';
-import colours from './styles/colours';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
+import { ComponentType } from 'react';
+import { useThemeContext } from '../theme/ThemeContext';
 
 export type DictionaryHeaderProps = Pick<Dictionary, 'name' | 'description' | 'version'>;
 
 export const DictionaryHeader: ComponentType<DictionaryHeaderProps> = ({ description, name, version }) => {
+	const theme = useThemeContext();
+
 	return (
 		<div
-			css={css`
-				background-color: ${colours.accent_dark};
-				display: flex;
-				flex-direction: column;
-				margin-bottom: 1rem;
-				padding: 2.5rem;
-				max-height: 10%;
-				align-items: flex-start;
-			`}
+			css={css({
+				backgroundColor: theme.colors.accent_dark,
+				display: 'flex',
+				flexDirection: 'column',
+				marginBottom: '1rem',
+				padding: '2.5rem',
+				maxHeight: '10%',
+				alignItems: 'flex-start',
+			})}
 		>
 			<div
 				css={css`
@@ -47,6 +49,7 @@ export const DictionaryHeader: ComponentType<DictionaryHeaderProps> = ({ descrip
 			>
 				<h2
 					css={css`
+						${theme.typography.heading}
 						font-weight: 700;
 						font-size: 40px;
 						color: white;
@@ -58,6 +61,7 @@ export const DictionaryHeader: ComponentType<DictionaryHeaderProps> = ({ descrip
 				</h2>
 				<span
 					css={css`
+						${theme.typography.subheading}
 						color: white;
 						margin: 0;
 					`}
@@ -66,6 +70,7 @@ export const DictionaryHeader: ComponentType<DictionaryHeaderProps> = ({ descrip
 				</span>
 				<p
 					css={css`
+						${theme.typography.subheading}
 						color: white;
 						margin: 0;
 					`}
