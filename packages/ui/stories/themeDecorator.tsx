@@ -1,17 +1,25 @@
 import type { Decorator } from '@storybook/react';
-import { ThemeProvider } from '../src/theme/ThemeContext';
 import type { PartialTheme } from '../src/theme';
+import { ThemeProvider } from '../src/theme/ThemeContext';
 import recursiveMerge from '../src/utils/recursiveMerge';
-import defaultTheme from '../src/theme';
 
-const globalCustomTheme: PartialTheme = { colors: { accent_dark: 'orange' } };
+const customTheme: PartialTheme = { colors: { accent_dark: 'orange' } };
+function getGlobalTheme(globalTheme: string): PartialTheme {
+	switch (globalTheme) {
+		case 'custom': {
+			return customTheme;
+		}
+		default: {
+			return {};
+		}
+	}
+}
 
 const themeDecorator =
 	(customTheme: PartialTheme = {}): Decorator =>
 	(Story, { globals: { theme } }) => {
-		const baseTheme = theme === 'custom' ? globalCustomTheme : {};
 		return (
-			<ThemeProvider theme={recursiveMerge(baseTheme, customTheme)}>
+			<ThemeProvider theme={recursiveMerge(getGlobalTheme(theme), customTheme)}>
 				<Story />
 			</ThemeProvider>
 		);
