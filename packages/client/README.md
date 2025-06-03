@@ -15,10 +15,11 @@ The Lectern Client provides developers TypeScript code tools to interact with Le
   - Check the structure of input data is valid.
   - Apply all restrictions, both across schemas and on individual fields, to validate input data.
   - Report all validation errors found in the input data.
-- Expose [Lectern Validation](https://www.npmjs.com/package/@overture-stack/lectern-validation) library functionality:
+- [Lectern Validation](https://www.npmjs.com/package/@overture-stack/lectern-validation) library functionality:
   - Parsing functions to check and convert data types from string values
   - Validation functions to confirm the structure and content of records match Lectern schemas
   - This functionality is combined in the Processing functions
+- Create template for TSV and CSV files based on a Lectern Schema
 
 ## Developer Examples
 ### Data Fetching
@@ -58,9 +59,10 @@ To process data records which all belong to the same schema we use the `processS
 
 ```ts
 import * as lectern from '@overture-stack/lectern-client';
+import type { Dictionary } from '@overture-stack/lectern-client';
 
 
-const dictionary = await getLecternDictionary();
+const dictionary: Dictionary; // You will need to provide or fetch the dictionary
 
 const donorData = [{submitter_donor_id: "abc123", gender: "Male", age: "28"}, {submitter_donor_id: "def456", gender: "Female", age: "37"}]
 
@@ -68,19 +70,55 @@ const schemaProcessingResult = lectern.process.processSchema(dictionary, "donors
 
 switch (schemaProcessingResult.status) {
 	case 'SUCCESS': {
-		const { records } = schemaProcessingResult;
+		const { data } = schemaProcessingResult;
 		// use converted and validated records
+		break;
 	}
 	case 'ERROR_PARSING': {
 		const {  errors, records } = schemaProcessingResult;
 		// errors occured parsing records. read the errors that occurred
 		// records have been return with their values parsed where possible. If an error occurred, the original input string value is returned
+		break;
 	}
 	case 'ERROR_VALIDATION': {
 		const { records, errors } = schemaProcessingResult;
 		// errors occured validating records. these errors have been returned
 		// records were parsed successfully, so this returns all parsed records
+		break;
 	}
+```
+
+### Data File Templates
+
+The function `createDataFileTemplate` can be used to create the content of a TSV or CSV formatted template file, based on the fields in a Lectern Schema. This file content includes a header row with all field names for the schema, and a blank row with delimeters for each field. Also provided is a filename for the file, which is the schema name and the appropriate file extension for the TSV or CSV.
+
+This template file can be used to collect data for validation using Lectern.
+
+This function does not produce an actual file or any file system interaction or download, just the expected content and filename.
+
+```ts
+import * as lectern from '@overture-stack/lectern-client';
+import type { Schema } from '@overture-stack/lectern-client';
+
+
+const schema: Schema; // You will need to provide or fetch a dictionary schema
+
+const dataFileTemplate = lectern.createDataFileTemplate(schema); // tsv by default
+
+const tsvFileContent = dataFileTemplate.content;
+const tsvFileName = dataFileTemplate.filename;
+```
+
+Example with CSV file:
+```ts
+// specify csv
+const csvFileTemplate = lectern.createDataFileTemplate(schema, { fileType: 'csv' });
+```
+
+Custom delimiter:
+```ts
+// txt file with | as delimiter
+const customFileTemplate = lectern.createDataFileTemplate(schema, { delimiter: '|', extension: 'txt' }); 
 ```
 
 ## Lectern Dependencies
