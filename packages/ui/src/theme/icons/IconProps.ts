@@ -19,66 +19,14 @@
  *
  */
 
-/** @jsxImportSource @emotion/react */
+import { SerializedStyles } from '@emotion/react';
 
-import { css } from '@emotion/react';
-import { ComponentType } from 'react';
-import colours from './styles/colours';
-
-import { useThemeContext } from '../theme/ThemeContext';
-
-export type DictionaryHeaderProps = {
-	name: string;
-	description?: string;
-	version?: string;
+type IconProps = {
+	fill?: string;
+	height?: number;
+	size?: number;
+	style?: SerializedStyles;
+	width?: number;
 };
 
-const DictionaryHeader: ComponentType<DictionaryHeaderProps> = ({ description, name }) => {
-	const theme = useThemeContext();
-	return (
-		<div
-			css={css`
-				background-color: ${colours.accent1_1};
-				${theme.typography.heading}
-				display: flex;
-				flex-direction: column;
-				width: 100%;
-				margin-bottom: 1rem;
-				padding: 2.5rem;
-				max-height: 10%;
-				align-items: flex-start;
-			`}
-		>
-			<div
-				css={css`
-					display: flex;
-					flex-direction: column;
-				`}
-			>
-				<h1
-					css={css`
-						font-weight: 700;
-						font-size: 40px;
-						color: white;
-						line-height: 100%;
-						margin: 0.5rem 0;
-					`}
-				>
-					{name}
-				</h1>
-				{description && (
-					<p
-						css={css`
-							color: white;
-							margin: 0;
-						`}
-					>
-						{description}
-					</p>
-				)}
-			</div>
-		</div>
-	);
-};
-
-export default DictionaryHeader;
+export default IconProps;

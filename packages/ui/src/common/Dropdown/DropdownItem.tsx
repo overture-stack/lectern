@@ -21,64 +21,52 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
-import { ComponentType } from 'react';
-import colours from './styles/colours';
+import { css, SerializedStyles } from '@emotion/react';
+import { FC, ReactNode } from 'react';
+import type { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
 
-import { useThemeContext } from '../theme/ThemeContext';
-
-export type DictionaryHeaderProps = {
-	name: string;
-	description?: string;
-	version?: string;
+type DropDownItemProps = {
+	action?: string | (() => void);
+	children: ReactNode;
+	customStyles?: {
+		hover?: SerializedStyles;
+		base?: SerializedStyles;
+	};
 };
 
-const DictionaryHeader: ComponentType<DictionaryHeaderProps> = ({ description, name }) => {
+const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
+	display: flex;
+	max-height: 42px;
+	min-height: 100%;
+	height: 100%;
+	align-items: center;
+	padding: 8px;
+	justify-content: center;
+	color: ${theme.colors?.black};
+	background-color: #f7f7f7;
+	border: 1px solid ${theme.colors.grey_1};
+	text-decoration: none;
+	cursor: pointer;
+	border: none;
+	&:hover {
+		background-color: ${theme.colors.grey_2};
+	}
+	${customStyles?.base}
+`;
+
+const DropDownItem = ({ children, action, customStyles }: DropDownItemProps) => {
 	const theme = useThemeContext();
-	return (
-		<div
-			css={css`
-				background-color: ${colours.accent1_1};
-				${theme.typography.heading}
-				display: flex;
-				flex-direction: column;
-				width: 100%;
-				margin-bottom: 1rem;
-				padding: 2.5rem;
-				max-height: 10%;
-				align-items: flex-start;
-			`}
-		>
-			<div
-				css={css`
-					display: flex;
-					flex-direction: column;
-				`}
-			>
-				<h1
-					css={css`
-						font-weight: 700;
-						font-size: 40px;
-						color: white;
-						line-height: 100%;
-						margin: 0.5rem 0;
-					`}
-				>
-					{name}
-				</h1>
-				{description && (
-					<p
-						css={css`
-							color: white;
-							margin: 0;
-						`}
-					>
-						{description}
-					</p>
-				)}
-			</div>
-		</div>
-	);
+	const content = <div css={styledListItemStyle(theme, customStyles)}>{children}</div>;
+	if (typeof action === 'function') {
+		return (
+			<a onClick={action} css={styledListItemStyle(theme, customStyles)}>
+				{children}
+			</a>
+		);
+	}
+
+	return content;
 };
 
-export default DictionaryHeader;
+export default DropDownItem;

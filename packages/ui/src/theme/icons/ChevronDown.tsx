@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2022 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -19,17 +19,29 @@
  *
  */
 
-import colors from './colors';
-import typography from './typography';
-import shadow from './shadow';
-import dimensions from './dimensions';
+/** @jsxImportSource @emotion/react */
 
-const defaultTheme = {
-	colors,
-	typography,
-	shadow,
-	dimensions,
+import { css } from '@emotion/react';
+
+import IconProps from './IconProps';
+
+const ChevronDown = ({ fill, width, height, style }: IconProps) => {
+	return (
+		<svg
+			css={css`
+				${style}
+			`}
+			width={width}
+			height={height}
+			viewBox="0 0 12 12"
+		>
+			<path
+				fill={fill}
+				fillRule="evenodd"
+				d="M9.952 3.342c.468-.456 1.228-.456 1.697 0 .234.228.351.526.351.825 0 .298-.117.597-.351.825l-4.8 4.666c-.469.456-1.23.456-1.697 0l-4.8-4.666c-.47-.456-.47-1.194 0-1.65.468-.456 1.228-.456 1.696 0L6 7.184l3.952-3.842z"
+			/>
+		</svg>
+	);
 };
 
-export default defaultTheme;
-export type DefaultTheme = typeof defaultTheme;
+export default ChevronDown;

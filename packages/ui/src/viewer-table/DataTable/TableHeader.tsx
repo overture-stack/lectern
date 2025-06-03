@@ -22,63 +22,37 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { ComponentType } from 'react';
-import colours from './styles/colours';
+import { flexRender, HeaderGroup } from '@tanstack/react-table';
+import { Lato } from '../styles/typography';
 
-import { useThemeContext } from '../theme/ThemeContext';
+const thStyle = css`
+	background: #e5edf3;
+	text-align: left;
+	padding: 12px;
+	border-bottom: 1px solid #dcdcdc;
+`;
 
-export type DictionaryHeaderProps = {
-	name: string;
-	description?: string;
-	version?: string;
+type TableHeaderProps<T> = {
+	headerGroup: HeaderGroup<T>;
 };
 
-const DictionaryHeader: ComponentType<DictionaryHeaderProps> = ({ description, name }) => {
-	const theme = useThemeContext();
+const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
 	return (
-		<div
-			css={css`
-				background-color: ${colours.accent1_1};
-				${theme.typography.heading}
-				display: flex;
-				flex-direction: column;
-				width: 100%;
-				margin-bottom: 1rem;
-				padding: 2.5rem;
-				max-height: 10%;
-				align-items: flex-start;
-			`}
-		>
-			<div
-				css={css`
-					display: flex;
-					flex-direction: column;
-				`}
-			>
-				<h1
+		<tr key={headerGroup.id}>
+			{headerGroup.headers.map((header) => (
+				<th
+					key={header.id}
+					colSpan={header.colSpan}
 					css={css`
-						font-weight: 700;
-						font-size: 40px;
-						color: white;
-						line-height: 100%;
-						margin: 0.5rem 0;
+						${thStyle}
+						${Lato.Subtitle2}
 					`}
 				>
-					{name}
-				</h1>
-				{description && (
-					<p
-						css={css`
-							color: white;
-							margin: 0;
-						`}
-					>
-						{description}
-					</p>
-				)}
-			</div>
-		</div>
+					{flexRender(header.column.columnDef.header, header.getContext())}
+				</th>
+			))}
+		</tr>
 	);
 };
 
-export default DictionaryHeader;
+export default TableHeader;
