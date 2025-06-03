@@ -1,0 +1,18 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"target": "ESNext",
+		"lib": ["ESNext"],
+		"module": "CommonJS",
+		"moduleResolution": "node",
+
+		"outDir": "dist/",
+		"noEmit": false,
+
+		"declaration": true,
+		"sourceMap": true,
+		"inlineSources": true
+	},
+	"include": ["./src/**/*.ts"],
+	"exclude": ["./stories/**/*.ts", "./.storybook/**/*.js", "./test/**/*.ts"]
+}

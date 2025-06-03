@@ -1,0 +1,27 @@
+import { Meta, Controls } from '@storybook/blocks';
+import { EntitiesDiagram } from '../src/viewer-diagram/EntitiesDiagram';
+import biosampleDictionary from './fixtures/minimalBiosampleModel';
+
+<Meta title="Lectern Web Components" />
+
+# Lectern Web Components
+
+## Dictionary Viewer
+
+### Entity Relation Diagram
+
+<section style={{ height: '300px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+	<EntitiesDiagram dictionary={biosampleDictionary} />
+</section>
+
+### Table View
+
+Placeholder for table view of data dictionary.
+
+## Dictionary Editor
+
+Interactive interface for creating or editing a dictionary in the browser.
+
+## Data Validator
+
+Browser based data validation. Select a dictionary and select input files to validate the contents without uploading to a remote server. Errors should be viewable in a condensed list, and the data can be presented in a table.

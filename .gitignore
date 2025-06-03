@@ -20,3 +20,5 @@ dist
 # common editor application Configs
 .vscode
 *.code-workspace
+
+*.tsbuildinfo
