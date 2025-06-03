@@ -23,13 +23,11 @@
 
 import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
-import { createColumnHelper, type ColumnDef, type ColumnHelper } from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 import { Lato } from '../styles/typography';
 // This file is responsible for defining the columns of the schema table, depending on user defined types and schemas.
 
 const columnHelper = createColumnHelper<SchemaField>();
-
-type X = ReturnType<typeof columnHelper.accessor>;
 
 export const schemaBaseColumns = [
 	columnHelper.accessor('name', {
