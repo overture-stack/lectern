@@ -1,6 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
-import { useMemo } from 'react';
 import ReactFlow, {
 	Background,
 	BackgroundVariant,
@@ -12,15 +11,14 @@ import ReactFlow, {
 	type NodeTypes,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { EntitiesDiagramSchemaNode } from './EntitiesDiagramSchemaNode';
+import { SchemaDiagramNode } from './SchemaDiagramNode';
 import { getNodesForDictionary, type SchemaNodeLayout } from './SchemaFlowNode';
-import { css } from '@emotion/react';
 
 // TODO: Colors and styling constants taken from theme instead of hardcoded
 
 // Register our custom node type
 const nodeTypes: NodeTypes = {
-	schema: EntitiesDiagramSchemaNode,
+	schema: SchemaDiagramNode,
 };
 
 function getEdgesForDictionary(dictionary: Dictionary): Edge[] {
@@ -66,7 +64,7 @@ function getEdgesForDictionary(dictionary: Dictionary): Edge[] {
 		.filter((maybeEdge) => maybeEdge !== undefined);
 }
 
-export function EntitiesDiagram(props: { dictionary: Dictionary; layout?: Partial<SchemaNodeLayout> }) {
+export function SchemaRelationshipDiagram(props: { dictionary: Dictionary; layout?: Partial<SchemaNodeLayout> }) {
 	// const nodes = useMemo(() => getNodesForDictionary(props.dictionary), [props.dictionary]);
 	// const edges = getEdgesForDictionary(props.dictionary);
 

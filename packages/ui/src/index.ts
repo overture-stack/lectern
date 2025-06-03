@@ -1,2 +1,2 @@
-export * from './editor/index';
-export * from './data-validator/index';
+export * from './viewer-diagram';
+export * from './viewer-table';

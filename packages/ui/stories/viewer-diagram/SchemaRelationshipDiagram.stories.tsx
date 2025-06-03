@@ -2,14 +2,14 @@
 
 import type { Schema, Values } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
-import { EntitiesDiagram } from '../../src/viewer-diagram/EntitiesDiagram';
+import { SchemaRelationshipDiagram } from '../../src/viewer-diagram/SchemaRelationshipDiagram';
 
 import biosampleDictionary from '../fixtures/minimalBiosampleModel';
 import websiteUserDictionary from '../fixtures/websiteUsersDataDictionary';
 
 const meta = {
-	component: EntitiesDiagram,
-	title: 'Viewer - Diagram/Entities Diagram',
+	component: SchemaRelationshipDiagram,
+	title: 'Viewer - Diagram/Schema Relationship Diagram',
 	tags: ['autodocs'],
 
 	render: (args) => (
@@ -18,10 +18,10 @@ const meta = {
 				height: '40vh',
 			}}
 		>
-			<EntitiesDiagram {...args} />
+			<SchemaRelationshipDiagram {...args} />
 		</div>
 	),
-} satisfies Meta<typeof EntitiesDiagram>;
+} satisfies Meta<typeof SchemaRelationshipDiagram>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

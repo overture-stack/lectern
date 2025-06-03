@@ -99,7 +99,7 @@ const dataTypeBadgeStyles = css({
  * Custom Schema Node Component
  * Renders a Lectern schema as a clean, traditional ERD table
  */
-export function EntitiesDiagramSchemaNode(props: { data: Schema }) {
+export function SchemaDiagramNode(props: { data: Schema }) {
 	const { data: schema } = props;
 
 	return (

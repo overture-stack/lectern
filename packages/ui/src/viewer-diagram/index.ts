@@ -1,1 +1,1 @@
-export { EntitiesDiagram } from './EntitiesDiagram';
+export { SchemaRelationshipDiagram as EntitiesDiagram } from './SchemaRelationshipDiagram';
