@@ -1,5 +1,5 @@
 import { Meta, Controls } from '@storybook/blocks';
-import { EntitiesDiagram } from '../src/viewer-diagram/EntitiesDiagram';
+import { SchemaRelationshipDiagram } from '../src/viewer-diagram/SchemaRelationshipDiagram';
 import biosampleDictionary from './fixtures/minimalBiosampleModel';
 
 <Meta title="Lectern Web Components" />
@@ -11,7 +11,7 @@ import biosampleDictionary from './fixtures/minimalBiosampleModel';
 ### Entity Relation Diagram
 
 <section style={{ height: '300px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-	<EntitiesDiagram dictionary={biosampleDictionary} />
+	<SchemaRelationshipDiagram dictionary={biosampleDictionary} />
 </section>
 
 ### Table View
