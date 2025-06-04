@@ -114,8 +114,8 @@ const descriptionContainerStyle = css`
 `;
 
 // These constants can be adjusted based on design requirements
-const DESCRIPTION_THRESHOLD = 220;
-const MAX_CHARS_VISIBLE = 240;
+const DESCRIPTION_THRESHOLD = 140;
+const MAX_CHARS_VISIBLE = 160;
 
 const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps) => {
 	const theme = useThemeContext();

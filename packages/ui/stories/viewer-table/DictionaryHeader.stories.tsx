@@ -22,6 +22,10 @@ export const AllHeaderProperties: Story = {
 	args: { ...pick(biosampleDictionary, 'name', 'version', 'description') },
 };
 
+export const NoVersion: Story = {
+	// args: { name: sampleDictionary.name, version: sampleDictionary.name, description: sampleDictionary.description },
+	args: { ...pick(biosampleDictionary, 'name', 'description') },
+};
 export const NoDescription: Story = {
 	args: { ...pick(biosampleDictionary, 'name', 'version') },
 };
@@ -30,5 +34,12 @@ export const LongName: Story = {
 	args: {
 		...pick(biosampleDictionary, 'name', 'version', 'description'),
 		name: 'This is a really really reallt reallty long dictionary name! wow!',
+	},
+};
+export const LongDescription: Story = {
+	args: {
+		...pick(biosampleDictionary, 'name', 'version', 'description'),
+		description:
+			'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
 	},
 };
