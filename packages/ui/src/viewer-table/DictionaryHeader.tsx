@@ -24,7 +24,7 @@ import React, { useState } from 'react';
 import { css } from '@emotion/react';
 import colours from './styles/colours';
 import { useThemeContext } from '../theme/ThemeContext';
-
+import type { Theme } from '../theme';
 type DictionaryHeaderProps = {
 	name: string;
 	description?: string;
@@ -36,7 +36,7 @@ const getChevronStyle = (isExpanded: boolean) => css`
 	${isExpanded && `transform: rotate(180deg);`}
 `;
 
-const linkStyle = (theme: any) => css`
+const linkStyle = (theme: Theme) => css`
 	${theme.typography?.label2}
 	color: white;
 	cursor: pointer;
@@ -48,14 +48,14 @@ const linkStyle = (theme: any) => css`
 		text-decoration: underline;
 	}
 `;
-const descriptionStyle = (theme: any) => css`
+const descriptionStyle = (theme: Theme) => css`
 	${theme.typography?.data}
 	color: white;
 	margin: 0;
 	display: inline;
 `;
 
-const containerStyle = (theme: any) => css`
+const containerStyle = (theme: Theme) => css`
 	background-color: ${colours.accent1_1};
 	${theme.typography.heading}
 	display: flex;
@@ -86,7 +86,7 @@ const titleStyle = css`
 	margin-bottom: 0.5rem;
 `;
 
-const versionStyle = (theme: any) => css`
+const versionStyle = (theme: Theme) => css`
 	${theme.typography.data}
 	color: white;
 `;
