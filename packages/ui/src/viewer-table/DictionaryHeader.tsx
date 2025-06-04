@@ -112,7 +112,6 @@ const descriptionColumnStyle = css`
 
 // These constants can be adjusted based on design requirements
 const DESCRIPTION_THRESHOLD = 140;
-const MAX_CHARS_VISIBLE = 160;
 
 const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps) => {
 	const theme = useThemeContext();
@@ -125,7 +124,7 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 	// We want to show all the text if it is not long or if it is already expanded via state variable
 	const showFull = isExpanded || !needsToggle;
 	// Based off of showFull, we determine the text to show, either its the full description or a truncated version
-	const textToShow = showFull ? description : description.slice(0, MAX_CHARS_VISIBLE) + '...';
+	const textToShow = showFull ? description : description.slice(0, DESCRIPTION_THRESHOLD) + '...';
 
 	return (
 		<div css={containerStyle(theme)}>
