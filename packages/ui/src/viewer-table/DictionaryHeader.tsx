@@ -124,7 +124,7 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 	// We want to show all the text if it is not long or if it is already expanded via state variable
 	const showFull = isExpanded || !needsToggle;
 	// Based off of showFull, we determine the text to show, either its the full description or a truncated version
-	const textToShow = showFull ? description : description.slice(0, DESCRIPTION_THRESHOLD) + '...';
+	const textToShow = showFull ? description : description.slice(0, DESCRIPTION_THRESHOLD) + '... ';
 
 	return (
 		<div css={containerStyle(theme)}>
@@ -139,7 +139,7 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 							<span css={descriptionStyle(theme)}>{textToShow}</span>
 							{needsToggle && (
 								<span css={linkStyle(theme)} onClick={() => setIsExpanded((prev) => !prev)}>
-									{isExpanded ? 'Read less' : 'Show more'}
+									{isExpanded ? ' Read less' : ' Show more'}
 									<ChevronDown style={getChevronStyle(isExpanded)} fill="white" width={10} height={10} />
 								</span>
 							)}
