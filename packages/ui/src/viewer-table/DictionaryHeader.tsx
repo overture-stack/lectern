@@ -37,10 +37,9 @@ const getChevronStyle = (isExpanded: boolean) => css`
 `;
 
 const linkStyle = (theme: Theme) => css`
-	${theme.typography?.label2}
+	${theme.typography?.subheading}
 	color: white;
 	cursor: pointer;
-	margin-left: 6px;
 	display: inline-flex;
 	align-items: center;
 
@@ -48,8 +47,13 @@ const linkStyle = (theme: Theme) => css`
 		text-decoration: underline;
 	}
 `;
+
+// Was unable to find the appropriate font size for the version numbering in the current design system, that matches
+// Figma mockup so we are using something that is somewhat close with a hard coded font size
+
 const descriptionStyle = (theme: Theme) => css`
 	${theme.typography?.data}
+	font-size: 16px;
 	color: white;
 	margin: 0;
 	display: inline;
@@ -77,18 +81,25 @@ const titleColumnStyle = css`
 	margin-right: 2rem;
 `;
 
+// Was unable to find the appropriate font size for the title in the current design system, that matches
+// Figma mockup so it is HARDCODED for now
+
 const titleStyle = css`
 	font-weight: 700;
-	font-size: 40px;
+	font-size: 30px;
 	color: white;
 	line-height: 100%;
 	margin: 0;
 	margin-bottom: 0.5rem;
 `;
 
+// Was unable to find the appropriate font size for the version numbering in the current design system, that matches
+// Figma mockup so we are using something that is somewhat close
+
 const versionStyle = (theme: Theme) => css`
 	${theme.typography.data}
 	color: white;
+	font-size: 17px;
 `;
 
 const descriptionColumnStyle = css`
@@ -126,7 +137,6 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 					<h1 css={titleStyle}>{name}</h1>
 					{version && <span css={versionStyle(theme)}>v{version}</span>}
 				</div>
-
 				{description && (
 					<div css={descriptionColumnStyle}>
 						<div css={descriptionContainerStyle}>
