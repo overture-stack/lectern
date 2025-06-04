@@ -20,11 +20,12 @@
  */
 
 /** @jsxImportSource @emotion/react */
-import React, { useState } from 'react';
 import { css } from '@emotion/react';
-import colours from './styles/colours';
-import { useThemeContext } from '../theme/ThemeContext';
+import { useState } from 'react';
 import type { Theme } from '../theme';
+import { useThemeContext } from '../theme/ThemeContext';
+import colours from './styles/colours';
+
 type DictionaryHeaderProps = {
 	name: string;
 	description?: string;
@@ -109,10 +110,6 @@ const descriptionColumnStyle = css`
 	justify-content: center;
 `;
 
-const descriptionContainerStyle = css`
-	margin: 0;
-`;
-
 // These constants can be adjusted based on design requirements
 const DESCRIPTION_THRESHOLD = 140;
 const MAX_CHARS_VISIBLE = 160;
@@ -139,7 +136,7 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 				</div>
 				{description && (
 					<div css={descriptionColumnStyle}>
-						<div css={descriptionContainerStyle}>
+						<div>
 							<span css={descriptionStyle(theme)}>{textToShow}</span>
 							{needsToggle && (
 								<span css={linkStyle(theme)} onClick={() => setIsExpanded((prev) => !prev)}>
