@@ -131,7 +131,7 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 			<div css={rowLayoutStyle}>
 				<div css={titleColumnStyle}>
 					<h1 css={titleStyle}>{name}</h1>
-					{version && <span css={versionStyle(theme)}>v{version}</span>}
+					{version && <span css={versionStyle(theme)}>{version}</span>}
 				</div>
 				{description && (
 					<div css={descriptionColumnStyle}>
