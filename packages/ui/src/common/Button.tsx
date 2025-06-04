@@ -20,6 +20,7 @@
  */
 
 /** @jsxImportSource @emotion/react */
+// This is a slightly refactored version of the stage button
 import React, { ReactNode } from 'react';
 import { css } from '@emotion/react';
 
@@ -35,45 +36,71 @@ type ButtonProps = {
 	isAsync?: boolean;
 	className?: string;
 	isLoading?: boolean;
+	leftIcon?: ReactNode;
+	width?: string;
 };
 
-const getButtonStyles = (theme: Theme) => css`
-	color: ${theme.colors.white};
-	background-color: ${theme.colors.accent};
-	${theme.typography.subheading2};
-	line-height: 24px;
-	border-radius: 5px;
-	border: 1px solid ${theme.colors.accent};
-	padding: 6px 15px;
+const getButtonContainerStyles = (theme: any, width?: string) => css`
 	display: flex;
-	justify-content: center;
+	flex-wrap: nowrap;
 	align-items: center;
+	justify-content: center;
+	gap: 11px;
+	width: ${width || 'auto'};
+	min-width: fit-content;
+	padding: 8px 16px;
+	background-color: #f7f7f7;
+	color: ${theme.colors.black};
+	border: 1px solid #beb2b294;
+	border-radius: 9px;
+	font-size: 14px;
+	height: 43px;
+	box-sizing: border-box;
 	cursor: pointer;
 	position: relative;
+	transition: all 0.2s ease;
 
 	&:hover {
-		background-color: ${theme.colors.accent_dark};
+		background-color: ${theme.colors.grey_1};
 	}
 
-	&:disabled,
-	&:disabled:hover {
-		background-color: ${theme.colors.grey_4};
+	&:disabled {
 		cursor: not-allowed;
-		color: ${theme.colors.white};
-		border: 1px solid ${theme.colors.grey_4};
+		opacity: 0.7;
 	}
 `;
 
 const getContentStyles = (shouldShowLoading: boolean) => css`
+	display: flex;
+	align-items: center;
+	font-weight: 400;
+	gap: 8px;
+	font-size: 16px;
+	line-height: 1.2;
+	color: inherit;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	visibility: ${shouldShowLoading ? 'hidden' : 'visible'};
 `;
 
-const getSpinnerStyles = (theme: Theme, shouldShowLoading: boolean) => css`
+const getSpinnerStyles = (shouldShowLoading: boolean) => css`
 	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 	visibility: ${shouldShowLoading ? 'visible' : 'hidden'};
-	bottom: 1px;
 `;
 
+const getIconStyles = () => css`
+	display: flex;
+	align-items: center;
+`;
+
+/**
+ * This is the generic button component used throughout stage, however it has
+ * the styling that is specific to the current theme that is being used.
+ */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 	(
 		{
@@ -83,6 +110,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 			isAsync = false,
 			className,
 			isLoading: controlledLoading,
+			leftIcon,
+			width,
 		}: ButtonProps,
 		ref,
 	) => {
@@ -103,10 +132,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				onClick={isAsync ? handleClick : onClick}
 				disabled={disabled || shouldShowLoading}
 				className={className}
-				css={getButtonStyles(theme)}
+				css={getButtonContainerStyles(theme, width)}
 			>
+				{leftIcon && !shouldShowLoading && <span css={getIconStyles()}>{leftIcon}</span>}
 				<span css={getContentStyles(shouldShowLoading)}>{children}</span>
-				<span css={getSpinnerStyles(theme, shouldShowLoading)}>
+				<span css={getSpinnerStyles(shouldShowLoading)}>
 					<Spinner height={20} width={20} />
 				</span>
 			</button>
