@@ -4,17 +4,29 @@ import List from '../../theme/icons/List';
 
 type TableOfContentsDropdownProps = {
 	schemas: Schema[];
+	onSchemaSelect: (schema: Schema) => void;
+	onAccordionToggle: (schemaName: string, isOpen: boolean) => void;
 };
 
-const TableOfContentsDropdown = ({ schemas }: TableOfContentsDropdownProps) => {
+const TableOfContentsDropdown = ({ schemas, onSchemaSelect, onAccordionToggle }: TableOfContentsDropdownProps) => {
+	const handleAction = (schema: Schema) => {
+		const anchorId = `${schema.name}`;
+		onAccordionToggle(schema.name, true);
+		onSchemaSelect(schema);
+		setTimeout(() => {
+			window.location.hash = anchorId;
+		}, 100);
+	};
+
 	const generateOptionsFromSchemas = () => {
 		return schemas.map((schema) => ({
 			label: schema.name,
 			action: () => {
-				console.log(`Selected schema: ${schema.name}`);
+				handleAction(schema);
 			},
 		}));
 	};
+
 	return <Dropdown leftIcon={<List />} title="Table of Contents" menuItems={generateOptionsFromSchemas()} />;
 };
 
