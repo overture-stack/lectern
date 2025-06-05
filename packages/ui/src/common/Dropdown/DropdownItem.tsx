@@ -37,21 +37,12 @@ type DropDownItemProps = {
 
 const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
 	display: flex;
-	max-height: 42px;
 	min-height: 100%;
 	height: 100%;
 	align-items: center;
-	padding: 8px;
 	justify-content: center;
-	color: ${theme.colors?.black};
-	background-color: #f7f7f7;
-	border: 1px solid ${theme.colors.grey_1};
-	text-decoration: none;
+	color: ${theme.colors.accent_dark};
 	cursor: pointer;
-	border: none;
-	&:hover {
-		background-color: ${theme.colors.grey_2};
-	}
 	${customStyles?.base}
 `;
 
