@@ -25,7 +25,7 @@ import { css } from '@emotion/react';
 
 import IconProps from './IconProps';
 
-const ChevronDown = ({ fill, width, height, style }: IconProps) => {
+const List = ({ fill, width, height, style }: IconProps) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -51,4 +51,4 @@ const ChevronDown = ({ fill, width, height, style }: IconProps) => {
 	);
 };
 
-export default ChevronDown;
+export default List;
