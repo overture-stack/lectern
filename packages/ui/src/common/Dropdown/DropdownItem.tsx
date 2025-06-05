@@ -40,10 +40,14 @@ const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
 	min-height: 100%;
 	height: 100%;
 	align-items: center;
+	border-radius: 9px;
 	justify-content: center;
 	color: ${theme.colors.accent_dark};
 	cursor: pointer;
 	${customStyles?.base}
+	&:hover {
+		background-color: ${theme.colors.grey_1};
+	}
 `;
 
 const DropDownItem = ({ children, action, customStyles }: DropDownItemProps) => {
@@ -51,9 +55,9 @@ const DropDownItem = ({ children, action, customStyles }: DropDownItemProps) => 
 	const content = <div css={styledListItemStyle(theme, customStyles)}>{children}</div>;
 	if (typeof action === 'function') {
 		return (
-			<a onClick={action} css={styledListItemStyle(theme, customStyles)}>
+			<div className="dropdown-item" onClick={action} css={styledListItemStyle(theme, customStyles)}>
 				{children}
-			</a>
+			</div>
 		);
 	}
 

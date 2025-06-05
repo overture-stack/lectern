@@ -37,7 +37,7 @@ const dropdownButtonStyle = (theme: Theme, width?: string) => css`
 	min-width: fit-content;
 	padding: 8px 16px;
 	background-color: #f7f7f7;
-	color: ${theme.colors.black};
+	color: ${theme.colors.accent_dark};
 	border: 1px solid #beb2b294;
 	border-radius: 9px;
 	font-size: 14px;
@@ -45,9 +45,6 @@ const dropdownButtonStyle = (theme: Theme, width?: string) => css`
 	box-sizing: border-box;
 	cursor: pointer;
 	transition: all 0.2s ease;
-	&:hover {
-		background-color: ${theme.colors.grey_1};
-	}
 `;
 
 const parentStyle = css`
@@ -72,8 +69,8 @@ const dropdownMenuStyle = (theme: Theme) => css`
 	width: 100%;
 	background-color: #f7f7f7;
 	border: 1px solid #beb2b294;
-	border-radius: 9px;
 	padding-top: 5px;
+	border-radius: 9px;
 	padding-bottom: 5px;
 `;
 
@@ -128,9 +125,10 @@ const Dropdown = ({ menuItems = [], title, leftIcon }: DropDownProps) => {
 				<div css={dropdownButtonStyle(theme)} onClick={handleToggle}>
 					{leftIcon}
 					<span css={dropDownTitleStyle(theme)}>{title}</span>
-					<ChevronDown fill={theme.colors?.black} width={18} height={18} style={chevronStyle(open)} />
+					<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} style={chevronStyle(open)} />
 				</div>
 
+				{/* {open && <>{renderMenuItems()}</>} */}
 				{open && <div css={dropdownMenuStyle(theme)}>{renderMenuItems()}</div>}
 			</div>
 		</div>
