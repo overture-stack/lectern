@@ -18,16 +18,14 @@ const TableOfContentsDropdown = ({ schemas, onSchemaSelect, onAccordionToggle }:
 		}, 100);
 	};
 
-	const generateOptionsFromSchemas = () => {
-		return schemas.map((schema) => ({
-			label: schema.name,
-			action: () => {
-				handleAction(schema);
-			},
-		}));
-	};
+	const menuItemsFromSchemas = schemas.map((schema) => ({
+		label: schema.name,
+		action: () => {
+			handleAction(schema);
+		},
+	}));
 
-	return <Dropdown leftIcon={<List />} title="Table of Contents" menuItems={generateOptionsFromSchemas()} />;
+	return <Dropdown leftIcon={<List />} title="Table of Contents" menuItems={menuItemsFromSchemas} />;
 };
 
 export default TableOfContentsDropdown;
