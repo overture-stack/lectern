@@ -3,4 +3,5 @@ import List from '../icons/List';
 export default {
 	ChevronDown,
 	List,
+	LIst,
 };
