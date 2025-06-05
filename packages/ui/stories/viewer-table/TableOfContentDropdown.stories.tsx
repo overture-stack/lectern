@@ -21,22 +21,17 @@ const schema: Schema = primitiveJson as Schema;
 
 // Mock functions for the story just to demonstrate interaction
 
-const onSchemaSelect = (schema: Schema) => {
-	console.log('Selected schema:', schema);
-};
-
 const onAccordionToggle = (schemaName: string, isOpen: boolean) => {
-	console.log(`Accordion ${isOpen ? 'opened' : 'closed'} for schema:`, schemaName);
+	console.log('Accordion has been toggled for the following schema: ', schemaName);
 };
 
 export const Default: Story = {
 	args: {
 		schemas: [schema],
-		onSchemaSelect,
 		onAccordionToggle,
 	},
 };
 
 export const Empty: Story = {
-	args: { schemas: [], onSchemaSelect, onAccordionToggle },
+	args: { schemas: [], onAccordionToggle },
 };

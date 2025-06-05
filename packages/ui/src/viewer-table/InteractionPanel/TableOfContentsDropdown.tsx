@@ -4,15 +4,13 @@ import List from '../../theme/icons/List';
 
 type TableOfContentsDropdownProps = {
 	schemas: Schema[];
-	onSchemaSelect: (schema: Schema) => void;
 	onAccordionToggle: (schemaName: string, isOpen: boolean) => void;
 };
 
-const TableOfContentsDropdown = ({ schemas, onSchemaSelect, onAccordionToggle }: TableOfContentsDropdownProps) => {
+const TableOfContentsDropdown = ({ schemas, onAccordionToggle }: TableOfContentsDropdownProps) => {
 	const handleAction = (schema: Schema) => {
 		const anchorId = `${schema.name}`;
-		onAccordionToggle(schema.name, true);
-		onSchemaSelect(schema);
+		onAccordionToggle(schema.name, true); // Ensuring that the accordion for the associated schema is open, via the state handler that will be defined in parent component
 		setTimeout(() => {
 			window.location.hash = anchorId;
 		}, 100);
