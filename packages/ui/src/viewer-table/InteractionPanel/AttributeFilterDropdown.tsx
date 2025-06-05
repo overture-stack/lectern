@@ -1,6 +1,6 @@
-import type { Schema, Dictionary } from '@overture-stack/lectern-dictionary';
+import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import Dropdown from '../../common/Dropdown/Dropdown';
-import List from '../../theme/icons/List';
+import ListFilter from '../../theme/icons/ListFilter';
 
 type FilterDropdownProps = {
 	data: Dictionary;
@@ -49,7 +49,7 @@ const AttributeFilter = ({ data, isFiltered, setFilteredData, setIsFiltered }: F
 		},
 	];
 
-	return <Dropdown leftIcon={<List />} title="Filter By" menuItems={menuItems} />;
+	return <Dropdown leftIcon={<ListFilter />} title="Filter By" menuItems={menuItems} />;
 };
 
 export default AttributeFilter;
