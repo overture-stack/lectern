@@ -64,7 +64,6 @@ const containerStyle = (theme: Theme) => css`
 	background-color: ${colours.accent1_1};
 	${theme.typography.heading}
 	display: flex;
-	width: 100%;
 	margin-bottom: 1rem;
 	padding: 2.5rem;
 `;
@@ -127,7 +126,7 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 	const textToShow = showFull ? description : description.slice(0, DESCRIPTION_THRESHOLD) + '... ';
 
 	return (
-		<div css={containerStyle(theme)}>
+		<div css={containerStyle(theme)} className="dictionary-header">
 			<div css={rowLayoutStyle}>
 				<div css={titleColumnStyle}>
 					<h1 css={titleStyle}>{name}</h1>
