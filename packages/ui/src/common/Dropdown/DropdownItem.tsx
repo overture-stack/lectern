@@ -38,6 +38,7 @@ type DropDownItemProps = {
 const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
 	display: flex;
 	min-height: 100%;
+	padding-bottom: 5px;
 	height: 100%;
 	align-items: center;
 	border-radius: 9px;

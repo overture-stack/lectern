@@ -40,7 +40,6 @@ const dropdownButtonStyle = (theme: Theme, width?: string) => css`
 	color: ${theme.colors.accent_dark};
 	border: 1px solid #beb2b294;
 	border-radius: 9px;
-	font-size: 14px;
 	height: 42px;
 	box-sizing: border-box;
 	cursor: pointer;
@@ -58,12 +57,12 @@ const chevronStyle = (open: boolean) => css`
 `;
 
 const dropDownTitleStyle = (theme: Theme) => css`
-	${theme.typography?.heading};
+	${theme.typography?.button};
 	color: ${theme.colors.accent_dark};
 `;
 
 const dropdownMenuStyle = (theme: Theme) => css`
-	${theme.typography?.heading};
+	${theme.typography?.button};
 	position: absolute;
 	top: calc(100% + 5px);
 	width: 100%;

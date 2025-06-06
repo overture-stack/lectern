@@ -35,11 +35,11 @@ const regular = css`
 
 const button = css`
 	${baseFont}
-	font-size: 16px;
-	font-weight: bold;
+	font-size: 20px;
+	font-weight: 700;
 	font-style: normal;
 	font-stretch: normal;
-	line-height: 18px;
+	line-height: 100%;
 	letter-spacing: normal;
 `;
 
