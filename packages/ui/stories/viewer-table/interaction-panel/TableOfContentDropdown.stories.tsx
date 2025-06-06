@@ -8,7 +8,7 @@ import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: TableOfContentsDropdown,
-	title: 'Viewer - Table/Interaction-Panel/Table of Contents Dropdown',
+	title: 'Viewer - Table/Interaction - Panel/Table of Contents Dropdown',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
 } satisfies Meta<typeof TableOfContentsDropdown>;
