@@ -5,6 +5,7 @@ import Eye from '../icons/Eye';
 import FileDownload from '../icons/FileDownload';
 import List from '../icons/List';
 import ListFilter from '../icons/ListFilter';
+import History from '../icons/History';
 export default {
 	ChevronDown,
 	Spinner,
@@ -13,4 +14,5 @@ export default {
 	FileDownload,
 	List,
 	ListFilter,
+	History,
 };
