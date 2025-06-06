@@ -2,13 +2,13 @@
 
 import { Schema } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
-import Dictionary from '../../../../samples/dictionary/advanced.json';
-import TableOfContentsDropdown from '../../src/viewer-table/InteractionPanel/TableOfContentsDropdown';
-import themeDecorator from '../themeDecorator';
+import Dictionary from '../../../../../samples/dictionary/advanced.json';
+import TableOfContentsDropdown from '../../../src/viewer-table/InteractionPanel/TableOfContentsDropdown';
+import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: TableOfContentsDropdown,
-	title: 'Viewer - Table/Table of Contents Dropdown',
+	title: 'Viewer - Table/Interaction - Panel/Table of Contents Dropdown',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
 } satisfies Meta<typeof TableOfContentsDropdown>;
