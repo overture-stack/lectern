@@ -53,7 +53,6 @@ const getButtonContainerStyles = (theme: any, width?: string) => css`
 	color: ${theme.colors.black};
 	border: 1px solid #beb2b294;
 	border-radius: 9px;
-	font-size: 14px;
 	height: 42px;
 	box-sizing: border-box;
 	cursor: pointer;
@@ -70,13 +69,11 @@ const getButtonContainerStyles = (theme: any, width?: string) => css`
 	}
 `;
 
-const getContentStyles = (shouldShowLoading: boolean) => css`
+const getContentStyles = (theme: Theme, shouldShowLoading: boolean) => css`
 	display: flex;
 	align-items: center;
-	font-weight: 400;
 	gap: 8px;
-	font-size: 16px;
-	line-height: 1.2;
+	${theme.typography.button};
 	color: inherit;
 	white-space: nowrap;
 	overflow: hidden;
@@ -118,7 +115,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 		const [internalLoading, setInternalLoading] = React.useState(false);
 
 		const shouldShowLoading = !!controlledLoading || (internalLoading && isAsync);
-
 		const handleClick = async (event: React.SyntheticEvent<HTMLButtonElement>) => {
 			setInternalLoading(true);
 			await onClick(event);
@@ -135,7 +131,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				css={getButtonContainerStyles(theme, width)}
 			>
 				{leftIcon && !shouldShowLoading && <span css={getIconStyles()}>{leftIcon}</span>}
-				<span css={getContentStyles(shouldShowLoading)}>{children}</span>
+				<span css={getContentStyles(theme, shouldShowLoading)}>{children}</span>
 				<span css={getSpinnerStyles(shouldShowLoading)}>
 					<Spinner height={20} width={20} />
 				</span>
