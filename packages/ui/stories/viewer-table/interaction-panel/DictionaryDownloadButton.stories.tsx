@@ -15,9 +15,9 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	args: {
-		version: '1.0.0',
-		name: 'Sample Dictionary',
-		lecternUrl: 'https://example.com',
+		version: '1.0',
+		name: 'example-dictionary',
+		lecternUrl: 'http://localhost:3031',
 		fileType: 'tsv',
 	},
 };
