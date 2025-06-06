@@ -1,12 +1,12 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import themeDecorator from '../themeDecorator';
-import CollapseAllButton from '../../src/viewer-table/InteractionPanel/CollapseAllButton';
+import themeDecorator from '../../themeDecorator';
+import CollapseAllButton from '../../../src/viewer-table/InteractionPanel/CollapseAllButton';
 
 const meta = {
 	component: CollapseAllButton,
-	title: 'Viewer - Table/CollapseAllButton',
+	title: 'Viewer - Table/Interaction - Panel/CollapseAllButton',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
 } satisfies Meta<typeof CollapseAllButton>;

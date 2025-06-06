@@ -54,7 +54,7 @@ const getButtonContainerStyles = (theme: any, width?: string) => css`
 	border: 1px solid #beb2b294;
 	border-radius: 9px;
 	font-size: 14px;
-	height: 43px;
+	height: 42px;
 	box-sizing: border-box;
 	cursor: pointer;
 	position: relative;
