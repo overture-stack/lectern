@@ -31,24 +31,19 @@ const dropdownButtonStyle = (theme: Theme, width?: string) => css`
 	display: flex;
 	flex-wrap: nowrap;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: center;
 	gap: 11px;
-	min-width: ${width || '200px'};
-	max-width: 400px;
-	width: 100%;
-	padding: 8px;
+	width: ${width || 'auto'};
+	min-width: fit-content;
+	padding: 8px 16px;
 	background-color: #f7f7f7;
-	color: ${theme.colors.black};
+	color: ${theme.colors.accent_dark};
 	border: 1px solid #beb2b294;
 	border-radius: 9px;
-	font-size: 14px;
-	max-height: 42px;
+	height: 42px;
+	box-sizing: border-box;
 	cursor: pointer;
-	transition: background-color 0.2s ease;
-
-	&:hover {
-		background-color: ${theme.colors.grey_1};
-	}
+	transition: all 0.2s ease;
 `;
 
 const parentStyle = css`
@@ -60,29 +55,22 @@ const chevronStyle = (open: boolean) => css`
 	transform: ${open ? 'rotate(180deg)' : 'none'};
 	transition: transform 0.2s ease;
 `;
-const dropDownTitleStyle = (theme: any) => css`
-	padding: 5px 10px;
-	font-weight: 400;
-	line-height: 100%;
-	letter-spacing: 0%;
+
+const dropDownTitleStyle = (theme: Theme) => css`
+	${theme.typography?.button};
 	color: ${theme.colors.accent_dark};
 `;
 
 const dropdownMenuStyle = (theme: Theme) => css`
+	${theme.typography?.button};
 	position: absolute;
 	top: calc(100% + 5px);
-	left: 0;
 	width: 100%;
 	background-color: #f7f7f7;
-	border: 1px solid ${theme.colors?.grey_1};
-	border-radius: 4px;
-	box-shadow:
-		0 1px 6px rgba(0, 0, 0, 0.1),
-		0 1px 5px rgba(0, 0, 0, 0.08);
-	list-style: none;
-	padding: 4px 0;
-	margin: 0;
-	z-index: 1000;
+	border: 1px solid #beb2b294;
+	padding-top: 5px;
+	border-radius: 9px;
+	padding-bottom: 5px;
 `;
 
 type MenuItem = {
@@ -102,8 +90,6 @@ const Dropdown = ({ menuItems = [], title, leftIcon }: DropDownProps) => {
 	const theme = useThemeContext();
 
 	const { ChevronDown } = theme.icons;
-
-	const hasMenuItems = menuItems.length > 0;
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -138,10 +124,11 @@ const Dropdown = ({ menuItems = [], title, leftIcon }: DropDownProps) => {
 				<div css={dropdownButtonStyle(theme)} onClick={handleToggle}>
 					{leftIcon}
 					<span css={dropDownTitleStyle(theme)}>{title}</span>
-					<ChevronDown fill={theme.colors?.black} width={18} height={18} style={chevronStyle(open)} />
+					<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} style={chevronStyle(open)} />
 				</div>
 
-				{open && <ul css={dropdownMenuStyle(theme)}>{renderMenuItems()}</ul>}
+				{/* {open && <>{renderMenuItems()}</>} */}
+				{open && <div css={dropdownMenuStyle(theme)}>{renderMenuItems()}</div>}
 			</div>
 		</div>
 	);
