@@ -30,6 +30,7 @@ import type { Theme } from '../../theme';
 const dropdownButtonStyle = (theme: Theme, width?: string) => css`
 	display: flex;
 	flex-wrap: nowrap;
+	white-space: nowrap;
 	align-items: center;
 	justify-content: center;
 	gap: 11px;
