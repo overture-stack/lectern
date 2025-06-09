@@ -27,7 +27,7 @@ import DropDownItem from './DropdownItem';
 import { useThemeContext } from '../../theme/ThemeContext';
 import type { Theme } from '../../theme';
 
-const dropdownButtonStyle = (theme: Theme, width?: string) => css`
+const dropdownButtonStyle = (theme: Theme, width?: string, disabled?: boolean) => css`
 	display: flex;
 	flex-wrap: nowrap;
 	white-space: nowrap;
@@ -43,9 +43,10 @@ const dropdownButtonStyle = (theme: Theme, width?: string) => css`
 	border-radius: 9px;
 	height: 42px;
 	box-sizing: border-box;
-	cursor: pointer;
+	cursor: ${disabled ? 'not-allowed' : 'pointer'};
 	transition: all 0.2s ease;
 	z-index: 1000;
+	opacity: ${disabled ? 0.7 : 1};
 `;
 
 const parentStyle = css`
@@ -84,9 +85,10 @@ type DropDownProps = {
 	title?: string;
 	leftIcon?: ReactNode;
 	menuItems?: MenuItem[];
+	disabled?: boolean;
 };
 
-const Dropdown = ({ menuItems = [], title, leftIcon }: DropDownProps) => {
+const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDownProps) => {
 	const [open, setOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const theme = useThemeContext();
@@ -107,10 +109,14 @@ const Dropdown = ({ menuItems = [], title, leftIcon }: DropDownProps) => {
 		};
 	}, [open]);
 
-	const handleToggle = useCallback((e: React.MouseEvent) => {
-		e.stopPropagation();
-		setOpen((prev) => !prev);
-	}, []);
+	const handleToggle = useCallback(
+		(e: React.MouseEvent) => {
+			if (disabled) return;
+			e.stopPropagation();
+			setOpen((prev) => !prev);
+		},
+		[disabled],
+	);
 
 	const renderMenuItems = () => {
 		return menuItems.map(({ label, action }) => (
@@ -123,14 +129,13 @@ const Dropdown = ({ menuItems = [], title, leftIcon }: DropDownProps) => {
 	return (
 		<div ref={dropdownRef} css={parentStyle}>
 			<div>
-				<div css={dropdownButtonStyle(theme)} onClick={handleToggle}>
+				<div css={dropdownButtonStyle(theme, undefined, disabled)} onClick={handleToggle}>
 					{leftIcon}
 					<span css={dropDownTitleStyle(theme)}>{title}</span>
 					<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} style={chevronStyle(open)} />
 				</div>
 
-				{/* {open && <>{renderMenuItems()}</>} */}
-				{open && <div css={dropdownMenuStyle(theme)}>{renderMenuItems()}</div>}
+				{open && !disabled && <div css={dropdownMenuStyle(theme)}>{renderMenuItems()}</div>}
 			</div>
 		</div>
 	);
