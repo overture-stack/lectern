@@ -3,7 +3,7 @@
 The lectern client exports a set of functions to make requests to a Lectern Server REST API. This is exported in a property named `rest`.
 
 ```ts
-import * as lectern from '@overture-stack/lecter-client';
+import * as lectern from '@overture-stack/lectern-client';
 
 const dictionaryList = await lectern.rest.getDictionaries('http://lectern.example.com');
 ```
@@ -15,12 +15,12 @@ All functions in the REST API take the lectern host URL as the first argument, a
 | Function                              | Lectern Server REST API                                                          | Description                                                                                                     |
 | ------------------------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | [listDictionaries](#listdictionaries) | `GET /dictionaries`                                                              | Fetch a list of all dictionaries available on the Lectern server.                                               |
-| [getDictionary](#getDictionary)       | `GET /dictionaries/{id}` <br/> `GET /dictionaries?name={name}&version={version}` | Fetch the contents of a single dictionary. This can be done by dictionary ID, or by dictonary name and version. |
+| [getDictionary](#getDictionary)       | `GET /dictionaries/{id}` <br/> `GET /dictionaries?name={name}&version={version}` | Fetch the contents of a single dictionary. This can be done by dictionary ID, or by dictionary name and version. |
 | [getDiff](#getDiff)                   | `GET /diff`                                                                      | Fetch the differences between two versions of the same dictionary.                                              |
 
 ### `listDictionaries()`
 
-List all dictionaries from Lectern Server. Optionally, the a dictionary name can be provided to filter the list to only dictionaries of the given name.
+List all dictionaries from Lectern Server. Optionally, a dictionary name can be provided to filter the list to only dictionaries of the given name.
 
 #### Options
 
