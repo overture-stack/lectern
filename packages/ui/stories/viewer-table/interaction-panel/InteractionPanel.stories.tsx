@@ -48,3 +48,19 @@ export const Default: Story = {
 		onAccordionToggle: mockOnAccordionToggle,
 	},
 };
+export const Disabled: Story = {
+	args: {
+		schemas: (AdvancedDictionary as Dictionary).schemas,
+		dictionary: AdvancedDictionary as Dictionary,
+		filteredData: AdvancedDictionary as Dictionary,
+		isFiltered: false,
+		version: '1.0',
+		name: 'advanced-dictionary',
+		lecternUrl: 'http://localhost:3031',
+		disabled: true,
+		setIsCollapsed: mockSetIsCollapsed,
+		setFilteredData: mockSetFilteredData,
+		setIsFiltered: mockSetIsFiltered,
+		onAccordionToggle: mockOnAccordionToggle,
+	},
+};
