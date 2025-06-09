@@ -5,9 +5,10 @@ import { useThemeContext } from '../../theme/ThemeContext';
 type TableOfContentsDropdownProps = {
 	schemas: Schema[];
 	onAccordionToggle: (schemaName: string, isOpen: boolean) => void;
+	disabled?: boolean;
 };
 
-const TableOfContentsDropdown = ({ schemas, onAccordionToggle }: TableOfContentsDropdownProps) => {
+const TableOfContentsDropdown = ({ schemas, onAccordionToggle, disabled = false }: TableOfContentsDropdownProps) => {
 	const theme = useThemeContext();
 	const { List } = theme.icons;
 	const handleAction = (schema: Schema) => {
@@ -25,7 +26,9 @@ const TableOfContentsDropdown = ({ schemas, onAccordionToggle }: TableOfContents
 		},
 	}));
 
-	return <Dropdown leftIcon={<List />} title="Table of Contents" menuItems={menuItemsFromSchemas} />;
+	return (
+		<Dropdown leftIcon={<List />} title="Table of Contents" menuItems={menuItemsFromSchemas} disabled={disabled} />
+	);
 };
 
 export default TableOfContentsDropdown;

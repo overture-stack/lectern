@@ -7,9 +7,16 @@ type FilterDropdownProps = {
 	isFiltered: boolean;
 	setFilteredData: (dict: Dictionary) => void;
 	setIsFiltered: (bool: boolean) => void;
+	disabled?: boolean;
 };
 
-const AttributeFilter = ({ data, isFiltered, setFilteredData, setIsFiltered }: FilterDropdownProps) => {
+const AttributeFilter = ({
+	data,
+	isFiltered,
+	setFilteredData,
+	setIsFiltered,
+	disabled = false,
+}: FilterDropdownProps) => {
 	const handleFilterSelect = (selectedFilterName: string) => {
 		if (isFiltered) {
 			setFilteredData(data);
@@ -49,7 +56,7 @@ const AttributeFilter = ({ data, isFiltered, setFilteredData, setIsFiltered }: F
 		},
 	];
 
-	return <Dropdown leftIcon={<ListFilter />} title="Filter By" menuItems={menuItems} />;
+	return <Dropdown leftIcon={<ListFilter />} title="Filter By" menuItems={menuItems} disabled={disabled} />;
 };
 
 export default AttributeFilter;

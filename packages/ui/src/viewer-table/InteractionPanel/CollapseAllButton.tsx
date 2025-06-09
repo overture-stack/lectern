@@ -5,9 +5,10 @@ import { useThemeContext } from '../../theme/ThemeContext';
 interface CollapseAllButtonProps {
 	setIsCollapsed: (isCollapsed: boolean) => void;
 	collapsedOnLoad?: boolean; // This prop is optional and defaults to false
+	disabled?: boolean;
 }
 
-const CollapseAllButton = ({ setIsCollapsed, collapsedOnLoad = false }: CollapseAllButtonProps) => {
+const CollapseAllButton = ({ setIsCollapsed, collapsedOnLoad = false, disabled = false }: CollapseAllButtonProps) => {
 	const theme = useThemeContext();
 	const { Collapse } = theme.icons;
 
@@ -16,7 +17,7 @@ const CollapseAllButton = ({ setIsCollapsed, collapsedOnLoad = false }: Collapse
 	}, [collapsedOnLoad, setIsCollapsed]);
 
 	return (
-		<Button leftIcon={<Collapse />} onClick={() => setIsCollapsed(true)}>
+		<Button leftIcon={<Collapse />} onClick={() => setIsCollapsed(true)} disabled={disabled}>
 			Collapse All
 		</Button>
 	);

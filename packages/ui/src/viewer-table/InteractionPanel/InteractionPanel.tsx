@@ -14,6 +14,7 @@ type InteractionPanelProps = {
 	schemas: Schema[];
 	dictionary: Dictionary;
 	filteredData: Dictionary;
+	disabled?: boolean;
 	isFiltered: boolean;
 	version: string;
 	name: string;
@@ -31,6 +32,7 @@ const InteractionPanel = ({
 	schemas,
 	dictionary,
 	filteredData,
+	disabled = false,
 	isFiltered,
 	version,
 	name,
@@ -75,15 +77,16 @@ const InteractionPanel = ({
 	return (
 		<div css={panelStyles}>
 			<div css={leftSectionStyles}>
-				<TableOfContentsDropdown schemas={schemas} onAccordionToggle={onAccordionToggle} />
+				<TableOfContentsDropdown schemas={schemas} onAccordionToggle={onAccordionToggle} disabled={disabled} />
 				<AttributeFilterDropdown
 					data={dictionary}
 					isFiltered={isFiltered}
 					setFilteredData={setFilteredData}
 					setIsFiltered={setIsFiltered}
+					disabled={disabled}
 				/>
-				<ExpandAllButton setIsCollapsed={setIsCollapsed} />
-				<CollapseAllButton setIsCollapsed={setIsCollapsed} />
+				<ExpandAllButton setIsCollapsed={setIsCollapsed} disabled={disabled} />
+				<CollapseAllButton setIsCollapsed={setIsCollapsed} disabled={disabled} />
 			</div>
 			<div css={rightSectionStyles}>
 				{onVersionChange && dictionaryVersions && (
@@ -91,9 +94,10 @@ const InteractionPanel = ({
 						dictionaryData={dictionaryVersions}
 						dictionaryIndex={currentVersionIndex}
 						onVersionChange={onVersionChange}
+						disabled={disabled}
 					/>
 				)}
-				<DownloadTemplatesButton version={version} name={name} lecternUrl={lecternUrl} />
+				<DownloadTemplatesButton version={version} name={name} lecternUrl={lecternUrl} disabled={disabled} />
 			</div>
 		</div>
 	);

@@ -28,9 +28,15 @@ type VersionSwitcherProps = {
 	dictionaryData: Dictionary[];
 	onVersionChange: (index: number) => void;
 	dictionaryIndex: number;
+	disabled?: boolean;
 };
 
-const VersionSwitcher = ({ dictionaryIndex, dictionaryData, onVersionChange }: VersionSwitcherProps) => {
+const VersionSwitcher = ({
+	dictionaryIndex,
+	dictionaryData,
+	onVersionChange,
+	disabled = false,
+}: VersionSwitcherProps) => {
 	const theme = useThemeContext();
 	const { History } = theme.icons;
 
@@ -49,6 +55,7 @@ const VersionSwitcher = ({ dictionaryIndex, dictionaryData, onVersionChange }: V
 			leftIcon={<History />}
 			menuItems={versionSwitcherObject}
 			title={`Version ${dictionaryData?.[dictionaryIndex].version}`}
+			disabled={disabled}
 		/>
 	);
 };

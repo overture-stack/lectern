@@ -5,9 +5,10 @@ import { useThemeContext } from '../../theme/ThemeContext';
 interface ExpandAllButtonProps {
 	setIsCollapsed: (isCollapsed: boolean) => void;
 	expandOnLoad?: boolean; // This prop is optional and defaults to false
+	disabled?: boolean;
 }
 
-const ExpandAllButton = ({ setIsCollapsed, expandOnLoad = false }: ExpandAllButtonProps) => {
+const ExpandAllButton = ({ setIsCollapsed, expandOnLoad = false, disabled = false }: ExpandAllButtonProps) => {
 	const theme = useThemeContext();
 	const { Eye } = theme.icons;
 
@@ -16,7 +17,7 @@ const ExpandAllButton = ({ setIsCollapsed, expandOnLoad = false }: ExpandAllButt
 	}, [expandOnLoad, setIsCollapsed]);
 
 	return (
-		<Button leftIcon={<Eye />} onClick={() => setIsCollapsed(false)}>
+		<Button leftIcon={<Eye />} onClick={() => setIsCollapsed(false)} disabled={disabled}>
 			Expand All
 		</Button>
 	);

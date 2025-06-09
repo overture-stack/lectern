@@ -30,9 +30,16 @@ type DictionaryDownloadButtonProps = {
 	name: string;
 	lecternUrl: string;
 	fileType?: 'tsv' | 'csv';
+	disabled?: boolean;
 };
 
-const DictionaryDownloadButton = ({ version, name, lecternUrl, fileType = 'tsv' }: DictionaryDownloadButtonProps) => {
+const DictionaryDownloadButton = ({
+	version,
+	name,
+	lecternUrl,
+	fileType = 'tsv',
+	disabled = false,
+}: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const theme = useThemeContext();
 	const { FileDownload } = theme.icons;
@@ -74,7 +81,7 @@ const DictionaryDownloadButton = ({ version, name, lecternUrl, fileType = 'tsv' 
 	};
 
 	return (
-		<Button leftIcon={<FileDownload />} onClick={downloadDictionary} disabled={isLoading}>
+		<Button leftIcon={<FileDownload />} onClick={downloadDictionary} disabled={disabled || isLoading}>
 			Submission Templates
 		</Button>
 	);
