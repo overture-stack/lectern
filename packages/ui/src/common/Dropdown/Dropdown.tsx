@@ -45,6 +45,7 @@ const dropdownButtonStyle = (theme: Theme, width?: string) => css`
 	box-sizing: border-box;
 	cursor: pointer;
 	transition: all 0.2s ease;
+	z-index: 1000;
 `;
 
 const parentStyle = css`

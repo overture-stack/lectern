@@ -48,7 +48,7 @@ const InteractionPanel = ({
 	const panelStyles = css`
 		display: flex;
 		align-items: center;
-		gap: 16px;
+		justify-content: space-between;
 		padding: 12px 16px;
 		border-bottom: 1px solid ${theme.colors.grey_4};
 		background-color: ${theme.colors.white};
@@ -60,25 +60,41 @@ const InteractionPanel = ({
 		position: relative;
 	`;
 
+	const leftSectionStyles = css`
+		display: flex;
+		align-items: center;
+		gap: 16px;
+	`;
+
+	const rightSectionStyles = css`
+		display: flex;
+		align-items: center;
+		gap: 16px;
+	`;
+
 	return (
 		<div css={panelStyles}>
-			<TableOfContentsDropdown schemas={schemas} onAccordionToggle={onAccordionToggle} />
-			<ExpandAllButton setIsCollapsed={setIsCollapsed} />
-			<CollapseAllButton setIsCollapsed={setIsCollapsed} />
-			<AttributeFilterDropdown
-				data={dictionary}
-				isFiltered={isFiltered}
-				setFilteredData={setFilteredData}
-				setIsFiltered={setIsFiltered}
-			/>
-			{onVersionChange && dictionaryVersions && (
-				<DictionaryVersionSwitcher
-					dictionaryData={dictionaryVersions}
-					dictionaryIndex={currentVersionIndex}
-					onVersionChange={onVersionChange}
+			<div css={leftSectionStyles}>
+				<TableOfContentsDropdown schemas={schemas} onAccordionToggle={onAccordionToggle} />
+				<AttributeFilterDropdown
+					data={dictionary}
+					isFiltered={isFiltered}
+					setFilteredData={setFilteredData}
+					setIsFiltered={setIsFiltered}
 				/>
-			)}
-			<DownloadTemplatesButton version={version} name={name} lecternUrl={lecternUrl} />
+				<ExpandAllButton setIsCollapsed={setIsCollapsed} />
+				<CollapseAllButton setIsCollapsed={setIsCollapsed} />
+			</div>
+			<div css={rightSectionStyles}>
+				{onVersionChange && dictionaryVersions && (
+					<DictionaryVersionSwitcher
+						dictionaryData={dictionaryVersions}
+						dictionaryIndex={currentVersionIndex}
+						onVersionChange={onVersionChange}
+					/>
+				)}
+				<DownloadTemplatesButton version={version} name={name} lecternUrl={lecternUrl} />
+			</div>
 		</div>
 	);
 };
