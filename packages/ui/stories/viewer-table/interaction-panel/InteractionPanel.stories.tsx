@@ -17,8 +17,20 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const SingleDictionaryData: Dictionary[] = [AdvancedDictionary as Dictionary];
+
+const MultipleDictionaryData: Dictionary[] = [
+	{ ...AdvancedDictionary, version: '1.0' } as Dictionary,
+	{ ...AdvancedDictionary, version: '2.0' } as Dictionary,
+	{ ...AdvancedDictionary, version: '3.0' } as Dictionary,
+];
+
 const mockSetIsCollapsed = (isCollapsed: boolean) => {
 	console.log('setIsCollapsed called with:', isCollapsed);
+};
+
+const mockOnVersionChange = (index: number) => {
+	console.log('onVersionChange called with index:', index);
 };
 
 const mockSetFilteredData = (dict: Dictionary) => {
@@ -62,5 +74,43 @@ export const Disabled: Story = {
 		setFilteredData: mockSetFilteredData,
 		setIsFiltered: mockSetIsFiltered,
 		onAccordionToggle: mockOnAccordionToggle,
+	},
+};
+
+export const WithMultipleVersions: Story = {
+	args: {
+		schemas: (AdvancedDictionary as Dictionary).schemas,
+		dictionary: AdvancedDictionary as Dictionary,
+		filteredData: AdvancedDictionary as Dictionary,
+		isFiltered: false,
+		version: '1.0',
+		name: 'advanced-dictionary',
+		lecternUrl: 'http://localhost:3031',
+		setIsCollapsed: mockSetIsCollapsed,
+		setFilteredData: mockSetFilteredData,
+		setIsFiltered: mockSetIsFiltered,
+		onAccordionToggle: mockOnAccordionToggle,
+		onVersionChange: mockOnVersionChange,
+		dictionaryVersions: MultipleDictionaryData,
+		currentVersionIndex: 0,
+	},
+};
+
+export const WithSingleVersion: Story = {
+	args: {
+		schemas: (AdvancedDictionary as Dictionary).schemas,
+		dictionary: AdvancedDictionary as Dictionary,
+		filteredData: AdvancedDictionary as Dictionary,
+		isFiltered: false,
+		version: '1.0',
+		name: 'advanced-dictionary',
+		lecternUrl: 'http://localhost:3031',
+		setIsCollapsed: mockSetIsCollapsed,
+		setFilteredData: mockSetFilteredData,
+		setIsFiltered: mockSetIsFiltered,
+		onAccordionToggle: mockOnAccordionToggle,
+		onVersionChange: mockOnVersionChange,
+		dictionaryVersions: SingleDictionaryData,
+		currentVersionIndex: 0,
 	},
 };
