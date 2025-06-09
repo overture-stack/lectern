@@ -34,6 +34,7 @@ export const DictionaryDocumentSummary = DictionaryDocument.pick({
 	name: true,
 	version: true,
 	description: true,
+	createdAt: true,
 	_id: true,
 });
 export type DictionaryDocumentSummary = zod.infer<typeof DictionaryDocumentSummary>;

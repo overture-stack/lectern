@@ -26,6 +26,7 @@ const dictionarySummarySchema = zod.object({
 	_id: zod.string(),
 	name: zod.string(),
 	version: zod.string(),
+	createdAt: zod.coerce.date(),
 });
 export type DictionarySummary = zod.infer<typeof dictionarySummarySchema>;
 
