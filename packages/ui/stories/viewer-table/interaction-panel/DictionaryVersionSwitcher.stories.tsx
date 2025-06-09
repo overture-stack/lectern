@@ -16,12 +16,33 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Using the primitiveJson as a mock schema for demonstration purposes
-const DictionaryData: Dictionary[] = [DictionarySample as Dictionary];
+// Create multiple dictionary versions for testing
+const SingleDictionaryData: Dictionary[] = [DictionarySample as Dictionary];
 
-export const Default: Story = {
+const MultipleDictionaryData: Dictionary[] = [
+	{ ...DictionarySample, version: '1.0' } as Dictionary,
+	{ ...DictionarySample, version: '2.0' } as Dictionary,
+	{ ...DictionarySample, version: '3.0' } as Dictionary,
+];
+
+export const MultipleVersions: Story = {
 	args: {
-		dictionaryData: DictionaryData,
+		dictionaryData: MultipleDictionaryData,
+		onVersionChange: (index: number) => console.log(`Version changed to index: ${index}`),
+		dictionaryIndex: 0,
+	},
+};
+export const SingleVersion: Story = {
+	args: {
+		dictionaryData: SingleDictionaryData,
+		onVersionChange: (index: number) => console.log(`Version changed to index: ${index}`),
+		dictionaryIndex: 0,
+	},
+};
+
+export const EmptyArray: Story = {
+	args: {
+		dictionaryData: [],
 		onVersionChange: (index: number) => console.log(`Version changed to index: ${index}`),
 		dictionaryIndex: 0,
 	},
