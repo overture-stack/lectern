@@ -40,7 +40,7 @@ const VersionSwitcher = ({
 	const theme = useThemeContext();
 	const { History } = theme.icons;
 
-	const versionSwitcherObject = dictionaryData?.map((dictionary: Dictionary, index: number) => {
+	const versionSwitcherObjectArray = dictionaryData?.map((dictionary: Dictionary, index: number) => {
 		// TODO: We should either remove the version date stamp requirement or update the date to be dynamic via
 		// lectern-client
 		return {
@@ -50,13 +50,19 @@ const VersionSwitcher = ({
 			},
 		};
 	});
+
+	// If there is only one version, we don't need to show the dropdown as per specifications
+	const displayVersionSwitcher = versionSwitcherObjectArray && versionSwitcherObjectArray.length > 1;
+
 	return (
-		<Dropdown
-			leftIcon={<History />}
-			menuItems={versionSwitcherObject}
-			title={`Version ${dictionaryData?.[dictionaryIndex].version}`}
-			disabled={disabled}
-		/>
+		displayVersionSwitcher && (
+			<Dropdown
+				leftIcon={<History />}
+				menuItems={versionSwitcherObjectArray}
+				title={`Version ${dictionaryData?.[dictionaryIndex].version}`}
+				disabled={disabled}
+			/>
+		)
 	);
 };
 
