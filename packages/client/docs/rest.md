@@ -30,21 +30,13 @@ List all dictionaries from Lectern Server. Optionally, a dictionary name can be 
 
 Returns an array with all Dictionaries that match the query. This is all dictionaries if no filters are provided, or the subset of dictionaries that match the provided dictionary name. Each entry in this array contains a subset of the dictionary fields.
 
-| Field       | Type   | Description                                                                                                                  |
-| ----------- | ------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| `_id`       | string | Internal ID for this dictionary. This is useful when requesting a dictionary by ID, for example with `rest.getDictionary()`. |
-| `name`      | string | Name of the dictionary.                                                                                                      |
-| `version`   | string | Version of the dictionary.                                                                                                   |
-| `createdAt` | Date   | When this version of the dictionary was created.                                                                             |
-
-```ts
-type DictionarySummary = {
-	_id: string,
-	name: string,
-	version: string,
-	createdAt: Date
-}
-```
+| Field         | Type                    | Description                                                                                                                  |
+| ------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `_id`         | `string`                | Internal ID for this dictionary. This is useful when requesting a dictionary by ID, for example with `rest.getDictionary()`. |
+| `name`        | `string`                | Name of the dictionary.                                                                                                      |
+| `description` | `string` \| `undefined` | Description of the dictionary. Optional property, could be `undefined`.                                                      |
+| `version`     | `string`                | Version of the dictionary.                                                                                                   |
+| `createdAt`   | `Date`                  | When this version of the dictionary was created.                                                                             |
 
 ```json
 [

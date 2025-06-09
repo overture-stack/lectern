@@ -25,6 +25,7 @@ import formatAxiosError from './formatAxiosError';
 const dictionarySummarySchema = zod.object({
 	_id: zod.string(),
 	name: zod.string(),
+	description: zod.string().optional(),
 	version: zod.string(),
 	createdAt: zod.coerce.date(),
 });
