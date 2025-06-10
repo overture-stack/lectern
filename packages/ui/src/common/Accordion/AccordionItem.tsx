@@ -9,6 +9,7 @@ export type AccordionData = {
 	openOnInit: boolean;
 	description: string;
 	content: ReactNode | string;
+	iconButton?: ReactNode; // Optional icon button for additional actions
 };
 type AccordionItemProps = {
 	data: AccordionData;
@@ -16,13 +17,14 @@ type AccordionItemProps = {
 	onClick: () => void;
 };
 
-const accordionItemStyle = css`
+const accordionItemStyle = (theme: Theme) => css`
 	list-style: none;
-	border: 1px solid #beb2b294;
-	border-radius: 9px;
-	margin-bottom: 8px;
+	border: 0.25px solid ${theme.colors.black};
+	border-radius: 8px;
+	margin-bottom: 1px;
 	overflow: hidden;
 	transition: all 0.2s ease;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
 
 const accordionItemTitleStyle = (theme: Theme) => css`
@@ -32,51 +34,76 @@ const accordionItemTitleStyle = (theme: Theme) => css`
 
 const accordionItemButtonStyle = (theme: Theme, isOpen: boolean) => css`
 	display: flex;
-	flex-wrap: nowrap;
-	white-space: nowrap;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: flex-start;
 	width: 100%;
-	padding: 12px 16px;
-	background-color: #f7f7f7;
+	padding: 24px 20px;
+	background-color: ${'#ffffff'};
 	color: ${theme.colors.accent_dark};
-	border: none;
 	cursor: pointer;
 	transition: all 0.2s ease;
 	${theme.typography?.button};
-
-	&:hover {
-		background-color: ${theme.colors.grey_1};
-	}
-
-	&:focus {
-		outline: none;
-		background-color: ${theme.colors.grey_1};
-	}
+	text-align: left;
 `;
 
 const chevronStyle = (isOpen: boolean) => css`
-	transform: ${!isOpen ? 'rotate(-90deg)' : 'none'};
+	transform: ${isOpen ? 'rotate(0deg)' : 'rotate(-90deg)'};
 	transition: transform 0.2s ease;
-	margin-left: 8px;
+	margin-right: 12px;
+	flex-shrink: 0;
 `;
 
 const accordionItemContainerStyle = (height: number) => css`
 	height: ${height}px;
 	overflow: hidden;
-	transition: height 0.2s ease;
+	transition: height 0.3s ease;
 `;
 
-const accordionItemContentStyle = css`
-	padding: 16px;
+const accordionItemContentStyle = (theme: Theme) => css`
+	padding: 30px;
 	background-color: #ffffff;
+`;
+
+const contentContainerStyle = css`
+	display: flex;
+	flex-direction: row;
+	algin-items: center;
+	gap: 43px;
+	flex: 1;
+	width: 100%;
+`;
+
+const titleStyle = (theme: Theme) => css`
+	${theme.typography?.subheading2};
+	color: ${theme.colors?.accent_dark};
+	margin: 0;
+`;
+
+const descriptionStyle = (theme: Theme) => css`
+	${theme.typography?.label2};
+	color: ${theme.colors?.grey_5};
+	margin-top: 2px;
+`;
+
+const iconButtonContainerStyle = css`
+	margin-left: auto;
+`;
+const contentInnerContainerStyle = (theme: Theme) => css`
+	display: flex;
+	padding: 30px;
+	border-left: 1px solid ${theme.colors.grey_3};
+	height: fit-content;
+	${theme.typography?.data};
 `;
 
 const AccordionItem = ({ data, isOpen, onClick }: AccordionItemProps) => {
 	const contentRef = useRef<HTMLDivElement>(null);
+
 	const [height, setHeight] = useState(0);
+
 	const theme = useThemeContext();
 
+	const { iconButton, description, title, content } = data;
 	const { ChevronDown } = theme.icons;
 
 	useEffect(() => {
@@ -91,17 +118,20 @@ const AccordionItem = ({ data, isOpen, onClick }: AccordionItemProps) => {
 	}, [isOpen]);
 
 	return (
-		<li css={accordionItemStyle}>
+		<li css={accordionItemStyle(theme)}>
 			<h2 css={accordionItemTitleStyle(theme)}>
-				<button css={accordionItemButtonStyle(theme, isOpen)} onClick={onClick}>
-					<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} style={chevronStyle(isOpen)} />
-					<span>{data.title}</span>
-					<span>{data.description}</span>
-				</button>
+				<div css={accordionItemButtonStyle(theme, isOpen)} onClick={onClick}>
+					<ChevronDown fill={theme.colors?.accent_dark} width={16} height={16} style={chevronStyle(isOpen)} />
+					<div css={contentContainerStyle}>
+						<span css={titleStyle(theme)}>{title}</span>
+						{description && <span css={descriptionStyle(theme)}>{description}</span>}
+					</div>
+					{iconButton && <span css={iconButtonContainerStyle}>{iconButton}</span>}
+				</div>
 			</h2>
 			<div css={accordionItemContainerStyle(height)}>
-				<div ref={contentRef} css={accordionItemContentStyle}>
-					{data.content}
+				<div ref={contentRef} css={accordionItemContentStyle(theme)}>
+					<div css={contentInnerContainerStyle(theme)}>{content}</div>
 				</div>
 			</div>
 		</li>

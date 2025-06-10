@@ -16,9 +16,29 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
 	args: {
 		accordionItems: [
-			{ title: 'Item 1', openOnInit: true, description: 'Description for item 1', content: 'Content for item 1' },
-			{ title: 'Item 2', openOnInit: false, description: 'Description for item 2', content: 'Content for item 2' },
-			{ title: 'Item 3', openOnInit: false, description: 'Description for item 3', content: 'Content for item 3' },
+			{
+				title: '{Schema:name}',
+				openOnInit: true,
+				description:
+					'{Schema: description} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+				content: 'Content for item 1',
+			},
+			{
+				title: '{Schema:name}',
+				openOnInit: false,
+				description:
+					'{Schema: description} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+				content:
+					'Paritur Lorem sint commodo deserunt duis nostrud. Quis cillum veniam dolor amet elit nulla. Pariatur sunt ex non minim labore et exercitation quis velit duis. Nisi minim commodo anim aute quis incididunt proident enim adipisicing eu do. Mollit tempor minim anim deserunt adipisicing. Magna esse labore eiusmod irure sunt cupidatat non et labore. Pariatur consectetur cupidatat ullamco dolor sit commodo proident cupidatat nulla occaecat qui ea. Ad nostrud magna quis anim veniam laboris do sint cillum nisi. Et sint enim eu proident ipsum. Deserunt ad ex non aliquip fugiat eiusmod tempor fugiat est et excepteur consequat excepteur ipsum.Quis consectetur nostrud proident laboris veniam eiusmod ullamco culpa esse reprehenderit esse proident sint. Ea aliqua laboris veniam tempor eiusmod sunt consequat nisi mollit. Veniam enim est cillum mollit sunt in non. Elit voluptate aliquip sunt fugiat aliqua elit incididunt fugiat ipsum eu mollit tempor. Officia magna est est cillum qui amet fugiat quis. Consectetur quis deserunt enim eiusmod est est sint quis consectetur nulla ea non. Magna ipsum aute laborum nisi duis tempor dolor ad cupidatat quis et pariatur.Sit ad irure laborum minim deserunt aute mollit fugiat minim laboris. Laborum aliqua occaecat dolore esse exercitation do elit aliquip amet proident laborum sint. Aute do cupidatat ut ea ipsum nisi veniam nulla ea est ex irure adipisicing adipisicing. In dolor aliquip non magna mollit reprehenderit sit fugiat excepteur. Pariatur tempor excepteur nulla tempor commodo reprehenderit deserunt sint nisi aute. Dolore est aliquip eu nisi ea nisi mollit culpa magna. ',
+			},
+			{
+				title: '{Schema:name}',
+				openOnInit: false,
+				description:
+					'{Schema: description} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+				content:
+					'Paritur Lorem sint commodo deserunt duis nostrud. Quis cillum veniam dolor amet elit nulla. Pariatur sunt ex non minim labore et exercitation quis velit duis. Nisi minim commodo anim aute quis incididunt proident enim adipisicing eu do. Mollit tempor minim anim deserunt adipisicing. Magna esse labore eiusmod irure sunt cupidatat non et labore. Pariatur consectetur cupidatat ullamco dolor sit commodo proident cupidatat nulla occaecat qui ea. Ad nostrud magna quis anim veniam laboris do sint cillum nisi. Et sint enim eu proident ipsum. Deserunt ad ex non aliquip fugiat eiusmod tempor fugiat est et excepteur consequat excepteur ipsum.Quis consectetur nostrud proident laboris veniam eiusmod ullamco culpa esse reprehenderit esse proident sint. Ea aliqua laboris veniam tempor eiusmod sunt consequat nisi mollit. Veniam enim est cillum mollit sunt in non. Elit voluptate aliquip sunt fugiat aliqua elit incididunt fugiat ipsum eu mollit tempor. Officia magna est est cillum qui amet fugiat quis. Consectetur quis deserunt enim eiusmod est est sint quis consectetur nulla ea non. Magna ipsum aute laborum nisi duis tempor dolor ad cupidatat quis et pariatur.Sit ad irure laborum minim deserunt aute mollit fugiat minim laboris. Laborum aliqua occaecat dolore esse exercitation do elit aliquip amet proident laborum sint. Aute do cupidatat ut ea ipsum nisi veniam nulla ea est ex irure adipisicing adipisicing. In dolor aliquip non magna mollit reprehenderit sit fugiat excepteur. Pariatur tempor excepteur nulla tempor commodo reprehenderit deserunt sint nisi aute. Dolore est aliquip eu nisi ea nisi mollit culpa magna. ',
+			},
 		],
 	},
 };
