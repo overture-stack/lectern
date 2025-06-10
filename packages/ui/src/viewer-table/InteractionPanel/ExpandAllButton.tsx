@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import Button from '../../common/Button';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-interface ExpandAllButtonProps {
+export interface ExpandAllButtonProps {
 	setIsCollapsed: (isCollapsed: boolean) => void;
 	expandOnLoad?: boolean; // This prop is optional and defaults to false
 }
