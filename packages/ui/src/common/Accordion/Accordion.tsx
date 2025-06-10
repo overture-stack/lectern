@@ -36,14 +36,30 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 		accordionItems.map((accordionItem) => accordionItem.openOnInit), // Initialize with the openOnInit property of each item
 	);
 
+	// This state keeps track of which accordion items have expanded descriptions
+	const [descriptionExpandedStates, setDescriptionExpandedStates] = useState<boolean[]>(
+		accordionItems.map(() => false), // Initialize all descriptions as collapsed
+	);
+
 	const onClick = (idx: number) => {
 		setOpenStates((prev) => prev.map((isOpen, index) => (index === idx ? !isOpen : isOpen)));
+	};
+
+	const onDescriptionToggle = (idx: number) => {
+		setDescriptionExpandedStates((prev) => prev.map((isExpanded, index) => (index === idx ? !isExpanded : isExpanded)));
 	};
 
 	return (
 		<ul css={accordionStyle}>
 			{accordionItems.map((item, idx) => (
-				<AccordionItem key={idx} data={item} isOpen={openStates[idx]} onClick={() => onClick(idx)} />
+				<AccordionItem
+					key={idx}
+					data={item}
+					isOpen={openStates[idx]}
+					onClick={() => onClick(idx)}
+					isDescriptionExpanded={descriptionExpandedStates[idx]}
+					onDescriptionToggle={() => onDescriptionToggle(idx)}
+				/>
 			))}
 		</ul>
 	);

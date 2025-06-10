@@ -15,6 +15,8 @@ type AccordionItemProps = {
 	data: AccordionData;
 	isOpen: boolean;
 	onClick: () => void;
+	isDescriptionExpanded: boolean;
+	onDescriptionToggle: () => void;
 };
 
 const accordionItemStyle = (theme: Theme) => css`
@@ -119,13 +121,12 @@ const linkStyle = (theme: Theme) => css`
 `;
 
 // These constants can be adjusted based on design requirements
-const DESCRIPTION_THRESHOLD = 240;
+const DESCRIPTION_THRESHOLD = 240; // Allows for ~4-5 lines of description text in accordion items
 
-const AccordionItem = ({ data, isOpen, onClick }: AccordionItemProps) => {
+const AccordionItem = ({ data, isOpen, onClick, isDescriptionExpanded, onDescriptionToggle }: AccordionItemProps) => {
 	const contentRef = useRef<HTMLDivElement>(null);
 
 	const [height, setHeight] = useState(0);
-	const [isExpanded, setIsExpanded] = useState(false);
 
 	const theme = useThemeContext();
 
@@ -136,13 +137,13 @@ const AccordionItem = ({ data, isOpen, onClick }: AccordionItemProps) => {
 	// according to the figma styling
 	const needsToggle = description && description.length > DESCRIPTION_THRESHOLD;
 	// We want to show all the text if it is not long or if it is already expanded via state variable
-	const showFull = isExpanded || !needsToggle;
+	const showFull = isDescriptionExpanded || !needsToggle;
 	// Based off of showFull, we determine the text to show, either its the full description or a truncated version
 	const textToShow = showFull ? description : description.slice(0, DESCRIPTION_THRESHOLD) + '... ';
 
 	const showMoreEventHandler = (e: React.MouseEvent) => {
 		e.stopPropagation();
-		setIsExpanded((prev) => !prev);
+		onDescriptionToggle();
 	};
 	useEffect(() => {
 		if (isOpen) {
@@ -167,9 +168,10 @@ const AccordionItem = ({ data, isOpen, onClick }: AccordionItemProps) => {
 								<span css={descriptionStyle(theme)}>{textToShow}</span>
 								{needsToggle && (
 									<span css={linkStyle(theme)} onClick={(e) => showMoreEventHandler(e)}>
-										{isExpanded ? ' Read less' : ' Show more'}
+										{' '}
+										{isDescriptionExpanded ? 'Read less' : 'Show more'}
 										<ChevronDown
-											style={getChevronStyle(isExpanded)}
+											style={getChevronStyle(isDescriptionExpanded)}
 											fill={theme.colors?.accent_dark}
 											width={10}
 											height={10}
