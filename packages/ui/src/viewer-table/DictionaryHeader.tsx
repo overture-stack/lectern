@@ -138,7 +138,8 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 							<span css={descriptionStyle(theme)}>{textToShow}</span>
 							{needsToggle && (
 								<span css={linkStyle(theme)} onClick={() => setIsExpanded((prev) => !prev)}>
-									{isExpanded ? ' Read less' : ' Show more'}
+									{' '}
+									{isExpanded ? 'Read less' : 'Show more'}
 									<ChevronDown style={getChevronStyle(isExpanded)} fill="white" width={10} height={10} />
 								</span>
 							)}
