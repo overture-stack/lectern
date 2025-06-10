@@ -3,20 +3,15 @@ import Button from '../../common/Button';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export interface ExpandAllButtonProps {
-	setIsCollapsed: (isCollapsed: boolean) => void;
-	expandOnLoad?: boolean; // This prop is optional and defaults to false
+	onClick: () => void;
 }
 
-const ExpandAllButton = ({ setIsCollapsed, expandOnLoad = false }: ExpandAllButtonProps) => {
+const ExpandAllButton = ({ onClick }: ExpandAllButtonProps) => {
 	const theme = useThemeContext();
 	const { Eye } = theme.icons;
 
-	useEffect(() => {
-		setIsCollapsed(expandOnLoad);
-	}, [expandOnLoad, setIsCollapsed]);
-
 	return (
-		<Button leftIcon={<Eye />} onClick={() => setIsCollapsed(false)}>
+		<Button leftIcon={<Eye />} onClick={onClick}>
 			Expand All
 		</Button>
 	);

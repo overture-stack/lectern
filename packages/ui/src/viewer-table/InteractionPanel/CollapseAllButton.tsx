@@ -3,20 +3,15 @@ import Button from '../../common/Button';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export interface CollapseAllButtonProps {
-	setIsCollapsed: (isCollapsed: boolean) => void;
-	collapsedOnLoad?: boolean; // This prop is optional and defaults to false
+	onClick: () => void;
 }
 
-const CollapseAllButton = ({ setIsCollapsed, collapsedOnLoad = false }: CollapseAllButtonProps) => {
+const CollapseAllButton = ({ onClick }: CollapseAllButtonProps) => {
 	const theme = useThemeContext();
 	const { Collapse } = theme.icons;
 
-	useEffect(() => {
-		setIsCollapsed(collapsedOnLoad);
-	}, [collapsedOnLoad, setIsCollapsed]);
-
 	return (
-		<Button leftIcon={<Collapse />} onClick={() => setIsCollapsed(true)}>
+		<Button leftIcon={<Collapse />} onClick={onClick}>
 			Collapse All
 		</Button>
 	);
