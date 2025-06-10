@@ -26,7 +26,7 @@ import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
 import colours from './styles/colours';
 
-type DictionaryHeaderProps = {
+export type DictionaryHeaderProps = {
 	name: string;
 	description?: string;
 	version?: string;
