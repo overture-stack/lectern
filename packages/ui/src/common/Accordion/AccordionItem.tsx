@@ -67,10 +67,11 @@ const accordionItemContentStyle = (theme: Theme) => css`
 const contentContainerStyle = css`
 	display: flex;
 	flex-direction: row;
-	algin-items: center;
-	gap: 43px;
+	align-items: center;
+	gap: 16px;
 	flex: 1;
-	width: 100%;
+	min-width: 0;
+	max-width: calc(100% - 100px);
 `;
 
 const titleStyle = (theme: Theme) => css`
@@ -82,7 +83,11 @@ const titleStyle = (theme: Theme) => css`
 const descriptionStyle = (theme: Theme) => css`
 	${theme.typography?.label2};
 	color: ${theme.colors?.grey_5};
-	margin-top: 2px;
+	padding: 4px 8px;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	flex: 1;
+	max-width: 60%;
 `;
 
 const iconButtonContainerStyle = css`
@@ -96,16 +101,49 @@ const contentInnerContainerStyle = (theme: Theme) => css`
 	${theme.typography?.data};
 `;
 
+const getChevronStyle = (isExpanded: boolean) => css`
+	margin-left: 4px;
+	${isExpanded && `transform: rotate(180deg);`}
+`;
+
+const linkStyle = (theme: Theme) => css`
+	${theme.typography?.label2}
+	color: ${theme.colors?.accent_dark};
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+
+	&:hover {
+		text-decoration: underline;
+	}
+`;
+
+// These constants can be adjusted based on design requirements
+const DESCRIPTION_THRESHOLD = 240;
+
 const AccordionItem = ({ data, isOpen, onClick }: AccordionItemProps) => {
 	const contentRef = useRef<HTMLDivElement>(null);
 
 	const [height, setHeight] = useState(0);
+	const [isExpanded, setIsExpanded] = useState(false);
 
 	const theme = useThemeContext();
 
 	const { iconButton, description, title, content } = data;
 	const { ChevronDown } = theme.icons;
 
+	// Determine if the description is long enough to need a toggle, based off of how many characters we want to show by default
+	// according to the figma styling
+	const needsToggle = description && description.length > DESCRIPTION_THRESHOLD;
+	// We want to show all the text if it is not long or if it is already expanded via state variable
+	const showFull = isExpanded || !needsToggle;
+	// Based off of showFull, we determine the text to show, either its the full description or a truncated version
+	const textToShow = showFull ? description : description.slice(0, DESCRIPTION_THRESHOLD) + '... ';
+
+	const showMoreEventHandler = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		setIsExpanded((prev) => !prev);
+	};
 	useEffect(() => {
 		if (isOpen) {
 			const contentEl = contentRef.current;
@@ -124,7 +162,22 @@ const AccordionItem = ({ data, isOpen, onClick }: AccordionItemProps) => {
 					<ChevronDown fill={theme.colors?.accent_dark} width={16} height={16} style={chevronStyle(isOpen)} />
 					<div css={contentContainerStyle}>
 						<span css={titleStyle(theme)}>{title}</span>
-						{description && <span css={descriptionStyle(theme)}>{description}</span>}
+						{description && (
+							<div>
+								<span css={descriptionStyle(theme)}>{textToShow}</span>
+								{needsToggle && (
+									<span css={linkStyle(theme)} onClick={(e) => showMoreEventHandler(e)}>
+										{isExpanded ? ' Read less' : ' Show more'}
+										<ChevronDown
+											style={getChevronStyle(isExpanded)}
+											fill={theme.colors?.accent_dark}
+											width={10}
+											height={10}
+										/>
+									</span>
+								)}
+							</div>
+						)}
 					</div>
 					{iconButton && <span css={iconButtonContainerStyle}>{iconButton}</span>}
 				</div>
