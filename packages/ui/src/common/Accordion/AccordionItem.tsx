@@ -25,8 +25,13 @@ const accordionItemStyle = (theme: Theme) => css`
 	border-radius: 8px;
 	margin-bottom: 1px;
 	overflow: hidden;
-	transition: all 0.2s ease;
+	transition: all 0.3s ease;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+	&:hover {
+		border-width: 1.2px;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+	}
 `;
 
 const accordionItemTitleStyle = (theme: Theme) => css`
