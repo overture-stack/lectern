@@ -14,5 +14,5 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-	args: { setIsCollapsed: (isCollapsed: boolean) => console.log('all collapsable components are expanded') },
+	args: { setIsCollapsed: (isCollapsed: boolean) => alert('all collapsable components are expanded') },
 };
