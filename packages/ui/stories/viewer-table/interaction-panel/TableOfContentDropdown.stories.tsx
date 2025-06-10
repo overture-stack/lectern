@@ -2,7 +2,7 @@
 
 import { Schema } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
-import Dictionary from '../../../../../samples/dictionary/advanced.json';
+import Dictionary from '../../fixtures/advanced.json';
 import TableOfContentsDropdown from '../../../src/viewer-table/InteractionPanel/TableOfContentsDropdown';
 import themeDecorator from '../../themeDecorator';
 
