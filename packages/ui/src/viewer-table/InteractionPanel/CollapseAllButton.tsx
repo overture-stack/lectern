@@ -25,14 +25,15 @@ import { useThemeContext } from '../../theme/ThemeContext';
 
 export interface CollapseAllButtonProps {
 	onClick: () => void;
+	disabled?: boolean;
 }
 
-const CollapseAllButton = ({ onClick }: CollapseAllButtonProps) => {
+const CollapseAllButton = ({ onClick, disabled }: CollapseAllButtonProps) => {
 	const theme = useThemeContext();
 	const { Collapse } = theme.icons;
 
 	return (
-		<Button leftIcon={<Collapse />} onClick={onClick}>
+		<Button leftIcon={<Collapse />} onClick={onClick} disabled={disabled}>
 			Collapse All
 		</Button>
 	);

@@ -106,8 +106,8 @@ const InteractionPanel = ({
 					setIsFiltered={setIsFiltered}
 					disabled={disabled}
 				/>
-				<ExpandAllButton setIsCollapsed={setIsCollapsed} disabled={disabled} />
-				<CollapseAllButton setIsCollapsed={setIsCollapsed} disabled={disabled} />
+				<ExpandAllButton onClick={() => setIsCollapsed(false)} disabled={disabled} />
+				<CollapseAllButton onClick={() => setIsCollapsed(true)} disabled={disabled} />
 			</div>
 			<div css={rightSectionStyles}>
 				{onVersionChange && dictionaryVersions && (

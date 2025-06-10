@@ -25,14 +25,15 @@ import { useThemeContext } from '../../theme/ThemeContext';
 
 export interface ExpandAllButtonProps {
 	onClick: () => void;
+	disabled?: boolean;
 }
 
-const ExpandAllButton = ({ onClick }: ExpandAllButtonProps) => {
+const ExpandAllButton = ({ onClick, disabled }: ExpandAllButtonProps) => {
 	const theme = useThemeContext();
 	const { Eye } = theme.icons;
 
 	return (
-		<Button leftIcon={<Eye />} onClick={onClick}>
+		<Button leftIcon={<Eye />} onClick={onClick} disabled={disabled}>
 			Expand All
 		</Button>
 	);
