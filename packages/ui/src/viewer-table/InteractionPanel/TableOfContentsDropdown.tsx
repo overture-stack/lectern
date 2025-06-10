@@ -2,7 +2,7 @@ import type { Schema } from '@overture-stack/lectern-dictionary';
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-type TableOfContentsDropdownProps = {
+export type TableOfContentsDropdownProps = {
 	schemas: Schema[];
 	onAccordionToggle: (schemaName: string, isOpen: boolean) => void;
 };
