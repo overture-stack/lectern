@@ -45,10 +45,11 @@ const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
 	justify-content: center;
 	color: ${theme.colors.accent_dark};
 	cursor: pointer;
-	${customStyles?.base}
 	&:hover {
 		background-color: ${theme.colors.grey_1};
 	}
+
+	${customStyles?.base}
 `;
 
 const DropDownItem = ({ children, action, customStyles }: DropDownItemProps) => {
