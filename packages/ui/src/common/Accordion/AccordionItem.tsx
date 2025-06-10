@@ -125,11 +125,8 @@ const DESCRIPTION_THRESHOLD = 240; // Allows for ~4-5 lines of description text 
 
 const AccordionItem = ({ data, isOpen, onClick, isDescriptionExpanded, onDescriptionToggle }: AccordionItemProps) => {
 	const contentRef = useRef<HTMLDivElement>(null);
-
 	const [height, setHeight] = useState(0);
-
 	const theme = useThemeContext();
-
 	const { iconButton, description, title, content } = data;
 	const { ChevronDown } = theme.icons;
 

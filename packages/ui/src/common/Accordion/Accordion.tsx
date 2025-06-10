@@ -38,7 +38,7 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 
 	// This state keeps track of which accordion items have expanded descriptions
 	const [descriptionExpandedStates, setDescriptionExpandedStates] = useState<boolean[]>(
-		accordionItems.map(() => false), // Initialize all descriptions as collapsed
+		accordionItems.map(() => false),
 	);
 
 	const onClick = (idx: number) => {
