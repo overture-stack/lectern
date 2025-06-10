@@ -109,8 +109,7 @@ const descriptionColumnStyle = css`
 	justify-content: center;
 `;
 
-// These constants can be adjusted based on design requirements
-const DESCRIPTION_THRESHOLD = 140;
+const DESCRIPTION_LENGTH_THRESHOLD = 140; // Chosen to display ~2-3 lines of text before truncation based on typical container width
 
 const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps) => {
 	const theme = useThemeContext();
@@ -119,11 +118,11 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 
 	// Determine if the description is long enough to need a toggle, based off of how many characters we want to show by default
 	// according to the figma styling
-	const needsToggle = description && description.length > DESCRIPTION_THRESHOLD;
+	const needsToggle = description && description.length > DESCRIPTION_LENGTH_THRESHOLD;
 	// We want to show all the text if it is not long or if it is already expanded via state variable
 	const showFull = isExpanded || !needsToggle;
 	// Based off of showFull, we determine the text to show, either its the full description or a truncated version
-	const textToShow = showFull ? description : description.slice(0, DESCRIPTION_THRESHOLD) + '... ';
+	const textToShow = showFull ? description : description.slice(0, DESCRIPTION_LENGTH_THRESHOLD) + '... ';
 
 	return (
 		<div css={containerStyle(theme)} className="dictionary-header">
