@@ -16,9 +16,9 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
 	args: {
 		accordionItems: [
-			{ title: 'Item 1', description: 'Description for item 1', content: 'Content for item 1' },
-			{ title: 'Item 2', description: 'Description for item 2', content: 'Content for item 2' },
-			{ title: 'Item 3', description: 'Description for item 3', content: 'Content for item 3' },
+			{ title: 'Item 1', openOnInit: true, description: 'Description for item 1', content: 'Content for item 1' },
+			{ title: 'Item 2', openOnInit: false, description: 'Description for item 2', content: 'Content for item 2' },
+			{ title: 'Item 3', openOnInit: false, description: 'Description for item 3', content: 'Content for item 3' },
 		],
 	},
 };

@@ -20,23 +20,27 @@ const accordionStyle = css`
  * @returns {JSX.Element} The rendered Accordion component.
  * @example
  * const accordionItems = [
- *  { title: 'Item 1', description: 'Description 1', content: 'Content for item 1' },
- *  { title: 'Item 2', description: 'Description 2', content: 'Content for item 2' },
+ *  { title: 'Item 1', description: 'Description 1', openOnInit: true, content: 'Content for item 1' },
+ *  { title: 'Item 2', description: 'Description 2', openOnInit: false, content: 'Content for item 2' },
  * ];
  * <Accordion accordionItems={accordionItems} />
  * Essentially pass in an an array of objects that are of type AccordionData, and it will render an accordion with those items.
  */
 
 const Accordion = ({ accordionItems }: AccordionProps) => {
-	const [currentIdx, setCurrentIdx] = useState(-1);
-	const btnOnClick = (idx: number) => {
-		setCurrentIdx((currentValue) => (currentValue !== idx ? idx : -1));
+	// This state keeps track of the currently open accordion item index via a boolean array, since each item can be opened or closed independently.
+	const [openStates, setOpenStates] = useState<boolean[]>(
+		accordionItems.map((accordionItem) => accordionItem.openOnInit), // Initialize with the openOnInit property of each item
+	);
+
+	const onClick = (idx: number) => {
+		setOpenStates((prev) => prev.map((isOpen, index) => (index === idx ? !isOpen : isOpen)));
 	};
 
 	return (
 		<ul css={accordionStyle}>
 			{accordionItems.map((item, idx) => (
-				<AccordionItem key={idx} data={item} isOpen={idx === currentIdx} onClick={() => btnOnClick(idx)} />
+				<AccordionItem key={idx} data={item} isOpen={openStates[idx]} onClick={() => onClick(idx)} />
 			))}
 		</ul>
 	);

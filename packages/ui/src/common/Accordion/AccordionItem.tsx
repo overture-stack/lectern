@@ -6,6 +6,7 @@ import { useThemeContext } from '../../theme/ThemeContext';
 
 export type AccordionData = {
 	title: string;
+	openOnInit: boolean;
 	description: string;
 	content: ReactNode | string;
 };
