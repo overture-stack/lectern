@@ -81,7 +81,7 @@ const DictionaryDownloadButton = ({
 	};
 
 	return (
-		<Button leftIcon={<FileDownload />} onClick={downloadDictionary} disabled={disabled || isLoading}>
+		<Button icon={<FileDownload />} onClick={downloadDictionary} disabled={disabled || isLoading}>
 			Submission Templates
 		</Button>
 	);

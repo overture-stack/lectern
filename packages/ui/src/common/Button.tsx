@@ -36,8 +36,9 @@ type ButtonProps = {
 	isAsync?: boolean;
 	className?: string;
 	isLoading?: boolean;
-	leftIcon?: ReactNode;
+	icon?: ReactNode;
 	width?: string;
+	iconOnly?: boolean;
 };
 
 const getButtonContainerStyles = (theme: any, width?: string) => css`
@@ -107,8 +108,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 			isAsync = false,
 			className,
 			isLoading: controlledLoading,
-			leftIcon,
+			icon,
 			width,
+			iconOnly = false,
 		}: ButtonProps,
 		ref,
 	) => {
@@ -130,8 +132,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				className={className}
 				css={getButtonContainerStyles(theme, width)}
 			>
-				{leftIcon && !shouldShowLoading && <span css={getIconStyles()}>{leftIcon}</span>}
-				<span css={getContentStyles(theme, shouldShowLoading)}>{children}</span>
+				{icon && !shouldShowLoading && <span css={getIconStyles()}>{icon}</span>}
+				{/* If iconOnly is true, we don't show the children */}
+				{!iconOnly && <span css={getContentStyles(theme, shouldShowLoading)}>{children}</span>}
 				<span css={getSpinnerStyles(shouldShowLoading)}>
 					<Spinner height={20} width={20} />
 				</span>
