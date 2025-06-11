@@ -29,7 +29,7 @@ const accordionItemStyle = (theme: Theme) => css`
 	&:hover {
 		box-shadow:
 			0 2px 6px rgba(0, 0, 0, 0.15),
-			0 0 0 1px ${theme.colors.black};
+			0 0 0 0.3px ${theme.colors.black};
 	}
 	transition: all 0.3s ease;
 `;
