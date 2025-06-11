@@ -21,3 +21,12 @@ export const Default: Story = {
 		fileType: 'tsv',
 	},
 };
+export const IconOnly: Story = {
+	args: {
+		version: '1.0',
+		name: 'example-dictionary',
+		lecternUrl: 'http://localhost:3031',
+		fileType: 'tsv',
+		iconOnly: true,
+	},
+};

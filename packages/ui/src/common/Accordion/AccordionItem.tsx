@@ -9,7 +9,7 @@ export type AccordionData = {
 	openOnInit: boolean;
 	description: string;
 	content: ReactNode | string;
-	iconButton?: ReactNode; // Optional icon button for additional actions
+	downloadButton: ReactNode;
 };
 type AccordionItemProps = {
 	data: AccordionData;
@@ -36,14 +36,14 @@ const accordionItemStyle = (theme: Theme) => css`
 
 const accordionItemTitleStyle = (theme: Theme) => css`
 	margin: 0;
+	width: 100%;
 	${theme.typography?.button};
 `;
 
 const accordionItemButtonStyle = (theme: Theme, isOpen: boolean) => css`
 	display: flex;
 	align-items: center;
-	justify-content: flex-start;
-	width: 100%;
+	justify-content: space-between;
 	padding: 24px 20px;
 	background-color: ${'#ffffff'};
 	color: ${theme.colors.accent_dark};
@@ -99,6 +99,9 @@ const descriptionStyle = (theme: Theme) => css`
 
 const iconButtonContainerStyle = css`
 	margin-left: auto;
+	display: flex;
+	flex-direction: row;
+	flex-shrink: 0;
 `;
 const contentInnerContainerStyle = (theme: Theme) => css`
 	display: flex;
@@ -132,7 +135,7 @@ const AccordionItem = ({ data, isOpen, onClick, isDescriptionExpanded, onDescrip
 	const contentRef = useRef<HTMLDivElement>(null);
 	const [height, setHeight] = useState(0);
 	const theme = useThemeContext();
-	const { iconButton, description, title, content } = data;
+	const { downloadButton, description, title, content } = data;
 	const { ChevronDown } = theme.icons;
 
 	// Determine if the description is long enough to need a toggle, based off of how many characters we want to show by default
@@ -183,7 +186,7 @@ const AccordionItem = ({ data, isOpen, onClick, isDescriptionExpanded, onDescrip
 							</div>
 						)}
 					</div>
-					{iconButton && <span css={iconButtonContainerStyle}>{iconButton}</span>}
+					{downloadButton && <span css={iconButtonContainerStyle}>{downloadButton}</span>}
 				</div>
 			</h2>
 			<div css={accordionItemContainerStyle(height)}>

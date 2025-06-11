@@ -1,7 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import AccordionItem, { AccordionData } from './AccordionItem';
+import DownloadTemplatesButton from '../../viewer-table/InteractionPanel/DownloadTemplatesButton';
 
 type AccordionProps = {
 	accordionItems: Array<AccordionData>;
@@ -31,14 +32,28 @@ const accordionStyle = css`
  */
 
 const Accordion = ({ accordionItems }: AccordionProps) => {
+	const accordionItemsWithButtons = useMemo(() => {
+		return accordionItems.map((item) => ({
+			...item,
+			downloadButton: (
+				<DownloadTemplatesButton
+					version={'1.0'}
+					name={'example-dictionary'}
+					lecternUrl="http://localhost:3031"
+					disabled={false}
+					iconOnly={true}
+				/>
+			),
+		}));
+	}, [accordionItems]);
+
 	// This state keeps track of the currently open accordion item index via a boolean array, since each item can be opened or closed independently.
 	const [openStates, setOpenStates] = useState<boolean[]>(
-		accordionItems.map((accordionItem) => accordionItem.openOnInit), // Initialize with the openOnInit property of each item
+		accordionItemsWithButtons.map((accordionItem) => accordionItem.openOnInit), // Initialize with the openOnInit property of each item
 	);
-
 	// This state keeps track of which accordion items have expanded descriptions
 	const [descriptionExpandedStates, setDescriptionExpandedStates] = useState<boolean[]>(
-		accordionItems.map(() => false),
+		accordionItemsWithButtons.map(() => false),
 	);
 
 	const onClick = (idx: number) => {
@@ -51,7 +66,7 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 
 	return (
 		<ul css={accordionStyle}>
-			{accordionItems.map((item, idx) => (
+			{accordionItemsWithButtons.map((item, idx) => (
 				<AccordionItem
 					key={idx}
 					data={item}

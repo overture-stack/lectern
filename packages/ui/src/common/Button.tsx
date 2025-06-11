@@ -22,7 +22,7 @@
 /** @jsxImportSource @emotion/react */
 // This is a slightly refactored version of the stage button
 import React, { ReactNode } from 'react';
-import { css } from '@emotion/react';
+import { css, SerializedStyles } from '@emotion/react';
 
 import { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
@@ -30,6 +30,7 @@ import { useThemeContext } from '../theme/ThemeContext';
 type ButtonProps = {
 	children?: ReactNode;
 	disabled?: boolean;
+	styleOverride?: SerializedStyles;
 	onClick?: (
 		e: React.SyntheticEvent<HTMLButtonElement>,
 	) => any | ((e: React.SyntheticEvent<HTMLButtonElement>) => Promise<any>);
@@ -41,7 +42,7 @@ type ButtonProps = {
 	iconOnly?: boolean;
 };
 
-const getButtonContainerStyles = (theme: any, width?: string) => css`
+const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: SerializedStyles) => css`
 	display: flex;
 	flex-wrap: nowrap;
 	align-items: center;
@@ -68,6 +69,7 @@ const getButtonContainerStyles = (theme: any, width?: string) => css`
 		cursor: not-allowed;
 		opacity: 0.7;
 	}
+	${styleOverride}
 `;
 
 const getContentStyles = (theme: Theme, shouldShowLoading: boolean) => css`
@@ -111,6 +113,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 			icon,
 			width,
 			iconOnly = false,
+			styleOverride,
 		}: ButtonProps,
 		ref,
 	) => {
@@ -130,7 +133,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				onClick={isAsync ? handleClick : onClick}
 				disabled={disabled || shouldShowLoading}
 				className={className}
-				css={getButtonContainerStyles(theme, width)}
+				css={getButtonContainerStyles(theme, width, styleOverride)}
 			>
 				{icon && !shouldShowLoading && <span css={getIconStyles()}>{icon}</span>}
 				{/* If iconOnly is true, we don't show the children */}
