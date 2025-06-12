@@ -1,0 +1,35 @@
+{
+	"name": "Advanced",
+	"version": "1.0",
+	"schemas": [
+		{
+			"name": "empty",
+			"description": "An empty schema with no fields.",
+			"fields": []
+		},
+		{
+			"name": "single_field",
+			"description": "A schema with a single field of type string.",
+			"fields": [{ "name": "single_string_field", "valueType": "string" }]
+		},
+		{
+			"name": "multiple_fields",
+			"description": "A schema with multiple fields of different types.",
+			"fields": [
+				{ "name": "string_field", "valueType": "string" },
+				{ "name": "integer_field", "valueType": "integer" },
+				{ "name": "boolean_field", "valueType": "boolean" }
+			]
+		},
+		{
+			"name": "primitives",
+			"description": "Includes one field of each primitive type without any restrictions. No Frills.",
+			"fields": [
+				{ "name": "boolean_field", "valueType": "boolean" },
+				{ "name": "integer_field", "valueType": "integer" },
+				{ "name": "number_field", "valueType": "number" },
+				{ "name": "string_field", "valueType": "string" }
+			]
+		}
+	]
+}
