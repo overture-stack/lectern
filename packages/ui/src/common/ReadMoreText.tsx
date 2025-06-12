@@ -25,7 +25,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
 
-type ReadMoreTextProps = {
+export type ReadMoreTextProps = {
 	children: ReactNode;
 	maxLines?: number;
 	wrapperStyle?: (theme: Theme) => any;

@@ -3,7 +3,6 @@ import { css } from '@emotion/react';
 import { useState, useMemo } from 'react';
 import AccordionItem, { AccordionData } from './AccordionItem';
 import DownloadTemplatesButton from '../../viewer-table/InteractionPanel/DownloadTemplatesButton';
-import { use } from 'chai';
 
 type AccordionProps = {
 	accordionItems: Array<AccordionData>;
@@ -75,10 +74,10 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 				setCopySuccess(false);
 				setIsCopying(false);
 			});
-		setClipboardContents(text);
-		console.log('Copied to clipboard:', text);
 		if (copySuccess) {
-			//do stuff
+			// Update the clipboard contents
+			const currentURL = window.location.href;
+			setClipboardContents(currentURL);
 		}
 		setCopySuccess(false);
 	};
@@ -93,7 +92,7 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 	const [openStates, setOpenStates] = useState<boolean[]>(
 		accordionItemsWithButtons.map((accordionItem) => accordionItem.openOnInit), // Initialize with the openOnInit property of each item
 	);
-	// This state keeps track of which accordion items have expanded descriptions
+	// This state keeps track of which accordion items are open
 	const onClick = (idx: number) => {
 		setOpenStates((prev) => prev.map((isOpen, index) => (index === idx ? !isOpen : isOpen)));
 	};
@@ -102,8 +101,10 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 		<ul css={accordionStyle}>
 			{accordionItemsWithButtons.map((item, idx) => (
 				<AccordionItem
+					index={idx}
 					key={idx}
 					data={item}
+					setIsOpen={(index) => onClick(index)}
 					isOpen={openStates[idx]}
 					onClick={() => onClick(idx)}
 					setClipboardContents={setClipboardContents}

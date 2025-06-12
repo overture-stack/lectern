@@ -22,6 +22,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import type { ReactNode } from 'react';
+import { useEffect } from 'react';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import ReadMoreText from '../ReadMoreText';
@@ -41,6 +42,8 @@ export type AccordionItemProps = {
 	data: AccordionData;
 	isOpen: boolean;
 	onClick: () => void;
+	index: number; // Index of the accordion item, used for accessibility and unique identification to avoid the issue with duplicates
+	setIsOpen: (index: number) => void;
 };
 
 const accordionItemStyle = (theme: Theme) => css`
@@ -134,19 +137,33 @@ const contentInnerContainerStyle = (theme: Theme) => css`
 	${theme.typography?.data};
 `;
 
-const AccordionItem = ({ data, isOpen, onClick, setClipboardContents }: AccordionItemProps) => {
+const AccordionItem = ({ index, data, isOpen, onClick, setClipboardContents, setIsOpen }: AccordionItemProps) => {
 	const theme = useThemeContext();
 	const { downloadButton, description, title, content } = data;
 	const { ChevronDown, Hash } = theme.icons;
+	useEffect(() => {
+		if (window.location.hash === `#${index}`) {
+			if (!data.openOnInit) {
+				setIsOpen(index);
+			}
+			document.getElementById(index.toString())?.scrollIntoView({ behavior: 'smooth' });
+		}
+	}, []);
 	return (
-		<li css={accordionItemStyle(theme)} id={data.title}>
+		<li css={accordionItemStyle(theme)} id={index.toString()}>
 			<h2 css={accordionItemTitleStyle}>
 				<div css={accordionItemButtonStyle(theme)} onClick={onClick}>
 					<ChevronDown fill={theme.colors.accent_dark} width={16} height={16} style={chevronStyle(isOpen)} />
 					<div css={contentContainerStyle}>
 						<span css={titleStyle}>
 							{title}
-							<span css={hashIconStyle(theme)} onClick={() => setClipboardContents(data.title)}>
+							<span
+								css={hashIconStyle(theme)}
+								onClick={() => {
+									window.location.hash = `#${index}`;
+									setClipboardContents(window.location.href);
+								}}
+							>
 								<Hash width={20} height={20} fill={theme.colors.secondary} />
 							</span>
 						</span>
