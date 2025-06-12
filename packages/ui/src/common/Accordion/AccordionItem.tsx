@@ -78,6 +78,7 @@ const contentContainerStyle = css`
 	gap: 16px;
 	flex: 1;
 	min-width: 0;
+	flex-wrap: wrap;
 	max-width: calc(100% - 100px);
 `;
 
