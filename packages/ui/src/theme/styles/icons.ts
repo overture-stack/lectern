@@ -6,6 +6,7 @@ import FileDownload from '../icons/FileDownload';
 import List from '../icons/List';
 import ListFilter from '../icons/ListFilter';
 import History from '../icons/History';
+import Hash from '../icons/Hash';
 export default {
 	ChevronDown,
 	Spinner,
@@ -15,4 +16,5 @@ export default {
 	List,
 	ListFilter,
 	History,
+	Hash,
 };

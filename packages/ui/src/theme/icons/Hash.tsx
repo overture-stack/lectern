@@ -31,8 +31,8 @@ const Hash = ({ fill, width, height, style }: IconProps) => {
 			height={height || '24'}
 			viewBox="0 0 24 24"
 			css={style}
-			fill={fill || 'none'}
-			stroke="currentColor"
+			stroke={fill || 'currentColor'}
+			fill="none"
 			strokeWidth="2"
 			strokeLinecap="round"
 			strokeLinejoin="round"

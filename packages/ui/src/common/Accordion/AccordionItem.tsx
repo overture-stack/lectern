@@ -84,7 +84,19 @@ const contentContainerStyle = css`
 const titleStyle = (theme: Theme) => css`
 	${theme.typography?.subheading2};
 	color: ${theme.colors?.accent_dark};
-	margin: 0;
+	display: inline-flex;
+	align-items: center;
+`;
+
+const hashIconStyle = (theme: Theme) => css`
+	opacity: 0;
+	margin-left: 8px;
+	transition: opacity 0.2s ease;
+	border-bottom: 2px solid ${theme.colors?.secondary};
+
+	&:hover {
+		opacity: 1;
+	}
 `;
 
 const descriptionStyle = (theme: Theme) => css`
@@ -136,7 +148,7 @@ const AccordionItem = ({ data, isOpen, onClick, isDescriptionExpanded, onDescrip
 	const [height, setHeight] = useState(0);
 	const theme = useThemeContext();
 	const { downloadButton, description, title, content } = data;
-	const { ChevronDown } = theme.icons;
+	const { ChevronDown, Hash } = theme.icons;
 
 	// Determine if the description is long enough to need a toggle, based off of how many characters we want to show by default
 	// according to the figma styling
@@ -167,23 +179,30 @@ const AccordionItem = ({ data, isOpen, onClick, isDescriptionExpanded, onDescrip
 				<div css={accordionItemButtonStyle(theme, isOpen)} onClick={onClick}>
 					<ChevronDown fill={theme.colors?.accent_dark} width={16} height={16} style={chevronStyle(isOpen)} />
 					<div css={contentContainerStyle}>
-						<span css={titleStyle(theme)}>{title}</span>
+						<span css={titleStyle(theme)}>
+							{title}
+							<span css={hashIconStyle(theme)}>
+								<Hash width={20} height={20} fill={theme.colors?.secondary} />
+							</span>
+						</span>
 						{description && (
-							<div>
-								<span css={descriptionStyle(theme)}>{textToShow}</span>
-								{needsToggle && (
-									<span css={linkStyle(theme)} onClick={(e) => showMoreEventHandler(e)}>
-										{' '}
-										{isDescriptionExpanded ? 'Read less' : 'Show more'}
-										<ChevronDown
-											style={getChevronStyle(isDescriptionExpanded)}
-											fill={theme.colors?.accent_dark}
-											width={10}
-											height={10}
-										/>
-									</span>
-								)}
-							</div>
+							<>
+								<span css={descriptionStyle(theme)}>
+									{textToShow}
+									{needsToggle && (
+										<span css={linkStyle(theme)} onClick={(e) => showMoreEventHandler(e)}>
+											{' '}
+											{isDescriptionExpanded ? 'Read less' : 'Show more'}
+											<ChevronDown
+												style={getChevronStyle(isDescriptionExpanded)}
+												fill={theme.colors?.accent_dark}
+												width={10}
+												height={10}
+											/>
+										</span>
+									)}
+								</span>
+							</>
 						)}
 					</div>
 					{downloadButton && <span css={iconButtonContainerStyle}>{downloadButton}</span>}
