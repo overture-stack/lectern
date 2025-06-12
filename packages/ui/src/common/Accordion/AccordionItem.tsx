@@ -159,7 +159,6 @@ const AccordionItem = ({ data, isOpen, onClick }: AccordionItemProps) => {
 					{downloadButton}
 				</div>
 			</h2>
-
 			<div css={accordionCollapseStyle(isOpen)}>
 				<div css={accordionItemContentStyle(theme)}>
 					<div css={contentInnerContainerStyle(theme)}>{content}</div>
