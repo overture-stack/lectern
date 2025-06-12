@@ -21,17 +21,17 @@ const schemas: Schema[] = Dictionary.schemas as Schema[];
 
 // Mock functions for the story just to demonstrate interaction
 
-const onAccordionToggle = (schemaName: string, isOpen: boolean) => {
-	alert(`Accordion has been toggled for the following schema: ${schemaName}`);
+const onAccordionToggle = (schemaIndex: number) => {
+	alert(`Accordion has been toggled for the following schema: ${schemas[schemaIndex].name}`);
 };
 
 export const Default: Story = {
 	args: {
 		schemas: schemas,
-		onAccordionToggle,
+		onSelect: onAccordionToggle,
 	},
 };
 
 export const Empty: Story = {
-	args: { schemas: [], onAccordionToggle },
+	args: { schemas: [], onSelect: onAccordionToggle },
 };
