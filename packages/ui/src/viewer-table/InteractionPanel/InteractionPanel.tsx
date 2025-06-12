@@ -43,7 +43,7 @@ type InteractionPanelProps = {
 	setIsCollapsed: (isCollapsed: boolean) => void;
 	setFilteredData: (dict: Dictionary) => void;
 	setIsFiltered: (bool: boolean) => void;
-	onAccordionToggle: (schemaName: string, isOpen: boolean) => void;
+	onAccordionToggle: (schemaIndex: number) => void;
 	onVersionChange?: (version: number) => void;
 	dictionaryVersions?: Dictionary[];
 	currentVersionIndex?: number;
@@ -98,7 +98,7 @@ const InteractionPanel = ({
 	return (
 		<div css={panelStyles}>
 			<div css={leftSectionStyles}>
-				<TableOfContentsDropdown schemas={schemas} onAccordionToggle={onAccordionToggle} disabled={disabled} />
+				<TableOfContentsDropdown schemas={schemas} onSelect={onAccordionToggle} disabled={disabled} />
 				<AttributeFilterDropdown
 					data={dictionary}
 					isFiltered={isFiltered}

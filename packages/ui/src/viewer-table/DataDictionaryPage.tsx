@@ -76,11 +76,15 @@ const DataDictionaryPage = ({
 		return initialStates;
 	});
 
-	const handleAccordionToggle = (schemaName: string, isOpen: boolean) => {
-		setAccordionStates((prev) => ({
-			...prev,
-			[schemaName]: isOpen,
-		}));
+	const handleAccordionToggle = (schemaIndex: number) => {
+		const schema = filteredData.schemas[schemaIndex];
+		if (schema) {
+			// Open the accordion for this schema
+			setAccordionStates((prev) => ({
+				...prev,
+				[schema.name]: true,
+			}));
+		}
 	};
 
 	// Handle expand/collapse all
