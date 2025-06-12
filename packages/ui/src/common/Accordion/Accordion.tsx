@@ -32,7 +32,7 @@ const accordionStyle = css`
  */
 
 const Accordion = ({ accordionItems }: AccordionProps) => {
-	//Some random buttons that we want to add to the accordion items, we will actually need to figure out some schema filtering logic,
+	//TODO: Some random buttons that we want to add to the accordion items, we will actually need to figure out some schema filtering logic,
 	// and download based on that, but for now we just add a button to each item.
 	const accordionItemsWithButtons = useMemo(() => {
 		return accordionItems.map((item) => ({
