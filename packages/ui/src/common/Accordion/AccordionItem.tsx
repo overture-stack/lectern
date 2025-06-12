@@ -1,8 +1,30 @@
+/*
+ *
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ *  This program and the accompanying materials are made available under the terms of
+ *  the GNU Affero General Public License v3.0. You should have received a copy of the
+ *  GNU Affero General Public License along with this program.
+ *   If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ *  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ *  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
+import ReadMoreText from '../ReadMoreText';
 
 export type AccordionData = {
 	title: string;
@@ -11,12 +33,11 @@ export type AccordionData = {
 	content: ReactNode | string;
 	downloadButton?: ReactNode;
 };
+
 type AccordionItemProps = {
 	data: AccordionData;
 	isOpen: boolean;
 	onClick: () => void;
-	isDescriptionExpanded: boolean;
-	onDescriptionToggle: () => void;
 };
 
 const accordionItemStyle = (theme: Theme) => css`
@@ -45,7 +66,7 @@ const accordionItemButtonStyle = (theme: Theme, isOpen: boolean) => css`
 	align-items: center;
 	justify-content: space-between;
 	padding: 24px 20px;
-	background-color: ${'#ffffff'};
+	background-color: #ffffff;
 	color: ${theme.colors.accent_dark};
 	cursor: pointer;
 	transition: all 0.2s ease;
@@ -83,7 +104,7 @@ const contentContainerStyle = css`
 `;
 
 const titleStyle = (theme: Theme) => css`
-	color: ${theme.colors?.accent_dark};
+	color: ${theme.colors.accent_dark};
 	display: flex;
 	align-items: center;
 `;
@@ -92,82 +113,36 @@ const hashIconStyle = (theme: Theme) => css`
 	opacity: 0;
 	margin-left: 8px;
 	transition: opacity 0.2s ease;
-	border-bottom: 2px solid ${theme.colors?.secondary};
+	border-bottom: 2px solid ${theme.colors.secondary};
 
 	&:hover {
 		opacity: 1;
 	}
 `;
 
-const descriptionStyle = (theme: Theme) => css`
+const descriptionWrapperStyle = (theme: Theme) => css`
 	${theme.typography?.label2};
-	color: ${theme.colors?.grey_5};
+	color: ${theme.colors.grey_5};
 	padding: 4px 8px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 `;
 
-const iconButtonContainerStyle = css`
-	margin-left: auto;
-	display: flex;
-	flex-direction: row;
-	flex-shrink: 0;
-`;
-const contentInnerContainerStyle = (theme: Theme) => css`
-	display: flex;
-	padding: 30px;
-	border-left: 1px solid ${theme.colors.grey_3};
-	height: fit-content;
+const contentTextStyle = (theme: Theme) => css`
 	${theme.typography?.data};
+	color: ${theme.colors.grey_5};
 `;
 
-const getChevronStyle = (isExpanded: boolean) => css`
-	margin-left: 4px;
-	${isExpanded && `transform: rotate(180deg);`}
-`;
-
-const linkStyle = (theme: Theme) => css`
-	${theme.typography?.label2}
-	color: ${theme.colors?.accent_dark};
-	cursor: pointer;
-	display: inline-flex;
-	align-items: center;
-
-	&:hover {
-		text-decoration: underline;
-	}
-`;
-
-// These constants can be adjusted based on design requirements
-const DESCRIPTION_THRESHOLD = 240; // Allows for ~4-5 lines of description text in accordion items
-
-const AccordionItem = ({ data, isOpen, onClick, isDescriptionExpanded, onDescriptionToggle }: AccordionItemProps) => {
+const AccordionItem = ({ data, isOpen, onClick }: AccordionItemProps) => {
 	const contentRef = useRef<HTMLDivElement>(null);
 	const [height, setHeight] = useState(0);
 	const theme = useThemeContext();
 	const { downloadButton, description, title, content } = data;
 	const { ChevronDown, Hash } = theme.icons;
 
-	// Determine if the description is long enough to need a toggle, based off of how many characters we want to show by default
-	// according to the figma styling
-	const needsToggle = description && description.length > DESCRIPTION_THRESHOLD;
-	// We want to show all the text if it is not long or if it is already expanded via state variable
-	const showFull = isDescriptionExpanded || !needsToggle;
-	// Based off of showFull, we determine the text to show, either its the full description or a truncated version
-	const textToShow = showFull ? description : description.slice(0, DESCRIPTION_THRESHOLD) + '... ';
-
-	const showMoreEventHandler = (e: React.MouseEvent) => {
-		e.stopPropagation();
-		onDescriptionToggle();
-	};
 	useEffect(() => {
-		if (isOpen) {
-			const contentEl = contentRef.current;
-			if (contentEl) {
-				setHeight(contentEl.scrollHeight);
-			}
-		} else {
-			setHeight(0);
+		if (contentRef.current) {
+			setHeight(isOpen ? contentRef.current.scrollHeight : 0);
 		}
 	}, [isOpen]);
 
@@ -175,43 +150,27 @@ const AccordionItem = ({ data, isOpen, onClick, isDescriptionExpanded, onDescrip
 		<li css={accordionItemStyle(theme)}>
 			<h2 css={accordionItemTitleStyle(theme)}>
 				<div css={accordionItemButtonStyle(theme, isOpen)} onClick={onClick}>
-					<ChevronDown fill={theme.colors?.accent_dark} width={16} height={16} style={chevronStyle(isOpen)} />
+					<ChevronDown fill={theme.colors.accent_dark} width={16} height={16} style={chevronStyle(isOpen)} />
 					<div css={contentContainerStyle}>
 						<span css={titleStyle(theme)}>
 							{title}
 							<span css={hashIconStyle(theme)}>
-								<Hash width={20} height={20} fill={theme.colors?.secondary} />
+								<Hash width={20} height={20} fill={theme.colors.secondary} />
 							</span>
 						</span>
-						{description && (
-							<>
-								<span css={descriptionStyle(theme)}>
-									{textToShow}
-									{needsToggle && (
-										<span css={linkStyle(theme)} onClick={(e) => showMoreEventHandler(e)}>
-											{' '}
-											{isDescriptionExpanded ? 'Read less' : 'Show more'}
-											<ChevronDown
-												style={getChevronStyle(isDescriptionExpanded)}
-												fill={theme.colors?.accent_dark}
-												width={10}
-												height={10}
-											/>
-										</span>
-									)}
-								</span>
-							</>
-						)}
+						{description && <ReadMoreText wrapperStyle={descriptionWrapperStyle}>{description}</ReadMoreText>}
 					</div>
-					{downloadButton && <span css={iconButtonContainerStyle}>{downloadButton}</span>}
+					{downloadButton && <span>{downloadButton}</span>}
 				</div>
 			</h2>
+
 			<div css={accordionItemContainerStyle(height)}>
 				<div ref={contentRef} css={accordionItemContentStyle(theme)}>
-					<div css={contentInnerContainerStyle(theme)}>{content}</div>
+					<div css={contentTextStyle(theme)}>{content}</div>
 				</div>
 			</div>
 		</li>
 	);
 };
+
 export default AccordionItem;
