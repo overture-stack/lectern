@@ -37,6 +37,7 @@ export type AccordionData = {
 };
 
 export type AccordionItemProps = {
+	setClipboardContents: (currentSchema: string) => void;
 	data: AccordionData;
 	isOpen: boolean;
 	onClick: () => void;
@@ -133,20 +134,19 @@ const contentInnerContainerStyle = (theme: Theme) => css`
 	${theme.typography?.data};
 `;
 
-const AccordionItem = ({ data, isOpen, onClick }: AccordionItemProps) => {
+const AccordionItem = ({ data, isOpen, onClick, setClipboardContents }: AccordionItemProps) => {
 	const theme = useThemeContext();
 	const { downloadButton, description, title, content } = data;
 	const { ChevronDown, Hash } = theme.icons;
-
 	return (
-		<li css={accordionItemStyle(theme)}>
+		<li css={accordionItemStyle(theme)} id={data.title}>
 			<h2 css={accordionItemTitleStyle}>
 				<div css={accordionItemButtonStyle(theme)} onClick={onClick}>
 					<ChevronDown fill={theme.colors.accent_dark} width={16} height={16} style={chevronStyle(isOpen)} />
 					<div css={contentContainerStyle}>
 						<span css={titleStyle}>
 							{title}
-							<span css={hashIconStyle(theme)}>
+							<span css={hashIconStyle(theme)} onClick={() => setClipboardContents(data.title)}>
 								<Hash width={20} height={20} fill={theme.colors.secondary} />
 							</span>
 						</span>
