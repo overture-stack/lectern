@@ -21,10 +21,12 @@
 
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import ReadMoreText from '../ReadMoreText';
+
+const MAX_LINES_BEFORE_EXPAND = 2;
 
 export type AccordionData = {
 	title: string;
@@ -34,7 +36,7 @@ export type AccordionData = {
 	downloadButton?: ReactNode;
 };
 
-type AccordionItemProps = {
+export type AccordionItemProps = {
 	data: AccordionData;
 	isOpen: boolean;
 	onClick: () => void;
@@ -81,17 +83,6 @@ const chevronStyle = (isOpen: boolean) => css`
 	flex-shrink: 0;
 `;
 
-const accordionItemContainerStyle = (height: number) => css`
-	height: ${height}px;
-	overflow: hidden;
-	transition: height 0.3s ease;
-`;
-
-const accordionItemContentStyle = (theme: Theme) => css`
-	padding: 30px;
-	background-color: #ffffff;
-`;
-
 const contentContainerStyle = css`
 	display: flex;
 	flex-direction: row;
@@ -114,7 +105,6 @@ const hashIconStyle = (theme: Theme) => css`
 	margin-left: 8px;
 	transition: opacity 0.2s ease;
 	border-bottom: 2px solid ${theme.colors.secondary};
-
 	&:hover {
 		opacity: 1;
 	}
@@ -128,29 +118,35 @@ const descriptionWrapperStyle = (theme: Theme) => css`
 	overflow-wrap: break-word;
 `;
 
-const contentTextStyle = (theme: Theme) => css`
+const accordionCollapseStyle = (isOpen: boolean) => css`
+	overflow: hidden;
+	max-height: ${isOpen ? '800px' : '0px'};
+	transition: max-height 0.3s ease;
+`;
+
+const accordionItemContentStyle = (theme: Theme) => css`
+	padding: 30px;
+	background-color: #ffffff;
+`;
+
+const contentInnerContainerStyle = (theme: Theme) => css`
+	display: flex;
+	padding: 30px;
+	border-left: 1px solid ${theme.colors.grey_3};
 	${theme.typography?.data};
-	color: ${theme.colors.grey_5};
 `;
 
 const AccordionItem = ({ data, isOpen, onClick }: AccordionItemProps) => {
-	const contentRef = useRef<HTMLDivElement>(null);
-	const [height, setHeight] = useState(0);
 	const theme = useThemeContext();
 	const { downloadButton, description, title, content } = data;
 	const { ChevronDown, Hash } = theme.icons;
-
-	useEffect(() => {
-		if (contentRef.current) {
-			setHeight(isOpen ? contentRef.current.scrollHeight : 0);
-		}
-	}, [isOpen]);
 
 	return (
 		<li css={accordionItemStyle(theme)}>
 			<h2 css={accordionItemTitleStyle(theme)}>
 				<div css={accordionItemButtonStyle(theme, isOpen)} onClick={onClick}>
 					<ChevronDown fill={theme.colors.accent_dark} width={16} height={16} style={chevronStyle(isOpen)} />
+
 					<div css={contentContainerStyle}>
 						<span css={titleStyle(theme)}>
 							{title}
@@ -158,15 +154,21 @@ const AccordionItem = ({ data, isOpen, onClick }: AccordionItemProps) => {
 								<Hash width={20} height={20} fill={theme.colors.secondary} />
 							</span>
 						</span>
-						{description && <ReadMoreText wrapperStyle={descriptionWrapperStyle}>{description}</ReadMoreText>}
+
+						{description && (
+							<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle}>
+								{description}
+							</ReadMoreText>
+						)}
 					</div>
+
 					{downloadButton && <span>{downloadButton}</span>}
 				</div>
 			</h2>
 
-			<div css={accordionItemContainerStyle(height)}>
-				<div ref={contentRef} css={accordionItemContentStyle(theme)}>
-					<div css={contentTextStyle(theme)}>{content}</div>
+			<div css={accordionCollapseStyle(isOpen)}>
+				<div css={accordionItemContentStyle(theme)}>
+					<div css={contentInnerContainerStyle(theme)}>{content}</div>
 				</div>
 			</div>
 		</li>
