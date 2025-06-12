@@ -57,13 +57,12 @@ const accordionItemStyle = (theme: Theme) => css`
 	transition: all 0.3s ease;
 `;
 
-const accordionItemTitleStyle = (theme: Theme) => css`
+const accordionItemTitleStyle = css`
 	margin: 0;
 	width: 100%;
-	${theme.typography?.button};
 `;
 
-const accordionItemButtonStyle = (theme: Theme, isOpen: boolean) => css`
+const accordionItemButtonStyle = (theme: Theme) => css`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -94,8 +93,7 @@ const contentContainerStyle = css`
 	max-width: calc(100% - 100px);
 `;
 
-const titleStyle = (theme: Theme) => css`
-	color: ${theme.colors.accent_dark};
+const titleStyle = css`
 	display: flex;
 	align-items: center;
 `;
@@ -130,9 +128,8 @@ const accordionItemContentStyle = (theme: Theme) => css`
 `;
 
 const contentInnerContainerStyle = (theme: Theme) => css`
-	display: flex;
-	padding: 30px;
 	border-left: 1px solid ${theme.colors.grey_3};
+	padding-left: 30px;
 	${theme.typography?.data};
 `;
 
@@ -143,26 +140,23 @@ const AccordionItem = ({ data, isOpen, onClick }: AccordionItemProps) => {
 
 	return (
 		<li css={accordionItemStyle(theme)}>
-			<h2 css={accordionItemTitleStyle(theme)}>
-				<div css={accordionItemButtonStyle(theme, isOpen)} onClick={onClick}>
+			<h2 css={accordionItemTitleStyle}>
+				<div css={accordionItemButtonStyle(theme)} onClick={onClick}>
 					<ChevronDown fill={theme.colors.accent_dark} width={16} height={16} style={chevronStyle(isOpen)} />
-
 					<div css={contentContainerStyle}>
-						<span css={titleStyle(theme)}>
+						<span css={titleStyle}>
 							{title}
 							<span css={hashIconStyle(theme)}>
 								<Hash width={20} height={20} fill={theme.colors.secondary} />
 							</span>
 						</span>
-
 						{description && (
 							<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle}>
 								{description}
 							</ReadMoreText>
 						)}
 					</div>
-
-					{downloadButton && <span>{downloadButton}</span>}
+					{downloadButton}
 				</div>
 			</h2>
 
