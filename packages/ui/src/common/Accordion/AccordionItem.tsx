@@ -83,9 +83,8 @@ const contentContainerStyle = css`
 `;
 
 const titleStyle = (theme: Theme) => css`
-	${theme.typography?.subheading2};
 	color: ${theme.colors?.accent_dark};
-	display: inline-flex;
+	display: flex;
 	align-items: center;
 `;
 
@@ -106,8 +105,6 @@ const descriptionStyle = (theme: Theme) => css`
 	padding: 4px 8px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
-	flex: 1;
-	max-width: 60%;
 `;
 
 const iconButtonContainerStyle = css`
