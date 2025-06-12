@@ -9,7 +9,7 @@ export type AccordionData = {
 	openOnInit: boolean;
 	description: string;
 	content: ReactNode | string;
-	downloadButton: ReactNode;
+	downloadButton?: ReactNode;
 };
 type AccordionItemProps = {
 	data: AccordionData;
