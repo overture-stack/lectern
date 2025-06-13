@@ -23,27 +23,27 @@ import type { Schema } from '@overture-stack/lectern-dictionary';
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-type TableOfContentsDropdownProps = {
+export type TableOfContentsDropdownProps = {
 	schemas: Schema[];
-	onAccordionToggle: (schemaName: string, isOpen: boolean) => void;
+	onSelect: (schemaIndex: number) => void;
 	disabled?: boolean;
 };
 
-const TableOfContentsDropdown = ({ schemas, onAccordionToggle, disabled = false }: TableOfContentsDropdownProps) => {
+const TableOfContentsDropdown = ({ schemas, onSelect, disabled }: TableOfContentsDropdownProps) => {
 	const theme = useThemeContext();
 	const { List } = theme.icons;
-	const handleAction = (schema: Schema) => {
-		const anchorId = `${schema.name}`;
-		onAccordionToggle(schema.name, true); // Ensuring that the accordion for the associated schema is open, via the state handler that will be defined in parent component
+	const handleAction = (index: number) => {
+		const anchorId = `#${index}`;
+		onSelect(index);
 		setTimeout(() => {
 			window.location.hash = anchorId;
 		}, 100);
 	};
 
-	const menuItemsFromSchemas = schemas.map((schema) => ({
+	const menuItemsFromSchemas = schemas.map((schema, index) => ({
 		label: schema.name,
 		action: () => {
-			handleAction(schema);
+			handleAction(index);
 		},
 	}));
 
