@@ -28,27 +28,17 @@ import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import AttributeFilterDropdown, { FilterMapping } from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
-import DictionaryVersionSwitcher from './DictionaryVersionSwitcher';
+import DictionaryVersionSwitcher, { DictionaryConfig } from './DictionaryVersionSwitcher';
 import DownloadTemplatesButton from './DownloadTemplatesButton';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
 
 type InteractionPanelProps = {
-	schemas: Schema[];
-	dictionary: Dictionary;
-	filteredData: Dictionary;
 	disabled?: boolean;
-	isFiltered: boolean;
-	version: string;
-	name: string;
-	lecternUrl: string;
 	setIsCollapsed: (isCollapsed: boolean) => void;
-	setFilteredData: (dict: Dictionary) => void;
-	setIsFiltered: (bool: boolean) => void;
 	onSelect: (schemaNameIndex: number) => void;
-	onVersionChange?: (version: number) => void;
-	dictionaryVersions?: Dictionary[];
-	currentVersionIndex?: number;
+	currDictionary: DictionaryConfig;
+	setFilters: (filters: FilterMapping) => void;
 };
 
 const panelStyles = (theme: Theme) => css`
@@ -78,37 +68,30 @@ const rightSectionStyles = css`
 	gap: 16px;
 `;
 const InteractionPanel = ({
-	schemas,
 	disabled = false,
-	version,
-	name,
-	lecternUrl,
 	setIsCollapsed,
 	onSelect,
-	onVersionChange,
-	dictionaryVersions,
-	currentVersionIndex = 0,
+	currDictionary,
+	setFilters,
 }: InteractionPanelProps) => {
-	const theme = useThemeContext();
-	const [filters, setFilters] = useState<FilterMapping>({ active: false, constraints: [] });
+	const theme: Theme = useThemeContext();
+	const currDict: Dictionary = currDictionary.dictionaryData[currDictionary.dictionaryIndex];
 	return (
 		<div css={panelStyles(theme)}>
 			<div css={leftSectionStyles}>
-				<TableOfContentsDropdown schemas={schemas} onSelect={onSelect} disabled={disabled} />
-				<AttributeFilterDropdown filters={filters} setFilters={setFilters} disabled={disabled} />
+				<TableOfContentsDropdown schemas={currDict.schemas} onSelect={onSelect} disabled={disabled} />
+				<AttributeFilterDropdown filters={currDictionary.filters} setFilters={setFilters} disabled={disabled} />
 				<ExpandAllButton onClick={() => setIsCollapsed(true)} disabled={disabled} />
 				<CollapseAllButton onClick={() => setIsCollapsed(false)} disabled={disabled} />
 			</div>
 			<div css={rightSectionStyles}>
-				{onVersionChange && dictionaryVersions && (
-					<DictionaryVersionSwitcher
-						dictionaryData={dictionaryVersions}
-						dictionaryIndex={currentVersionIndex}
-						onVersionChange={onVersionChange}
-						disabled={disabled}
-					/>
-				)}
-				<DownloadTemplatesButton version={version} name={name} lecternUrl={lecternUrl} disabled={disabled} />
+				<DictionaryVersionSwitcher config={currDictionary} disabled={disabled} />
+				<DownloadTemplatesButton
+					version={currDict.version}
+					name={currDict.name}
+					lecternUrl={currDictionary.lecternUrl}
+					disabled={disabled}
+				/>
 			</div>
 		</div>
 	);
