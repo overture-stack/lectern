@@ -27,28 +27,26 @@ import DropDownItem from './DropdownItem';
 import { useThemeContext } from '../../theme/ThemeContext';
 import type { Theme } from '../../theme';
 
-const dropdownButtonStyle = (theme: Theme, width?: string) => css`
+const dropdownButtonStyle = (theme: Theme, width?: string, disabled?: boolean) => css`
 	display: flex;
 	flex-wrap: nowrap;
+	white-space: nowrap;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: center;
 	gap: 11px;
-	min-width: ${width || '200px'};
-	max-width: 400px;
-	width: 100%;
-	padding: 8px;
+	width: ${width || 'auto'};
+	min-width: fit-content;
+	padding: 8px 16px;
 	background-color: #f7f7f7;
-	color: ${theme.colors.black};
+	color: ${theme.colors.accent_dark};
 	border: 1px solid #beb2b294;
 	border-radius: 9px;
-	font-size: 14px;
-	max-height: 42px;
-	cursor: pointer;
-	transition: background-color 0.2s ease;
-
-	&:hover {
-		background-color: ${theme.colors.grey_1};
-	}
+	height: 42px;
+	box-sizing: border-box;
+	cursor: ${disabled ? 'not-allowed' : 'pointer'};
+	transition: all 0.2s ease;
+	z-index: 1000;
+	opacity: ${disabled ? 0.7 : 1};
 `;
 
 const parentStyle = css`
@@ -60,29 +58,22 @@ const chevronStyle = (open: boolean) => css`
 	transform: ${open ? 'rotate(180deg)' : 'none'};
 	transition: transform 0.2s ease;
 `;
-const dropDownTitleStyle = (theme: any) => css`
-	padding: 5px 10px;
-	font-weight: 400;
-	line-height: 100%;
-	letter-spacing: 0%;
+
+const dropDownTitleStyle = (theme: Theme) => css`
+	${theme.typography?.button};
 	color: ${theme.colors.accent_dark};
 `;
 
 const dropdownMenuStyle = (theme: Theme) => css`
+	${theme.typography?.button};
 	position: absolute;
 	top: calc(100% + 5px);
-	left: 0;
 	width: 100%;
 	background-color: #f7f7f7;
-	border: 1px solid ${theme.colors?.grey_1};
-	border-radius: 4px;
-	box-shadow:
-		0 1px 6px rgba(0, 0, 0, 0.1),
-		0 1px 5px rgba(0, 0, 0, 0.08);
-	list-style: none;
-	padding: 4px 0;
-	margin: 0;
-	z-index: 1000;
+	border: 1px solid #beb2b294;
+	padding-top: 5px;
+	border-radius: 9px;
+	padding-bottom: 5px;
 `;
 
 type MenuItem = {
@@ -94,16 +85,15 @@ type DropDownProps = {
 	title?: string;
 	leftIcon?: ReactNode;
 	menuItems?: MenuItem[];
+	disabled?: boolean;
 };
 
-const Dropdown = ({ menuItems = [], title, leftIcon }: DropDownProps) => {
+const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDownProps) => {
 	const [open, setOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const theme = useThemeContext();
 
 	const { ChevronDown } = theme.icons;
-
-	const hasMenuItems = menuItems.length > 0;
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -119,10 +109,14 @@ const Dropdown = ({ menuItems = [], title, leftIcon }: DropDownProps) => {
 		};
 	}, [open]);
 
-	const handleToggle = useCallback((e: React.MouseEvent) => {
-		e.stopPropagation();
-		setOpen((prev) => !prev);
-	}, []);
+	const handleToggle = useCallback(
+		(e: React.MouseEvent) => {
+			if (disabled) return;
+			e.stopPropagation();
+			setOpen((prev) => !prev);
+		},
+		[disabled],
+	);
 
 	const renderMenuItems = () => {
 		return menuItems.map(({ label, action }) => (
@@ -135,13 +129,13 @@ const Dropdown = ({ menuItems = [], title, leftIcon }: DropDownProps) => {
 	return (
 		<div ref={dropdownRef} css={parentStyle}>
 			<div>
-				<div css={dropdownButtonStyle(theme)} onClick={handleToggle}>
+				<div css={dropdownButtonStyle(theme, undefined, disabled)} onClick={handleToggle}>
 					{leftIcon}
 					<span css={dropDownTitleStyle(theme)}>{title}</span>
-					<ChevronDown fill={theme.colors?.black} width={18} height={18} style={chevronStyle(open)} />
+					<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} style={chevronStyle(open)} />
 				</div>
 
-				{open && <ul css={dropdownMenuStyle(theme)}>{renderMenuItems()}</ul>}
+				{open && !disabled && <div css={dropdownMenuStyle(theme)}>{renderMenuItems()}</div>}
 			</div>
 		</div>
 	);

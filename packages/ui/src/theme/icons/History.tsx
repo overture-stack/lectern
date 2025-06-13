@@ -18,52 +18,32 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-
 /** @jsxImportSource @emotion/react */
+import IconProps from './IconProps';
+import { css } from '@emotion/react';
 
-import { css, SerializedStyles } from '@emotion/react';
-import { FC, ReactNode } from 'react';
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
-
-type DropDownItemProps = {
-	action?: string | (() => void);
-	children: ReactNode;
-	customStyles?: {
-		hover?: SerializedStyles;
-		base?: SerializedStyles;
-	};
+const History = ({ width, height, style }: IconProps) => {
+	return (
+		<svg
+			css={css`
+				${style};
+				height: ${height}px;
+				width: ${width}px;
+			`}
+			xmlns="http://www.w3.org/2000/svg"
+			width="24"
+			height="24"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		>
+			<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+			<path d="M3 3v5h5" />
+			<path d="M12 7v5l4 2" />
+		</svg>
+	);
 };
-
-const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
-	display: flex;
-	min-height: 100%;
-	padding-bottom: 5px;
-	height: 100%;
-	align-items: center;
-	border-radius: 9px;
-	justify-content: center;
-	color: ${theme.colors.accent_dark};
-	cursor: pointer;
-	&:hover {
-		background-color: ${theme.colors.grey_1};
-	}
-
-	${customStyles?.base}
-`;
-
-const DropDownItem = ({ children, action, customStyles }: DropDownItemProps) => {
-	const theme = useThemeContext();
-	const content = <div css={styledListItemStyle(theme, customStyles)}>{children}</div>;
-	if (typeof action === 'function') {
-		return (
-			<div className="dropdown-item" onClick={action} css={styledListItemStyle(theme, customStyles)}>
-				{children}
-			</div>
-		);
-	}
-
-	return content;
-};
-
-export default DropDownItem;
+export default History;

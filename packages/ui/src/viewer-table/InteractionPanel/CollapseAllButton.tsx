@@ -19,51 +19,23 @@
  *
  */
 
-/** @jsxImportSource @emotion/react */
-
-import { css, SerializedStyles } from '@emotion/react';
-import { FC, ReactNode } from 'react';
-import type { Theme } from '../../theme';
+import Button from '../../common/Button';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-type DropDownItemProps = {
-	action?: string | (() => void);
-	children: ReactNode;
-	customStyles?: {
-		hover?: SerializedStyles;
-		base?: SerializedStyles;
-	};
-};
+export interface CollapseAllButtonProps {
+	onClick: () => void;
+	disabled?: boolean;
+}
 
-const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
-	display: flex;
-	min-height: 100%;
-	padding-bottom: 5px;
-	height: 100%;
-	align-items: center;
-	border-radius: 9px;
-	justify-content: center;
-	color: ${theme.colors.accent_dark};
-	cursor: pointer;
-	&:hover {
-		background-color: ${theme.colors.grey_1};
-	}
-
-	${customStyles?.base}
-`;
-
-const DropDownItem = ({ children, action, customStyles }: DropDownItemProps) => {
+const CollapseAllButton = ({ onClick, disabled }: CollapseAllButtonProps) => {
 	const theme = useThemeContext();
-	const content = <div css={styledListItemStyle(theme, customStyles)}>{children}</div>;
-	if (typeof action === 'function') {
-		return (
-			<div className="dropdown-item" onClick={action} css={styledListItemStyle(theme, customStyles)}>
-				{children}
-			</div>
-		);
-	}
+	const { Collapse } = theme.icons;
 
-	return content;
+	return (
+		<Button leftIcon={<Collapse />} onClick={onClick} disabled={disabled}>
+			Collapse All
+		</Button>
+	);
 };
 
-export default DropDownItem;
+export default CollapseAllButton;
