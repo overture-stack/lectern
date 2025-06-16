@@ -21,22 +21,20 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
 import IconProps from './IconProps';
+import { css } from '@emotion/react';
 
-const FileDownload = ({ style, height, width }: IconProps) => {
+const FileDownload = ({ fill, height, width, style }: IconProps) => {
 	return (
 		<svg
 			css={css`
-				${style};
-				height: ${height}px;
-				width: ${width}px;
+				${style}
 			`}
 			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
+			width={width || '24'}
+			height={height || '24'}
 			viewBox="0 0 24 24"
-			fill="none"
+			fill={fill || 'none'}
 			stroke="currentColor"
 			strokeWidth="2"
 			strokeLinecap="round"

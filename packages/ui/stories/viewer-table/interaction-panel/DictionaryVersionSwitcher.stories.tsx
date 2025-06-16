@@ -2,7 +2,7 @@
 
 import { Dictionary, Schema } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
-import DictionarySample from '../../../../../samples/dictionary/advanced.json';
+import DictionarySample from '../../fixtures/advanced.json';
 import VersionSwitcher from '../../../src/viewer-table/InteractionPanel/DictionaryVersionSwitcher';
 import themeDecorator from '../../themeDecorator';
 
@@ -27,23 +27,51 @@ const MultipleDictionaryData: Dictionary[] = [
 
 export const MultipleVersions: Story = {
 	args: {
-		dictionaryData: MultipleDictionaryData,
-		onVersionChange: (index: number) => console.log(`Version changed to index: ${index}`),
-		dictionaryIndex: 0,
+		config: {
+			lecternUrl: 'http://localhost:3031',
+			dictionaryIndex: 0,
+			dictionaryData: MultipleDictionaryData,
+			onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
+			filters: { active: true },
+			setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+		},
 	},
 };
 export const SingleVersion: Story = {
 	args: {
-		dictionaryData: SingleDictionaryData,
-		onVersionChange: (index: number) => console.log(`Version changed to index: ${index}`),
-		dictionaryIndex: 0,
+		config: {
+			lecternUrl: 'http://localhost:3031',
+			dictionaryIndex: 0,
+			dictionaryData: SingleDictionaryData,
+			onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
+			filters: { active: true },
+			setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+		},
 	},
 };
 
 export const EmptyArray: Story = {
 	args: {
-		dictionaryData: [],
-		onVersionChange: (index: number) => console.log(`Version changed to index: ${index}`),
-		dictionaryIndex: 0,
+		config: {
+			lecternUrl: 'http://localhost:3031',
+			dictionaryIndex: 0,
+			dictionaryData: [],
+			onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
+			filters: { active: true },
+			setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+		},
+	},
+};
+export const DisabledWithMultipleVersions: Story = {
+	args: {
+		config: {
+			lecternUrl: 'http://localhost:3031',
+			dictionaryIndex: 0,
+			dictionaryData: MultipleDictionaryData,
+			onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
+			filters: { active: true },
+			setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+		},
+		disabled: true,
 	},
 };

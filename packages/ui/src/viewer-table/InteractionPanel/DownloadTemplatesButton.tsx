@@ -30,7 +30,7 @@ export type DictionaryDownloadButtonProps = {
 	version: string;
 	name: string;
 	lecternUrl: string;
-	fileType?: 'tsv' | 'csv';
+	fileType: 'tsv' | 'csv';
 	disabled?: boolean;
 	iconOnly?: boolean;
 };

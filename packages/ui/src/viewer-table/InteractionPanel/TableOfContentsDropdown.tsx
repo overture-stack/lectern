@@ -23,13 +23,13 @@ import type { Schema } from '@overture-stack/lectern-dictionary';
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-type TableOfContentsDropdownProps = {
+export type TableOfContentsDropdownProps = {
 	schemas: Schema[];
 	onSelect: (schemaIndex: number) => void;
 	disabled?: boolean;
 };
 
-const TableOfContentsDropdown = ({ schemas, onSelect, disabled = false }: TableOfContentsDropdownProps) => {
+const TableOfContentsDropdown = ({ schemas, onSelect, disabled }: TableOfContentsDropdownProps) => {
 	const theme = useThemeContext();
 	const { List } = theme.icons;
 	const handleAction = (index: number) => {

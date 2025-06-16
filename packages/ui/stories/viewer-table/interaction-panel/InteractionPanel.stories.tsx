@@ -1,11 +1,12 @@
 /** @jsxImportSource @emotion/react */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import { Dictionary } from '@overture-stack/lectern-dictionary';
+import type { Meta, StoryObj } from '@storybook/react';
+import { FilterMapping } from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
+import { DictionaryConfig } from '../../../src/viewer-table/InteractionPanel/DictionaryVersionSwitcher';
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
+import AdvancedDictionary from '../../fixtures/advanced.json';
 import themeDecorator from '../../themeDecorator';
-import AdvancedDictionary from '../../../../../samples/dictionary/advanced.json';
-import biosampleDictionary from '../../fixtures/minimalBiosampleModel';
 
 const meta = {
 	component: InteractionPanel,
@@ -26,91 +27,78 @@ const MultipleDictionaryData: Dictionary[] = [
 ];
 
 const mockSetIsCollapsed = (isCollapsed: boolean) => {
-	console.log('setIsCollapsed called with:', isCollapsed);
+	alert('setIsCollapsed called with:' + isCollapsed);
 };
 
 const mockOnVersionChange = (index: number) => {
-	console.log('onVersionChange called with index:', index);
+	alert('onVersionChange called with index:' + index);
 };
 
-const mockSetFilteredData = (dict: Dictionary) => {
-	console.log('setFilteredData called with dictionary:', dict.name);
-};
-
-const mockSetIsFiltered = (bool: boolean) => {
-	console.log('setIsFiltered called with:', bool);
-};
-
-const mockOnAccordionToggle = (schemaName: string, isOpen: boolean) => {
-	console.log('onAccordionToggle called for schema:', schemaName, 'isOpen:', isOpen);
-};
-
+// When we are at multiple versions, then the version switcher is now rendered, this is to test that behavior
 export const Default: Story = {
 	args: {
-		schemas: (AdvancedDictionary as Dictionary).schemas,
-		dictionary: AdvancedDictionary as Dictionary,
-		filteredData: AdvancedDictionary as Dictionary,
-		isFiltered: false,
-		version: '1.0',
-		name: 'advanced-dictionary',
-		lecternUrl: 'http://localhost:3031',
 		setIsCollapsed: mockSetIsCollapsed,
-		setFilteredData: mockSetFilteredData,
-		setIsFiltered: mockSetIsFiltered,
-		onAccordionToggle: mockOnAccordionToggle,
-	},
-};
-export const Disabled: Story = {
-	args: {
-		schemas: (AdvancedDictionary as Dictionary).schemas,
-		dictionary: AdvancedDictionary as Dictionary,
-		filteredData: AdvancedDictionary as Dictionary,
-		isFiltered: false,
-		version: '1.0',
-		name: 'advanced-dictionary',
-		lecternUrl: 'http://localhost:3031',
-		disabled: true,
-		setIsCollapsed: mockSetIsCollapsed,
-		setFilteredData: mockSetFilteredData,
-		setIsFiltered: mockSetIsFiltered,
-		onAccordionToggle: mockOnAccordionToggle,
+		onSelect(schemaNameIndex) {
+			alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
+		},
+		currDictionary: {
+			lecternUrl: 'http://localhost:3031',
+			dictionaryIndex: 0,
+			dictionaryData: MultipleDictionaryData,
+			onVersionChange: mockOnVersionChange,
+			filters: { active: true },
+			setFilters: (filters: FilterMapping) => {
+				alert('setFilters called with:' + filters);
+			},
+		} as DictionaryConfig,
+		setFilters: (filters: FilterMapping) => {
+			alert('setFilters called with:' + filters);
+		},
 	},
 };
 
-export const WithMultipleVersions: Story = {
-	args: {
-		schemas: (AdvancedDictionary as Dictionary).schemas,
-		dictionary: AdvancedDictionary as Dictionary,
-		filteredData: AdvancedDictionary as Dictionary,
-		isFiltered: false,
-		version: '1.0',
-		name: 'advanced-dictionary',
-		lecternUrl: 'http://localhost:3031',
-		setIsCollapsed: mockSetIsCollapsed,
-		setFilteredData: mockSetFilteredData,
-		setIsFiltered: mockSetIsFiltered,
-		onAccordionToggle: mockOnAccordionToggle,
-		onVersionChange: mockOnVersionChange,
-		dictionaryVersions: MultipleDictionaryData,
-		currentVersionIndex: 0,
-	},
-};
-
+// The reason why this story exists is to test the behavior when the dictionary version switcher button is not rendered
 export const WithSingleVersion: Story = {
 	args: {
-		schemas: (AdvancedDictionary as Dictionary).schemas,
-		dictionary: AdvancedDictionary as Dictionary,
-		filteredData: AdvancedDictionary as Dictionary,
-		isFiltered: false,
-		version: '1.0',
-		name: 'advanced-dictionary',
-		lecternUrl: 'http://localhost:3031',
 		setIsCollapsed: mockSetIsCollapsed,
-		setFilteredData: mockSetFilteredData,
-		setIsFiltered: mockSetIsFiltered,
-		onAccordionToggle: mockOnAccordionToggle,
-		onVersionChange: mockOnVersionChange,
-		dictionaryVersions: SingleDictionaryData,
-		currentVersionIndex: 0,
+		onSelect(schemaNameIndex) {
+			alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
+		},
+		currDictionary: {
+			lecternUrl: 'http://localhost:3031',
+			dictionaryIndex: 0,
+			dictionaryData: SingleDictionaryData,
+			onVersionChange: mockOnVersionChange,
+			filters: { active: true },
+			setFilters: (filters: FilterMapping) => {
+				alert('setFilters called with:' + filters);
+			},
+		} as DictionaryConfig,
+		setFilters: (filters: FilterMapping) => {
+			alert('setFilters called with:' + filters);
+		},
+	},
+};
+
+export const Disabled: Story = {
+	args: {
+		disabled: true,
+		setIsCollapsed: mockSetIsCollapsed,
+		onSelect(schemaNameIndex) {
+			alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
+		},
+		currDictionary: {
+			lecternUrl: 'http://localhost:3031',
+			dictionaryIndex: 0,
+			dictionaryData: SingleDictionaryData,
+			onVersionChange: mockOnVersionChange,
+			filters: { active: true },
+			setFilters: (filters: FilterMapping) => {
+				alert('setFilters called with:' + filters);
+			},
+		} as DictionaryConfig,
+		setFilters: (filters: FilterMapping) => {
+			alert('setFilters called with:' + filters);
+		},
 	},
 };

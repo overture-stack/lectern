@@ -2,7 +2,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
 import themeDecorator from '../../themeDecorator';
-import AdvancedDictionary from '../../../../../samples/dictionary/advanced.json';
+import AdvancedDictionary from '../../fixtures/advanced.json';
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 const meta = {
 	component: AttributeFilter,
@@ -16,9 +16,14 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	args: {
-		data: AdvancedDictionary as Dictionary,
-		isFiltered: false,
-		setFilteredData: () => {},
-		setIsFiltered: () => {},
+		filters: { active: true },
+		setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+	},
+};
+export const Disabled: Story = {
+	args: {
+		filters: { active: false },
+		setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+		disabled: true,
 	},
 };

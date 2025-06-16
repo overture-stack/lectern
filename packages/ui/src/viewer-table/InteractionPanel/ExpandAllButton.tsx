@@ -19,7 +19,6 @@
  *
  */
 
-import { useEffect } from 'react';
 import Button from '../../common/Button';
 import { useThemeContext } from '../../theme/ThemeContext';
 
@@ -33,7 +32,7 @@ const ExpandAllButton = ({ onClick, disabled }: ExpandAllButtonProps) => {
 	const { Eye } = theme.icons;
 
 	return (
-		<Button icon={<Eye />} onClick={onClick} disabled={disabled}>
+		<Button leftIcon={<Eye />} onClick={onClick} disabled={disabled}>
 			Expand All
 		</Button>
 	);

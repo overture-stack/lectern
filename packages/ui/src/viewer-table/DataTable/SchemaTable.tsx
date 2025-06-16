@@ -23,7 +23,7 @@
 
 import { css } from '@emotion/react';
 import type { Schema, SchemaField } from '@overture-stack/lectern-dictionary';
-import { ColumnDef, getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
+import { getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
 import { Lato } from '../styles/typography';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';

@@ -15,5 +15,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-	args: { setIsCollapsed: (isCollapsed: boolean) => alert('all collapsable components are collapsed') },
+	args: { onClick: () => alert('All collapsible components are collapsed') },
+};
+export const Disabled: Story = {
+	args: {
+		onClick: () => alert('All collapsible components are collapsed'),
+		disabled: true,
+	},
 };
