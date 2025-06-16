@@ -3,7 +3,7 @@
 The lectern client exports a set of functions to make requests to a Lectern Server REST API. This is exported in a property named `rest`.
 
 ```ts
-import * as lectern from '@overture-stack/lecter-client';
+import * as lectern from '@overture-stack/lectern-client';
 
 const dictionaryList = await lectern.rest.getDictionaries('http://lectern.example.com');
 ```
@@ -15,12 +15,12 @@ All functions in the REST API take the lectern host URL as the first argument, a
 | Function                              | Lectern Server REST API                                                          | Description                                                                                                     |
 | ------------------------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | [listDictionaries](#listdictionaries) | `GET /dictionaries`                                                              | Fetch a list of all dictionaries available on the Lectern server.                                               |
-| [getDictionary](#getDictionary)       | `GET /dictionaries/{id}` <br/> `GET /dictionaries?name={name}&version={version}` | Fetch the contents of a single dictionary. This can be done by dictionary ID, or by dictonary name and version. |
+| [getDictionary](#getDictionary)       | `GET /dictionaries/{id}` <br/> `GET /dictionaries?name={name}&version={version}` | Fetch the contents of a single dictionary. This can be done by dictionary ID, or by dictionary name and version. |
 | [getDiff](#getDiff)                   | `GET /diff`                                                                      | Fetch the differences between two versions of the same dictionary.                                              |
 
 ### `listDictionaries()`
 
-List all dictionaries from Lectern Server. Optionally, the a dictionary name can be provided to filter the list to only dictionaries of the given name.
+List all dictionaries from Lectern Server. Optionally, a dictionary name can be provided to filter the list to only dictionaries of the given name.
 
 #### Options
 
@@ -28,30 +28,35 @@ List all dictionaries from Lectern Server. Optionally, the a dictionary name can
 
 #### Returns
 
-```ts
-type DictionarySummary = {
-	_id: string,
-	name: string,
-	version: string
-}
-```
+Returns an array with all Dictionaries that match the query. This is all dictionaries if no filters are provided, or the subset of dictionaries that match the provided dictionary name. Each entry in this array contains a subset of the dictionary fields.
+
+| Field         | Type                    | Description                                                                                                                  |
+| ------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `_id`         | `string`                | Internal ID for this dictionary. This is useful when requesting a dictionary by ID, for example with `rest.getDictionary()`. |
+| `name`        | `string`                | Name of the dictionary.                                                                                                      |
+| `description` | `string` \| `undefined` | Description of the dictionary. Optional property, could be `undefined`.                                                      |
+| `version`     | `string`                | Version of the dictionary.                                                                                                   |
+| `createdAt`   | `Date`                  | When this version of the dictionary was created.                                                                             |
 
 ```json
 [
 	{
 		"_id": "678e62971a9a67cacd8f4325",
 		"name": "example_dictionary",
-		"version": "1.0"
+		"version": "1.0",
+		"createdAt": "2025-05-29T07:00:00.0000"
 	},
 	{
 		"_id": "678e63f91a9a67cacd8f4328",
 		"name": "example_dictionary",
-		"version": "1.1"
+		"version": "1.1",
+		"createdAt": "2025-05-30T215:00:00.0000",
 	},
 	{
 		"_id": "678e6bdd1a9a67cacd8f432d",
 		"name": "example_dictionary",
-		"version": "1.2"
+		"version": "1.2",
+		"createdAt": "2025-05-31T23:00:00.0000"
 	}
 ]
 ```

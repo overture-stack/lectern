@@ -516,20 +516,24 @@
 				"properties": {
 					"_id": {
 						"type": "string",
-						"description": "mongo generated object id"
+						"description": "Internal database ID."
 					},
 					"name": {
 						"type": "string",
-						"description": "The name of the parameter"
+						"description": "The name of the Dictionary."
 					},
 					"description": {
 						"type": "string",
-						"description": "Version of the dictionary",
+						"description": "Description of the Dictionary.",
 						"required": false
 					},
 					"version": {
 						"type": "string",
-						"description": "Version of the dictionary"
+						"description": "Version of the Dictionary."
+					},
+					"createdAt": {
+						"type": "string",
+						"description": "ISO formatted date that the Dictionary was created."
 					}
 				}
 			},
