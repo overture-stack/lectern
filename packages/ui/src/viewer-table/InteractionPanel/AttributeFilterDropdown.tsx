@@ -34,7 +34,7 @@ const AttributeFilter = ({ filters, setFilters, disabled }: FilterDropdownProps)
 		},
 	];
 
-	return <Dropdown title="Filter" menuItems={menuItems} disabled={disabled} />;
+	return <Dropdown title="Filter By" menuItems={menuItems} disabled={disabled} />;
 };
 
 export default AttributeFilter;
