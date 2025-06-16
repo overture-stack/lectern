@@ -16,9 +16,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	args: {
-		data: AdvancedDictionary as Dictionary,
-		isFiltered: false,
-		setFilteredData: () => {},
-		setIsFiltered: () => {},
+		filters: { active: true },
+		setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
 	},
 };

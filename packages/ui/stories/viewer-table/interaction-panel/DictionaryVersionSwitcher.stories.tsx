@@ -27,23 +27,38 @@ const MultipleDictionaryData: Dictionary[] = [
 
 export const MultipleVersions: Story = {
 	args: {
-		dictionaryData: { MultipleDictionaryData },
-		onVersionChange: (index: number) => console.log(`Version changed to index: ${index}`),
-		dictionaryIndex: 0,
+		config: {
+			lecternUrl: 'http://localhost:3031',
+			dictionaryIndex: 0,
+			dictionaryData: MultipleDictionaryData,
+			onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
+			filters: { active: true },
+			setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+		},
 	},
 };
 export const SingleVersion: Story = {
 	args: {
-		dictionaryData: SingleDictionaryData,
-		onVersionChange: (index: number) => console.log(`Version changed to index: ${index}`),
-		dictionaryIndex: 0,
+		config: {
+			lecternUrl: 'http://localhost:3031',
+			dictionaryIndex: 0,
+			dictionaryData: SingleDictionaryData,
+			onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
+			filters: { active: true },
+			setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+		},
 	},
 };
 
 export const EmptyArray: Story = {
 	args: {
-		dictionaryData: [],
-		onVersionChange: (index: number) => console.log(`Version changed to index: ${index}`),
-		dictionaryIndex: 0,
+		config: {
+			lecternUrl: 'http://localhost:3031',
+			dictionaryIndex: 0,
+			dictionaryData: [],
+			onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
+			filters: { active: true },
+			setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+		},
 	},
 };
