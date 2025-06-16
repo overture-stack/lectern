@@ -34,51 +34,8 @@ const mockOnVersionChange = (index: number) => {
 	alert('onVersionChange called with index:' + index);
 };
 
+// When we are at multiple versions, then the version switcher is now rendered, this is to test that behavior
 export const Default: Story = {
-	args: {
-		setIsCollapsed: mockSetIsCollapsed,
-		onSelect(schemaNameIndex) {
-			alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
-		},
-		currDictionary: {
-			lecternUrl: 'http://localhost:3031',
-			dictionaryIndex: 0,
-			dictionaryData: SingleDictionaryData,
-			onVersionChange: mockOnVersionChange,
-			filters: { active: true },
-			setFilters: (filters: FilterMapping) => {
-				alert('setFilters called with:' + filters);
-			},
-		} as DictionaryConfig,
-		setFilters: (filters: FilterMapping) => {
-			alert('setFilters called with:' + filters);
-		},
-	},
-};
-export const Disabled: Story = {
-	args: {
-		disabled: true,
-		setIsCollapsed: mockSetIsCollapsed,
-		onSelect(schemaNameIndex) {
-			alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
-		},
-		currDictionary: {
-			lecternUrl: 'http://localhost:3031',
-			dictionaryIndex: 0,
-			dictionaryData: SingleDictionaryData,
-			onVersionChange: mockOnVersionChange,
-			filters: { active: true },
-			setFilters: (filters: FilterMapping) => {
-				alert('setFilters called with:' + filters);
-			},
-		} as DictionaryConfig,
-		setFilters: (filters: FilterMapping) => {
-			alert('setFilters called with:' + filters);
-		},
-	},
-};
-
-export const WithMultipleVersions: Story = {
 	args: {
 		setIsCollapsed: mockSetIsCollapsed,
 		onSelect(schemaNameIndex) {
@@ -100,8 +57,32 @@ export const WithMultipleVersions: Story = {
 	},
 };
 
+// The reason why this story exists is to test the behavior when the dictionary version switcher button is not rendered
 export const WithSingleVersion: Story = {
 	args: {
+		setIsCollapsed: mockSetIsCollapsed,
+		onSelect(schemaNameIndex) {
+			alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
+		},
+		currDictionary: {
+			lecternUrl: 'http://localhost:3031',
+			dictionaryIndex: 0,
+			dictionaryData: SingleDictionaryData,
+			onVersionChange: mockOnVersionChange,
+			filters: { active: true },
+			setFilters: (filters: FilterMapping) => {
+				alert('setFilters called with:' + filters);
+			},
+		} as DictionaryConfig,
+		setFilters: (filters: FilterMapping) => {
+			alert('setFilters called with:' + filters);
+		},
+	},
+};
+
+export const Disabled: Story = {
+	args: {
+		disabled: true,
 		setIsCollapsed: mockSetIsCollapsed,
 		onSelect(schemaNameIndex) {
 			alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
