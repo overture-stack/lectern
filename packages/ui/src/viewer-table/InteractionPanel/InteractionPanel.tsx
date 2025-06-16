@@ -87,6 +87,7 @@ const InteractionPanel = ({
 			<div css={rightSectionStyles}>
 				<DictionaryVersionSwitcher config={currDictionary} disabled={disabled} />
 				<DownloadTemplatesButton
+					fileType="tsv"
 					version={currDict.version}
 					name={currDict.name}
 					lecternUrl={currDictionary.lecternUrl}
