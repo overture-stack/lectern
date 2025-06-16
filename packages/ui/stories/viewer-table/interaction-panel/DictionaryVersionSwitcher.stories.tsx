@@ -2,7 +2,7 @@
 
 import { Dictionary, Schema } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
-import DictionarySample from '../../../../../samples/dictionary/advanced.json';
+import DictionarySample from '../../fixtures/advanced.json';
 import VersionSwitcher from '../../../src/viewer-table/InteractionPanel/DictionaryVersionSwitcher';
 import themeDecorator from '../../themeDecorator';
 
@@ -27,7 +27,7 @@ const MultipleDictionaryData: Dictionary[] = [
 
 export const MultipleVersions: Story = {
 	args: {
-		dictionaryData: MultipleDictionaryData,
+		dictionaryData: { MultipleDictionaryData },
 		onVersionChange: (index: number) => console.log(`Version changed to index: ${index}`),
 		dictionaryIndex: 0,
 	},
