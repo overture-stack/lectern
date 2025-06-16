@@ -62,3 +62,16 @@ export const EmptyArray: Story = {
 		},
 	},
 };
+export const DisabledWithMultipleVersions: Story = {
+	args: {
+		config: {
+			lecternUrl: 'http://localhost:3031',
+			dictionaryIndex: 0,
+			dictionaryData: MultipleDictionaryData,
+			onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
+			filters: { active: true },
+			setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+		},
+		disabled: true,
+	},
+};

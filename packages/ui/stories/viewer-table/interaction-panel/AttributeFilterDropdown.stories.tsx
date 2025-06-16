@@ -20,3 +20,10 @@ export const Default: Story = {
 		setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
 	},
 };
+export const Disabled: Story = {
+	args: {
+		filters: { active: false },
+		setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+		disabled: true,
+	},
+};
