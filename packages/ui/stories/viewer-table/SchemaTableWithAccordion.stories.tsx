@@ -3,10 +3,9 @@
 // import { DictionaryHeader } from '#/viewer-table/DictionaryHeader';
 import type { Meta, StoryObj } from '@storybook/react';
 import SchemaTableWithAccordion from '../../src/viewer-table/DataTable/SchemaTableWithAccordion';
-import biosampleDictionary from '../fixtures/minimalBiosampleModel';
+import webUsers from '../fixtures/websiteUsersDataDictionary';
 import themeDecorator from '../themeDecorator';
-
-const schema = biosampleDictionary.schemas[0];
+const schema = webUsers.schemas[0];
 
 const meta = {
 	component: SchemaTableWithAccordion,

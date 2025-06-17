@@ -3,11 +3,9 @@
 // import { DictionaryHeader } from '#/viewer-table/DictionaryHeader';
 import type { Meta, StoryObj } from '@storybook/react';
 import SchemaTable from '../../src/viewer-table/DataTable/SchemaTable';
-import biosampleDictionary from '../fixtures/minimalBiosampleModel';
+import webUsers from '../fixtures/websiteUsersDataDictionary';
 import themeDecorator from '../themeDecorator';
-
-const schema = biosampleDictionary.schemas[0];
-
+const schema = webUsers.schemas[0];
 const meta = {
 	component: SchemaTable,
 	title: 'Viewer - Table/Schema Table',

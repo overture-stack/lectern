@@ -1,9 +1,8 @@
 import Accordion from '../../common/Accordion/Accordion';
 import { AccordionData } from '../../common/Accordion/AccordionItem';
 import biosampleDictionary from '../../../stories/fixtures/minimalBiosampleModel';
-const schema = biosampleDictionary.schemas[0];
 import SchemaTable from './SchemaTable';
-const SchemaTableWithAccordion = () => {
+const SchemaTableWithAccordion = ({ schema }: any) => {
 	const accordionItems: Array<AccordionData> = [
 		{
 			title: 'Hello World',
