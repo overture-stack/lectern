@@ -31,15 +31,15 @@ const columnHelper = createColumnHelper<SchemaField>();
 
 export const schemaBaseColumns = [
 	columnHelper.accessor('name', {
-		header: 'SchemaField ',
+		header: 'SchemaField',
 		cell: (field) => {
 			// TODO: Open issue in lectern to make displayName a known property of field
 			return (
 				<div
 					css={css`
 						display: flex;
-						flex-direction: row;
-						gap: 10000000px;
+						flex-direction: column;
+						gap: 10px;
 					`}
 				>
 					<div css={Lato.Paragraph_bold_small}>{field.row.original.name}</div>
