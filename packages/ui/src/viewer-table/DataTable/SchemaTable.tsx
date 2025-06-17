@@ -24,7 +24,6 @@
 import { css } from '@emotion/react';
 import type { Schema, SchemaField } from '@overture-stack/lectern-dictionary';
 import { getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
-import { Lato } from '../styles/typography';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
 import { schemaBaseColumns } from './tableInit';
@@ -35,7 +34,6 @@ type SchemaTableProps = {
 
 const sectionStyle = css`
 	margin-bottom: 48px;
-	max-width: 1200px;
 `;
 const tableStyle = css`
 	width: 100%;

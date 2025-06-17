@@ -21,12 +21,11 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { flexRender, Row } from '@tanstack/react-table';
-import { useState } from 'react';
 import { css } from '@emotion/react';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { Row } from '@tanstack/react-table';
+import ReadMoreText from '../../common/ReadMoreText';
+import { Theme } from '../../theme';
 
-//Styles
 const rowStyle = (index: number) => css`
 	background-color: ${index % 2 === 0 ? '' : '#F5F7F8'};
 `;
@@ -40,44 +39,23 @@ const tdStyle = css`
 	word-break: break-word;
 	vertical-align: top;
 `;
-const linkStyle = css`
-	color: #0b75a2;
-	font-size: 12px;
-	cursor: pointer;
-	margin-left: 6px;
 
-	&:hover {
-		text-decoration: underline;
-	}
-`;
-const chevronDownStyle = css`
-	margin-left: 4px;
+const descriptionWrapperStyle = (theme: Theme) => css`
+	${theme.typography?.label2};
+	color: ${theme.colors.grey_5};
+	padding: 4px 8px;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 `;
 
-const chevronUpStyle = css`
-	margin-left: 4px;
-	transform: rotate(180deg);
-`;
-
-// Component Implementation
-
-type TableRowProps<T> = {
-	row: Row<T>;
+type TableRowProps<R> = {
+	row: Row<R>;
 	index: number;
 };
 
-const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
-	const [expandedCells, setExpandedCells] = useState<Record<string, boolean>>({});
-	const theme = useThemeContext();
-	const { ChevronDown } = theme.icons;
+const MAX_LINES_BEFORE_EXPAND = 2;
 
-	const toggleExpand = (cellId: string) => {
-		setExpandedCells((prev) => ({
-			...prev,
-			[cellId]: !prev[cellId],
-		}));
-	};
-
+const TableRow = <R,>({ row, index }: TableRowProps<R>) => {
 	return (
 		<tr key={row.id} css={rowStyle(index)}>
 			{row.getVisibleCells().map((cell) => {
@@ -88,29 +66,12 @@ const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
 				}
 
 				const valueStr = cellValue.toString(); // concatenate a large string to test dropdown feature
-				const isLong = valueStr.length > 68; // Length for truncation, to best match the Figma design
-				const isExpanded = expandedCells[cell.id];
-
-				if (isLong) {
-					return (
-						<td key={cell.id} css={tdStyle}>
-							<span>{isExpanded ? valueStr : valueStr.slice(0, 68) + ' ...'}</span>
-							<span css={linkStyle} onClick={() => toggleExpand(cell.id)}>
-								{!isExpanded ? '\nRead more' : '\nRead less'}
-								<ChevronDown
-									style={!isExpanded ? chevronDownStyle : chevronUpStyle}
-									fill="#000"
-									width={10}
-									height={10}
-								/>
-							</span>
-						</td>
-					);
-				}
 
 				return (
 					<td key={cell.id} css={tdStyle}>
-						{flexRender(cell.column.columnDef.cell, cell.getContext())}
+						<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle}>
+							{valueStr}
+						</ReadMoreText>
 					</td>
 				);
 			})}
