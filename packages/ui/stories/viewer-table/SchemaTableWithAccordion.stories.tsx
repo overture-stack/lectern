@@ -5,7 +5,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import SchemaTableWithAccordion from '../../src/viewer-table/DataTable/SchemaTableWithAccordion';
 import webUsers from '../fixtures/websiteUsersDataDictionary';
 import themeDecorator from '../themeDecorator';
-const schema = webUsers.schemas[0];
+import { Schema } from '@overture-stack/lectern-dictionary';
+const schema: Schema = webUsers.schemas[0];
 
 const meta = {
 	component: SchemaTableWithAccordion,
