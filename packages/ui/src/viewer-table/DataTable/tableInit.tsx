@@ -25,18 +25,29 @@ import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
 import { useThemeContext } from '../../theme/ThemeContext';
+import { useEffect } from 'react';
+import { Theme } from '../../theme';
 // This file is responsible for defining the columns of the schema table, depending on user defined types and schemas.
 
+const hashIconStyle = (theme: Theme) => css`
+	opacity: 0;
+	margin-left: 8px;
+	transition: opacity 0.2s ease;
+	border-bottom: 2px solid ${theme.colors.secondary};
+	&:hover {
+		opacity: 1;
+	}
+`;
 const columnHelper = createColumnHelper<SchemaField>();
 
-const renderSchemaField = (field: CellContext<SchemaField, string>) => {
+const renderSchemaField = (field: CellContext<SchemaField, string>, setClipboardContents: (curr: string) => void) => {
 	const theme = useThemeContext();
-	{
-		/* In a Dictionary, there is no such thing as an examples field, however it is commonly apart of the meta */
-	}
-	{
-		/* due to project specs, we will render the examples here if they exist and have logic to handle it. */
-	}
+	const fieldName = field.row.original.name;
+	const fieldIndex = field.row.index;
+
+	// In a Dictionary, there is no such thing as an examples field, however it is commonly apart of the meta
+	// due to project specs, we will render the examples here if they exist and have logic to handle it.
+
 	const renderExamples = () => {
 		const examples = field.row.original.meta?.examples;
 		if (!examples) {
@@ -55,27 +66,48 @@ const renderSchemaField = (field: CellContext<SchemaField, string>) => {
 		);
 	};
 
+	const { Hash } = theme.icons;
+
+	useEffect(() => {
+		const hashTarget = `field-${fieldIndex}`;
+		if (window.location.hash === `#${hashTarget}`) {
+			document.getElementById(hashTarget)?.scrollIntoView({ behavior: 'smooth' });
+		}
+	}, []);
+
+	const handleClick = () => {
+		const hashTarget = `field-${fieldIndex}`;
+		window.location.hash = `#${hashTarget}`;
+		setClipboardContents(window.location.href);
+	};
+
 	return (
 		<div
+			id={`field-${fieldIndex}`}
 			css={css`
 				display: flex;
 				flex-direction: column;
 				gap: 10px;
 			`}
 		>
-			<div css={theme.typography.heading}>{field.row.original.name}</div>
+			<div css={theme.typography.heading}>
+				{fieldName}
+				<span css={hashIconStyle(theme)} onClick={handleClick}>
+					<Hash width={20} height={20} fill={theme.colors.secondary} />
+				</span>
+			</div>
 			<div css={theme.typography.heading}>{field.row.original.description}</div>
 			{renderExamples()}
 		</div>
 	);
 };
 
-export const schemaBaseColumns = [
+export const getSchemaBaseColumns = (setClipboardContents: (curr: string) => void) => [
 	columnHelper.accessor('name', {
 		header: 'SchemaField',
 		cell: (field) => {
 			// TODO: Open issue in lectern to make displayName a known property of field
-			return renderSchemaField(field);
+			return renderSchemaField(field, setClipboardContents);
 		},
 	}),
 	columnHelper.accessor(

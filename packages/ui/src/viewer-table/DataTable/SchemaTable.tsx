@@ -26,7 +26,8 @@ import type { Schema, SchemaField } from '@overture-stack/lectern-dictionary';
 import { getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
-import { schemaBaseColumns } from './tableInit';
+import { getSchemaBaseColumns } from './tableInit';
+import { useMemo, useState } from 'react';
 
 type SchemaTableProps = {
 	schema: Schema;
@@ -43,11 +44,46 @@ const tableStyle = css`
 `;
 
 const SchemaTable = ({ schema }: SchemaTableProps) => {
+	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
+	const [isCopying, setIsCopying] = useState(false);
+	const [copySuccess, setCopySuccess] = useState(false);
+
+	const handleCopy = (text: string) => {
+		if (isCopying) {
+			return; // We don't wanna copy if we are already copying
+		}
+		setIsCopying(true);
+		navigator.clipboard
+			.writeText(text)
+			.then(() => {
+				setCopySuccess(true);
+				setTimeout(() => {
+					setIsCopying(false);
+				}, 2000); // Reset copy success after 2 seconds as well as the isCopying state
+			})
+			.catch((err) => {
+				console.error('Failed to copy text: ', err);
+				setCopySuccess(false);
+				setIsCopying(false);
+			});
+		if (copySuccess) {
+			// Update the clipboard contents
+			const currentURL = window.location.href;
+			setClipboardContents(currentURL);
+		}
+		setCopySuccess(false);
+	};
+
 	const table = useReactTable({
 		data: schema.fields || [],
-		columns: schemaBaseColumns,
+		columns: getSchemaBaseColumns(setClipboardContents),
 		getCoreRowModel: getCoreRowModel(),
 	});
+	useMemo(() => {
+		if (clipboardContents) {
+			handleCopy(clipboardContents);
+		}
+	}, [clipboardContents]);
 
 	return (
 		<section css={sectionStyle}>

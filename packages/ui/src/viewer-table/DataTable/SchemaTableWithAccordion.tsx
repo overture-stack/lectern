@@ -10,7 +10,7 @@ const SchemaTableWithAccordion = ({ schema }: props) => {
 		{
 			title: schema.name,
 			description: schema.description ?? '',
-			openOnInit: false,
+			openOnInit: true,
 			content: <SchemaTable schema={schema} />,
 		},
 	];
