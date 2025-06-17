@@ -23,29 +23,53 @@
 
 import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
-import { createColumnHelper } from '@tanstack/react-table';
-import { Lato } from '../styles/typography';
+import { CellContext, createColumnHelper } from '@tanstack/react-table';
+import { useThemeContext } from '../../theme/ThemeContext';
 // This file is responsible for defining the columns of the schema table, depending on user defined types and schemas.
 
 const columnHelper = createColumnHelper<SchemaField>();
+
+const renderSchemaField = (field: CellContext<SchemaField, string>) => {
+	const theme = useThemeContext();
+	{
+		/* In a Dictionary, there is no such thing as an examples field, however it is commonly apart of the meta */
+	}
+	{
+		/* due to project specs, we will render the examples here if they exist and have logic to handle it. */
+	}
+	const renderExamples = () => {
+		const examples = field.row.original.meta?.examples;
+		const examplesLength = examples?.toString().length;
+		return (
+			examples && (
+				<div css={theme.typography.heading}>
+					{examplesLength && examplesLength > 1 ? 'Examples:' : 'Example:'}{' '}
+					{Array.isArray(examples) ? examples.join(', ') : String(examples)}
+				</div>
+			)
+		);
+	};
+	return (
+		<div
+			css={css`
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+			`}
+		>
+			<div css={theme.typography.heading}>{field.row.original.name}</div>
+			<div css={theme.typography.heading}>{field.row.original.description}</div>
+			{renderExamples()}
+		</div>
+	);
+};
 
 export const schemaBaseColumns = [
 	columnHelper.accessor('name', {
 		header: 'SchemaField',
 		cell: (field) => {
 			// TODO: Open issue in lectern to make displayName a known property of field
-			return (
-				<div
-					css={css`
-						display: flex;
-						flex-direction: column;
-						gap: 10px;
-					`}
-				>
-					<div css={Lato.Paragraph_bold_small}>{field.row.original.name}</div>
-					<div css={Lato.Paragraph_small}>{field.row.original.description}</div>
-				</div>
-			);
+			return renderSchemaField(field);
 		},
 	}),
 	columnHelper.accessor(
