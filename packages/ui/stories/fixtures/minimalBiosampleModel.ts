@@ -20,7 +20,7 @@ const dictionary: Dictionary = {
 						regex: '#/regex/submitter_id',
 					},
 					meta: {
-						examples: ['DONOR12345', 'DONOR67890'],
+						examples: ['DONOR12345'],
 					},
 				},
 				{

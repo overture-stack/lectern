@@ -39,16 +39,22 @@ const renderSchemaField = (field: CellContext<SchemaField, string>) => {
 	}
 	const renderExamples = () => {
 		const examples = field.row.original.meta?.examples;
-		const examplesLength = examples?.toString().length;
+		if (!examples) {
+			return null;
+		}
+		// the only way we can have more than one example is if we have an array of examples
+
+		const count = Array.isArray(examples) ? examples.length : 1;
+		const label = count > 1 ? 'Examples:' : 'Example:';
+		const text = Array.isArray(examples) ? examples.join(', ') : String(examples);
+
 		return (
-			examples && (
-				<div css={theme.typography.heading}>
-					{examplesLength && examplesLength > 1 ? 'Examples:' : 'Example:'}{' '}
-					{Array.isArray(examples) ? examples.join(', ') : String(examples)}
-				</div>
-			)
+			<div css={theme.typography.heading}>
+				{label} {text}
+			</div>
 		);
 	};
+
 	return (
 		<div
 			css={css`
