@@ -44,6 +44,7 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 					lecternUrl="http://localhost:3031"
 					disabled={false}
 					iconOnly={true}
+					fileType="tsv"
 				/>
 			),
 		}));

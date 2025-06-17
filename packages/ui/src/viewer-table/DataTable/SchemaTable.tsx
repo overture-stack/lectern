@@ -52,26 +52,6 @@ const SchemaTable = ({ schema }: SchemaTableProps) => {
 
 	return (
 		<section css={sectionStyle}>
-			<div
-				css={[
-					Lato.Paragraph_bold,
-					css`
-						margin-bottom: 10px;
-					`,
-				]}
-			>
-				{schema.name}
-			</div>
-			<div
-				css={[
-					Lato.Paragraph_small,
-					css`
-						margin-bottom: 20px;
-					`,
-				]}
-			>
-				{schema.description}
-			</div>
 			<table css={tableStyle}>
 				<thead>
 					{table.getHeaderGroups().map((headerGroup: HeaderGroup<SchemaField>) => (
