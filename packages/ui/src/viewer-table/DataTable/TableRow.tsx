@@ -22,9 +22,8 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { Row } from '@tanstack/react-table';
+import { Row, flexRender } from '@tanstack/react-table';
 import ReadMoreText from '../../common/ReadMoreText';
-import { Theme } from '../../theme';
 
 const rowStyle = (index: number) => css`
 	background-color: ${index % 2 === 0 ? '' : '#F5F7F8'};
@@ -40,38 +39,18 @@ const tdStyle = css`
 	vertical-align: top;
 `;
 
-const descriptionWrapperStyle = (theme: Theme) => css`
-	${theme.typography?.label2};
-	color: ${theme.colors.grey_5};
-	padding: 4px 8px;
-	word-wrap: break-word;
-	overflow-wrap: break-word;
-`;
-
 type TableRowProps<R> = {
 	row: Row<R>;
 	index: number;
 };
 
-const MAX_LINES_BEFORE_EXPAND = 2;
-
 const TableRow = <R,>({ row, index }: TableRowProps<R>) => {
 	return (
 		<tr key={row.id} css={rowStyle(index)}>
 			{row.getVisibleCells().map((cell) => {
-				const cellValue = cell.getValue();
-
-				if (cellValue === undefined || cellValue === null || cellValue === '') {
-					return <td key={cell.id} css={tdStyle}></td>;
-				}
-
-				const valueStr = cellValue.toString(); // concatenate a large string to test dropdown feature
-
 				return (
 					<td key={cell.id} css={tdStyle}>
-						<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle}>
-							{valueStr}
-						</ReadMoreText>
+						<ReadMoreText>{flexRender(cell.column.columnDef.cell, cell.getContext())}</ReadMoreText>
 					</td>
 				);
 			})}
