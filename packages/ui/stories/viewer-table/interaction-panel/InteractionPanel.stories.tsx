@@ -3,10 +3,10 @@
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 import type { FilterOptions } from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
-import { DictionaryConfig } from '../../../src/viewer-table/InteractionPanel/DictionaryVersionSwitcher';
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
 import AdvancedDictionary from '../../fixtures/advanced.json';
 import themeDecorator from '../../themeDecorator';
+
 const meta = {
 	component: InteractionPanel,
 	title: 'Viewer - Table/Interaction - Panel/InteractionPanel',
@@ -15,6 +15,7 @@ const meta = {
 } satisfies Meta<typeof InteractionPanel>;
 
 export default meta;
+
 type Story = StoryObj<typeof meta>;
 
 const SingleDictionaryData: Dictionary[] = [AdvancedDictionary as Dictionary];
@@ -33,6 +34,10 @@ const mockOnVersionChange = (index: number) => {
 	alert('onVersionChange called with index:' + index);
 };
 
+const mockSetFilters = (filters: FilterOptions[]) => {
+	alert('setFilters called with:' + filters);
+};
+
 // When we are at multiple versions, then the version switcher is now rendered, this is to test that behavior
 export const Default: Story = {
 	args: {
@@ -41,17 +46,12 @@ export const Default: Story = {
 			alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
 		},
 		currDictionary: {
-			lecternUrl: 'http://localhost:3031',
+			lecternUrl: '',
 			dictionaryIndex: 0,
 			dictionaryData: MultipleDictionaryData,
 			onVersionChange: mockOnVersionChange,
-			filters: { active: true },
-			setFilters: (filters: FilterOptions[]) => {
-				alert('setFilters called with:' + filters);
-			},
-		} as DictionaryConfig,
-		setFilters: (filters: FilterOptions[]) => {
-			alert('setFilters called with:' + filters);
+			filters: [],
+			setFilters: mockSetFilters,
 		},
 	},
 };
@@ -64,17 +64,12 @@ export const WithSingleVersion: Story = {
 			alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
 		},
 		currDictionary: {
-			lecternUrl: 'http://localhost:3031',
+			lecternUrl: '',
 			dictionaryIndex: 0,
 			dictionaryData: SingleDictionaryData,
 			onVersionChange: mockOnVersionChange,
-			filters: { active: true },
-			setFilters: (filters: FilterOptions[]) => {
-				alert('setFilters called with:' + filters);
-			},
-		} as DictionaryConfig,
-		setFilters: (filters: FilterOptions[]) => {
-			alert('setFilters called with:' + filters);
+			filters: [],
+			setFilters: mockSetFilters,
 		},
 	},
 };
@@ -87,17 +82,12 @@ export const Disabled: Story = {
 			alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
 		},
 		currDictionary: {
-			lecternUrl: 'http://localhost:3031',
+			lecternUrl: '',
 			dictionaryIndex: 0,
 			dictionaryData: SingleDictionaryData,
 			onVersionChange: mockOnVersionChange,
-			filters: { active: true },
-			setFilters: (filters: FilterOptions[]) => {
-				alert('setFilters called with:' + filters);
-			},
-		} as DictionaryConfig,
-		setFilters: (filters: FilterOptions[]) => {
-			alert('setFilters called with:' + filters);
+			filters: [],
+			setFilters: mockSetFilters,
 		},
 	},
 };

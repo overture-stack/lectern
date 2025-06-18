@@ -14,13 +14,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	args: {
-		filters: ['Required'],
+		filters: [],
 		setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
 	},
 };
 export const Disabled: Story = {
 	args: {
-		filters: ['Required'],
+		filters: [],
 		setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
 		disabled: true,
 	},
