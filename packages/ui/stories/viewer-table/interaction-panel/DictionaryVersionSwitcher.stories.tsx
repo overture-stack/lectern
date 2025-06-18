@@ -16,61 +16,59 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Create multiple dictionary versions for testing
 const SingleDictionaryData: Dictionary[] = [DictionarySample as Dictionary];
-
 const MultipleDictionaryData: Dictionary[] = [
 	{ ...DictionarySample, version: '1.0' } as Dictionary,
 	{ ...DictionarySample, version: '2.0' } as Dictionary,
 	{ ...DictionarySample, version: '3.0' } as Dictionary,
 ];
 
+const mockProps = {
+	config: {
+		lecternUrl: 'http://localhost:3031',
+		dictionaryIndex: 0,
+		onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
+		filters: [],
+		setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+	},
+};
+
 export const MultipleVersions: Story = {
 	args: {
+		...mockProps,
 		config: {
-			lecternUrl: 'http://localhost:3031',
-			dictionaryIndex: 0,
+			...mockProps.config,
 			dictionaryData: MultipleDictionaryData,
-			onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
-			filters: { active: true },
-			setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
 		},
 	},
 };
+
 export const SingleVersion: Story = {
 	args: {
+		...mockProps,
 		config: {
-			lecternUrl: 'http://localhost:3031',
-			dictionaryIndex: 0,
+			...mockProps.config,
 			dictionaryData: SingleDictionaryData,
-			onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
-			filters: { active: true },
-			setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
 		},
 	},
 };
 
 export const EmptyArray: Story = {
 	args: {
+		...mockProps,
 		config: {
-			lecternUrl: 'http://localhost:3031',
-			dictionaryIndex: 0,
+			...mockProps.config,
 			dictionaryData: [],
-			onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
-			filters: { active: true },
-			setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
 		},
 	},
 };
+
 export const DisabledWithMultipleVersions: Story = {
 	args: {
+		...mockProps,
 		config: {
-			lecternUrl: 'http://localhost:3031',
-			dictionaryIndex: 0,
+			...mockProps.config,
 			dictionaryData: MultipleDictionaryData,
-			onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
-			filters: { active: true },
-			setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
 		},
 		disabled: true,
 	},

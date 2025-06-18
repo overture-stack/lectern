@@ -14,12 +14,15 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const mockOnClick = () => alert('All collapsible components are collapsed');
+
 export const Default: Story = {
-	args: { onClick: () => alert('All collapsible components are collapsed') },
+	args: { onClick: mockOnClick, disabled: false },
 };
+
 export const Disabled: Story = {
 	args: {
-		onClick: () => alert('All collapsible components are collapsed'),
+		onClick: mockOnClick,
 		disabled: true,
 	},
 };

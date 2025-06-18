@@ -25,7 +25,7 @@ import { useState } from 'react';
 import Button from '../../common/Button';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-type DictionaryDownloadButtonProps = {
+export type DictionaryDownloadButtonProps = {
 	version: string;
 	name: string;
 	lecternUrl: string;
