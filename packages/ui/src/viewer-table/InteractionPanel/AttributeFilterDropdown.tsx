@@ -3,14 +3,14 @@ import Dropdown from '../../common/Dropdown/Dropdown';
 export type FilterDropdownProps = {
 	filters: FilterOptions[];
 	setFilters: (filters: FilterOptions[]) => void;
+	disabled?: boolean;
 };
 
 export type FilterOptions = 'Required' | 'All Fields';
 
-const FilterDropdown = ({ filters, setFilters }: FilterDropdownProps) => {
+const FilterDropdown = ({ filters, setFilters, disabled }: FilterDropdownProps) => {
 	const handleFilterSelect = (selectedFilterName: FilterOptions) => {
 		// If we click the filter again then we want to toggle it off, iff it is the same filter being clicked
-		// and it is currently active
 		if (filters?.includes(selectedFilterName)) {
 			setFilters([]);
 			return;
@@ -28,7 +28,7 @@ const FilterDropdown = ({ filters, setFilters }: FilterDropdownProps) => {
 		},
 	];
 
-	return <Dropdown title="Filter By" menuItems={menuItems} />;
+	return <Dropdown title="Filter By" menuItems={menuItems} disabled={disabled} />;
 };
 
 export default FilterDropdown;

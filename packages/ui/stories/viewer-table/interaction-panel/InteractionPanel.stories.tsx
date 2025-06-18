@@ -2,12 +2,11 @@
 
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
-import { FilterMapping } from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
+import type { FilterOptions } from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
 import { DictionaryConfig } from '../../../src/viewer-table/InteractionPanel/DictionaryVersionSwitcher';
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
 import AdvancedDictionary from '../../fixtures/advanced.json';
 import themeDecorator from '../../themeDecorator';
-
 const meta = {
 	component: InteractionPanel,
 	title: 'Viewer - Table/Interaction - Panel/InteractionPanel',
@@ -47,11 +46,11 @@ export const Default: Story = {
 			dictionaryData: MultipleDictionaryData,
 			onVersionChange: mockOnVersionChange,
 			filters: { active: true },
-			setFilters: (filters: FilterMapping) => {
+			setFilters: (filters: FilterOptions[]) => {
 				alert('setFilters called with:' + filters);
 			},
 		} as DictionaryConfig,
-		setFilters: (filters: FilterMapping) => {
+		setFilters: (filters: FilterOptions[]) => {
 			alert('setFilters called with:' + filters);
 		},
 	},
@@ -70,11 +69,11 @@ export const WithSingleVersion: Story = {
 			dictionaryData: SingleDictionaryData,
 			onVersionChange: mockOnVersionChange,
 			filters: { active: true },
-			setFilters: (filters: FilterMapping) => {
+			setFilters: (filters: FilterOptions[]) => {
 				alert('setFilters called with:' + filters);
 			},
 		} as DictionaryConfig,
-		setFilters: (filters: FilterMapping) => {
+		setFilters: (filters: FilterOptions[]) => {
 			alert('setFilters called with:' + filters);
 		},
 	},
@@ -93,11 +92,11 @@ export const Disabled: Story = {
 			dictionaryData: SingleDictionaryData,
 			onVersionChange: mockOnVersionChange,
 			filters: { active: true },
-			setFilters: (filters: FilterMapping) => {
+			setFilters: (filters: FilterOptions[]) => {
 				alert('setFilters called with:' + filters);
 			},
 		} as DictionaryConfig,
-		setFilters: (filters: FilterMapping) => {
+		setFilters: (filters: FilterOptions[]) => {
 			alert('setFilters called with:' + filters);
 		},
 	},

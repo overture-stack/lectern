@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import themeDecorator from '../../themeDecorator';
 import DictionaryDownloadButton from '../../../src/viewer-table/InteractionPanel/DownloadTemplatesButton';
+import themeDecorator from '../../themeDecorator';
 const meta = {
 	component: DictionaryDownloadButton,
 	title: 'Viewer - Table/Interaction - Panel/DictionaryDownloadButton',

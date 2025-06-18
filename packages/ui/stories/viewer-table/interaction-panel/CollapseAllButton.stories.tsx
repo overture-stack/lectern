@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import themeDecorator from '../../themeDecorator';
 import CollapseAllButton from '../../../src/viewer-table/InteractionPanel/CollapseAllButton';
+import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: CollapseAllButton,
