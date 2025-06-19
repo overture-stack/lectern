@@ -20,11 +20,15 @@
  */
 
 /** @jsxImportSource @emotion/react */
+
 import { css } from '@emotion/react';
 import type { ReactNode } from 'react';
-import { useEffect, MouseEvent } from 'react';
+import { MouseEvent, useEffect } from 'react';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
+import DictionaryDownloadButton, {
+	DictionaryDownloadButtonProps,
+} from '../../viewer-table/InteractionPanel/DownloadTemplatesButton';
 import ReadMoreText from '../ReadMoreText';
 
 const MAX_LINES_BEFORE_EXPAND = 2;
@@ -34,7 +38,7 @@ export type AccordionData = {
 	openOnInit: boolean;
 	description: string;
 	content: ReactNode | string;
-	downloadButton?: ReactNode; // Optional for now, just for testing, will need to be mandatory later due to
+	dictionaryDownloadButtonProps: DictionaryDownloadButtonProps;
 };
 
 export type AccordionItemProps = {
@@ -140,13 +144,14 @@ const contentInnerContainerStyle = (theme: Theme) => css`
 
 const AccordionItem = ({ index, data, openState, setClipboardContents }: AccordionItemProps) => {
 	const theme = useThemeContext();
-	const { downloadButton, description, title, content } = data;
+	const { description, title, content, dictionaryDownloadButtonProps } = data;
 	const { ChevronDown, Hash } = theme.icons;
 
 	const indexString = index.toString();
+	const windowLocationHash = `#${index}`;
 
 	useEffect(() => {
-		if (window.location.hash === `#${index}`) {
+		if (window.location.hash === windowLocationHash) {
 			if (!data.openOnInit) {
 				openState.toggle();
 			}
@@ -156,7 +161,7 @@ const AccordionItem = ({ index, data, openState, setClipboardContents }: Accordi
 
 	const hashOnClick = (event: MouseEvent<HTMLSpanElement>) => {
 		event.stopPropagation();
-		window.location.hash = `#${index}`;
+		window.location.hash = windowLocationHash;
 		setClipboardContents(window.location.href);
 	};
 
@@ -178,7 +183,7 @@ const AccordionItem = ({ index, data, openState, setClipboardContents }: Accordi
 							</ReadMoreText>
 						)}
 					</div>
-					{downloadButton}
+					<DictionaryDownloadButton {...dictionaryDownloadButtonProps} />
 				</div>
 			</h2>
 			<div css={accordionCollapseStyle(openState.isOpen)}>
