@@ -35,21 +35,13 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 	// Some placeholder buttons just for testing, THIS IS NOT A SOLUTION.
 	//TODO: Some random buttons that we want to add to the accordion items, we will actually need to figure out some schema filtering logic,
 	// and download based on that, but for now we just add a button to each item.
-	const accordionItemsWithButtons = useMemo(() => {
-		return accordionItems.map((item) => ({
-			...item,
-			downloadButton: (
-				<DownloadTemplatesButton
-					version={'1.0'}
-					name={'example-dictionary'}
-					lecternUrl="http://localhost:3031"
-					disabled={false}
-					iconOnly={true}
-					fileType="tsv"
-				/>
-			),
-		}));
-	}, [accordionItems]);
+
+	const accordionItemsWithButtons = accordionItems.map((item) => ({
+		...item,
+		downloadButton: (
+			<DownloadTemplatesButton version={''} name={''} lecternUrl="" disabled={true} iconOnly={true} fileType="tsv" />
+		),
+	}));
 
 	// This state keeps track of the clipboard contents, which can be set by the accordion items.
 	// Each individual accordion item can set this state when it's tag has been clicked, however only one item can be set at a time.
@@ -93,9 +85,9 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 	// This state keeps track of the currently open accordion item index via a boolean array, since each item can be opened or closed independently.
 	const [openStates, setOpenStates] = useState<boolean[]>(accordionItemsWithButtons.map((item) => item.openOnInit)); // Inits the component with the openOnInit prop
 
-	const handleToggle = useCallback((index: number) => {
+	const handleToggle = (index: number) => {
 		setOpenStates((prev) => prev.map((isOpen, i) => (i === index ? !isOpen : isOpen)));
-	}, []);
+	};
 
 	return (
 		<ul css={accordionStyle}>
