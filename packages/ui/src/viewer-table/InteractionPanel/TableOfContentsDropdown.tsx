@@ -19,51 +19,37 @@
  *
  */
 
-/** @jsxImportSource @emotion/react */
-
-import { css, SerializedStyles } from '@emotion/react';
-import { FC, ReactNode } from 'react';
-import type { Theme } from '../../theme';
+import type { Schema } from '@overture-stack/lectern-dictionary';
+import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-type DropDownItemProps = {
-	action?: string | (() => void);
-	children: ReactNode;
-	customStyles?: {
-		hover?: SerializedStyles;
-		base?: SerializedStyles;
-	};
+export type TableOfContentsDropdownProps = {
+	schemas: Schema[];
+	onSelect: (schemaIndex: number) => void;
+	disabled?: boolean;
 };
 
-const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
-	display: flex;
-	min-height: 100%;
-	padding-bottom: 5px;
-	height: 100%;
-	align-items: center;
-	border-radius: 9px;
-	justify-content: center;
-	color: ${theme.colors.accent_dark};
-	cursor: pointer;
-	&:hover {
-		background-color: ${theme.colors.grey_1};
-	}
-
-	${customStyles?.base}
-`;
-
-const DropDownItem = ({ children, action, customStyles }: DropDownItemProps) => {
+const TableOfContentsDropdown = ({ schemas, onSelect, disabled }: TableOfContentsDropdownProps) => {
 	const theme = useThemeContext();
-	const content = <div css={styledListItemStyle(theme, customStyles)}>{children}</div>;
-	if (typeof action === 'function') {
-		return (
-			<div className="dropdown-item" onClick={action} css={styledListItemStyle(theme, customStyles)}>
-				{children}
-			</div>
-		);
-	}
+	const { List } = theme.icons;
+	const handleAction = (index: number) => {
+		const anchorId = `#${index}`;
+		onSelect(index);
+		setTimeout(() => {
+			window.location.hash = anchorId;
+		}, 100);
+	};
 
-	return content;
+	const menuItemsFromSchemas = schemas.map((schema, index) => ({
+		label: schema.name,
+		action: () => {
+			handleAction(index);
+		},
+	}));
+
+	return (
+		<Dropdown leftIcon={<List />} title="Table of Contents" menuItems={menuItemsFromSchemas} disabled={disabled} />
+	);
 };
 
-export default DropDownItem;
+export default TableOfContentsDropdown;
