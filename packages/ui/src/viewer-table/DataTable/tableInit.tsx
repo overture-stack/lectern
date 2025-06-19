@@ -104,11 +104,8 @@ const renderSchemaField = (field: CellContext<SchemaField, string>, setClipboard
 
 export const getSchemaBaseColumns = (setClipboardContents: (curr: string) => void) => [
 	columnHelper.accessor('name', {
-		header: 'SchemaField',
-		cell: (field) => {
-			// TODO: Open issue in lectern to make displayName a known property of field
-			return renderSchemaField(field, setClipboardContents);
-		},
+		header: 'Fields',
+		cell: (field) => renderSchemaField(field, setClipboardContents),
 	}),
 	columnHelper.accessor(
 		(row) => {
@@ -120,12 +117,11 @@ export const getSchemaBaseColumns = (setClipboardContents: (curr: string) => voi
 		},
 		{
 			id: 'required',
-			header: 'Required',
-			cell: (required) => (required.getValue() ? 'Yes' : 'No'),
+			header: 'Attribute',
 		},
 	),
 	columnHelper.accessor('valueType', {
-		header: 'Type',
+		header: 'Data Type',
 		cell: (type) => {
 			const { valueType, isArray, delimiter } = type.row.original;
 			return (

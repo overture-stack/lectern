@@ -22,12 +22,13 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import type { Schema, SchemaField } from '@overture-stack/lectern-dictionary';
-import { getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
+import type { Schema } from '@overture-stack/lectern-dictionary';
+import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { useMemo, useState } from 'react';
+import { useThemeContext } from '../../theme/ThemeContext';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
 import { getSchemaBaseColumns } from './tableInit';
-import { useMemo, useState } from 'react';
 
 type SchemaTableProps = {
 	schema: Schema;
@@ -37,10 +38,57 @@ const sectionStyle = css`
 	margin-bottom: 48px;
 	max-width: 1200px;
 `;
+
+const tableContainerStyle = css`
+	display: flex;
+	max-width: 1200px;
+`;
+
+const fixedColumnContainerStyle = css`
+	flex: 0 0 300px;
+`;
+
+const scrollableColumnsContainerStyle = css`
+	overflow-x: auto;
+	flex: 1;
+`;
+
 const tableStyle = css`
-	width: 100%;
-	border-collapse: collapse;
+	border-collapse: separate;
+	border-spacing: 0;
 	margin-top: 8px;
+	width: 100%;
+	td,
+	th {
+		vertical-align: top;
+		line-height: 1.5;
+	}
+`;
+
+const fixedTableStyle = css`
+	${tableStyle}
+	width: 300px; // Match the container width
+`;
+
+const scrollableTableStyle = css`
+	${tableStyle}
+	min-width: 800px; // Ensure table is wide enough to scroll
+`;
+
+const thStyle = css`
+	padding: 8px;
+	text-align: left;
+	border-bottom: 1px solid #dcdcdc;
+`;
+
+const tdStyle = css`
+	padding: 8px;
+	border-bottom: 1px solid #dcdcdc;
+	vertical-align: top;
+`;
+
+const rowStyle = (index: number) => css`
+	background-color: ${index % 2 === 0 ? '#fff' : '#f9f9f9'};
 `;
 
 const SchemaTable = ({ schema }: SchemaTableProps) => {
@@ -49,9 +97,7 @@ const SchemaTable = ({ schema }: SchemaTableProps) => {
 	const [copySuccess, setCopySuccess] = useState(false);
 
 	const handleCopy = (text: string) => {
-		if (isCopying) {
-			return; // We don't wanna copy if we are already copying
-		}
+		if (isCopying) return;
 		setIsCopying(true);
 		navigator.clipboard
 			.writeText(text)
@@ -59,7 +105,7 @@ const SchemaTable = ({ schema }: SchemaTableProps) => {
 				setCopySuccess(true);
 				setTimeout(() => {
 					setIsCopying(false);
-				}, 2000); // Reset copy success after 2 seconds as well as the isCopying state
+				}, 2000);
 			})
 			.catch((err) => {
 				console.error('Failed to copy text: ', err);
@@ -67,9 +113,7 @@ const SchemaTable = ({ schema }: SchemaTableProps) => {
 				setIsCopying(false);
 			});
 		if (copySuccess) {
-			// Update the clipboard contents
-			const currentURL = window.location.href;
-			setClipboardContents(currentURL);
+			setClipboardContents(window.location.href);
 		}
 		setCopySuccess(false);
 	};
@@ -79,26 +123,48 @@ const SchemaTable = ({ schema }: SchemaTableProps) => {
 		columns: getSchemaBaseColumns(setClipboardContents),
 		getCoreRowModel: getCoreRowModel(),
 	});
+
 	useMemo(() => {
 		if (clipboardContents) {
 			handleCopy(clipboardContents);
 		}
 	}, [clipboardContents]);
 
+	const theme = useThemeContext();
+
 	return (
 		<section css={sectionStyle}>
-			<table css={tableStyle}>
-				<thead>
-					{table.getHeaderGroups().map((headerGroup: HeaderGroup<SchemaField>) => (
-						<TableHeader key={headerGroup.id} headerGroup={headerGroup} />
-					))}
-				</thead>
-				<tbody>
-					{table.getRowModel().rows.map((row, i: number) => (
-						<TableRow key={row.id} row={row} index={i} />
-					))}
-				</tbody>
-			</table>
+			<div css={tableContainerStyle}>
+				<div css={fixedColumnContainerStyle}>
+					<table css={fixedTableStyle}>
+						<thead>
+							{table.getHeaderGroups().map((headerGroup) => (
+								<TableHeader key={headerGroup.id} headerGroup={headerGroup} columnSlice={[0, 1]} />
+							))}
+						</thead>
+						<tbody>
+							{table.getRowModel().rows.map((row, i) => (
+								<TableRow key={row.id} row={row} index={i} columnSlice={[0, 1]} />
+							))}
+						</tbody>
+					</table>
+				</div>
+
+				<div css={scrollableColumnsContainerStyle}>
+					<table css={scrollableTableStyle}>
+						<thead>
+							{table.getHeaderGroups().map((headerGroup) => (
+								<TableHeader key={headerGroup.id} headerGroup={headerGroup} columnSlice={[1]} />
+							))}
+						</thead>
+						<tbody>
+							{table.getRowModel().rows.map((row, i) => (
+								<TableRow key={row.id} row={row} index={i} columnSlice={[1]} />
+							))}
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</section>
 	);
 };

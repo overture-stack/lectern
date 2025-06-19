@@ -42,18 +42,19 @@ const tdStyle = css`
 type TableRowProps<R> = {
 	row: Row<R>;
 	index: number;
+	columnSlice?: [number, number] | [number];
 };
 
-const TableRow = <R,>({ row, index }: TableRowProps<R>) => {
+const TableRow = <R,>({ row, index, columnSlice }: TableRowProps<R>) => {
+	const cells = columnSlice ? row.getVisibleCells().slice(...columnSlice) : row.getVisibleCells();
+
 	return (
 		<tr key={row.id} css={rowStyle(index)}>
-			{row.getVisibleCells().map((cell) => {
-				return (
-					<td key={cell.id} css={tdStyle}>
-						<ReadMoreText>{flexRender(cell.column.columnDef.cell, cell.getContext())}</ReadMoreText>
-					</td>
-				);
-			})}
+			{cells.map((cell) => (
+				<td key={cell.id} css={tdStyle}>
+					<ReadMoreText>{flexRender(cell.column.columnDef.cell, cell.getContext())}</ReadMoreText>
+				</td>
+			))}
 		</tr>
 	);
 };

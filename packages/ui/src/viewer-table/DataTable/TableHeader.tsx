@@ -23,7 +23,7 @@
 
 import { css } from '@emotion/react';
 import { flexRender, HeaderGroup } from '@tanstack/react-table';
-import { Lato } from '../styles/typography';
+import { useThemeContext } from '../../theme/ThemeContext';
 
 const thStyle = css`
 	background: #e5edf3;
@@ -34,18 +34,22 @@ const thStyle = css`
 
 type TableHeaderProps<T> = {
 	headerGroup: HeaderGroup<T>;
+	columnSlice?: [number, number] | [number];
 };
 
-const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
+const TableHeader = <T,>({ headerGroup, columnSlice }: TableHeaderProps<T>) => {
+	const theme = useThemeContext();
+	const headers = columnSlice ? headerGroup.headers.slice(...columnSlice) : headerGroup.headers;
+
 	return (
 		<tr key={headerGroup.id}>
-			{headerGroup.headers.map((header) => (
+			{headers.map((header) => (
 				<th
 					key={header.id}
 					colSpan={header.colSpan}
 					css={css`
 						${thStyle}
-						${Lato.Subtitle2}
+						${theme.typography.subheading2}
 					`}
 				>
 					{flexRender(header.column.columnDef.header, header.getContext())}
