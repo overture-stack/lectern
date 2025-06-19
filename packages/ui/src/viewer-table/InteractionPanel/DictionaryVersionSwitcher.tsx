@@ -23,32 +23,30 @@
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
-import { FilterOptions } from './AttributeFilterDropdown';
 
 type VersionSwitcherProps = {
-	config: DictionaryConfig;
+	dictionaryData: Dictionary[];
+	dictionaryIndex: number;
+	onVersionChange: (index: number) => void;
 	disabled?: boolean;
 };
-export type DictionaryConfig = {
-	lecternUrl: string;
-	dictionaryIndex: number;
-	dictionaryData: Dictionary[];
-	onVersionChange: (index: number) => void;
-	filters: FilterOptions[];
-	setFilters: (filters: FilterOptions[]) => void;
-};
 
-const VersionSwitcher = ({ config, disabled = false }: VersionSwitcherProps) => {
+const VersionSwitcher = ({
+	dictionaryData,
+	dictionaryIndex,
+	onVersionChange,
+	disabled = false,
+}: VersionSwitcherProps) => {
 	const theme = useThemeContext();
 	const { History } = theme.icons;
 
-	const versionSwitcherObjectArray = config.dictionaryData?.map((dictionary: Dictionary, index: number) => {
+	const versionSwitcherObjectArray = dictionaryData?.map((dictionary: Dictionary, index: number) => {
 		// TODO: We should either remove the version date stamp requirement or update the date to be dynamic via
 		// lectern-client
 		return {
 			label: 'Version ' + dictionary?.version,
 			action: () => {
-				config.onVersionChange(index);
+				onVersionChange(index);
 			},
 		};
 	});
@@ -61,7 +59,7 @@ const VersionSwitcher = ({ config, disabled = false }: VersionSwitcherProps) => 
 			<Dropdown
 				leftIcon={<History />}
 				menuItems={versionSwitcherObjectArray}
-				title={`Version ${config.dictionaryData?.[config.dictionaryIndex].version}`}
+				title={`Version ${dictionaryData?.[dictionaryIndex].version}`}
 				disabled={disabled}
 			/>
 		)
