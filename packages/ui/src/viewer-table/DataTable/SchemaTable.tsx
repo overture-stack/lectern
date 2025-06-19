@@ -67,12 +67,12 @@ const tableStyle = css`
 
 const fixedTableStyle = css`
 	${tableStyle}
-	width: 300px; // Match the container width
+	width: 300px;
 `;
 
 const scrollableTableStyle = css`
 	${tableStyle}
-	min-width: 800px; // Ensure table is wide enough to scroll
+	min-width: 800px;
 `;
 
 const thStyle = css`
