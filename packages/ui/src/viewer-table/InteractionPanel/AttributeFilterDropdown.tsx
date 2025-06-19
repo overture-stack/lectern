@@ -1,3 +1,4 @@
+import React from 'react';
 import Dropdown from '../../common/Dropdown/Dropdown';
 
 export type FilterDropdownProps = {
