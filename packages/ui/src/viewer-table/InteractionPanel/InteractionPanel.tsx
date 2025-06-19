@@ -27,7 +27,7 @@ import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import AttributeFilterDropdown, { FilterOptions } from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
-import DictionaryVersionSwitcher, { DictionaryConfig } from './DictionaryVersionSwitcher';
+import DictionaryVersionSwitcher from './DictionaryVersionSwitcher';
 import DownloadTemplatesButton from './DownloadTemplatesButton';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
@@ -36,7 +36,14 @@ type InteractionPanelProps = {
 	disabled?: boolean;
 	setIsCollapsed: (isCollapsed: boolean) => void;
 	onSelect: (schemaNameIndex: number) => void;
-	currDictionary: DictionaryConfig;
+	currDictionary: {
+		lecternUrl: string;
+		dictionaryIndex: number;
+		dictionaryData: Dictionary[];
+		onVersionChange: (index: number) => void;
+		filters: FilterOptions[];
+		setFilters: (filters: FilterOptions[]) => void;
+	};
 };
 
 const panelStyles = (theme: Theme) => css`
@@ -82,7 +89,12 @@ const InteractionPanel = ({ disabled = false, setIsCollapsed, onSelect, currDict
 				<CollapseAllButton onClick={() => setIsCollapsed(false)} disabled={disabled} />
 			</div>
 			<div css={rightSectionStyles}>
-				<DictionaryVersionSwitcher config={currDictionary} disabled={disabled} />
+				<DictionaryVersionSwitcher
+					dictionaryData={currDictionary.dictionaryData}
+					dictionaryIndex={currDictionary.dictionaryIndex}
+					onVersionChange={currDictionary.onVersionChange}
+					disabled={disabled}
+				/>
 				<DownloadTemplatesButton
 					fileType="tsv"
 					version={currDict.version}

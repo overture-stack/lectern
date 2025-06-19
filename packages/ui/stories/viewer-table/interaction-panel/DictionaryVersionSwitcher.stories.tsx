@@ -24,52 +24,36 @@ const MultipleDictionaryData: Dictionary[] = [
 ];
 
 const mockProps = {
-	config: {
-		lecternUrl: 'http://localhost:3031',
-		dictionaryIndex: 0,
-		onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
-		filters: [],
-		setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
-	},
+	dictionaryData: MultipleDictionaryData,
+	dictionaryIndex: 0,
+	onVersionChange: (index: number) => alert(`Version changed to index: ${index}`),
 };
 
 export const MultipleVersions: Story = {
 	args: {
 		...mockProps,
-		config: {
-			...mockProps.config,
-			dictionaryData: MultipleDictionaryData,
-		},
+		dictionaryData: MultipleDictionaryData,
 	},
 };
 
 export const SingleVersion: Story = {
 	args: {
 		...mockProps,
-		config: {
-			...mockProps.config,
-			dictionaryData: SingleDictionaryData,
-		},
+		dictionaryData: SingleDictionaryData,
 	},
 };
 
 export const EmptyArray: Story = {
 	args: {
 		...mockProps,
-		config: {
-			...mockProps.config,
-			dictionaryData: [],
-		},
+		dictionaryData: [],
 	},
 };
 
 export const DisabledWithMultipleVersions: Story = {
 	args: {
 		...mockProps,
-		config: {
-			...mockProps.config,
-			dictionaryData: MultipleDictionaryData,
-		},
+		dictionaryData: MultipleDictionaryData,
 		disabled: true,
 	},
 };
