@@ -20,50 +20,50 @@
  */
 
 /** @jsxImportSource @emotion/react */
-
-import { css, SerializedStyles } from '@emotion/react';
-import { FC, ReactNode } from 'react';
-import type { Theme } from '../../theme';
+import { Dictionary } from '@overture-stack/lectern-dictionary';
+import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-type DropDownItemProps = {
-	action?: string | (() => void);
-	children: ReactNode;
-	customStyles?: {
-		hover?: SerializedStyles;
-		base?: SerializedStyles;
-	};
+type VersionSwitcherProps = {
+	dictionaryData: Dictionary[];
+	dictionaryIndex: number;
+	onVersionChange: (index: number) => void;
+	disabled?: boolean;
 };
 
-const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
-	display: flex;
-	min-height: 100%;
-	padding-bottom: 5px;
-	height: 100%;
-	align-items: center;
-	border-radius: 9px;
-	justify-content: center;
-	color: ${theme.colors.accent_dark};
-	cursor: pointer;
-	&:hover {
-		background-color: ${theme.colors.grey_1};
-	}
-
-	${customStyles?.base}
-`;
-
-const DropDownItem = ({ children, action, customStyles }: DropDownItemProps) => {
+const VersionSwitcher = ({
+	dictionaryData,
+	dictionaryIndex,
+	onVersionChange,
+	disabled = false,
+}: VersionSwitcherProps) => {
 	const theme = useThemeContext();
-	const content = <div css={styledListItemStyle(theme, customStyles)}>{children}</div>;
-	if (typeof action === 'function') {
-		return (
-			<div className="dropdown-item" onClick={action} css={styledListItemStyle(theme, customStyles)}>
-				{children}
-			</div>
-		);
-	}
+	const { History } = theme.icons;
 
-	return content;
+	const versionSwitcherObjectArray = dictionaryData?.map((dictionary: Dictionary, index: number) => {
+		// TODO: We should either remove the version date stamp requirement or update the date to be dynamic via
+		// lectern-client
+		return {
+			label: 'Version ' + dictionary?.version,
+			action: () => {
+				onVersionChange(index);
+			},
+		};
+	});
+
+	// If there is only one version, we don't need to show the dropdown as per specifications
+	const displayVersionSwitcher = versionSwitcherObjectArray && versionSwitcherObjectArray.length > 1;
+
+	return (
+		displayVersionSwitcher && (
+			<Dropdown
+				leftIcon={<History />}
+				menuItems={versionSwitcherObjectArray}
+				title={`Version ${dictionaryData?.[dictionaryIndex].version}`}
+				disabled={disabled}
+			/>
+		)
+	);
 };
 
-export default DropDownItem;
+export default VersionSwitcher;
