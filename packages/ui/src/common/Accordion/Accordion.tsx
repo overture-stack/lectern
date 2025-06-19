@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import AccordionItem, { AccordionData } from './AccordionItem';
 import DownloadTemplatesButton from '../../viewer-table/InteractionPanel/DownloadTemplatesButton';
 
@@ -32,6 +32,7 @@ const accordionStyle = css`
  */
 
 const Accordion = ({ accordionItems }: AccordionProps) => {
+	// Some placeholder buttons just for testing, THIS IS NOT A SOLUTION.
 	//TODO: Some random buttons that we want to add to the accordion items, we will actually need to figure out some schema filtering logic,
 	// and download based on that, but for now we just add a button to each item.
 	const accordionItemsWithButtons = useMemo(() => {
@@ -59,7 +60,7 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 
 	const handleCopy = (text: string) => {
 		if (isCopying) {
-			return; // We don't wanna copy if we are already copying
+			return; // We don't want to copy if we are already copying
 		}
 		setIsCopying(true);
 		navigator.clipboard
@@ -90,24 +91,23 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 	}, [clipboardContents]);
 
 	// This state keeps track of the currently open accordion item index via a boolean array, since each item can be opened or closed independently.
-	const [openStates, setOpenStates] = useState<boolean[]>(
-		accordionItemsWithButtons.map((accordionItem) => accordionItem.openOnInit), // Initialize with the openOnInit property of each item
-	);
-	// This state keeps track of which accordion items are open
-	const onClick = (idx: number) => {
-		setOpenStates((prev) => prev.map((isOpen, index) => (index === idx ? !isOpen : isOpen)));
-	};
+	const [openStates, setOpenStates] = useState<boolean[]>(accordionItemsWithButtons.map((item) => item.openOnInit)); // Inits the component with the openOnInit prop
+
+	const handleToggle = useCallback((index: number) => {
+		setOpenStates((prev) => prev.map((isOpen, i) => (i === index ? !isOpen : isOpen)));
+	}, []);
 
 	return (
 		<ul css={accordionStyle}>
-			{accordionItemsWithButtons.map((item, idx) => (
+			{accordionItemsWithButtons.map((item, index) => (
 				<AccordionItem
-					index={idx}
-					key={idx}
+					index={index}
+					key={index}
 					data={item}
-					setIsOpen={(index) => onClick(index)}
-					isOpen={openStates[idx]}
-					onClick={() => onClick(idx)}
+					openState={{
+						isOpen: openStates[index],
+						toggle: () => handleToggle(index),
+					}}
 					setClipboardContents={setClipboardContents}
 				/>
 			))}
