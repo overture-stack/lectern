@@ -22,11 +22,10 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import type { Dictionary, Schema } from '@overture-stack/lectern-dictionary';
-import { useState } from 'react';
+import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
-import AttributeFilterDropdown, { FilterMapping } from './AttributeFilterDropdown';
+import AttributeFilterDropdown, { FilterOptions } from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
 import DictionaryVersionSwitcher, { DictionaryConfig } from './DictionaryVersionSwitcher';
 import DownloadTemplatesButton from './DownloadTemplatesButton';
@@ -38,7 +37,6 @@ type InteractionPanelProps = {
 	setIsCollapsed: (isCollapsed: boolean) => void;
 	onSelect: (schemaNameIndex: number) => void;
 	currDictionary: DictionaryConfig;
-	setFilters: (filters: FilterMapping) => void;
 };
 
 const panelStyles = (theme: Theme) => css`
@@ -67,20 +65,19 @@ const rightSectionStyles = css`
 	align-items: center;
 	gap: 16px;
 `;
-const InteractionPanel = ({
-	disabled = false,
-	setIsCollapsed,
-	onSelect,
-	currDictionary,
-	setFilters,
-}: InteractionPanelProps) => {
+
+const InteractionPanel = ({ disabled = false, setIsCollapsed, onSelect, currDictionary }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
 	const currDict: Dictionary = currDictionary.dictionaryData[currDictionary.dictionaryIndex];
 	return (
 		<div css={panelStyles(theme)}>
 			<div css={leftSectionStyles}>
 				<TableOfContentsDropdown schemas={currDict.schemas} onSelect={onSelect} disabled={disabled} />
-				<AttributeFilterDropdown filters={currDictionary.filters} setFilters={setFilters} disabled={disabled} />
+				<AttributeFilterDropdown
+					filters={currDictionary.filters}
+					setFilters={currDictionary.setFilters}
+					disabled={disabled}
+				/>
 				<ExpandAllButton onClick={() => setIsCollapsed(true)} disabled={disabled} />
 				<CollapseAllButton onClick={() => setIsCollapsed(false)} disabled={disabled} />
 			</div>

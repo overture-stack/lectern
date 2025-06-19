@@ -23,7 +23,7 @@
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
-import { FilterMapping } from './AttributeFilterDropdown';
+import { FilterOptions } from './AttributeFilterDropdown';
 
 type VersionSwitcherProps = {
 	config: DictionaryConfig;
@@ -34,8 +34,8 @@ export type DictionaryConfig = {
 	dictionaryIndex: number;
 	dictionaryData: Dictionary[];
 	onVersionChange: (index: number) => void;
-	filters: FilterMapping;
-	setFilters: (filters: FilterMapping) => void;
+	filters: FilterOptions[];
+	setFilters: (filters: FilterOptions[]) => void;
 };
 
 const VersionSwitcher = ({ config, disabled = false }: VersionSwitcherProps) => {
