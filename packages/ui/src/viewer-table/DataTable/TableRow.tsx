@@ -55,7 +55,14 @@ const TableRow = <R,>({ row, index }: TableRowProps<R>) => {
 			{row.getVisibleCells().map((cell) => {
 				return (
 					<td key={cell.id} css={tdStyle(theme)}>
-						<ReadMoreText>{flexRender(cell.column.columnDef.cell, cell.getContext())}</ReadMoreText>
+						<ReadMoreText
+							wrapperStyle={() => css`
+								${theme.typography.data}
+							`}
+							maxLines={4}
+						>
+							{flexRender(cell.column.columnDef.cell, cell.getContext())}
+						</ReadMoreText>
 					</td>
 				);
 			})}

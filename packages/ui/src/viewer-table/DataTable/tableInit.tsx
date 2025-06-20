@@ -24,10 +24,9 @@
 import { css } from '@emotion/react';
 import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
-import { useThemeContext } from '../../theme/ThemeContext';
 import { useEffect } from 'react';
 import { Theme } from '../../theme';
-import ReadMoreText from '../../common/ReadMoreText';
+import { useThemeContext } from '../../theme/ThemeContext';
 // This file is responsible for defining the columns of the schema table, depending on user defined types and schemas.
 
 const hashIconStyle = (theme: Theme) => css`
@@ -132,9 +131,8 @@ export const getSchemaBaseColumns = (setClipboardContents: (curr: string) => voi
 		header: 'Data Type',
 		cell: (type) => {
 			const { valueType, isArray, delimiter } = type.row.original;
-			const theme: Theme = useThemeContext();
 			return (
-				<div css={theme.typography.data}>
+				<div>
 					{valueType}
 					{isArray}
 					{delimiter}
@@ -164,7 +162,7 @@ export const getSchemaBaseColumns = (setClipboardContents: (curr: string) => voi
 			if ('codeList' in restrictionsObj && restrictionsObj.codeList) {
 				const value =
 					Array.isArray(restrictionsObj.codeList) ?
-						restrictionsObj.codeList.join(', ')
+						restrictionsObj.codeList.join(',\n ')
 					:	(restrictionsObj.codeList as any).$ref || restrictionsObj.codeList;
 				restrictionItems.push(value);
 			}
@@ -176,14 +174,7 @@ export const getSchemaBaseColumns = (setClipboardContents: (curr: string) => voi
 			if ('unique' in restrictionsObj && restrictionsObj.unique) {
 				restrictionItems.push('Unique');
 			}
-
-			return (
-				<div css={theme.typography.data}>
-					{restrictionItems.length > 0 ?
-						<ReadMoreText>{restrictionItems.join('; ')}</ReadMoreText>
-					:	'None'}
-				</div>
-			);
+			return restrictionItems.length > 0 ? <div>{restrictionItems.join('; ')}</div> : 'None';
 		},
 	}),
 ];

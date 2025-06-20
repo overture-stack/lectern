@@ -10,6 +10,24 @@ const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(file
 
 // More info at: https://storybook.js.org/docs/writing-tests/test-addon
 export default defineConfig({
+	// To enable import of commonJS modules from the monorepo
+	build: {
+		commonjsOptions: {
+			include: [
+				/@overture-stack\/lectern-client/,
+				/@overture-stack\/lectern-dictionary/,
+				/@overture-stack\/lectern-validation/,
+			],
+		},
+	},
+	optimizeDeps: {
+		include: [
+			'@overture-stack/lectern-client',
+			'@overture-stack/lectern-dictionary',
+			'@overture-stack/lectern-validation',
+		],
+	},
+
 	plugins: [tsconfigPaths()],
 	test: {
 		workspace: [
