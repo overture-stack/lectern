@@ -22,7 +22,8 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import type { Schema, SchemaField } from '@overture-stack/lectern-dictionary';
+import type { Schema, SchemaField, Dictionary } from '@overture-stack/lectern-dictionary';
+import { replaceReferences } from '@overture-stack/lectern-dictionary';
 import { getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
@@ -31,6 +32,7 @@ import { useMemo, useState } from 'react';
 
 type SchemaTableProps = {
 	schema: Schema;
+	dictionary: Dictionary;
 };
 
 const sectionStyle = css`
@@ -43,10 +45,12 @@ const tableStyle = css`
 	margin-top: 8px;
 `;
 
-const SchemaTable = ({ schema }: SchemaTableProps) => {
+const SchemaTable = ({ schema, dictionary }: SchemaTableProps) => {
 	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
 	const [isCopying, setIsCopying] = useState(false);
 	const [copySuccess, setCopySuccess] = useState(false);
+
+	const resolvedDictionary = replaceReferences(dictionary);
 
 	const handleCopy = (text: string) => {
 		if (isCopying) {
@@ -75,7 +79,7 @@ const SchemaTable = ({ schema }: SchemaTableProps) => {
 	};
 
 	const table = useReactTable({
-		data: schema.fields || [],
+		data: resolvedDictionary.schemas,
 		columns: getSchemaBaseColumns(setClipboardContents),
 		getCoreRowModel: getCoreRowModel(),
 	});

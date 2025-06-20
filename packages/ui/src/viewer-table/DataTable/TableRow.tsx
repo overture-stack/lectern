@@ -24,12 +24,15 @@
 import { css } from '@emotion/react';
 import { Row, flexRender } from '@tanstack/react-table';
 import ReadMoreText from '../../common/ReadMoreText';
+import { useThemeContext } from '../../theme/ThemeContext';
+import { Theme } from '../../theme';
 
 const rowStyle = (index: number) => css`
 	background-color: ${index % 2 === 0 ? '' : '#F5F7F8'};
 `;
 
-const tdStyle = css`
+const tdStyle = (theme: Theme) => css`
+	${theme.typography.data}
 	padding: 12px;
 	border-bottom: 1px solid #eaeaea;
 	max-width: 30vw;
@@ -45,11 +48,12 @@ type TableRowProps<R> = {
 };
 
 const TableRow = <R,>({ row, index }: TableRowProps<R>) => {
+	const theme = useThemeContext();
 	return (
 		<tr key={row.id} css={rowStyle(index)}>
 			{row.getVisibleCells().map((cell) => {
 				return (
-					<td key={cell.id} css={tdStyle}>
+					<td key={cell.id} css={tdStyle(theme)}>
 						<ReadMoreText>{flexRender(cell.column.columnDef.cell, cell.getContext())}</ReadMoreText>
 					</td>
 				);

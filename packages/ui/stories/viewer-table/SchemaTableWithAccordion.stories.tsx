@@ -20,5 +20,5 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	// args: { name: sampleDictionary.name, version: sampleDictionary.name, description: sampleDictionary.description },
-	args: { schema },
+	args: { schema, dictionary: Dictionary },
 };

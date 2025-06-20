@@ -1,35 +1,184 @@
 {
-	"name": "Advanced",
-	"version": "1.0",
+	"name": "Hockey Game Stats",
+	"version": "1.0.0",
+	"meta": {
+		"description": "A comprehensive data dictionary for tracking statistics in a hockey game, with a focus on providing rich examples for all supported features.",
+		"author": "Claude AI"
+	},
+	"references": {
+		"maple_leafs_roster": {
+			"description": "The official roster for the Toronto Maple Leafs.",
+			"values": [
+				"Matthews",
+				"Nylander",
+				"Marner",
+				"Tavares",
+				"Rielly",
+				"Domi",
+				"Bertuzzi",
+				"Knies",
+				"McMann",
+				"Holmberg",
+				"Kampf",
+				"Reaves",
+				"Dewar",
+				"Lorentz",
+				"Robertson",
+				"Pacioretty",
+				"McCabe",
+				"Tanev",
+				"Ekman-Larsson",
+				"Benoit",
+				"Timmins",
+				"Hakanpaa",
+				"Woll",
+				"Stolarz",
+				"Murray"
+			]
+		},
+		"gender_options": {
+			"description": "Standard gender identification options including missing data categories.",
+			"values": [
+				"Man",
+				"Woman",
+				"Another Gender",
+				"Prefer not to answer",
+				"Not applicable",
+				"Missing - Unknown",
+				"Missing - Not collected",
+				"Missing - Not provided",
+				"Missing - Restricted access"
+			]
+		}
+	},
 	"schemas": [
 		{
-			"name": "empty",
-			"description": "An empty schema with no fields.",
-			"fields": []
-		},
-		{
-			"name": "single_field",
-			"description": "A schema with a single field of type string.",
-			"fields": [{ "name": "single_string_field", "valueType": "string" }]
-		},
-		{
-			"name": "multiple_fields",
-			"description": "A schema with multiple fields of different types.",
+			"name": "game_statistics",
+			"description": "A schema for recording the statistics of a single hockey game.",
 			"fields": [
-				{ "name": "string_field", "valueType": "string" },
-				{ "name": "integer_field", "valueType": "integer" },
-				{ "name": "boolean_field", "valueType": "boolean" }
+				{
+					"name": "game_id",
+					"valueType": "string",
+					"description": "A unique identifier assigned to any given game played by the Toronto Maple Leafs. Example(s): BLF_67_2INF, BOS_GM7_4_0",
+					"restrictions": {
+						"required": true,
+						"regex": "^[A-Z]{3}_[A-Z0-9]{2,5}_[A-Z0-9]{1,5}$"
+					}
+				},
+				{
+					"name": "three_stars_of_the_game",
+					"valueType": "string",
+					"isArray": true,
+					"delimiter": "|",
+					"description": "The 'three stars' is a long-standing hockey tradition to recognize the three best individual performances in a game. This honor system dates back to the 1930s and has become one of hockey's most cherished traditions, serving as both a way to acknowledge outstanding play and provide fans with a memorable conclusion to each game. Example: \"Nylander|Matthews|Marner\"",
+					"restrictions": {
+						"required": true,
+						"codeList": { "$ref": "maple_leafs_roster" }
+					},
+					"meta": {
+						"selection_rule": "Choose exactly three players from the roster."
+					}
+				},
+				{
+					"name": "first_star",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"codeList": { "$ref": "maple_leafs_roster" }
+					}
+				},
+				{
+					"name": "second_star",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"codeList": { "$ref": "maple_leafs_roster" }
+					}
+				},
+				{
+					"name": "third_star",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"codeList": { "$ref": "maple_leafs_roster" }
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKeys": [["first_star", "second_star", "third_star"]]
+			}
+		},
+		{
+			"name": "player_profiles",
+			"description": "Contains profile information for each player.",
+			"fields": [
+				{
+					"name": "player_name",
+					"valueType": "string",
+					"unique": true,
+					"restrictions": {
+						"required": true,
+						"codeList": { "$ref": "maple_leafs_roster" }
+					}
+				},
+				{
+					"name": "games_played",
+					"valueType": "integer",
+					"restrictions": {
+						"required": true,
+						"range": { "min": 0 }
+					}
+				},
+				{
+					"name": "is_active",
+					"valueType": "boolean",
+					"restrictions": {
+						"required": true
+					}
+				}
 			]
 		},
 		{
-			"name": "primitives",
-			"description": "Includes one field of each primitive type without any restrictions. No Frills.",
+			"name": "game_events",
+			"description": "Records specific events that occur during a game.",
 			"fields": [
-				{ "name": "boolean_field", "valueType": "boolean" },
-				{ "name": "integer_field", "valueType": "integer" },
-				{ "name": "number_field", "valueType": "number" },
-				{ "name": "string_field", "valueType": "string" }
-			]
+				{
+					"name": "event_id",
+					"valueType": "string",
+					"unique": true,
+					"restrictions": { "required": true }
+				},
+				{
+					"name": "game_id",
+					"valueType": "string",
+					"restrictions": { "required": true }
+				},
+				{
+					"name": "player_name",
+					"valueType": "string",
+					"restrictions": { "required": true }
+				},
+				{
+					"name": "event_type",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"codeList": ["goal", "assist", "penalty"]
+					}
+				}
+			],
+			"restrictions": {
+				"foreignKeys": [
+					{
+						"schema": "game_statistics",
+						"mappings": [{ "local": "game_id", "foreign": "game_id" }]
+					},
+					{
+						"schema": "player_profiles",
+						"mappings": [{ "local": "player_name", "foreign": "player_name" }]
+					}
+				]
+			}
 		}
 	]
 }

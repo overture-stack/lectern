@@ -22,11 +22,12 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { SchemaField } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
 import { useThemeContext } from '../../theme/ThemeContext';
 import { useEffect } from 'react';
 import { Theme } from '../../theme';
+import ReadMoreText from '../../common/ReadMoreText';
 // This file is responsible for defining the columns of the schema table, depending on user defined types and schemas.
 
 const hashIconStyle = (theme: Theme) => css`
@@ -60,7 +61,7 @@ const renderSchemaField = (field: CellContext<SchemaField, string>, setClipboard
 		const text = Array.isArray(examples) ? examples.join(', ') : String(examples);
 
 		return (
-			<div css={theme.typography.heading}>
+			<div css={theme.typography.data}>
 				{label} {text}
 			</div>
 		);
@@ -90,13 +91,13 @@ const renderSchemaField = (field: CellContext<SchemaField, string>, setClipboard
 				gap: 10px;
 			`}
 		>
-			<div css={theme.typography.heading}>
+			<div css={theme.typography.data}>
 				{fieldName}
 				<span css={hashIconStyle(theme)} onClick={handleClick}>
 					<Hash width={20} height={20} fill={theme.colors.secondary} />
 				</span>
 			</div>
-			<div css={theme.typography.heading}>{field.row.original.description}</div>
+			<div css={theme.typography.data}>{field.row.original.description}</div>
 			{renderExamples()}
 		</div>
 	);
@@ -104,7 +105,7 @@ const renderSchemaField = (field: CellContext<SchemaField, string>, setClipboard
 
 export const getSchemaBaseColumns = (setClipboardContents: (curr: string) => void) => [
 	columnHelper.accessor('name', {
-		header: 'SchemaField',
+		header: 'Fields',
 		cell: (field) => {
 			// TODO: Open issue in lectern to make displayName a known property of field
 			return renderSchemaField(field, setClipboardContents);
@@ -120,16 +121,20 @@ export const getSchemaBaseColumns = (setClipboardContents: (curr: string) => voi
 		},
 		{
 			id: 'required',
-			header: 'Required',
-			cell: (required) => (required.getValue() ? 'Yes' : 'No'),
+			header: 'Attribute',
+			cell: (required) => {
+				const theme: Theme = useThemeContext();
+				return <div css={theme.typography.data}>{required.getValue() ? 'Required' : 'Optional'}</div>;
+			},
 		},
 	),
 	columnHelper.accessor('valueType', {
 		header: 'Type',
 		cell: (type) => {
 			const { valueType, isArray, delimiter } = type.row.original;
+			const theme: Theme = useThemeContext();
 			return (
-				<div>
+				<div css={theme.typography.data}>
 					{valueType}
 					{isArray}
 					{delimiter}
@@ -137,12 +142,48 @@ export const getSchemaBaseColumns = (setClipboardContents: (curr: string) => voi
 			);
 		},
 	}),
-	columnHelper.accessor((row) => row.meta?.examples ?? [], {
-		id: 'examples',
-		header: 'Examples',
-		cell: (examples) => {
-			const value = examples.getValue();
-			return Array.isArray(value) ? value.join(',  ') : value;
+	columnHelper.accessor((row) => row.restrictions ?? {}, {
+		id: 'restrictions',
+		header: 'Restrictions',
+		cell: (restrictions) => {
+			const theme: Theme = useThemeContext();
+
+			const restrictionsObj: SchemaRestrictions = restrictions.getValue();
+			if (!restrictionsObj || Object.keys(restrictionsObj).length === 0) {
+				return <div css={theme.typography.data}>None</div>;
+			}
+
+			const restrictionItems: string[] = []; // This is the array that we push everything into.
+
+			if ('regex' in restrictionsObj && restrictionsObj.regex) {
+				const regexValue =
+					Array.isArray(restrictionsObj.regex) ? restrictionsObj.regex.join(', ') : restrictionsObj.regex;
+				restrictionItems.push(regexValue);
+			}
+
+			if ('codeList' in restrictionsObj && restrictionsObj.codeList) {
+				const value =
+					Array.isArray(restrictionsObj.codeList) ?
+						restrictionsObj.codeList.join(', ')
+					:	(restrictionsObj.codeList as any).$ref || restrictionsObj.codeList;
+				restrictionItems.push(value);
+			}
+
+			if ('range' in restrictionsObj && restrictionsObj.range) {
+				restrictionItems.push(JSON.stringify(restrictionsObj.range));
+			}
+
+			if ('unique' in restrictionsObj && restrictionsObj.unique) {
+				restrictionItems.push('Unique');
+			}
+
+			return (
+				<div css={theme.typography.data}>
+					{restrictionItems.length > 0 ?
+						<ReadMoreText>{restrictionItems.join('; ')}</ReadMoreText>
+					:	'None'}
+				</div>
+			);
 		},
 	}),
 ];
