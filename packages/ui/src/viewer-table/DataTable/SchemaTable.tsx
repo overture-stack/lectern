@@ -79,7 +79,7 @@ const SchemaTable = ({ schema, dictionary }: SchemaTableProps) => {
 	};
 
 	const table = useReactTable({
-		data: resolvedDictionary.schemas,
+		data: resolvedDictionary.schemas[0].fields,
 		columns: getSchemaBaseColumns(setClipboardContents),
 		getCoreRowModel: getCoreRowModel(),
 	});
