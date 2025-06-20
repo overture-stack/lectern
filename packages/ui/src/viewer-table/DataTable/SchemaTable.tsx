@@ -22,13 +22,13 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import type { Schema, SchemaField, Dictionary } from '@overture-stack/lectern-dictionary';
+import type { Dictionary, Schema, SchemaField } from '@overture-stack/lectern-dictionary';
 import { replaceReferences } from '@overture-stack/lectern-dictionary';
 import { getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
+import { useMemo, useState } from 'react';
+import { getSchemaBaseColumns } from './SchemaTableInitialization/TableInit';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
-import { getSchemaBaseColumns } from './tableInit';
-import { useMemo, useState } from 'react';
 
 type SchemaTableProps = {
 	schema: Schema;
