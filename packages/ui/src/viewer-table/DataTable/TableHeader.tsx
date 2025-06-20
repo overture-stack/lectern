@@ -36,6 +36,7 @@ const thStyle = (theme: Theme) => css`
 
 type TableHeaderProps<T> = {
 	headerGroup: HeaderGroup<T>;
+	columnSlice?: [number, number] | [number];
 };
 
 const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {

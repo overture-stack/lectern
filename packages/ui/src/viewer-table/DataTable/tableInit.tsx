@@ -129,7 +129,7 @@ export const getSchemaBaseColumns = (setClipboardContents: (curr: string) => voi
 		},
 	),
 	columnHelper.accessor('valueType', {
-		header: 'Type',
+		header: 'Data Type',
 		cell: (type) => {
 			const { valueType, isArray, delimiter } = type.row.original;
 			const theme: Theme = useThemeContext();

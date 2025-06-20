@@ -45,6 +45,7 @@ const tdStyle = (theme: Theme) => css`
 type TableRowProps<R> = {
 	row: Row<R>;
 	index: number;
+	columnSlice?: [number, number] | [number];
 };
 
 const TableRow = <R,>({ row, index }: TableRowProps<R>) => {
