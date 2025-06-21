@@ -68,9 +68,9 @@ export const getSchemaBaseColumns = (setClipboardContents: (curr: string) => voi
 			);
 		},
 	}),
-	columnHelper.accessor((row) => row.restrictions, {
-		id: 'restrictions',
-		header: 'Restrictions',
+	columnHelper.accessor((row: SchemaField) => row.restrictions, {
+		id: 'Attribute',
+		header: 'Attribute',
 		cell: (restrictions) => {
 			return renderAllowedValuesColumn(restrictions);
 		},

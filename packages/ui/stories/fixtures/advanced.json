@@ -73,7 +73,7 @@
 					"description": "The 'three stars' is a long-standing hockey tradition to recognize the three best individual performances in a game. This honor system dates back to the 1930s and has become one of hockey's most cherished traditions, serving as both a way to acknowledge outstanding play and provide fans with a memorable conclusion to each game. Example: \"Nylander|Matthews|Marner\"",
 					"restrictions": {
 						"required": true,
-						"codeList": "#/maple_leafs_roster/values"
+						"codeList": ["A", "B", "C"]
 					},
 					"meta": {
 						"selection_rule": "Choose exactly three players from the roster."
