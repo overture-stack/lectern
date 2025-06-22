@@ -99,8 +99,9 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, d
 		:	''}
 	`;
 
-	const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+	const handleClick = (event: MouseEvent<HTMLDivElement>) => {
 		if (onClick) {
+			event.stopPropagation;
 			onClick(event);
 		}
 	};
