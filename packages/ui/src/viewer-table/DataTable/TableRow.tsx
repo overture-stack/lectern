@@ -31,7 +31,7 @@ const rowStyle = (index: number) => css`
 	background-color: ${index % 2 === 0 ? '' : '#F5F7F8'};
 `;
 
-const tdStyle = (theme: Theme) => css`
+const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 	${theme.typography.data}
 	padding: 12px;
 	border-bottom: 1px solid #eaeaea;
@@ -40,6 +40,13 @@ const tdStyle = (theme: Theme) => css`
 	overflow-wrap: break-word;
 	word-break: break-word;
 	vertical-align: top;
+	${cellIndex === 0 &&
+	`
+		position: sticky;
+		left: 0;
+		z-index: 10;
+		background-color: ${rowIndex % 2 === 0 ? 'white' : '#F5F7F8'};
+	`}
 `;
 
 type TableRowProps<R> = {
@@ -52,9 +59,9 @@ const TableRow = <R,>({ row, index }: TableRowProps<R>) => {
 	const theme = useThemeContext();
 	return (
 		<tr key={row.id} css={rowStyle(index)}>
-			{row.getVisibleCells().map((cell) => {
+			{row.getVisibleCells().map((cell, cellIndex) => {
 				return (
-					<td key={cell.id} css={tdStyle(theme)}>
+					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>
 						<ReadMoreText
 							wrapperStyle={() => css`
 								${theme.typography.data}

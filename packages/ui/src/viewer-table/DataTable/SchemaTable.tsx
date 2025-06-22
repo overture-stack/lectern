@@ -39,10 +39,33 @@ const sectionStyle = css`
 	margin-bottom: 48px;
 	max-width: 1200px;
 `;
+
+const tableContainerStyle = css`
+	overflow-x: auto;
+	max-width: 100%;
+	border: 1px solid #eaeaea;
+	border-radius: 4px;
+`;
+
 const tableStyle = css`
-	width: 100%;
+	min-width: 1200px;
 	border-collapse: collapse;
 	margin-top: 8px;
+	position: relative;
+`;
+
+const stickyColumnStyle = css`
+	position: sticky;
+	left: 0;
+	z-index: 10;
+	background-color: inherit;
+`;
+
+const stickyHeaderStyle = css`
+	position: sticky;
+	left: 0;
+	z-index: 20;
+	background-color: #e5edf3;
 `;
 
 const SchemaTable = ({ schema, dictionary }: SchemaTableProps) => {
@@ -91,18 +114,20 @@ const SchemaTable = ({ schema, dictionary }: SchemaTableProps) => {
 
 	return (
 		<section css={sectionStyle}>
-			<table css={tableStyle}>
-				<thead>
-					{table.getHeaderGroups().map((headerGroup: HeaderGroup<SchemaField>) => (
-						<TableHeader key={headerGroup.id} headerGroup={headerGroup} />
-					))}
-				</thead>
-				<tbody>
-					{table.getRowModel().rows.map((row, i: number) => (
-						<TableRow key={row.id} row={row} index={i} />
-					))}
-				</tbody>
-			</table>
+			<div css={tableContainerStyle}>
+				<table css={tableStyle}>
+					<thead>
+						{table.getHeaderGroups().map((headerGroup: HeaderGroup<SchemaField>) => (
+							<TableHeader key={headerGroup.id} headerGroup={headerGroup} />
+						))}
+					</thead>
+					<tbody>
+						{table.getRowModel().rows.map((row, i: number) => (
+							<TableRow key={row.id} row={row} index={i} />
+						))}
+					</tbody>
+				</table>
+			</div>
 		</section>
 	);
 };

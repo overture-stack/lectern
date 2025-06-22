@@ -26,12 +26,19 @@ import { flexRender, HeaderGroup } from '@tanstack/react-table';
 import { useThemeContext } from '../../theme/ThemeContext';
 import { Theme } from '../../theme';
 
-const thStyle = (theme: Theme) => css`
+const thStyle = (theme: Theme, index: number) => css`
 	${theme.typography.heading};
 	background: #e5edf3;
 	text-align: left;
 	padding: 12px;
 	border-bottom: 1px solid #dcdcdc;
+	${index === 0 &&
+	`
+		position: sticky;
+		left: 0;
+		z-index: 20;
+		background-color: #e5edf3;
+	`}
 `;
 
 type TableHeaderProps<T> = {
@@ -43,8 +50,8 @@ const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
 	const theme = useThemeContext();
 	return (
 		<tr key={headerGroup.id}>
-			{headerGroup.headers.map((header) => (
-				<th key={header.id} colSpan={header.colSpan} css={thStyle(theme)}>
+			{headerGroup.headers.map((header, index) => (
+				<th key={header.id} colSpan={header.colSpan} css={thStyle(theme, index)}>
 					{flexRender(header.column.columnDef.header, header.getContext())}
 				</th>
 			))}
