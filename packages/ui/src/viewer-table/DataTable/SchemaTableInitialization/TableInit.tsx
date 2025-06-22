@@ -22,11 +22,10 @@
 /** @jsxImportSource @emotion/react */
 
 import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
-import { createColumnHelper } from '@tanstack/react-table';
-import { Theme } from '../../../theme';
-import { useThemeContext } from '../../../theme/ThemeContext';
-import { renderFieldsColumn } from './Columns/Fields';
+import { CellContext, createColumnHelper } from '@tanstack/react-table';
 import { renderAllowedValuesColumn } from './Columns/AllowedValues';
+import { renderFieldsColumn } from './Columns/Fields';
+import { renderDataTypeColumn } from './Columns/DataType';
 // This file is responsible for defining the columns of the schema table, depending on user defined types and schemas.
 
 const columnHelper = createColumnHelper<SchemaField>();
@@ -38,40 +37,16 @@ export const getSchemaBaseColumns = (setClipboardContents: (curr: string) => voi
 			return renderFieldsColumn(field, setClipboardContents);
 		},
 	}),
-	columnHelper.accessor(
-		(row) => {
-			const restrictions = row.restrictions || {};
-			if ('required' in restrictions && typeof restrictions !== 'function') {
-				return restrictions.required ?? false;
-			}
-			return false;
-		},
-		{
-			id: 'required',
-			header: 'Attribute',
-			cell: (required) => {
-				const theme: Theme = useThemeContext();
-				return <div css={theme.typography.data}>{required.getValue() ? 'Required' : 'Optional'}</div>;
-			},
-		},
-	),
 	columnHelper.accessor('valueType', {
 		header: 'Data Type',
-		cell: (type) => {
-			const { valueType, isArray, delimiter } = type.row.original;
-			return (
-				<div>
-					{valueType}
-					{isArray}
-					{delimiter}
-				</div>
-			);
+		cell: (type: CellContext<SchemaField, string>) => {
+			return renderDataTypeColumn(type);
 		},
 	}),
 	columnHelper.accessor((row: SchemaField) => row.restrictions, {
-		id: 'Attribute',
-		header: 'Attribute',
-		cell: (restrictions) => {
+		id: 'allowedValues',
+		header: 'Allowed Values',
+		cell: (restrictions: CellContext<SchemaField, SchemaRestrictions>) => {
 			return renderAllowedValuesColumn(restrictions);
 		},
 	}),
