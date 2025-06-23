@@ -100,8 +100,22 @@
 					"name": "third_star",
 					"valueType": "string",
 					"restrictions": {
-						"required": true,
-						"codeList": "#/maple_leafs_roster/values"
+						"if": {
+							"conditions": [
+								{
+									"fields": ["player_status"],
+									"match": {
+										"value": "Injured"
+									}
+								}
+							]
+						},
+						"then": {
+							"required": true
+						},
+						"else": {
+							"empty": true
+						}
 					}
 				}
 			],
