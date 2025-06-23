@@ -6,6 +6,10 @@ export type OpenModalButtonProps = {
 	title: string;
 };
 const OpenModalPill = ({ title }: OpenModalButtonProps) => {
-	return <Pill icon={<Eye width={15} height={15} />}>{title}</Pill>;
+	return (
+		<Pill size="small" icon={<Eye width={15} height={15} />}>
+			{title}
+		</Pill>
+	);
 };
 export default OpenModalPill;

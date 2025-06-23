@@ -1,10 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary';
+import { DictionaryMeta, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
+import Pill from '../../../../common/Pill';
+import OpenModalPill from '../OpenModalPill';
 
 const hashIconStyle = (theme: Theme) => css`
 	opacity: 0;
@@ -29,6 +31,7 @@ export type FieldExamplesProps = {
 
 export type FieldNameProps = {
 	name: string;
+	uniqueKeys: string[];
 	index: number;
 	onHashClick: () => void;
 };
@@ -55,15 +58,18 @@ const FieldExamples = ({ examples }: FieldExamplesProps) => {
 	);
 };
 
-const FieldName = ({ name, onHashClick }: FieldNameProps) => {
+const FieldName = ({ name, onHashClick, uniqueKeys }: FieldNameProps) => {
 	const theme = useThemeContext();
 	const { Hash } = theme.icons;
+	const displayKeys = uniqueKeys.filter((value) => value !== '');
 	return (
 		<div css={theme.typography.label}>
 			{name}
 			<span css={hashIconStyle(theme)} onClick={onHashClick}>
 				<Hash width={20} height={20} fill={theme.colors.secondary} />
 			</span>
+			{displayKeys.length === 1 && <Pill size="small">{displayKeys}</Pill>}
+			{displayKeys.length > 1 && <OpenModalPill title="Primary Key" />}
 		</div>
 	);
 };
@@ -95,6 +101,8 @@ export const FieldsColumn = ({ field }: { field: CellContext<SchemaField, string
 	const fieldIndex = field.row.index;
 	const fieldDescription = field.row.original.description;
 	const fieldExamples = field.row.original.meta?.examples;
+	const fieldRestrictions: SchemaRestrictions = field.row.original.restrictions;
+	const uniqueKey = fieldRestrictions && 'uniqueKey' in fieldRestrictions ? fieldRestrictions.uniqueKey : [''];
 
 	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
 	const [isCopying, setIsCopying] = useState(false);
@@ -137,7 +145,7 @@ export const FieldsColumn = ({ field }: { field: CellContext<SchemaField, string
 
 	return (
 		<div id={`field-${fieldIndex}`} css={fieldContainerStyle}>
-			<FieldName name={fieldName} index={fieldIndex} onHashClick={handleHashClick} />
+			<FieldName name={fieldName} index={fieldIndex} onHashClick={handleHashClick} uniqueKeys={uniqueKey as string[]} />
 			{fieldDescription && <FieldDescription description={fieldDescription} />}
 			{fieldExamples && <FieldExamples examples={fieldExamples} />}
 		</div>
