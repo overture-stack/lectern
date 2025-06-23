@@ -3,9 +3,9 @@ import { css } from '@emotion/react';
 import { DictionaryMeta, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
 import React, { useEffect, useMemo, useState } from 'react';
+import Pill from '../../../../common/Pill';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
-import Pill from '../../../../common/Pill';
 import OpenModalPill from '../OpenModalPill';
 
 const hashIconStyle = (theme: Theme) => css`
@@ -26,7 +26,7 @@ const fieldContainerStyle = css`
 `;
 
 export type FieldExamplesProps = {
-	examples: string | number | boolean | string[] | number[] | DictionaryMeta | undefined;
+	examples: DictionaryMeta[string];
 };
 
 export type FieldNameProps = {
