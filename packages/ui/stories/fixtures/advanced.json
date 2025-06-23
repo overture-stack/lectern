@@ -55,12 +55,15 @@
 		{
 			"name": "game_statistics",
 			"description": "A schema for recording the statistics of a single hockey game.",
+
 			"fields": [
 				{
 					"name": "game_id",
+					"unique": true,
 					"valueType": "string",
 					"description": "A unique identifier assigned to any given game played by the Toronto Maple Leafs.  ",
 					"restrictions": {
+						"uniqueKey": "HelloWorld",
 						"required": true,
 						"regex": "^[A-Z]{3}_[A-Z0-9]{2,5}_[A-Z0-9]{1,5}$"
 					}
@@ -70,10 +73,11 @@
 					"valueType": "string",
 					"isArray": true,
 					"delimiter": "|",
-					"description": "The 'three stars' is a long-standing hockey tradition to recognize the three best individual performances in a game. This honor system dates back to the 1930s and has become one of hockey's most cherished traditions, serving as both a way to acknowledge outstanding play and provide fans with a memorable conclusion to each game. ",
+					"description": "The 'ng stars' is a long-standing hockey tradition to recognize the three best individual performances in a game. This honor system dates back to the 1930s and has become one of hockey's most cherished traditions, serving as both a way to acknowledge outstanding play and provide fans with a memorable conclusion to each game. ",
 					"restrictions": {
 						"required": true,
-						"codeList": ["A", "B", "C"]
+						"codeList": ["A", "B", "C"],
+						"count": { "min": 2, "max": 3 }
 					},
 					"meta": {
 						"selection_rule": "Choose exactly three players from the roster.",
@@ -93,7 +97,8 @@
 					"valueType": "string",
 					"restrictions": {
 						"required": true,
-						"codeList": "#/maple_leafs_roster/values"
+						"codeList": ["A", "B", "C"],
+						"count": { "min": 2 }
 					}
 				},
 				{

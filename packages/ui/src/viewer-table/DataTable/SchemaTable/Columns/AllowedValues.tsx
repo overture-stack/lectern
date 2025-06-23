@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { RestrictionRange, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
+import { MatchRuleCount, RestrictionRange, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
 
 const handleRange = (range: RestrictionRange, restrictionItems: string[]) => {
@@ -16,6 +16,31 @@ const handleRange = (range: RestrictionRange, restrictionItems: string[]) => {
 	}
 };
 
+const handleCodeListsWithCountRestrictions = (
+	codeList: string | string[] | number[],
+	count: MatchRuleCount,
+	restrictionItems: string[],
+) => {
+	const codeListDisplay = Array.isArray(codeList) ? codeList.join(', ') : codeList;
+
+	if (typeof count === 'number') {
+		restrictionItems.push(`Exactly ${count} from: ${codeListDisplay}`);
+	} else {
+		const range = count;
+		if (range.min && range.max) {
+			restrictionItems.push(`Select ${range.min} to ${range.max} from: ${codeListDisplay}`);
+		} else if (range.min) {
+			restrictionItems.push(`At least ${range.min} from: ${codeListDisplay}`);
+		} else if (range.max) {
+			restrictionItems.push(`Up to ${range.max} from: ${codeListDisplay}`);
+		} else if (range.exclusiveMin) {
+			restrictionItems.push(`More than ${range.exclusiveMin} from: ${codeListDisplay}`);
+		} else if (range.exclusiveMax) {
+			restrictionItems.push(`Fewer than ${range.exclusiveMax} from: ${codeListDisplay}`);
+		}
+	}
+};
+
 export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField, SchemaRestrictions>) => {
 	const schemaField: SchemaField = restrictions.row.original;
 	const restrictionsValue: SchemaRestrictions = restrictions.getValue();
@@ -27,7 +52,7 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 	}
 
 	if ('if' in restrictionsValue && restrictionsValue.if) {
-		restrictionItems.push('CONDITIONAL RESTRICTION, PART 5');
+		restrictionItems.push('Depends on');
 	}
 
 	// Type narrowing and pushing appropriate values from the restrictions into the restrictionItems array
@@ -42,9 +67,9 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 	}
 
 	if ('codeList' in restrictionsValue && restrictionsValue.codeList) {
-		restrictionItems.push(
-			Array.isArray(restrictionsValue.codeList) ? restrictionsValue.codeList.join(',\n ') : restrictionsValue.codeList,
-		);
+		const codeListDisplay =
+			Array.isArray(restrictionsValue.codeList) ? restrictionsValue.codeList.join(', ') : restrictionsValue.codeList;
+		restrictionItems.push('One of: ' + codeListDisplay);
 	}
 
 	if ('range' in restrictionsValue && restrictionsValue.range) {
@@ -52,15 +77,12 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 	}
 
 	if (
-		'range' in restrictionsValue &&
-		restrictionsValue.range &&
 		'codeList' in restrictionsValue &&
-		restrictionsValue.codeList
+		restrictionsValue.codeList &&
+		'count' in restrictionsValue &&
+		restrictionsValue.count
 	) {
-	}
-
-	if ('unique' in restrictionsValue && restrictionsValue.unique) {
-		restrictionItems.push('Unique');
+		handleCodeListsWithCountRestrictions(restrictionsValue.codeList, restrictionsValue.count, restrictionItems);
 	}
 
 	if (schemaField.isArray && restrictionItems.length > 0) {

@@ -34,7 +34,7 @@ const getSizeStyles = (size: PillSize) => {
 		},
 		medium: {
 			padding: '4px 12px',
-			fontSize: '12px',
+			fontSize: '16px',
 			lineHeight: '16px',
 			borderRadius: '5px',
 			gap: '6px',
@@ -59,9 +59,9 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, d
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		gap: ${sizeStyles.gap}px;
+		gap: ${sizeStyles.gap};
 		padding: ${sizeStyles.padding};
-		font-size: ${sizeStyles.fontSize};
+		font-size: ${icon ? '11px' : sizeStyles.fontSize};
 		line-height: ${sizeStyles.lineHeight};
 		font-weight: 500;
 		border-radius: ${sizeStyles.borderRadius};
@@ -69,10 +69,7 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, d
 		color: ${variantStyles.color};
 		transition: all 0.2s ease-in-out;
 		user-select: none;
-		text-align: center;
-		max-width: 100%;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		max-width: 73px !important;
 
 		${onClick ?
 			css`
