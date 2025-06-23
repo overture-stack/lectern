@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { SchemaField } from '@overture-stack/lectern-dictionary';
+import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
@@ -15,64 +15,131 @@ const hashIconStyle = (theme: Theme) => css`
 		opacity: 1;
 	}
 `;
-export const renderFieldsColumn = (field: CellContext<SchemaField, string>) => {
+
+const fieldContainerStyle = css`
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	scroll-margin: 40%;
+`;
+
+export type FieldExamplesProps = {
+	examples: string | number | boolean | string[] | number[] | DictionaryMeta | undefined;
+};
+
+export type FieldNameProps = {
+	name: string;
+	index: number;
+	onHashClick: () => void;
+};
+
+export type FieldDescriptionProps = {
+	description: string;
+};
+
+const FieldExamples = ({ examples }: FieldExamplesProps) => {
 	const theme = useThemeContext();
-	const fieldName = field.row.original.name;
-	const fieldIndex = field.row.index;
+	if (!examples) {
+		return null;
+	}
+	const count = Array.isArray(examples) ? examples.length : 1;
+	const label = count > 1 ? 'Examples:' : 'Example:';
+	const text = Array.isArray(examples) ? examples.join(', ') : String(examples);
 
-	// In a Dictionary, there is no such thing as an examples field, however it is commonly apart of the meta
-	// due to project specs, we will render the examples here if they exist and have logic to handle it.
+	return (
+		<div>
+			<p css={theme.typography.label}>
+				{label} <span css={theme.typography.data}>{text}</span>
+			</p>
+		</div>
+	);
+};
 
-	const renderExamples = () => {
-		const examples = field.row.original.meta?.examples;
-		if (!examples) {
-			return null;
-		}
-		// the only way we can have more than one example is if we have an array of examples
-
-		const count = Array.isArray(examples) ? examples.length : 1;
-		const label = count > 1 ? 'Examples:' : 'Example:';
-		const text = Array.isArray(examples) ? examples.join(', ') : String(examples);
-
-		return (
-			<div css={theme.typography.data}>
-				{label} {text}
-			</div>
-		);
-	};
-
+const FieldName = ({ name, onHashClick }: FieldNameProps) => {
+	const theme = useThemeContext();
 	const { Hash } = theme.icons;
+	return (
+		<div css={theme.typography.label}>
+			{name}
+			<span css={hashIconStyle(theme)} onClick={onHashClick}>
+				<Hash width={20} height={20} fill={theme.colors.secondary} />
+			</span>
+		</div>
+	);
+};
 
+const FieldDescription = ({ description }: FieldDescriptionProps) => {
+	const theme = useThemeContext();
+	return <div css={theme.typography.data}>{description}</div>;
+};
+
+const useHashNavigation = (fieldIndex: number) => {
 	useEffect(() => {
 		const hashTarget = `field-${fieldIndex}`;
 		if (window.location.hash === `#${hashTarget}`) {
-			document.getElementById(hashTarget)?.scrollIntoView({ behavior: 'smooth' });
+			document.getElementById(hashTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		}
-	}, []);
+	}, [fieldIndex]);
+};
 
-	const handleClick = () => {
+const useHashClickHandler = (fieldIndex: number, setClipboardContents: (clipboardContents: string) => void) => {
+	return () => {
 		const hashTarget = `field-${fieldIndex}`;
 		window.location.hash = `#${hashTarget}`;
-		// setClipboardContents(window.location.href);
+		setClipboardContents(window.location.href);
+	};
+};
+
+export const FieldsColumn = ({ field }: { field: CellContext<SchemaField, string> }) => {
+	const fieldName = field.row.original.name;
+	const fieldIndex = field.row.index;
+	const fieldDescription = field.row.original.description;
+	const fieldExamples = field.row.original.meta?.examples;
+
+	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
+	const [isCopying, setIsCopying] = useState(false);
+	const [copySuccess, setCopySuccess] = useState(false);
+
+	const handleCopy = (text: string) => {
+		if (isCopying) {
+			return; // We don't wanna copy if we are already copying
+		}
+		setIsCopying(true);
+		navigator.clipboard
+			.writeText(text)
+			.then(() => {
+				setCopySuccess(true);
+				setTimeout(() => {
+					setIsCopying(false);
+				}, 2000); // Reset copy success after 2 seconds as well as the isCopying state
+			})
+			.catch((err) => {
+				console.error('Failed to copy text: ', err);
+				setCopySuccess(false);
+				setIsCopying(false);
+			});
+		if (copySuccess) {
+			// Update the clipboard contents
+			const currentURL = window.location.href;
+			setClipboardContents(currentURL);
+		}
+		setCopySuccess(false);
 	};
 
+	useMemo(() => {
+		if (clipboardContents) {
+			handleCopy(clipboardContents);
+		}
+	}, [clipboardContents]);
+
+	useHashNavigation(fieldIndex);
+	const handleHashClick = useHashClickHandler(fieldIndex, setClipboardContents);
+
 	return (
-		<div
-			id={`field-${fieldIndex}`}
-			css={css`
-				display: flex;
-				flex-direction: column;
-				gap: 10px;
-			`}
-		>
-			<div css={theme.typography.data}>
-				{fieldName}
-				<span css={hashIconStyle(theme)} onClick={handleClick}>
-					<Hash width={20} height={20} fill={theme.colors.secondary} />
-				</span>
-			</div>
-			<div css={theme.typography.data}>{field.row.original.description}</div>
-			{renderExamples()}
+		<div id={`field-${fieldIndex}`} css={fieldContainerStyle}>
+			<FieldName name={fieldName} index={fieldIndex} onHashClick={handleHashClick} />
+			{fieldDescription && <FieldDescription description={fieldDescription} />}
+			{fieldExamples && <FieldExamples examples={fieldExamples} />}
 		</div>
 	);
 };

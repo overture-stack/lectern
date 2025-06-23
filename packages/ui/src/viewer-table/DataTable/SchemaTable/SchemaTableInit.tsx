@@ -26,7 +26,7 @@ import { CellContext, createColumnHelper } from '@tanstack/react-table';
 import { renderAllowedValuesColumn } from './Columns/AllowedValues';
 import { renderAttributesColumn } from './Columns/Attribute';
 import { renderDataTypeColumn } from './Columns/DataType';
-import { renderFieldsColumn } from './Columns/Fields';
+import { FieldsColumn } from './Columns/Fields';
 // This file is responsible for defining the columns of the schema table, depending on user defined types and schemas.
 
 const columnHelper = createColumnHelper<SchemaField>();
@@ -35,7 +35,7 @@ export const getSchemaBaseColumns = () => [
 	columnHelper.accessor('name', {
 		header: 'Fields',
 		cell: (field) => {
-			return renderFieldsColumn(field);
+			return <FieldsColumn field={field} />;
 		},
 	}),
 	columnHelper.accessor('restrictions.required', {

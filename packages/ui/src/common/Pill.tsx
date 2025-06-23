@@ -36,7 +36,7 @@ const getSizeStyles = (size: PillSize) => {
 			padding: '4px 12px',
 			fontSize: '12px',
 			lineHeight: '16px',
-			borderRadius: '16px',
+			borderRadius: '5px',
 			gap: '6px',
 		},
 		large: {
@@ -69,7 +69,7 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, d
 		color: ${variantStyles.color};
 		transition: all 0.2s ease-in-out;
 		user-select: none;
-		white-space: nowrap;
+		text-align: center;
 		max-width: 100%;
 		overflow: hidden;
 		text-overflow: ellipsis;

@@ -59,7 +59,7 @@
 				{
 					"name": "game_id",
 					"valueType": "string",
-					"description": "A unique identifier assigned to any given game played by the Toronto Maple Leafs. Example(s): BLF_67_2INF, BOS_GM7_4_0",
+					"description": "A unique identifier assigned to any given game played by the Toronto Maple Leafs.  ",
 					"restrictions": {
 						"required": true,
 						"regex": "^[A-Z]{3}_[A-Z0-9]{2,5}_[A-Z0-9]{1,5}$"
@@ -70,13 +70,14 @@
 					"valueType": "string",
 					"isArray": true,
 					"delimiter": "|",
-					"description": "The 'three stars' is a long-standing hockey tradition to recognize the three best individual performances in a game. This honor system dates back to the 1930s and has become one of hockey's most cherished traditions, serving as both a way to acknowledge outstanding play and provide fans with a memorable conclusion to each game. Example: \"Nylander|Matthews|Marner\"",
+					"description": "The 'three stars' is a long-standing hockey tradition to recognize the three best individual performances in a game. This honor system dates back to the 1930s and has become one of hockey's most cherished traditions, serving as both a way to acknowledge outstanding play and provide fans with a memorable conclusion to each game. ",
 					"restrictions": {
 						"required": true,
 						"codeList": ["A", "B", "C"]
 					},
 					"meta": {
-						"selection_rule": "Choose exactly three players from the roster."
+						"selection_rule": "Choose exactly three players from the roster.",
+						"examples": ["BLF_67_2INF", "BOS_GM7_4_0"]
 					}
 				},
 				{
