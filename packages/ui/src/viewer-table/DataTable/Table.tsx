@@ -22,17 +22,13 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import type { Dictionary, Schema, SchemaField } from '@overture-stack/lectern-dictionary';
-import { replaceReferences } from '@overture-stack/lectern-dictionary';
-import { getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
-import { getSchemaBaseColumns } from './SchemaTableInitialization/TableInit';
+import { ColumnDef, getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
 
-type SchemaTableProps = {
-	schema: Schema;
-	dictionary: Dictionary;
+export type GenericTableProps<R> = {
+	data: R[];
+	columns: ColumnDef<R, any>[];
 };
 
 const sectionStyle = css`
@@ -40,11 +36,19 @@ const sectionStyle = css`
 	max-width: 1200px;
 `;
 
+// We can keep the scrollbar which would mean it spans the whole table or just have the scrollbar hidden.
 const tableContainerStyle = css`
 	overflow-x: auto;
+	-webkit-scrollbar: none;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
 	max-width: 100%;
 	border: 1px solid #eaeaea;
 	border-radius: 4px;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
 `;
 
 const tableStyle = css`
@@ -54,70 +58,19 @@ const tableStyle = css`
 	position: relative;
 `;
 
-const stickyColumnStyle = css`
-	position: sticky;
-	left: 0;
-	z-index: 10;
-	background-color: inherit;
-`;
-
-const stickyHeaderStyle = css`
-	position: sticky;
-	left: 0;
-	z-index: 20;
-	background-color: #e5edf3;
-`;
-
-const SchemaTable = ({ schema, dictionary }: SchemaTableProps) => {
-	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
-	const [isCopying, setIsCopying] = useState(false);
-	const [copySuccess, setCopySuccess] = useState(false);
-
-	const resolvedDictionary = replaceReferences(dictionary);
-
-	const handleCopy = (text: string) => {
-		if (isCopying) {
-			return; // We don't wanna copy if we are already copying
-		}
-		setIsCopying(true);
-		navigator.clipboard
-			.writeText(text)
-			.then(() => {
-				setCopySuccess(true);
-				setTimeout(() => {
-					setIsCopying(false);
-				}, 2000); // Reset copy success after 2 seconds as well as the isCopying state
-			})
-			.catch((err) => {
-				console.error('Failed to copy text: ', err);
-				setCopySuccess(false);
-				setIsCopying(false);
-			});
-		if (copySuccess) {
-			// Update the clipboard contents
-			const currentURL = window.location.href;
-			setClipboardContents(currentURL);
-		}
-		setCopySuccess(false);
-	};
-
+const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 	const table = useReactTable({
-		data: resolvedDictionary.schemas[0].fields,
-		columns: getSchemaBaseColumns(setClipboardContents),
+		data: data,
+		columns,
 		getCoreRowModel: getCoreRowModel(),
 	});
-	useMemo(() => {
-		if (clipboardContents) {
-			handleCopy(clipboardContents);
-		}
-	}, [clipboardContents]);
 
 	return (
 		<section css={sectionStyle}>
 			<div css={tableContainerStyle}>
 				<table css={tableStyle}>
 					<thead>
-						{table.getHeaderGroups().map((headerGroup: HeaderGroup<SchemaField>) => (
+						{table.getHeaderGroups().map((headerGroup: HeaderGroup<R>) => (
 							<TableHeader key={headerGroup.id} headerGroup={headerGroup} />
 						))}
 					</thead>
@@ -132,4 +85,4 @@ const SchemaTable = ({ schema, dictionary }: SchemaTableProps) => {
 	);
 };
 
-export default SchemaTable;
+export default Table;

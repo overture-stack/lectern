@@ -24,18 +24,18 @@
 import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
 import { renderAllowedValuesColumn } from './Columns/AllowedValues';
-import { renderFieldsColumn } from './Columns/Fields';
-import { renderDataTypeColumn } from './Columns/DataType';
 import { renderAttributesColumn } from './Columns/Attribute';
+import { renderDataTypeColumn } from './Columns/DataType';
+import { renderFieldsColumn } from './Columns/Fields';
 // This file is responsible for defining the columns of the schema table, depending on user defined types and schemas.
 
 const columnHelper = createColumnHelper<SchemaField>();
 
-export const getSchemaBaseColumns = (setClipboardContents: (curr: string) => void) => [
+export const getSchemaBaseColumns = () => [
 	columnHelper.accessor('name', {
 		header: 'Fields',
 		cell: (field) => {
-			return renderFieldsColumn(field, setClipboardContents);
+			return renderFieldsColumn(field);
 		},
 	}),
 	columnHelper.accessor('restrictions.required', {

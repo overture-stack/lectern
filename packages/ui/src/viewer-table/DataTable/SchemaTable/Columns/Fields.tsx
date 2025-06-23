@@ -15,10 +15,7 @@ const hashIconStyle = (theme: Theme) => css`
 		opacity: 1;
 	}
 `;
-export const renderFieldsColumn = (
-	field: CellContext<SchemaField, string>,
-	setClipboardContents: (curr: string) => void,
-) => {
+export const renderFieldsColumn = (field: CellContext<SchemaField, string>) => {
 	const theme = useThemeContext();
 	const fieldName = field.row.original.name;
 	const fieldIndex = field.row.index;
@@ -56,7 +53,7 @@ export const renderFieldsColumn = (
 	const handleClick = () => {
 		const hashTarget = `field-${fieldIndex}`;
 		window.location.hash = `#${hashTarget}`;
-		setClipboardContents(window.location.href);
+		// setClipboardContents(window.location.href);
 	};
 
 	return (
