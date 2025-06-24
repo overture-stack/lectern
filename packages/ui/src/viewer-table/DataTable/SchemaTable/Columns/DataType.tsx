@@ -5,8 +5,9 @@ import { CellContext } from '@tanstack/react-table';
 import React from 'react';
 import Pill from '../../../../common/Pill';
 
-const containerStyle = () => css`
+const containerStyle = css`
 	display: flex;
+	align-items: center;
 	flex-direction: column;
 	gap: 10px;
 `;

@@ -41,6 +41,8 @@ const getSizeStyles = (size: PillSize) => {
 			lineHeight: '12px',
 			borderRadius: '9px',
 			gap: '3px',
+			width: '65px',
+			maxWidth: '75px',
 		},
 		small: {
 			padding: '2px 8px',
@@ -49,6 +51,8 @@ const getSizeStyles = (size: PillSize) => {
 			lineHeight: '14px',
 			borderRadius: '9px',
 			gap: '4px',
+			width: '80px',
+			maxWidth: '100px',
 		},
 		medium: {
 			padding: '4px 12px',
@@ -57,6 +61,8 @@ const getSizeStyles = (size: PillSize) => {
 			lineHeight: '16px',
 			borderRadius: '9px',
 			gap: '6px',
+			width: '95px',
+			maxWidth: '140px',
 		},
 		large: {
 			padding: '6px 16px',
@@ -65,6 +71,8 @@ const getSizeStyles = (size: PillSize) => {
 			lineHeight: '20px',
 			borderRadius: '20px',
 			gap: '8px',
+			width: '150px',
+			maxWidth: '180px',
 		},
 	};
 
@@ -91,6 +99,12 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, d
 		border: ${variantStyles.border};
 		transition: all 0.2s ease-in-out;
 		user-select: none;
+		width: ${sizeStyles.width};
+		max-width: ${sizeStyles.maxWidth};
+		text-align: center;
+		word-wrap: break-word;
+		overflow-wrap: break-word;
+		hyphens: auto;
 		${onClick ?
 			css`
 				cursor: pointer;
@@ -110,9 +124,10 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, d
 					display: flex;
 					align-items: center;
 					font-size: ${parseInt(sizeStyles.fontSize) - 2}px;
+					flex-shrink: 0;
 				}
 			`
-		:	''}
+		:	''};
 	`;
 
 	const handleClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -131,7 +146,7 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, d
 			tabIndex={onClick ? 0 : undefined}
 		>
 			{icon && <span className="pill-icon">{icon}</span>}
-			<span>{children}</span>
+			<span style={{ wordBreak: 'break-word', textAlign: 'center' }}>{children}</span>
 		</div>
 	);
 };

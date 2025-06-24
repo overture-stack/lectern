@@ -23,6 +23,7 @@
 
 import { css } from '@emotion/react';
 import { ColumnDef, getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
 
@@ -31,19 +32,37 @@ export type GenericTableProps<R> = {
 	columns: ColumnDef<R, any>[];
 };
 
-const sectionStyle = css`
+const scrollWrapperStyle = css`
+	position: relative;
+	overflow: hidden;
+	border-radius: 4px;
 	margin-bottom: 48px;
-	max-width: 1200px;
 `;
 
-// We can keep the scrollbar which would mean it spans the whole table or just have the scrollbar hidden.
+// Shadow overlays
+const shadowStyle = css`
+	position: absolute;
+	top: 0;
+	z-index: 100;
+	width: 20px;
+	height: 100%;
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+`;
+
+const leftShadowStyle = (width: number, opacity: number) => css`
+	${shadowStyle}
+	left: ${width + 25}px;
+	background: linear-gradient(90deg, rgba(0, 0, 0, 0.035), transparent);
+	opacity: ${opacity};
+`;
+
 const tableContainerStyle = css`
 	overflow-x: auto;
 	-webkit-scrollbar: none;
 	-ms-overflow-style: none;
 	scrollbar-width: none;
 	max-width: 100%;
-	border-radius: 4px;
 
 	&::-webkit-scrollbar {
 		display: none;
@@ -57,7 +76,7 @@ const tableStyle = css`
 	margin-top: 8px;
 	position: relative;
 `;
-const tableHeaderStyle = css`
+const tableBorderStyle = css`
 	border: 1px solid #dcdde1;
 `;
 
@@ -67,24 +86,69 @@ const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 	});
+	/***************************** MESSY SCROLLING BEHAVIOR***********************/
+	const scrollRef = useRef<HTMLDivElement>(null);
+	const [showLeftShadow, setShowLeftShadow] = useState(false);
+	const [firstColumnWidth, setFirstColumnWidth] = useState(0);
+
+	// We need to compute the width of the first column in order to make sure that the scrolling occurs after that point
+	const updateFirstColumnWidth = useCallback(() => {
+		if (!scrollRef.current) {
+			return;
+		}
+		const firstColumnHeader = scrollRef.current.querySelector('th:first-child');
+		if (firstColumnHeader) {
+			setFirstColumnWidth(parseFloat(window.getComputedStyle(firstColumnHeader).width));
+		}
+	}, []);
+
+	const handleScroll = useCallback(() => {
+		if (!scrollRef.current) {
+			return;
+		}
+		const { scrollLeft } = scrollRef.current;
+		setShowLeftShadow(scrollLeft > 0);
+	}, []);
+
+	// Handle scroll events
+	useEffect(() => {
+		const scrollElement = scrollRef.current;
+		if (!scrollElement) {
+			return;
+		}
+		handleScroll();
+		scrollElement.addEventListener('scroll', handleScroll);
+		return () => scrollElement.removeEventListener('scroll', handleScroll);
+	}, [handleScroll]);
+
+	// Handle resize events for first column width
+	useEffect(() => {
+		// Initial width calculation
+		updateFirstColumnWidth();
+
+		window.addEventListener('resize', updateFirstColumnWidth);
+		return () => window.removeEventListener('resize', updateFirstColumnWidth);
+	}, [updateFirstColumnWidth]);
+	/***************************** MESSY SCROLLING BEHAVIOR***********************/
 
 	return (
-		<section css={sectionStyle}>
-			<div css={tableContainerStyle}>
+		<div css={scrollWrapperStyle}>
+			<div css={tableContainerStyle} ref={scrollRef}>
+				<div css={leftShadowStyle(firstColumnWidth, showLeftShadow ? 1 : 0)} />
 				<table css={tableStyle}>
-					<thead css={tableHeaderStyle}>
+					<thead css={tableBorderStyle}>
 						{table.getHeaderGroups().map((headerGroup: HeaderGroup<R>) => (
 							<TableHeader key={headerGroup.id} headerGroup={headerGroup} />
 						))}
 					</thead>
-					<tbody css={tableHeaderStyle}>
+					<tbody css={tableBorderStyle}>
 						{table.getRowModel().rows.map((row, i: number) => (
 							<TableRow key={row.id} row={row} index={i} />
 						))}
 					</tbody>
 				</table>
 			</div>
-		</section>
+		</div>
 	);
 };
 
