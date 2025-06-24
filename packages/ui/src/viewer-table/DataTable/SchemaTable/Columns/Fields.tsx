@@ -33,6 +33,7 @@ export type FieldNameProps = {
 	uniqueKeys: string[];
 	index: number;
 	onHashClick: () => void;
+	foreignKey: string;
 };
 
 export type FieldDescriptionProps = {
@@ -57,7 +58,7 @@ const FieldExamples = ({ examples }: FieldExamplesProps) => {
 	);
 };
 
-const FieldName = ({ name, onHashClick, uniqueKeys }: FieldNameProps) => {
+const FieldName = ({ name, onHashClick, uniqueKeys, foreignKey }: FieldNameProps) => {
 	const theme = useThemeContext();
 	const { Hash } = theme.icons;
 	const displayKeys = uniqueKeys.filter((value) => value !== '');
@@ -73,8 +74,9 @@ const FieldName = ({ name, onHashClick, uniqueKeys }: FieldNameProps) => {
 			<span css={hashIconStyle(theme)} onClick={onHashClick}>
 				<Hash width={10} height={10} fill={theme.colors.secondary} />
 			</span>
-			{displayKeys.length === 1 && <Pill size="small">{displayKeys}</Pill>}
-			{displayKeys.length > 1 && <OpenModalPill title="Primary Key" />}
+			{displayKeys.length === 1 && !foreignKey && <Pill size="small">{displayKeys}</Pill>}
+			{displayKeys.length > 1 && !foreignKey && <OpenModalPill title="Primary Key" />}
+			{foreignKey && <OpenModalPill title="Foreign Key" />}
 		</div>
 	);
 };
@@ -108,7 +110,7 @@ export const FieldsColumn = ({ field }: { field: CellContext<SchemaField, string
 	const fieldExamples = field.row.original.meta?.examples;
 	const fieldRestrictions: SchemaRestrictions = field.row.original.restrictions;
 	const uniqueKey = fieldRestrictions && 'uniqueKey' in fieldRestrictions ? fieldRestrictions.uniqueKey : [''];
-
+	const foreignKey = fieldRestrictions && 'foreignKey' in fieldRestrictions && fieldRestrictions.foreignKey;
 	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
 	const [isCopying, setIsCopying] = useState(false);
 	const [copySuccess, setCopySuccess] = useState(false);
@@ -150,9 +152,15 @@ export const FieldsColumn = ({ field }: { field: CellContext<SchemaField, string
 
 	return (
 		<div id={`field-${fieldIndex}`} css={fieldContainerStyle}>
-			<FieldName name={fieldName} index={fieldIndex} onHashClick={handleHashClick} uniqueKeys={uniqueKey as string[]} />
+			<FieldName
+				name={fieldName}
+				index={fieldIndex}
+				onHashClick={handleHashClick}
+				uniqueKeys={uniqueKey as string[]}
+				foreignKey={foreignKey as string}
+			/>
 			{fieldDescription && <FieldDescription description={fieldDescription} />}
-			{fieldExamples && <FieldExamples examples={fieldExamples} />}
+			{!foreignKey && fieldExamples && <FieldExamples examples={fieldExamples} />}
 		</div>
 	);
 };

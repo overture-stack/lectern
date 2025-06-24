@@ -42,9 +42,8 @@ const thStyle = (theme: Theme, index: number) => css`
 	border: 1px solid #DCDDE1;
 `;
 
-type TableHeaderProps<T> = {
+export type TableHeaderProps<T> = {
 	headerGroup: HeaderGroup<T>;
-	columnSlice?: [number, number] | [number];
 };
 
 const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {

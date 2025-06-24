@@ -87,9 +87,21 @@
 				{
 					"name": "first_star",
 					"valueType": "string",
+					"description": "The 'ng stars' is a long-standing hockey tradition to recognize the three best individual performances in a game. This honor system dates back to the 1930s and has become one of hockey's most cherished traditions, serving as both a way to acknowledge outstanding play and provide fans with a memorable conclusion to each game. ",
 					"restrictions": {
 						"required": true,
-						"codeList": "#/maple_leafs_roster/values"
+						"codeList": "#/maple_leafs_roster/values",
+						"foreignKey": [
+							{
+								"schema": "player_profiles",
+								"mappings": [
+									{
+										"local": "first_star",
+										"foreign": "player_name"
+									}
+								]
+							}
+						]
 					}
 				},
 				{
