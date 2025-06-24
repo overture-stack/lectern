@@ -125,7 +125,7 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 	const textToShow = showFull ? description : description.slice(0, DESCRIPTION_LENGTH_THRESHOLD) + '... ';
 
 	return (
-		<div css={containerStyle(theme)} className="dictionary-header">
+		<div css={containerStyle(theme)}>
 			<div css={rowLayoutStyle}>
 				<div css={titleColumnStyle}>
 					<h1 css={titleStyle}>{name}</h1>
