@@ -57,7 +57,7 @@ const DropDownItem = ({ children, action, customStyles }: DropDownItemProps) => 
 	const content = <div css={styledListItemStyle(theme, customStyles)}>{children}</div>;
 	if (typeof action === 'function') {
 		return (
-			<div className="dropdown-item" onClick={action} css={styledListItemStyle(theme, customStyles)}>
+			<div onClick={action} css={styledListItemStyle(theme, customStyles)}>
 				{children}
 			</div>
 		);

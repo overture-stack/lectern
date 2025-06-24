@@ -20,6 +20,7 @@
  */
 
 import type { Schema } from '@overture-stack/lectern-dictionary';
+import React from 'react';
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
 
@@ -35,9 +36,7 @@ const TableOfContentsDropdown = ({ schemas, onSelect, disabled }: TableOfContent
 	const handleAction = (index: number) => {
 		const anchorId = `#${index}`;
 		onSelect(index);
-		setTimeout(() => {
-			window.location.hash = anchorId;
-		}, 100);
+		window.location.hash = anchorId;
 	};
 
 	const menuItemsFromSchemas = schemas.map((schema, index) => ({
