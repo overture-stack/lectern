@@ -62,6 +62,7 @@ const FieldName = ({ name, onHashClick, uniqueKeys }: FieldNameProps) => {
 	const { Hash } = theme.icons;
 	const displayKeys = uniqueKeys.filter((value) => value !== '');
 	const fieldNameStyle = css`
+		${theme.typography.label}
 		display: flex;
 		align-items: center;
 		gap: 2px;
