@@ -20,14 +20,13 @@
  */
 
 /** @jsxImportSource @emotion/react */
-// This is a slightly refactored version of the stage button
-import React, { ReactNode } from 'react';
 import { css } from '@emotion/react';
+import React, { ReactNode } from 'react';
 
 import { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
 
-type ButtonProps = {
+export interface ButtonProps {
 	children?: ReactNode;
 	disabled?: boolean;
 	onClick?: (
@@ -38,7 +37,7 @@ type ButtonProps = {
 	isLoading?: boolean;
 	leftIcon?: ReactNode;
 	width?: string;
-};
+}
 
 const getButtonContainerStyles = (theme: any, width?: string) => css`
 	display: flex;
@@ -94,10 +93,6 @@ const getIconStyles = () => css`
 	align-items: center;
 `;
 
-/**
- * This is the generic button component used throughout stage, however it has
- * the styling that is specific to the current theme that is being used.
- */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 	(
 		{
@@ -113,6 +108,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 		ref,
 	) => {
 		const [internalLoading, setInternalLoading] = React.useState(false);
+		const theme = useThemeContext();
+		const { Spinner } = theme.icons;
 
 		const shouldShowLoading = !!controlledLoading || (internalLoading && isAsync);
 		const handleClick = async (event: React.SyntheticEvent<HTMLButtonElement>) => {
@@ -120,8 +117,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 			await onClick(event);
 			setInternalLoading(false);
 		};
-		const theme = useThemeContext();
-		const { Spinner } = theme.icons;
 		return (
 			<button
 				ref={ref}
