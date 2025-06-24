@@ -34,7 +34,6 @@ const rowStyle = (index: number) => css`
 const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 	${theme.typography.data}
 	padding: 12px;
-	border-bottom: 1px solid #eaeaea;
 	max-width: 30vw;
 	white-space: pre-wrap;
 	overflow-wrap: break-word;
@@ -47,6 +46,7 @@ const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 		z-index: 10;
 		background-color: ${rowIndex % 2 === 0 ? 'white' : '#F5F7F8'};
 	`}
+	border: 1px solid #DCDDE1;
 `;
 
 type TableRowProps<R> = {

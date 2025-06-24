@@ -43,7 +43,6 @@ const tableContainerStyle = css`
 	-ms-overflow-style: none;
 	scrollbar-width: none;
 	max-width: 100%;
-	border: 1px solid #eaeaea;
 	border-radius: 4px;
 
 	&::-webkit-scrollbar {
@@ -54,8 +53,12 @@ const tableContainerStyle = css`
 const tableStyle = css`
 	min-width: 1200px;
 	border-collapse: collapse;
+	border: 1px solid lightgray;
 	margin-top: 8px;
 	position: relative;
+`;
+const tableHeaderStyle = css`
+	border: 1px solid #dcdde1;
 `;
 
 const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
@@ -69,12 +72,12 @@ const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 		<section css={sectionStyle}>
 			<div css={tableContainerStyle}>
 				<table css={tableStyle}>
-					<thead>
+					<thead css={tableHeaderStyle}>
 						{table.getHeaderGroups().map((headerGroup: HeaderGroup<R>) => (
 							<TableHeader key={headerGroup.id} headerGroup={headerGroup} />
 						))}
 					</thead>
-					<tbody>
+					<tbody css={tableHeaderStyle}>
 						{table.getRowModel().rows.map((row, i: number) => (
 							<TableRow key={row.id} row={row} index={i} />
 						))}

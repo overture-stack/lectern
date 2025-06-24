@@ -39,6 +39,7 @@ const thStyle = (theme: Theme, index: number) => css`
 		z-index: 20;
 		background-color: #e5edf3;
 	`}
+	border: 1px solid #DCDDE1;
 `;
 
 type TableHeaderProps<T> = {
