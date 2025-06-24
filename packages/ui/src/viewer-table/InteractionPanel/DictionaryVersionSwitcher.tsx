@@ -24,7 +24,7 @@ import { Dictionary } from '@overture-stack/lectern-dictionary';
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-type VersionSwitcherProps = {
+export type VersionSwitcherProps = {
 	dictionaryData: Dictionary[];
 	dictionaryIndex: number;
 	onVersionChange: (index: number) => void;

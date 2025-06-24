@@ -32,7 +32,7 @@ import DownloadTemplatesButton from './DownloadTemplatesButton';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
 
-type InteractionPanelProps = {
+export type InteractionPanelProps = {
 	disabled?: boolean;
 	setIsCollapsed: (isCollapsed: boolean) => void;
 	onSelect: (schemaNameIndex: number) => void;
@@ -85,8 +85,8 @@ const InteractionPanel = ({ disabled = false, setIsCollapsed, onSelect, currDict
 					setFilters={currDictionary.setFilters}
 					disabled={disabled}
 				/>
-				<ExpandAllButton onClick={() => setIsCollapsed(true)} disabled={disabled} />
-				<CollapseAllButton onClick={() => setIsCollapsed(false)} disabled={disabled} />
+				<ExpandAllButton onClick={() => setIsCollapsed(false)} disabled={disabled} />
+				<CollapseAllButton onClick={() => setIsCollapsed(true)} disabled={disabled} />
 			</div>
 			<div css={rightSectionStyles}>
 				<DictionaryVersionSwitcher

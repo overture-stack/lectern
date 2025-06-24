@@ -33,16 +33,11 @@ export type TableOfContentsDropdownProps = {
 const TableOfContentsDropdown = ({ schemas, onSelect, disabled }: TableOfContentsDropdownProps) => {
 	const theme = useThemeContext();
 	const { List } = theme.icons;
-	const handleAction = (index: number) => {
-		const anchorId = `#${index}`;
-		onSelect(index);
-		window.location.hash = anchorId;
-	};
 
 	const menuItemsFromSchemas = schemas.map((schema, index) => ({
 		label: schema.name,
 		action: () => {
-			handleAction(index);
+			onSelect(index);
 		},
 	}));
 
