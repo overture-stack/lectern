@@ -10,7 +10,6 @@ import OpenModalPill from '../OpenModalPill';
 
 const hashIconStyle = (theme: Theme) => css`
 	opacity: 0;
-	margin-left: 8px;
 	transition: opacity 0.2s ease;
 	border-bottom: 2px solid ${theme.colors.secondary};
 	&:hover {
@@ -62,11 +61,16 @@ const FieldName = ({ name, onHashClick, uniqueKeys }: FieldNameProps) => {
 	const theme = useThemeContext();
 	const { Hash } = theme.icons;
 	const displayKeys = uniqueKeys.filter((value) => value !== '');
+	const fieldNameStyle = css`
+		display: flex;
+		align-items: center;
+		gap: 2px;
+	`;
 	return (
-		<div css={theme.typography.label}>
+		<div css={fieldNameStyle}>
 			{name}
 			<span css={hashIconStyle(theme)} onClick={onHashClick}>
-				<Hash width={20} height={20} fill={theme.colors.secondary} />
+				<Hash width={10} height={10} fill={theme.colors.secondary} />
 			</span>
 			{displayKeys.length === 1 && <Pill size="small">{displayKeys}</Pill>}
 			{displayKeys.length > 1 && <OpenModalPill title="Primary Key" />}

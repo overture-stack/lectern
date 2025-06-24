@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import React, { CSSProperties, MouseEvent, ReactNode } from 'react';
-import colors from '../theme/styles/colors';
-
-export type PillVariant = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info';
-export type PillSize = 'small' | 'medium' | 'large';
+import { Theme } from '../theme';
+import { useThemeContext } from '../theme/ThemeContext';
+export type PillVariant = 'default' | 'button';
+export type PillSize = 'extra-small' | 'small' | 'medium' | 'large';
 
 export interface PillProps {
 	children: ReactNode;
@@ -16,15 +16,31 @@ export interface PillProps {
 	style?: CSSProperties;
 }
 
-const getVariantStyles = (dark: boolean) => {
-	return {
-		background: dark ? '#D9D9D9' : '#E5E7EA',
-		color: dark ? colors.black : colors.black,
+const getVariantStyles = (dark: boolean, variant: PillVariant, theme: Theme) => {
+	const VARIANT_STYLES = {
+		default: {
+			background: dark ? '#D9D9D9' : '#E5E7EA',
+			color: theme.colors.black,
+			border: 'none',
+		},
+		button: {
+			background: '#FFFF',
+			color: theme.colors.black,
+			border: `1px solid ${theme.colors.black}`,
+		},
 	};
+	return VARIANT_STYLES[variant];
 };
 
 const getSizeStyles = (size: PillSize) => {
 	const sizeStyles = {
+		'extra-small': {
+			padding: '1px 6px',
+			fontSize: '8px',
+			lineHeight: '12px',
+			borderRadius: '6px',
+			gap: '3px',
+		},
 		small: {
 			padding: '2px 8px',
 			fontSize: '10px',
@@ -52,7 +68,8 @@ const getSizeStyles = (size: PillSize) => {
 };
 
 const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, dark = false, style }: PillProps) => {
-	const variantStyles = getVariantStyles(dark);
+	const theme = useThemeContext();
+	const variantStyles = getVariantStyles(dark, variant, theme);
 	const sizeStyles = getSizeStyles(size);
 
 	const pillStyles = css`
@@ -67,9 +84,9 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, d
 		border-radius: ${sizeStyles.borderRadius};
 		background-color: ${variantStyles.background};
 		color: ${variantStyles.color};
+		border: ${variantStyles.border};
 		transition: all 0.2s ease-in-out;
 		user-select: none;
-
 		${onClick ?
 			css`
 				cursor: pointer;
@@ -83,7 +100,6 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, d
 				}
 			`
 		:	''}
-
 		${icon ?
 			css`
 				.pill-icon {
