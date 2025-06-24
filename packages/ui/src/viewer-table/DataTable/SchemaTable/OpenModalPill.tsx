@@ -8,7 +8,7 @@ export type OpenModalButtonProps = {
 const OpenModalPill = ({ title }: OpenModalButtonProps) => {
 	return (
 		<Pill
-			size={title === 'Required When' ? 'small' : 'extra-small'}
+			size={title === 'Required When' ? 'medium' : 'extra-small'}
 			variant={title === 'Required When' || 'Primary Key' ? 'button' : 'default'}
 			icon={<Eye width={15} height={15} />}
 		>

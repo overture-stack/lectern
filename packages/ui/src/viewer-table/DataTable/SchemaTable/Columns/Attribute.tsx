@@ -13,7 +13,7 @@ export const renderAttributesColumn = (schemaRestrictions: SchemaRestrictions | 
 		return handleRequiredWhen();
 	}
 	return (
-		<Pill>
+		<Pill dark={true}>
 			{schemaRestrictions && 'required' in schemaRestrictions && schemaRestrictions.required ? 'Required' : 'Optional'}
 		</Pill>
 	);

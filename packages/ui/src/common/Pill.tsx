@@ -37,13 +37,15 @@ const getSizeStyles = (size: PillSize) => {
 		'extra-small': {
 			padding: '1px 6px',
 			fontSize: '8px',
+			fontWeight: '700',
 			lineHeight: '12px',
-			borderRadius: '6px',
+			borderRadius: '9px',
 			gap: '3px',
 		},
 		small: {
 			padding: '2px 8px',
 			fontSize: '10px',
+			fontWeight: '700',
 			lineHeight: '14px',
 			borderRadius: '9px',
 			gap: '4px',
@@ -51,6 +53,7 @@ const getSizeStyles = (size: PillSize) => {
 		medium: {
 			padding: '4px 12px',
 			fontSize: '16px',
+			fontWeight: '700',
 			lineHeight: '16px',
 			borderRadius: '9px',
 			gap: '6px',
@@ -58,6 +61,7 @@ const getSizeStyles = (size: PillSize) => {
 		large: {
 			padding: '6px 16px',
 			fontSize: '14px',
+			fontWeight: '700',
 			lineHeight: '20px',
 			borderRadius: '20px',
 			gap: '8px',
@@ -80,7 +84,7 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, d
 		padding: ${sizeStyles.padding};
 		font-size: ${sizeStyles.fontSize};
 		line-height: ${sizeStyles.lineHeight};
-		font-weight: 500;
+		font-weight: ${sizeStyles.fontWeight};
 		border-radius: ${sizeStyles.borderRadius};
 		background-color: ${variantStyles.background};
 		color: ${variantStyles.color};

@@ -11,7 +11,7 @@ const containerStyle = () => css`
 	gap: 10px;
 `;
 export const renderDataTypeColumn = (type: CellContext<SchemaField, string>) => {
-	const { valueType, isArray, delimiter, unique } = type.row.original;
+	const { valueType, isArray, unique } = type.row.original;
 	const renderContent = () => {
 		return isArray ? 'Array' : valueType.charAt(0).toUpperCase() + valueType.slice(1);
 	};
