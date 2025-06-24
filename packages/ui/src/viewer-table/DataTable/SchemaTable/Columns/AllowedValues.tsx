@@ -46,18 +46,12 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 	const restrictionsValue: SchemaRestrictions = restrictions.getValue();
 	const restrictionItems: string[] = [];
 
-	// If we have nothing we can return None
 	if (!restrictionsValue || Object.keys(restrictionsValue).length === 0) {
 		return 'None';
 	}
 
 	if ('if' in restrictionsValue && restrictionsValue.if) {
 		restrictionItems.push('Depends on');
-	}
-
-	// Type narrowing and pushing appropriate values from the restrictions into the restrictionItems array
-	if ('required' in restrictionsValue && restrictionsValue.required) {
-		restrictionItems.push('Required');
 	}
 
 	if ('regex' in restrictionsValue && restrictionsValue.regex) {
@@ -68,8 +62,10 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 
 	if ('codeList' in restrictionsValue && restrictionsValue.codeList) {
 		const codeListDisplay =
-			Array.isArray(restrictionsValue.codeList) ? restrictionsValue.codeList.join(', ') : restrictionsValue.codeList;
-		restrictionItems.push('One of: ' + codeListDisplay);
+			Array.isArray(restrictionsValue.codeList) ?
+				restrictionsValue.codeList.map((item) => `"${item}"`).join(',\n')
+			:	`"${restrictionsValue.codeList}"`;
+		restrictionItems.push('One of:\n' + `${codeListDisplay}`);
 	}
 
 	if ('range' in restrictionsValue && restrictionsValue.range) {

@@ -63,6 +63,8 @@ const TableRow = <R,>({ row, index }: TableRowProps<R>) => {
 				return (
 					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>
 						<ReadMoreText
+							expandedText="Show Less"
+							collapsedText="Show All"
 							wrapperStyle={() => css`
 								${theme.typography.data}
 							`}

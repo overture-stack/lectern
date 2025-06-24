@@ -1,13 +1,12 @@
 /** @jsxImportSource @emotion/react */
 
-// import { DictionaryHeader } from '#/viewer-table/DictionaryHeader';
+import { Dictionary, replaceReferences, Schema } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 import SchemaTable from '../../src/viewer-table/DataTable/SchemaTable/SchemaTable';
 import Advanced from '../fixtures/advanced.json';
 import themeDecorator from '../themeDecorator';
-import { Dictionary, Schema } from '@overture-stack/lectern-dictionary';
 
-const dictionary: Dictionary = Advanced as Dictionary;
+const dictionary: Dictionary = replaceReferences(Advanced as Dictionary);
 const schema: Schema = dictionary.schemas[0];
 
 const meta = {
