@@ -21,28 +21,33 @@
 import { MatchRuleCount, RestrictionRange, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
 
+export type restrictionItem = {
+	prefix: string | null;
+	content: string;
+};
 export type AllowedValuesColumnProps = {
 	restrictions: CellContext<SchemaField, SchemaRestrictions>;
 };
 
-const handleRange = (range: RestrictionRange, restrictionItems: string[]): void => {
+const handleRange = (range: RestrictionRange, restrictionItems: restrictionItem[]): void => {
 	if (range.min !== undefined && range.max !== undefined) {
-		restrictionItems.push(`Min: ${range.min}\nMax: ${range.max}`);
+		restrictionItems.push({ prefix: 'Min: ', content: `${range.min}` });
+		restrictionItems.push({ prefix: 'Max: ', content: `${range.max}` });
 	} else if (range.min !== undefined) {
-		restrictionItems.push(`Min: ${range.min}`);
+		restrictionItems.push({ prefix: 'Min: ', content: `${range.min}` });
 	} else if (range.max !== undefined) {
-		restrictionItems.push(`Max: ${range.max}`);
+		restrictionItems.push({ prefix: 'Max: ', content: `${range.max}` });
 	} else if (range.exclusiveMin !== undefined) {
-		restrictionItems.push(`Greater than ${range.exclusiveMin}`);
+		restrictionItems.push({ prefix: 'Greater than ', content: `${range.exclusiveMin}` });
 	} else if (range.exclusiveMax !== undefined) {
-		restrictionItems.push(`Less than ${range.exclusiveMax}`);
+		restrictionItems.push({ prefix: 'Less than ', content: `${range.exclusiveMin}` });
 	}
 };
 
 const handleCodeListsWithCountRestrictions = (
 	codeList: string | string[] | number[],
 	count: MatchRuleCount,
-	restrictionItems: string[],
+	restrictionItems: restrictionItem[],
 	isArray: boolean,
 	delimiter: string = ',',
 ): void => {
@@ -50,39 +55,63 @@ const handleCodeListsWithCountRestrictions = (
 	const delimiterText = isArray ? `, delimited by "${delimiter}"` : '';
 
 	if (typeof count === 'number') {
-		restrictionItems.push(`Exactly ${count}${delimiterText} from:\n${codeListDisplay}`);
+		restrictionItems.push({
+			prefix: `Exactly ${count}${delimiterText} from:`,
+			content: `${codeListDisplay}`,
+		});
 	} else {
 		if (count.min !== undefined && count.max !== undefined) {
-			restrictionItems.push(`Select ${count.min} to ${count.max}${delimiterText} from:\n${codeListDisplay}`);
+			restrictionItems.push({
+				prefix: `Select ${count.min} to ${count.max}${delimiterText} from:`,
+				content: `${codeListDisplay}`,
+			});
 		} else if (count.min !== undefined) {
-			restrictionItems.push(`At least ${count.min}${delimiterText} from:\n${codeListDisplay}`);
+			restrictionItems.push({
+				prefix: `At least ${count.min}${delimiterText} from:`,
+				content: `${codeListDisplay}`,
+			});
 		} else if (count.max !== undefined) {
-			restrictionItems.push(`Up to ${count.max}${delimiterText} from:\n${codeListDisplay}`);
+			restrictionItems.push({
+				prefix: `Up to ${count.max}${delimiterText} from:`,
+				content: `${codeListDisplay}`,
+			});
 		} else if (count.exclusiveMin !== undefined) {
-			restrictionItems.push(`More than ${count.exclusiveMin}${delimiterText} from:\n${codeListDisplay}`);
+			restrictionItems.push({
+				prefix: `More than ${count.exclusiveMin}${delimiterText} from:`,
+				content: `${codeListDisplay}`,
+			});
 		} else if (count.exclusiveMax !== undefined) {
-			restrictionItems.push(`Fewer than ${count.exclusiveMax}${delimiterText} from:\n${codeListDisplay}`);
+			restrictionItems.push({
+				prefix: `Fewer than ${count.exclusiveMax}${delimiterText} from:`,
+				content: `${codeListDisplay}`,
+			});
 		}
 	}
 };
 
-export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField, SchemaRestrictions>): string => {
+export const renderAllowedValuesColumn = (
+	restrictions: CellContext<SchemaField, SchemaRestrictions>,
+): restrictionItem[] => {
 	const schemaField: SchemaField = restrictions.row.original;
 	const restrictionsValue: SchemaRestrictions = restrictions.getValue();
-	const restrictionItems: string[] = [];
+	const restrictionItems: restrictionItem[] = [];
 
 	if (!restrictionsValue || Object.keys(restrictionsValue).length === 0) {
-		return 'None';
+		restrictionItems.push({ prefix: null, content: 'None' });
+		return restrictionItems;
 	}
 
 	if ('if' in restrictionsValue && restrictionsValue.if) {
-		restrictionItems.push('Depends on');
+		restrictionItems.push({ prefix: 'If condition', content: 'See field description for conditional requirements' });
 	}
 
 	if ('regex' in restrictionsValue && restrictionsValue.regex) {
 		const regexValue =
 			Array.isArray(restrictionsValue.regex) ? restrictionsValue.regex.join(', ') : restrictionsValue.regex;
-		restrictionItems.push(`Must match pattern: ${regexValue}\nSee field description for examples.`);
+		restrictionItems.push({
+			prefix: 'Must match pattern: ',
+			content: `${regexValue}\nSee field description for examples.`,
+		});
 	}
 
 	if ('codeList' in restrictionsValue && restrictionsValue.codeList && !('count' in restrictionsValue)) {
@@ -90,7 +119,7 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 			Array.isArray(restrictionsValue.codeList) ?
 				restrictionsValue.codeList.join(',\n')
 			:	`"${restrictionsValue.codeList}"`;
-		restrictionItems.push('One of:\n' + `${codeListDisplay}`);
+		restrictionItems.push({ prefix: 'One of:\n', content: `${codeListDisplay}` });
 	}
 
 	if ('range' in restrictionsValue && restrictionsValue.range) {
@@ -113,8 +142,12 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 	}
 
 	if (schemaField.unique) {
-		restrictionItems.push('Must be unique');
+		restrictionItems.push({ prefix: null, content: 'Must be unique' });
 	}
 
-	return restrictionItems.length > 0 ? restrictionItems.join('\n') : 'None';
+	if (restrictionItems.length === 0) {
+		restrictionItems.push({ prefix: null, content: 'None' });
+	}
+
+	return restrictionItems;
 };
