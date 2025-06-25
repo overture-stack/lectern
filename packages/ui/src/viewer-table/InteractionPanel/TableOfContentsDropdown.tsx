@@ -19,51 +19,35 @@
  *
  */
 
-/** @jsxImportSource @emotion/react */
-
-import { css, SerializedStyles } from '@emotion/react';
-import { FC, ReactNode } from 'react';
-import type { Theme } from '../../theme';
+import type { Schema } from '@overture-stack/lectern-dictionary';
+import React from 'react';
+import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-type DropDownItemProps = {
-	action?: string | (() => void);
-	children: ReactNode;
-	customStyles?: {
-		hover?: SerializedStyles;
-		base?: SerializedStyles;
-	};
+export type TableOfContentsDropdownProps = {
+	schemas: Schema[];
+	onSelect: (schemaIndex: number) => void;
 };
 
-const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
-	display: flex;
-	min-height: 100%;
-	padding-bottom: 5px;
-	height: 100%;
-	align-items: center;
-	border-radius: 9px;
-	justify-content: center;
-	color: ${theme.colors.accent_dark};
-	cursor: pointer;
-	&:hover {
-		background-color: ${theme.colors.grey_1};
-	}
-
-	${customStyles?.base}
-`;
-
-const DropDownItem = ({ children, action, customStyles }: DropDownItemProps) => {
+const TableOfContentsDropdown = ({ schemas, onSelect }: TableOfContentsDropdownProps) => {
 	const theme = useThemeContext();
-	const content = <div css={styledListItemStyle(theme, customStyles)}>{children}</div>;
-	if (typeof action === 'function') {
-		return (
-			<div onClick={action} css={styledListItemStyle(theme, customStyles)}>
-				{children}
-			</div>
-		);
-	}
+	const { List } = theme.icons;
+	const handleAction = (index: number) => {
+		const anchorId = `#${index}`;
+		onSelect(index);
+		window.location.hash = anchorId;
+	};
 
-	return content;
+	const menuItemsFromSchemas = schemas.map((schema, index) => ({
+		label: schema.name,
+		action: () => {
+			handleAction(index);
+		},
+	}));
+
+	return schemas.length > 0 ?
+			<Dropdown leftIcon={<List />} title="Table of Contents" menuItems={menuItemsFromSchemas} />
+		:	null;
 };
 
-export default DropDownItem;
+export default TableOfContentsDropdown;
