@@ -54,20 +54,10 @@ const panelStyles = (theme: Theme) => css`
 	border-bottom: 1px solid ${theme.colors.grey_4};
 	background-color: ${theme.colors.white};
 	min-height: 70px;
-	flex-wrap: nowrap;
-	overflow-x: auto;
-	overflow-y: visible;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	position: relative;
 `;
 
-const leftSectionStyles = css`
-	display: flex;
-	align-items: center;
-	gap: 16px;
-`;
-
-const rightSectionStyles = css`
+const sectionStyles = css`
 	display: flex;
 	align-items: center;
 	gap: 16px;
@@ -75,11 +65,12 @@ const rightSectionStyles = css`
 
 const InteractionPanel = ({ disabled = false, setIsCollapsed, onSelect, currDictionary }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
-	const currDict: Dictionary = currDictionary.dictionaryData[currDictionary.dictionaryIndex];
+	const currentDictionary: Dictionary = currDictionary.dictionaryData[currDictionary.dictionaryIndex];
+
 	return (
 		<div css={panelStyles(theme)}>
-			<div css={leftSectionStyles}>
-				<TableOfContentsDropdown schemas={currDict.schemas} onSelect={onSelect} disabled={disabled} />
+			<div css={sectionStyles}>
+				<TableOfContentsDropdown schemas={currentDictionary.schemas} onSelect={onSelect} disabled={disabled} />
 				<AttributeFilterDropdown
 					filters={currDictionary.filters}
 					setFilters={currDictionary.setFilters}
@@ -88,7 +79,8 @@ const InteractionPanel = ({ disabled = false, setIsCollapsed, onSelect, currDict
 				<ExpandAllButton onClick={() => setIsCollapsed(false)} disabled={disabled} />
 				<CollapseAllButton onClick={() => setIsCollapsed(true)} disabled={disabled} />
 			</div>
-			<div css={rightSectionStyles}>
+
+			<div css={sectionStyles}>
 				<DictionaryVersionSwitcher
 					dictionaryData={currDictionary.dictionaryData}
 					dictionaryIndex={currDictionary.dictionaryIndex}
@@ -97,8 +89,8 @@ const InteractionPanel = ({ disabled = false, setIsCollapsed, onSelect, currDict
 				/>
 				<DownloadTemplatesButton
 					fileType="tsv"
-					version={currDict.version}
-					name={currDict.name}
+					version={currentDictionary.version}
+					name={currentDictionary.name}
 					lecternUrl={currDictionary.lecternUrl}
 					disabled={disabled}
 				/>

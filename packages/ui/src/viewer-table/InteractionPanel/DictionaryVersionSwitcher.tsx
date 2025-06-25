@@ -24,19 +24,19 @@ import { Dictionary } from '@overture-stack/lectern-dictionary';
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-export type VersionSwitcherProps = {
+export type DictionaryVersionSwitcherProps = {
 	dictionaryData: Dictionary[];
 	dictionaryIndex: number;
 	onVersionChange: (index: number) => void;
 	disabled?: boolean;
 };
 
-const VersionSwitcher = ({
+const DictionaryVersionSwitcher = ({
 	dictionaryData,
 	dictionaryIndex,
 	onVersionChange,
 	disabled = false,
-}: VersionSwitcherProps) => {
+}: DictionaryVersionSwitcherProps) => {
 	const theme = useThemeContext();
 	const { History } = theme.icons;
 
@@ -66,4 +66,4 @@ const VersionSwitcher = ({
 	);
 };
 
-export default VersionSwitcher;
+export default DictionaryVersionSwitcher;
