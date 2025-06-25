@@ -45,7 +45,9 @@ const TableOfContentsDropdown = ({ schemas, onSelect }: TableOfContentsDropdownP
 		},
 	}));
 
-	return <Dropdown leftIcon={<List />} title="Table of Contents" menuItems={menuItemsFromSchemas} />;
+	return schemas.length > 0 ?
+			<Dropdown leftIcon={<List />} title="Table of Contents" menuItems={menuItemsFromSchemas} />
+		:	null;
 };
 
 export default TableOfContentsDropdown;
