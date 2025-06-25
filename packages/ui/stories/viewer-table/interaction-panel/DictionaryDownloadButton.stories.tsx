@@ -1,8 +1,11 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import DictionaryDownloadButton, {
+	DictionaryDownloadButtonProps,
+} from '../../../src/viewer-table/InteractionPanel/DownloadTemplatesButton';
 import themeDecorator from '../../themeDecorator';
-import DictionaryDownloadButton from '../../../src/viewer-table/InteractionPanel/DownloadTemplatesButton';
+
 const meta = {
 	component: DictionaryDownloadButton,
 	title: 'Viewer - Table/Interaction - Panel/DictionaryDownloadButton',
@@ -11,23 +14,25 @@ const meta = {
 } satisfies Meta<typeof DictionaryDownloadButton>;
 
 export default meta;
+
 type Story = StoryObj<typeof meta>;
+
+const mockDictionaryDownloadButtonProps: DictionaryDownloadButtonProps = {
+	version: '1.0',
+	name: 'example-dictionary',
+	lecternUrl: 'http://localhost:3031',
+	fileType: 'tsv',
+};
 
 export const Default: Story = {
 	args: {
-		version: '1.0',
-		name: 'example-dictionary',
-		lecternUrl: 'http://localhost:3031',
-		fileType: 'tsv',
+		...mockDictionaryDownloadButtonProps,
 	},
 };
 
 export const Disabled: Story = {
 	args: {
-		version: '1.0',
-		name: 'example-dictionary',
-		lecternUrl: 'http://localhost:3031',
-		fileType: 'tsv',
+		...mockDictionaryDownloadButtonProps,
 		disabled: true,
 	},
 };

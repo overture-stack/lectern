@@ -2,8 +2,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
 import themeDecorator from '../../themeDecorator';
-import AdvancedDictionary from '../../fixtures/advanced.json';
-import { Dictionary } from '@overture-stack/lectern-dictionary';
+
 const meta = {
 	component: AttributeFilter,
 	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
@@ -12,18 +11,21 @@ const meta = {
 } satisfies Meta<typeof AttributeFilter>;
 
 export default meta;
+
 type Story = StoryObj<typeof meta>;
+
+const mockSetFilters = (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`);
 
 export const Default: Story = {
 	args: {
-		filters: { active: true },
-		setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+		filters: [],
+		setFilters: mockSetFilters,
 	},
 };
 export const Disabled: Story = {
 	args: {
-		filters: { active: false },
-		setFilters: (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`),
+		filters: [],
+		setFilters: mockSetFilters,
 		disabled: true,
 	},
 };

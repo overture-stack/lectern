@@ -20,11 +20,15 @@
  */
 
 /** @jsxImportSource @emotion/react */
+
 import { css } from '@emotion/react';
 import type { ReactNode } from 'react';
-import { useEffect } from 'react';
+import { MouseEvent, useEffect } from 'react';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
+import DictionaryDownloadButton, {
+	DictionaryDownloadButtonProps,
+} from '../../viewer-table/InteractionPanel/DownloadTemplatesButton';
 import ReadMoreText from '../ReadMoreText';
 
 const MAX_LINES_BEFORE_EXPAND = 2;
@@ -34,16 +38,17 @@ export type AccordionData = {
 	openOnInit: boolean;
 	description: string;
 	content: ReactNode | string;
-	downloadButton?: ReactNode;
+	dictionaryDownloadButtonProps: DictionaryDownloadButtonProps;
 };
 
 export type AccordionItemProps = {
 	setClipboardContents: (currentSchema: string) => void;
 	data: AccordionData;
-	isOpen: boolean;
-	onClick: () => void;
-	index: number; // Index of the accordion item, used for accessibility and unique identification to avoid the issue with duplicates
-	setIsOpen: (index: number) => void;
+	index: number;
+	openState: {
+		isOpen: boolean;
+		toggle: () => void;
+	};
 };
 
 const accordionItemStyle = (theme: Theme) => css`
@@ -137,33 +142,38 @@ const contentInnerContainerStyle = (theme: Theme) => css`
 	${theme.typography?.data};
 `;
 
-const AccordionItem = ({ index, data, isOpen, onClick, setClipboardContents, setIsOpen }: AccordionItemProps) => {
+const AccordionItem = ({ index, data, openState, setClipboardContents }: AccordionItemProps) => {
 	const theme = useThemeContext();
-	const { downloadButton, description, title, content } = data;
+	const { description, title, content, dictionaryDownloadButtonProps } = data;
 	const { ChevronDown, Hash } = theme.icons;
+
+	const indexString = index.toString();
+	const windowLocationHash = `#${index}`;
+
 	useEffect(() => {
-		if (window.location.hash === `#${index}`) {
+		if (window.location.hash === windowLocationHash) {
 			if (!data.openOnInit) {
-				setIsOpen(index);
+				openState.toggle();
 			}
-			document.getElementById(index.toString())?.scrollIntoView({ behavior: 'smooth' });
+			document.getElementById(indexString)?.scrollIntoView({ behavior: 'smooth' });
 		}
 	}, []);
+
+	const hashOnClick = (event: MouseEvent<HTMLSpanElement>) => {
+		event.stopPropagation();
+		window.location.hash = windowLocationHash;
+		setClipboardContents(window.location.href);
+	};
+
 	return (
-		<li css={accordionItemStyle(theme)} id={index.toString()}>
+		<li css={accordionItemStyle(theme)} id={indexString}>
 			<h2 css={accordionItemTitleStyle}>
-				<div css={accordionItemButtonStyle(theme)} onClick={onClick}>
-					<ChevronDown fill={theme.colors.accent_dark} width={16} height={16} style={chevronStyle(isOpen)} />
+				<div css={accordionItemButtonStyle(theme)} onClick={openState.toggle}>
+					<ChevronDown fill={theme.colors.accent_dark} width={16} height={16} style={chevronStyle(openState.isOpen)} />
 					<div css={contentContainerStyle}>
 						<span css={titleStyle}>
 							{title}
-							<span
-								css={hashIconStyle(theme)}
-								onClick={() => {
-									window.location.hash = `#${index}`;
-									setClipboardContents(window.location.href);
-								}}
-							>
+							<span css={hashIconStyle(theme)} onClick={hashOnClick}>
 								<Hash width={20} height={20} fill={theme.colors.secondary} />
 							</span>
 						</span>
@@ -173,10 +183,10 @@ const AccordionItem = ({ index, data, isOpen, onClick, setClipboardContents, set
 							</ReadMoreText>
 						)}
 					</div>
-					{downloadButton}
+					<DictionaryDownloadButton {...dictionaryDownloadButtonProps} />
 				</div>
 			</h2>
-			<div css={accordionCollapseStyle(isOpen)}>
+			<div css={accordionCollapseStyle(openState.isOpen)}>
 				<div css={accordionItemContentStyle(theme)}>
 					<div css={contentInnerContainerStyle(theme)}>{content}</div>
 				</div>

@@ -21,7 +21,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { useState, Dispatch, SetStateAction } from 'react';
+import { useState, Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import Button from '../../common/Button';
 import { useThemeContext } from '../../theme/ThemeContext';
 import { css } from '@emotion/react';
@@ -40,7 +40,9 @@ const downloadDictionary = async (
 	fetchUrl: string,
 	name: string,
 	version: string,
+	event: SyntheticEvent<HTMLButtonElement, Event>,
 ) => {
+	event.stopPropagation();
 	try {
 		setIsLoading(true);
 		const res = await fetch(fetchUrl);
@@ -99,7 +101,7 @@ const DictionaryDownloadButton = ({
 				:	undefined
 			}
 			icon={<FileDownload />}
-			onClick={() => downloadDictionary(setIsLoading, fetchUrl, name, version)}
+			onClick={(e) => downloadDictionary(setIsLoading, fetchUrl, name, version, e)}
 			disabled={disabled || isLoading}
 		>
 			Submission Templates

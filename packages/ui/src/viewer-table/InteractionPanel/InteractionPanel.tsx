@@ -22,23 +22,28 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import type { Dictionary, Schema } from '@overture-stack/lectern-dictionary';
-import { useState } from 'react';
+import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
-import AttributeFilterDropdown, { FilterMapping } from './AttributeFilterDropdown';
+import AttributeFilterDropdown, { FilterOptions } from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
-import DictionaryVersionSwitcher, { DictionaryConfig } from './DictionaryVersionSwitcher';
+import DictionaryVersionSwitcher from './DictionaryVersionSwitcher';
 import DownloadTemplatesButton from './DownloadTemplatesButton';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
 
-type InteractionPanelProps = {
+export type InteractionPanelProps = {
 	disabled?: boolean;
 	setIsCollapsed: (isCollapsed: boolean) => void;
 	onSelect: (schemaNameIndex: number) => void;
-	currDictionary: DictionaryConfig;
-	setFilters: (filters: FilterMapping) => void;
+	currDictionary: {
+		lecternUrl: string;
+		dictionaryIndex: number;
+		dictionaryData: Dictionary[];
+		onVersionChange: (index: number) => void;
+		filters: FilterOptions[];
+		setFilters: (filters: FilterOptions[]) => void;
+	};
 };
 
 const panelStyles = (theme: Theme) => css`
@@ -56,40 +61,40 @@ const panelStyles = (theme: Theme) => css`
 	position: relative;
 `;
 
-const leftSectionStyles = css`
+const sectionStyles = css`
 	display: flex;
 	align-items: center;
 	gap: 16px;
 `;
 
-const rightSectionStyles = css`
-	display: flex;
-	align-items: center;
-	gap: 16px;
-`;
-const InteractionPanel = ({
-	disabled = false,
-	setIsCollapsed,
-	onSelect,
-	currDictionary,
-	setFilters,
-}: InteractionPanelProps) => {
+const InteractionPanel = ({ disabled = false, setIsCollapsed, onSelect, currDictionary }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
-	const currDict: Dictionary = currDictionary.dictionaryData[currDictionary.dictionaryIndex];
+	const currentDictionary: Dictionary = currDictionary.dictionaryData[currDictionary.dictionaryIndex];
+
 	return (
 		<div css={panelStyles(theme)}>
-			<div css={leftSectionStyles}>
-				<TableOfContentsDropdown schemas={currDict.schemas} onSelect={onSelect} disabled={disabled} />
-				<AttributeFilterDropdown filters={currDictionary.filters} setFilters={setFilters} disabled={disabled} />
-				<ExpandAllButton onClick={() => setIsCollapsed(true)} disabled={disabled} />
-				<CollapseAllButton onClick={() => setIsCollapsed(false)} disabled={disabled} />
+			<div css={sectionStyles}>
+				<TableOfContentsDropdown schemas={currentDictionary.schemas} onSelect={onSelect} disabled={disabled} />
+				<AttributeFilterDropdown
+					filters={currDictionary.filters}
+					setFilters={currDictionary.setFilters}
+					disabled={disabled}
+				/>
+				<ExpandAllButton onClick={() => setIsCollapsed(false)} disabled={disabled} />
+				<CollapseAllButton onClick={() => setIsCollapsed(true)} disabled={disabled} />
 			</div>
-			<div css={rightSectionStyles}>
-				<DictionaryVersionSwitcher config={currDictionary} disabled={disabled} />
+
+			<div css={sectionStyles}>
+				<DictionaryVersionSwitcher
+					dictionaryData={currDictionary.dictionaryData}
+					dictionaryIndex={currDictionary.dictionaryIndex}
+					onVersionChange={currDictionary.onVersionChange}
+					disabled={disabled}
+				/>
 				<DownloadTemplatesButton
 					fileType="tsv"
-					version={currDict.version}
-					name={currDict.name}
+					version={currentDictionary.version}
+					name={currentDictionary.name}
 					lecternUrl={currDictionary.lecternUrl}
 					disabled={disabled}
 				/>
