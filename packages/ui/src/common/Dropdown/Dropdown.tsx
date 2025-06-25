@@ -22,10 +22,10 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import DropDownItem from './DropdownItem';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import type { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
+import DropDownItem from './DropdownItem';
 
 const dropdownButtonStyle = (theme: Theme, width?: string) => css`
 	display: flex;
