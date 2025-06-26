@@ -39,7 +39,7 @@ export const renderAttributesColumn = (schemaRestrictions: SchemaRestrictions | 
 		return <OpenModalPill title="Required When" />;
 	};
 	return (
-		<div className="hello world" css={containerStyle}>
+		<div css={containerStyle}>
 			{schemaRestrictions && 'if' in schemaRestrictions && schemaRestrictions.if ?
 				handleRequiredWhen()
 			:	<Pill dark={true}>
