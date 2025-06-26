@@ -7,7 +7,6 @@ import Advanced from '../fixtures/advanced.json';
 import themeDecorator from '../themeDecorator';
 
 const dictionary: Dictionary = replaceReferences(Advanced as Dictionary);
-const schema: Schema = dictionary.schemas[0];
 
 const meta = {
 	component: SchemaTable,
@@ -20,7 +19,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-	args: { schema },
+	args: { schema: dictionary.schemas[0] },
 };
 
 export const PlayerProfiles: Story = {
@@ -29,4 +28,12 @@ export const PlayerProfiles: Story = {
 
 export const GameEvents: Story = {
 	args: { schema: dictionary.schemas[2] },
+};
+
+export const AdvancedStats: Story = {
+	args: { schema: dictionary.schemas[3] },
+};
+
+export const EdgeCases: Story = {
+	args: { schema: dictionary.schemas[4] },
 };

@@ -43,7 +43,7 @@ const handleRange = (range: RestrictionRange, restrictionItems: restrictionItem[
 	} else if (range.exclusiveMin !== undefined) {
 		restrictionItems.push({ prefix: 'Greater than ', content: `${range.exclusiveMin}` });
 	} else if (range.exclusiveMax !== undefined) {
-		restrictionItems.push({ prefix: 'Less than ', content: `${range.exclusiveMin}` });
+		restrictionItems.push({ prefix: 'Less than ', content: `${range.exclusiveMax}` });
 	}
 };
 
@@ -158,12 +158,12 @@ export const computeAllowedValuesColumn = (
 	return restrictionItems;
 };
 
-export const renderAllowedValuesColumn = (
-	restrictionItems: restrictionItem[],
-	restrictions: CellContext<SchemaField, SchemaRestrictions>,
-) => {
+export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField, SchemaRestrictions>) => {
+	const restrictionItems = computeAllowedValuesColumn(restrictions);
 	const restrictionsValue: SchemaRestrictions = restrictions.getValue();
+
 	const theme = useThemeContext();
+
 	const linkStyle = (theme: Theme) => css`
 		${theme.typography?.label};
 		color: ${theme.colors.black};
@@ -179,6 +179,11 @@ export const renderAllowedValuesColumn = (
 			text-decoration: underline;
 		}
 	`;
+
+	const onClick = () => {
+		alert('Modal has been opened\n\n\n Hello World');
+	};
+
 	return (
 		<div>
 			{restrictionItems.map((item: restrictionItem) => {
@@ -191,12 +196,7 @@ export const renderAllowedValuesColumn = (
 				);
 			})}
 			{!!(restrictionsValue && 'if' in restrictionsValue && restrictionsValue.if) && (
-				<div
-					onClick={() => {
-						alert('Modal has been opened\n\n\n Hello World');
-					}}
-					css={linkStyle(theme)}
-				>
+				<div onClick={onClick} css={linkStyle(theme)}>
 					View More
 				</div>
 			)}

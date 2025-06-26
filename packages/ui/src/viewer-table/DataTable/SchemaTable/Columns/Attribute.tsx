@@ -30,6 +30,7 @@ const containerStyle = css`
 	display: flex;
 	align-items: center;
 	flex-direction: column;
+	justify-content: center;
 	gap: 10px;
 `;
 
@@ -37,18 +38,16 @@ export const renderAttributesColumn = (schemaRestrictions: SchemaRestrictions | 
 	const handleRequiredWhen = () => {
 		return <OpenModalPill title="Required When" />;
 	};
-
-	if (schemaRestrictions && 'if' in schemaRestrictions && schemaRestrictions.if) {
-		return handleRequiredWhen();
-	}
-
 	return (
-		<div css={containerStyle}>
-			<Pill dark={true}>
-				{schemaRestrictions && 'required' in schemaRestrictions && schemaRestrictions.required ?
-					'Required'
-				:	'Optional'}
-			</Pill>
+		<div className="hello world" css={containerStyle}>
+			{schemaRestrictions && 'if' in schemaRestrictions && schemaRestrictions.if ?
+				handleRequiredWhen()
+			:	<Pill dark={true}>
+					{schemaRestrictions && 'required' in schemaRestrictions && schemaRestrictions.required ?
+						'Required'
+					:	'Optional'}
+				</Pill>
+			}
 		</div>
 	);
 };
