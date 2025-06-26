@@ -39,10 +39,9 @@ const scrollWrapperStyle = css`
 	margin-bottom: 48px;
 `;
 
-// Shadow overlays
 const shadowStyle = css`
 	position: absolute;
-	top: 0;
+	top: 0.7%;
 	z-index: 100;
 	width: 20px;
 	height: 100%;
@@ -57,16 +56,16 @@ const leftShadowStyle = (width: number, opacity: number) => css`
 	opacity: ${opacity};
 `;
 
+const rightShadowStyle = (opacity: number) => css`
+	${shadowStyle}
+	right: 0;
+	background: linear-gradient(270deg, rgba(0, 0, 0, 0.06), transparent);
+	opacity: ${opacity};
+`;
+
 const tableContainerStyle = css`
 	overflow-x: auto;
-	-webkit-scrollbar: none;
-	-ms-overflow-style: none;
-	scrollbar-width: none;
 	max-width: 100%;
-
-	&::-webkit-scrollbar {
-		display: none;
-	}
 `;
 
 const tableStyle = css`
@@ -89,6 +88,7 @@ const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 	/***************************** MESSY SCROLLING BEHAVIOR***********************/
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const [showLeftShadow, setShowLeftShadow] = useState(false);
+	const [showRightShadow, setShowRightShadow] = useState(false);
 	const [firstColumnWidth, setFirstColumnWidth] = useState(0);
 
 	// We need to compute the width of the first column in order to make sure that the scrolling occurs after that point
@@ -106,8 +106,9 @@ const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 		if (!scrollRef.current) {
 			return;
 		}
-		const { scrollLeft } = scrollRef.current;
+		const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
 		setShowLeftShadow(scrollLeft > 0);
+		setShowRightShadow(scrollWidth - scrollLeft - clientWidth > 0);
 	}, []);
 
 	// Handle scroll events
@@ -135,6 +136,7 @@ const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 		<div css={scrollWrapperStyle}>
 			<div css={tableContainerStyle} ref={scrollRef}>
 				<div css={leftShadowStyle(firstColumnWidth, showLeftShadow ? 1 : 0)} />
+				<div css={rightShadowStyle(showRightShadow ? 1 : 0)} />
 				<table css={tableStyle}>
 					<thead css={tableBorderStyle}>
 						{table.getHeaderGroups().map((headerGroup: HeaderGroup<R>) => (

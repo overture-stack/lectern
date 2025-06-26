@@ -42,7 +42,7 @@ export const renderAttributesColumn = (schemaRestrictions: SchemaRestrictions | 
 		<div css={containerStyle}>
 			{schemaRestrictions && 'if' in schemaRestrictions && schemaRestrictions.if ?
 				handleRequiredWhen()
-			:	<Pill dark={true}>
+			:	<Pill>
 					{schemaRestrictions && 'required' in schemaRestrictions && schemaRestrictions.required ?
 						'Required'
 					:	'Optional'}

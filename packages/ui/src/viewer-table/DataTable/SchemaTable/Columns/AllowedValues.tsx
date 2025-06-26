@@ -23,6 +23,7 @@ import { CellContext } from '@tanstack/react-table';
 import { Theme } from '../../../../theme';
 import { css } from '@emotion/react';
 import { useThemeContext } from '../../../../theme/ThemeContext';
+import Pill from '../../../../common/Pill';
 
 export type restrictionItem = {
 	prefix: string | null;
@@ -103,13 +104,7 @@ export const computeAllowedValuesColumn = (
 		restrictionItems.push({ prefix: null, content: 'None' });
 		return restrictionItems;
 	}
-
-	if ('if' in restrictionsValue && (restrictionsValue.if || restrictionsValue.else || restrictionsValue.then)) {
-		restrictionItems.push({
-			prefix: 'PLACEHOLDER\n',
-			content: 'See field description for conditional requirements',
-		});
-	}
+	restrictionItems.push(...handleDependsOn(restrictionsValue));
 
 	if ('regex' in restrictionsValue && restrictionsValue.regex) {
 		const regexValue =
@@ -158,6 +153,41 @@ export const computeAllowedValuesColumn = (
 	return restrictionItems;
 };
 
+const handleDependsOn = (schemaRestrictions: SchemaRestrictions): restrictionItem[] => {
+	const restrictionItems: restrictionItem[] = [];
+
+	if (schemaRestrictions && 'compare' in schemaRestrictions && schemaRestrictions.compare) {
+	}
+	if (
+		schemaRestrictions &&
+		'if' in schemaRestrictions &&
+		schemaRestrictions.if &&
+		'conditions' in schemaRestrictions.if &&
+		schemaRestrictions.if.conditions &&
+		Array.isArray(schemaRestrictions.if.conditions)
+	) {
+		const allFields: string[] = [];
+		schemaRestrictions.if.conditions.forEach((condition) => {
+			if (condition.fields !== undefined) {
+				if (Array.isArray(condition.fields)) {
+					allFields.push(...condition.fields);
+				} else if (typeof condition.fields === 'string') {
+					allFields.push(condition.fields);
+				}
+			}
+		});
+		// Since there can be multiple fields with multiple conditions, there is a possibility that there are duplicates
+		const uniqueFields = [...new Set(allFields)];
+		if (uniqueFields.length > 0) {
+			restrictionItems.push({
+				prefix: 'Depends on:\n',
+				content: uniqueFields.join(', '),
+			});
+		}
+	}
+
+	return restrictionItems;
+};
 export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField, SchemaRestrictions>) => {
 	const restrictionItems = computeAllowedValuesColumn(restrictions);
 	const restrictionsValue: SchemaRestrictions = restrictions.getValue();
@@ -188,6 +218,27 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 		<div>
 			{restrictionItems.map((item: restrictionItem) => {
 				const { prefix, content } = item;
+
+				//Must render inside of pill
+				if (prefix === 'Depends on:\n') {
+					return (
+						<div>
+							{prefix && <strong>{prefix}</strong>}
+							<Pill
+								size="extra-small"
+								style={{
+									fontFamily: 'B612 Mono',
+									color: theme.colors.accent_dark,
+									fontWeight: '400',
+									lineHeight: '20px',
+									fontSize: '13px',
+								}}
+							>
+								{content}
+							</Pill>
+						</div>
+					);
+				}
 				return (
 					<div>
 						{prefix && <strong>{prefix}</strong>}
@@ -195,7 +246,7 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 					</div>
 				);
 			})}
-			{!!(restrictionsValue && 'if' in restrictionsValue && restrictionsValue.if) && (
+			{restrictionsValue && 'if' in restrictionsValue && restrictionsValue.if && (
 				<div onClick={onClick} css={linkStyle(theme)}>
 					View details
 				</div>

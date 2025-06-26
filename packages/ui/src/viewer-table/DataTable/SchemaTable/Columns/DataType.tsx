@@ -44,8 +44,8 @@ export const renderDataTypeColumn = (type: CellContext<SchemaField, string>) => 
 
 	return (
 		<div css={containerStyle}>
-			<Pill dark={true}>{renderContent()}</Pill>
-			{unique && <Pill dark={true}>Unique</Pill>}
+			<Pill>{renderContent()}</Pill>
+			{unique && <Pill>Unique</Pill>}
 		</div>
 	);
 };

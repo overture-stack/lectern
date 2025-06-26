@@ -12,17 +12,16 @@ export interface PillProps {
 	size?: PillSize;
 	icon?: ReactNode;
 	onClick?: (event: MouseEvent<HTMLDivElement>) => void;
-	dark?: boolean;
 	style?: CSSProperties;
 }
 
-const getVariantStyles = (dark: boolean, variant: PillVariant, theme: Theme) => {
+const getVariantStyles = (variant: PillVariant, theme: Theme) => {
 	const VARIANT_STYLES = {
 		default: {
-			background: dark ? '#D9D9D9' : '#E5E7EA',
+			background: '#E5E7EA',
 			color: theme.colors.black,
 			border: 'none',
-			hoverBackground: dark ? '#CCCCCC' : '#D8DADD',
+			hoverBackground: '#D8DADD',
 		},
 		button: {
 			background: '#FFFF',
@@ -41,7 +40,7 @@ const getSizeStyles = (size: PillSize) => {
 			fontSize: '8px',
 			fontWeight: '700',
 			lineHeight: '12px',
-			borderRadius: '9px',
+			borderRadius: '3px',
 			gap: '3px',
 			width: '65px',
 			maxWidth: '75px',
@@ -51,7 +50,7 @@ const getSizeStyles = (size: PillSize) => {
 			fontSize: '10px',
 			fontWeight: '700',
 			lineHeight: '14px',
-			borderRadius: '9px',
+			borderRadius: '4px',
 			gap: '4px',
 			width: '80px',
 			maxWidth: '100px',
@@ -61,7 +60,7 @@ const getSizeStyles = (size: PillSize) => {
 			fontSize: '16px',
 			fontWeight: '700',
 			lineHeight: '16px',
-			borderRadius: '9px',
+			borderRadius: '5px',
 			gap: '6px',
 			width: '95px',
 			maxWidth: '140px',
@@ -71,7 +70,7 @@ const getSizeStyles = (size: PillSize) => {
 			fontSize: '14px',
 			fontWeight: '700',
 			lineHeight: '20px',
-			borderRadius: '20px',
+			borderRadius: '6px',
 			gap: '8px',
 			width: '150px',
 			maxWidth: '180px',
@@ -81,9 +80,9 @@ const getSizeStyles = (size: PillSize) => {
 	return sizeStyles[size];
 };
 
-const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, dark = false, style }: PillProps) => {
+const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, style }: PillProps) => {
 	const theme = useThemeContext();
-	const variantStyles = getVariantStyles(dark, variant, theme);
+	const variantStyles = getVariantStyles(variant, theme);
 	const sizeStyles = getSizeStyles(size);
 
 	const pillStyles = css`
@@ -143,7 +142,7 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, d
 			tabIndex={onClick ? 0 : undefined}
 		>
 			{icon && <span className="pill-icon">{icon}</span>}
-			<span style={{ wordBreak: 'break-word', textAlign: 'center' }}>{children}</span>
+			<span style={{ textAlign: 'center' }}>{children}</span>
 		</div>
 	);
 };
