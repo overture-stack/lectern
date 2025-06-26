@@ -1,5 +1,7 @@
 /** @jsxImportSource @emotion/react */
+
 import type { Meta, StoryObj } from '@storybook/react';
+
 import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
 import themeDecorator from '../../themeDecorator';
 

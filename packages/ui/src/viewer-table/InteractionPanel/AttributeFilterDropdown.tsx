@@ -18,6 +18,7 @@
  */
 
 import React from 'react';
+
 import Dropdown from '../../common/Dropdown/Dropdown';
 
 export type AttributeFilterDropdownProps = {
@@ -30,7 +31,7 @@ export type FilterOptions = 'Required' | 'All Fields';
 
 const AttributeFilterDropdown = ({ filters, setFilters, disabled }: AttributeFilterDropdownProps) => {
 	const handleFilterSelect = (selectedFilterName: FilterOptions) => {
-// Toggles selected filter on click
+		// Toggles selected filter on click
 		if (filters?.includes(selectedFilterName)) {
 			setFilters([]);
 			return;

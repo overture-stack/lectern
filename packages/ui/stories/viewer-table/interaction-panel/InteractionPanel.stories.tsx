@@ -2,6 +2,7 @@
 
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
+
 import type { FilterOptions } from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
 import AdvancedDictionary from '../../fixtures/advanced.json';
