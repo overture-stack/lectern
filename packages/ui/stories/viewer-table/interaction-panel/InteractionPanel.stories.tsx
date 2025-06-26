@@ -32,7 +32,7 @@ const mockProps = {
 	onSelect: (schemaNameIndex) => {
 		alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
 	},
-	currDictionary: {
+	dictionaryConfig: {
 		lecternUrl: '',
 		dictionaryIndex: 0,
 		onVersionChange: (index: number) => {
@@ -49,8 +49,8 @@ const mockProps = {
 export const Default: Story = {
 	args: {
 		...mockProps,
-		currDictionary: {
-			...mockProps.currDictionary,
+		dictionaryConfig: {
+			...mockProps.dictionaryConfig,
 			dictionaryData: MultipleDictionaryData,
 		},
 	},
@@ -60,8 +60,8 @@ export const Default: Story = {
 export const WithSingleVersion: Story = {
 	args: {
 		...mockProps,
-		currDictionary: {
-			...mockProps.currDictionary,
+		dictionaryConfig: {
+			...mockProps.dictionaryConfig,
 			dictionaryData: SingleDictionaryData,
 		},
 	},
@@ -70,8 +70,8 @@ export const WithSingleVersion: Story = {
 export const Disabled: Story = {
 	args: {
 		...mockProps,
-		currDictionary: {
-			...mockProps.currDictionary,
+		dictionaryConfig: {
+			...mockProps.dictionaryConfig,
 			dictionaryData: MultipleDictionaryData,
 		},
 		disabled: true,

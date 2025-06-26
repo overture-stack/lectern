@@ -23,6 +23,7 @@
 
 import { css } from '@emotion/react';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
+
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import AttributeFilterDropdown, { FilterOptions } from './AttributeFilterDropdown';
@@ -36,7 +37,7 @@ export type InteractionPanelProps = {
 	disabled?: boolean;
 	setIsCollapsed: (isCollapsed: boolean) => void;
 	onSelect: (schemaNameIndex: number) => void;
-	currDictionary: {
+	dictionaryConfig: {
 		lecternUrl: string;
 		dictionaryIndex: number;
 		dictionaryData: Dictionary[];
@@ -67,17 +68,17 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const InteractionPanel = ({ disabled = false, setIsCollapsed, onSelect, currDictionary }: InteractionPanelProps) => {
+const InteractionPanel = ({ disabled = false, setIsCollapsed, onSelect, dictionaryConfig }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
-	const currentDictionary: Dictionary = currDictionary.dictionaryData[currDictionary.dictionaryIndex];
+	const selectedDictionary: Dictionary = dictionaryConfig.dictionaryData[dictionaryConfig.dictionaryIndex];
 
 	return (
 		<div css={panelStyles(theme)}>
 			<div css={sectionStyles}>
-				<TableOfContentsDropdown schemas={currentDictionary.schemas} onSelect={onSelect} disabled={disabled} />
+				<TableOfContentsDropdown schemas={selectedDictionary.schemas} onSelect={onSelect} disabled={disabled} />
 				<AttributeFilterDropdown
-					filters={currDictionary.filters}
-					setFilters={currDictionary.setFilters}
+					filters={dictionaryConfig.filters}
+					setFilters={dictionaryConfig.setFilters}
 					disabled={disabled}
 				/>
 				<ExpandAllButton onClick={() => setIsCollapsed(false)} disabled={disabled} />
@@ -86,16 +87,16 @@ const InteractionPanel = ({ disabled = false, setIsCollapsed, onSelect, currDict
 
 			<div css={sectionStyles}>
 				<DictionaryVersionSwitcher
-					dictionaryData={currDictionary.dictionaryData}
-					dictionaryIndex={currDictionary.dictionaryIndex}
-					onVersionChange={currDictionary.onVersionChange}
+					dictionaryData={dictionaryConfig.dictionaryData}
+					dictionaryIndex={dictionaryConfig.dictionaryIndex}
+					onVersionChange={dictionaryConfig.onVersionChange}
 					disabled={disabled}
 				/>
 				<DownloadTemplatesButton
 					fileType="tsv"
-					version={currentDictionary.version}
-					name={currentDictionary.name}
-					lecternUrl={currDictionary.lecternUrl}
+					version={selectedDictionary.version}
+					name={selectedDictionary.name}
+					lecternUrl={dictionaryConfig.lecternUrl}
 					disabled={disabled}
 				/>
 			</div>
