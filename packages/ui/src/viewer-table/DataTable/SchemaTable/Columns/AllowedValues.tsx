@@ -54,38 +54,38 @@ const handleCodeListsWithCountRestrictions = (
 	isArray: boolean,
 	delimiter: string = ',',
 ): void => {
-	const codeListDisplay = Array.isArray(codeList) ? codeList.join(', ') : codeList;
+	const codeListDisplay = Array.isArray(codeList) ? codeList.join(',\n') : codeList;
 	const delimiterText = isArray ? `, delimited by "${delimiter}"` : '';
 
 	if (typeof count === 'number') {
 		restrictionItems.push({
-			prefix: `Exactly ${count}${delimiterText} from: `,
+			prefix: `Exactly ${count}${delimiterText} from:\n`,
 			content: `${codeListDisplay}`,
 		});
 	} else {
 		if (count.min !== undefined && count.max !== undefined) {
 			restrictionItems.push({
-				prefix: `Select ${count.min} to ${count.max}${delimiterText} from: `,
+				prefix: `Select ${count.min} to ${count.max}${delimiterText} from:\n`,
 				content: `${codeListDisplay}`,
 			});
 		} else if (count.min !== undefined) {
 			restrictionItems.push({
-				prefix: `At least ${count.min}${delimiterText} from: `,
+				prefix: `At least ${count.min}${delimiterText} from:\n`,
 				content: `${codeListDisplay}`,
 			});
 		} else if (count.max !== undefined) {
 			restrictionItems.push({
-				prefix: `Up to ${count.max}${delimiterText} from: `,
+				prefix: `Up to ${count.max}${delimiterText} from:\n`,
 				content: `${codeListDisplay}`,
 			});
 		} else if (count.exclusiveMin !== undefined) {
 			restrictionItems.push({
-				prefix: `More than ${count.exclusiveMin}${delimiterText} from: `,
+				prefix: `More than ${count.exclusiveMin}${delimiterText} from:\n`,
 				content: `${codeListDisplay}`,
 			});
 		} else if (count.exclusiveMax !== undefined) {
 			restrictionItems.push({
-				prefix: `Fewer than ${count.exclusiveMax}${delimiterText} from: `,
+				prefix: `Fewer than ${count.exclusiveMax}${delimiterText} from:\n`,
 				content: `${codeListDisplay}`,
 			});
 		}
@@ -104,7 +104,7 @@ export const computeAllowedValuesColumn = (
 		return restrictionItems;
 	}
 
-	if ('if' in restrictionsValue && restrictionsValue.if) {
+	if ('if' in restrictionsValue && (restrictionsValue.if || restrictionsValue.else || restrictionsValue.then)) {
 		restrictionItems.push({
 			prefix: 'PLACEHOLDER\n',
 			content: 'See field description for conditional requirements',
@@ -197,7 +197,7 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 			})}
 			{!!(restrictionsValue && 'if' in restrictionsValue && restrictionsValue.if) && (
 				<div onClick={onClick} css={linkStyle(theme)}>
-					View More
+					View details
 				</div>
 			)}
 		</div>
