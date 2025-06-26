@@ -20,6 +20,9 @@
 /** @jsxImportSource @emotion/react */
 import { MatchRuleCount, RestrictionRange, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
+import { Theme } from '../../../../theme';
+import { css } from '@emotion/react';
+import { useThemeContext } from '../../../../theme/ThemeContext';
 
 export type restrictionItem = {
 	prefix: string | null;
@@ -56,40 +59,40 @@ const handleCodeListsWithCountRestrictions = (
 
 	if (typeof count === 'number') {
 		restrictionItems.push({
-			prefix: `Exactly ${count}${delimiterText} from:`,
+			prefix: `Exactly ${count}${delimiterText} from: `,
 			content: `${codeListDisplay}`,
 		});
 	} else {
 		if (count.min !== undefined && count.max !== undefined) {
 			restrictionItems.push({
-				prefix: `Select ${count.min} to ${count.max}${delimiterText} from:`,
+				prefix: `Select ${count.min} to ${count.max}${delimiterText} from: `,
 				content: `${codeListDisplay}`,
 			});
 		} else if (count.min !== undefined) {
 			restrictionItems.push({
-				prefix: `At least ${count.min}${delimiterText} from:`,
+				prefix: `At least ${count.min}${delimiterText} from: `,
 				content: `${codeListDisplay}`,
 			});
 		} else if (count.max !== undefined) {
 			restrictionItems.push({
-				prefix: `Up to ${count.max}${delimiterText} from:`,
+				prefix: `Up to ${count.max}${delimiterText} from: `,
 				content: `${codeListDisplay}`,
 			});
 		} else if (count.exclusiveMin !== undefined) {
 			restrictionItems.push({
-				prefix: `More than ${count.exclusiveMin}${delimiterText} from:`,
+				prefix: `More than ${count.exclusiveMin}${delimiterText} from: `,
 				content: `${codeListDisplay}`,
 			});
 		} else if (count.exclusiveMax !== undefined) {
 			restrictionItems.push({
-				prefix: `Fewer than ${count.exclusiveMax}${delimiterText} from:`,
+				prefix: `Fewer than ${count.exclusiveMax}${delimiterText} from: `,
 				content: `${codeListDisplay}`,
 			});
 		}
 	}
 };
 
-export const renderAllowedValuesColumn = (
+export const computeAllowedValuesColumn = (
 	restrictions: CellContext<SchemaField, SchemaRestrictions>,
 ): restrictionItem[] => {
 	const schemaField: SchemaField = restrictions.row.original;
@@ -102,7 +105,10 @@ export const renderAllowedValuesColumn = (
 	}
 
 	if ('if' in restrictionsValue && restrictionsValue.if) {
-		restrictionItems.push({ prefix: 'If condition', content: 'See field description for conditional requirements' });
+		restrictionItems.push({
+			prefix: 'PLACEHOLDER\n',
+			content: 'See field description for conditional requirements',
+		});
 	}
 
 	if ('regex' in restrictionsValue && restrictionsValue.regex) {
@@ -119,7 +125,7 @@ export const renderAllowedValuesColumn = (
 			Array.isArray(restrictionsValue.codeList) ?
 				restrictionsValue.codeList.join(',\n')
 			:	`"${restrictionsValue.codeList}"`;
-		restrictionItems.push({ prefix: 'One of:\n', content: `${codeListDisplay}` });
+		restrictionItems.push({ prefix: 'One of: \n', content: `${codeListDisplay}` });
 	}
 
 	if ('range' in restrictionsValue && restrictionsValue.range) {
@@ -150,4 +156,50 @@ export const renderAllowedValuesColumn = (
 	}
 
 	return restrictionItems;
+};
+
+export const renderAllowedValuesColumn = (
+	restrictionItems: restrictionItem[],
+	restrictions: CellContext<SchemaField, SchemaRestrictions>,
+) => {
+	const restrictionsValue: SchemaRestrictions = restrictions.getValue();
+	const theme = useThemeContext();
+	const linkStyle = (theme: Theme) => css`
+		${theme.typography?.label};
+		color: ${theme.colors.black};
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		background: none;
+		border: none;
+		padding: 0;
+		margin-top: 4px;
+		text-decoration: underline;
+		&:hover {
+			text-decoration: underline;
+		}
+	`;
+	return (
+		<div>
+			{restrictionItems.map((item: restrictionItem) => {
+				const { prefix, content } = item;
+				return (
+					<div>
+						{prefix && <strong>{prefix}</strong>}
+						{content}
+					</div>
+				);
+			})}
+			{!!(restrictionsValue && 'if' in restrictionsValue && restrictionsValue.if) && (
+				<div
+					onClick={() => {
+						alert('Modal has been opened\n\n\n Hello World');
+					}}
+					css={linkStyle(theme)}
+				>
+					View More
+				</div>
+			)}
+		</div>
+	);
 };

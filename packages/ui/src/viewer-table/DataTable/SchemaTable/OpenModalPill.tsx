@@ -11,6 +11,9 @@ const OpenModalPill = ({ title }: OpenModalButtonProps) => {
 			size={title === 'Required When' ? 'medium' : 'extra-small'}
 			variant={title === 'Required When' || 'Primary Key' || 'Foreign Key' ? 'button' : 'default'}
 			icon={<Eye width={15} height={15} />}
+			onClick={() => {
+				alert('Modal has been opened\n\n\n Hello World');
+			}}
 		>
 			{title}
 		</Pill>

@@ -22,11 +22,13 @@ const getVariantStyles = (dark: boolean, variant: PillVariant, theme: Theme) => 
 			background: dark ? '#D9D9D9' : '#E5E7EA',
 			color: theme.colors.black,
 			border: 'none',
+			hoverBackground: dark ? '#CCCCCC' : '#D8DADD',
 		},
 		button: {
 			background: '#FFFF',
 			color: theme.colors.black,
 			border: `1px solid ${theme.colors.black}`,
+			hoverBackground: '#F5F5F5',
 		},
 	};
 	return VARIANT_STYLES[variant];
@@ -109,12 +111,7 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, d
 			css`
 				cursor: pointer;
 				&:hover {
-					transform: translateY(-1px);
-					box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-				}
-				&:active {
-					transform: translateY(0);
-					box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+					background-color: ${variantStyles.hoverBackground};
 				}
 			`
 		:	''}

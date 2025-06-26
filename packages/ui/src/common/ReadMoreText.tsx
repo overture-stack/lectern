@@ -43,7 +43,7 @@ const defaultWrapperStyle = (theme: Theme) => css`
 `;
 
 const linkStyle = (theme: Theme) => css`
-	${theme.typography?.label2};
+	${theme.typography?.label};
 	color: ${theme.colors.black};
 	cursor: pointer;
 	display: inline-flex;
