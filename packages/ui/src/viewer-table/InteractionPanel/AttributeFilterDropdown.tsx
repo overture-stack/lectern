@@ -30,7 +30,7 @@ export type FilterOptions = 'Required' | 'All Fields';
 
 const AttributeFilterDropdown = ({ filters, setFilters, disabled }: AttributeFilterDropdownProps) => {
 	const handleFilterSelect = (selectedFilterName: FilterOptions) => {
-		// If we click the filter again then we want to toggle it off, iff it is the same filter being clicked
+// Toggles selected filter on click
 		if (filters?.includes(selectedFilterName)) {
 			setFilters([]);
 			return;
