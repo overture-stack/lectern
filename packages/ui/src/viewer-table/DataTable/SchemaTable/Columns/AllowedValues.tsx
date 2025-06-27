@@ -18,12 +18,12 @@
  */
 
 /** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
 import { MatchRuleCount, RestrictionRange, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
-import { Theme } from '../../../../theme';
-import { css } from '@emotion/react';
-import { useThemeContext } from '../../../../theme/ThemeContext';
 import Pill from '../../../../common/Pill';
+import { Theme } from '../../../../theme';
+import { useThemeContext } from '../../../../theme/ThemeContext';
 
 export type restrictionItem = {
 	prefix: string | null;
@@ -210,44 +210,46 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 		}
 	`;
 
-	const onClick = () => {
+	const pillStyle = {
+		fontFamily: 'B612 Mono',
+		color: theme.colors.accent_dark,
+		fontWeight: '400',
+		lineHeight: '20px',
+		fontSize: '13px',
+	};
+
+	const handleViewDetails = () => {
 		alert('Modal has been opened\n\n\n Hello World');
 	};
 
+	const renderRestrictionItem = (item: restrictionItem) => {
+		const { prefix, content } = item;
+		if (prefix === 'Depends on:\n') {
+			return (
+				<div key={`${prefix}-${content}`}>
+					{prefix && <strong>{prefix}</strong>}
+					<Pill size="extra-small" style={pillStyle}>
+						{content}
+					</Pill>
+				</div>
+			);
+		}
+
+		return (
+			<div key={`${prefix}-${content}`}>
+				{prefix && <strong>{prefix}</strong>}
+				{content}
+			</div>
+		);
+	};
+
+	const hasConditionalRestrictions = restrictionsValue && 'if' in restrictionsValue && restrictionsValue.if;
+
 	return (
 		<div>
-			{restrictionItems.map((item: restrictionItem) => {
-				const { prefix, content } = item;
-
-				//Must render inside of pill
-				if (prefix === 'Depends on:\n') {
-					return (
-						<div>
-							{prefix && <strong>{prefix}</strong>}
-							<Pill
-								size="extra-small"
-								style={{
-									fontFamily: 'B612 Mono',
-									color: theme.colors.accent_dark,
-									fontWeight: '400',
-									lineHeight: '20px',
-									fontSize: '13px',
-								}}
-							>
-								{content}
-							</Pill>
-						</div>
-					);
-				}
-				return (
-					<div>
-						{prefix && <strong>{prefix}</strong>}
-						{content}
-					</div>
-				);
-			})}
-			{restrictionsValue && 'if' in restrictionsValue && restrictionsValue.if && (
-				<div onClick={onClick} css={linkStyle(theme)}>
+			{restrictionItems.map(renderRestrictionItem)}
+			{hasConditionalRestrictions && (
+				<div onClick={handleViewDetails} css={linkStyle(theme)}>
 					View details
 				</div>
 			)}
