@@ -32,6 +32,24 @@ const accordionStyle = css`
  */
 
 const Accordion = ({ accordionItems }: AccordionProps) => {
+	//TODO: Some random buttons that we want to add to the accordion items, we will actually need to figure out some schema filtering logic,
+	// and download based on that, but for now we just add a button to each item.
+	const accordionItemsWithButtons = useMemo(() => {
+		return accordionItems.map((item) => ({
+			...item,
+			downloadButton: (
+				<DownloadTemplatesButton
+					version={'1.0'}
+					name={'example-dictionary'}
+					lecternUrl="http://localhost:3031"
+					disabled={false}
+					iconOnly={true}
+					fileType="tsv"
+				/>
+			),
+		}));
+	}, [accordionItems]);
+
 	// This state keeps track of the clipboard contents, which can be set by the accordion items.
 	// Each individual accordion item can set this state when it's tag has been clicked, however only one item can be set at a time.
 

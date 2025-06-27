@@ -19,6 +19,9 @@ const dictionary: Dictionary = {
 						required: true,
 						regex: '#/regex/submitter_id',
 					},
+					meta: {
+						examples: ['DONOR12345'],
+					},
 				},
 				{
 					name: 'gender',
