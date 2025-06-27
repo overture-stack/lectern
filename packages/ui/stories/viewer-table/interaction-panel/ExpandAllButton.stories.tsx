@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import themeDecorator from '../../themeDecorator';
 import ExpandAllButton from '../../../src/viewer-table/InteractionPanel/ExpandAllButton';
+import themeDecorator from '../../themeDecorator';
 const meta = {
 	component: ExpandAllButton,
 	title: 'Viewer - Table/Interaction - Panel/ExpandAllButton',
@@ -14,5 +14,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-	args: { setIsCollapsed: (isCollapsed: boolean) => alert('all collapsable components are expanded') },
+	args: { onClick: () => alert('All collapsible components are expanded') },
+};
+export const Disabled: Story = {
+	args: {
+		onClick: () => alert('All collapsible components are expanded'),
+		disabled: true,
+	},
 };
