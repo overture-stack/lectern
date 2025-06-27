@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
+import { css } from '@emotion/react';
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -8,11 +9,24 @@ import InteractionPanel from '../../../src/viewer-table/InteractionPanel/Interac
 import AdvancedDictionary from '../../fixtures/advanced.json';
 import themeDecorator from '../../themeDecorator';
 
+const storybookStyles = css`
+	padding-bottom: 200px;
+`;
+
 const meta = {
 	component: InteractionPanel,
 	title: 'Viewer - Table/Interaction - Panel/InteractionPanel',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	render: (args) => (
+		<div
+			style={{
+				paddingBottom: '200px',
+			}}
+		>
+			<InteractionPanel {...args} />
+		</div>
+	),
 } satisfies Meta<typeof InteractionPanel>;
 
 export default meta;
@@ -54,6 +68,7 @@ export const Default: Story = {
 			...mockProps.dictionaryConfig,
 			dictionaryData: MultipleDictionaryData,
 		},
+		styles: storybookStyles,
 	},
 };
 
