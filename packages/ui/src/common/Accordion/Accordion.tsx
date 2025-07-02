@@ -30,6 +30,10 @@ export type AccordionProps = {
 	accordionItems: Array<AccordionData>;
 };
 
+export type AccordionOpenState = {
+	isOpen: boolean;
+	toggle: () => void;
+};
 const accordionStyle = css`
 	list-style: none;
 	padding: 0;
@@ -76,9 +80,15 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 	}, [clipboardContents]);
 
 	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map((item) => item.openOnInit));
-
 	const handleToggle = (index: number) => {
 		setOpenStates((prev) => prev.map((isOpen, i) => (i === index ? !isOpen : isOpen)));
+	};
+
+	const setOpenState = (index: number): AccordionOpenState => {
+		return {
+			isOpen: openStates[index],
+			toggle: () => handleToggle(index),
+		};
 	};
 
 	return (
@@ -87,11 +97,8 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 				<AccordionItem
 					index={index}
 					key={index}
-					data={item}
-					openState={{
-						isOpen: openStates[index],
-						toggle: () => handleToggle(index),
-					}}
+					accordionData={item}
+					openState={setOpenState(index)}
 					setClipboardContents={setClipboardContents}
 				/>
 			))}

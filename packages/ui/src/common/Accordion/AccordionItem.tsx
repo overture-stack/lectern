@@ -24,43 +24,43 @@
 import { css } from '@emotion/react';
 import type { ReactNode } from 'react';
 import { MouseEvent, useEffect } from 'react';
+
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import DictionaryDownloadButton, {
 	DictionaryDownloadButtonProps,
 } from '../../viewer-table/InteractionPanel/DownloadTemplatesButton';
 import ReadMoreText from '../ReadMoreText';
+import { AccordionOpenState } from './Accordion';
 
 const MAX_LINES_BEFORE_EXPAND = 2;
 
 export type AccordionData = {
 	title: string;
 	openOnInit: boolean;
-	description: string;
-	content: ReactNode | string;
+	description?: string;
+	content: ReactNode;
 	dictionaryDownloadButtonProps: DictionaryDownloadButtonProps;
 };
 
 export type AccordionItemProps = {
 	setClipboardContents: (currentSchema: string) => void;
-	data: AccordionData;
+	accordionData: AccordionData;
 	index: number;
-	openState: {
-		isOpen: boolean;
-		toggle: () => void;
-	};
+	openState: AccordionOpenState;
 };
 
 const accordionItemStyle = (theme: Theme) => css`
 	list-style: none;
-	border: 0.25px solid ${theme.colors.black};
 	border-radius: 8px;
 	margin-bottom: 1px;
 	overflow: hidden;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	box-shadow:
+		0 2px 6px rgba(70, 63, 63, 0.05),
+		0 0 0 0.3px ${theme.colors.black};
 	&:hover {
 		box-shadow:
-			0 2px 6px rgba(0, 0, 0, 0.15),
+			0 2px 6px rgba(70, 63, 63, 0.15),
 			0 0 0 0.3px ${theme.colors.black};
 	}
 	transition: all 0.3s ease;
@@ -73,6 +73,7 @@ const accordionItemTitleStyle = css`
 
 const accordionItemButtonStyle = (theme: Theme) => css`
 	display: flex;
+	border: none;
 	align-items: center;
 	justify-content: space-between;
 	padding: 24px 20px;
@@ -127,7 +128,7 @@ const descriptionWrapperStyle = (theme: Theme) => css`
 
 const accordionCollapseStyle = (isOpen: boolean) => css`
 	overflow: hidden;
-	max-height: ${isOpen ? '800px' : '0px'};
+	max-height: ${isOpen ? 'none' : '0px'};
 	transition: max-height 0.3s ease;
 `;
 
@@ -142,21 +143,24 @@ const contentInnerContainerStyle = (theme: Theme) => css`
 	${theme.typography?.data};
 `;
 
-const AccordionItem = ({ index, data, openState, setClipboardContents }: AccordionItemProps) => {
+const AccordionItem = ({ index, accordionData, openState, setClipboardContents }: AccordionItemProps) => {
 	const theme = useThemeContext();
-	const { description, title, content, dictionaryDownloadButtonProps } = data;
+	const { description, title, content, dictionaryDownloadButtonProps } = accordionData;
 	const { ChevronDown, Hash } = theme.icons;
 
 	const indexString = index.toString();
 	const windowLocationHash = `#${index}`;
 
-	useEffect(() => {
+	const handleInitialHashCheck = () => {
 		if (window.location.hash === windowLocationHash) {
-			if (!data.openOnInit) {
+			if (!accordionData.openOnInit) {
 				openState.toggle();
 			}
 			document.getElementById(indexString)?.scrollIntoView({ behavior: 'smooth' });
 		}
+	};
+	useEffect(() => {
+		handleInitialHashCheck();
 	}, []);
 
 	const hashOnClick = (event: MouseEvent<HTMLSpanElement>) => {
@@ -168,7 +172,7 @@ const AccordionItem = ({ index, data, openState, setClipboardContents }: Accordi
 	return (
 		<li css={accordionItemStyle(theme)} id={indexString}>
 			<h2 css={accordionItemTitleStyle}>
-				<div css={accordionItemButtonStyle(theme)} onClick={openState.toggle}>
+				<button type="button" css={accordionItemButtonStyle(theme)} onClick={openState.toggle}>
 					<ChevronDown fill={theme.colors.accent_dark} width={16} height={16} style={chevronStyle(openState.isOpen)} />
 					<div css={contentContainerStyle}>
 						<span css={titleStyle}>
@@ -184,7 +188,7 @@ const AccordionItem = ({ index, data, openState, setClipboardContents }: Accordi
 						)}
 					</div>
 					<DictionaryDownloadButton {...dictionaryDownloadButtonProps} />
-				</div>
+				</button>
 			</h2>
 			<div css={accordionCollapseStyle(openState.isOpen)}>
 				<div css={accordionItemContentStyle(theme)}>
