@@ -46,7 +46,7 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 
 	const handleCopy = (text: string) => {
 		if (isCopying) {
-			return; // We don't want to copy if we are already copying
+			return;
 		}
 		setIsCopying(true);
 		navigator.clipboard
@@ -55,7 +55,7 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 				setCopySuccess(true);
 				setTimeout(() => {
 					setIsCopying(false);
-				}, 2000); // Reset copy success after 2 seconds as well as the isCopying state
+				}, 2000);
 			})
 			.catch((err) => {
 				console.error('Failed to copy text: ', err);
@@ -63,7 +63,6 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 				setIsCopying(false);
 			});
 		if (copySuccess) {
-			// Update the clipboard contents
 			const currentURL = window.location.href;
 			setClipboardContents(currentURL);
 		}
@@ -76,8 +75,7 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 		}
 	}, [clipboardContents]);
 
-	// This state keeps track of the currently open accordion item index via a boolean array, since each item can be opened or closed independently.
-	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map((item) => item.openOnInit)); // Inits the component with the openOnInit prop
+	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map((item) => item.openOnInit));
 
 	const handleToggle = (index: number) => {
 		setOpenStates((prev) => prev.map((isOpen, i) => (i === index ? !isOpen : isOpen)));
