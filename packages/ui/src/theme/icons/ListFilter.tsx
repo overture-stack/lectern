@@ -19,36 +19,32 @@
  *
  */
 
-import type { Schema } from '@overture-stack/lectern-dictionary';
-import React from 'react';
-import Dropdown from '../../common/Dropdown/Dropdown';
-import { useThemeContext } from '../../theme/ThemeContext';
+/** @jsxImportSource @emotion/react */
 
-export type TableOfContentsDropdownProps = {
-	schemas: Schema[];
-	onSelect: (schemaIndex: number) => void;
-	disabled?: boolean;
+import { css } from '@emotion/react';
+
+import IconProps from './IconProps';
+
+const ListFilter = ({ fill, width, height, style }: IconProps) => {
+	return (
+		<svg
+			css={css`
+				${style}
+			`}
+			width={width || '24'}
+			height={height || '24'}
+			fill={fill || 'none'}
+			viewBox="0 0 24 24"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		>
+			<path d="M3 6h18" />
+			<path d="M7 12h10" />
+			<path d="M10 18h4" />
+		</svg>
+	);
 };
 
-const TableOfContentsDropdown = ({ schemas, onSelect, disabled }: TableOfContentsDropdownProps) => {
-	const theme = useThemeContext();
-	const { List } = theme.icons;
-	const handleAction = (index: number) => {
-		const anchorId = `#${index}`;
-		onSelect(index);
-		window.location.hash = anchorId;
-	};
-
-	const menuItemsFromSchemas = schemas.map((schema, index) => ({
-		label: schema.name,
-		action: () => {
-			handleAction(index);
-		},
-	}));
-
-	return schemas.length > 0 ?
-			<Dropdown leftIcon={<List />} title="Table of Contents" menuItems={menuItemsFromSchemas} disabled={disabled} />
-		:	null;
-};
-
-export default TableOfContentsDropdown;
+export default ListFilter;

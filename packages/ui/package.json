@@ -24,6 +24,7 @@
 		"@emotion/styled": "^11.14.0",
 		"@overture-stack/lectern-dictionary": "workspace:*",
 		"@overture-stack/lectern-validation": "workspace:*",
+		"@overture-stack/lectern-client": "workspace:*",
 		"@tanstack/react-table": "^8.21.3",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",

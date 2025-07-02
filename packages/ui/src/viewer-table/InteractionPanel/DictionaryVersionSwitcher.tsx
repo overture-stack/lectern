@@ -19,36 +19,53 @@
  *
  */
 
-import type { Schema } from '@overture-stack/lectern-dictionary';
-import React from 'react';
+/** @jsxImportSource @emotion/react */
+
+import { Dictionary } from '@overture-stack/lectern-dictionary';
+
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-export type TableOfContentsDropdownProps = {
-	schemas: Schema[];
-	onSelect: (schemaIndex: number) => void;
+export type DictionaryVersionSwitcherProps = {
+	dictionaryData: Dictionary[];
+	dictionaryIndex: number;
+	onVersionChange: (index: number) => void;
 	disabled?: boolean;
 };
 
-const TableOfContentsDropdown = ({ schemas, onSelect, disabled }: TableOfContentsDropdownProps) => {
+const DictionaryVersionSwitcher = ({
+	dictionaryData,
+	dictionaryIndex,
+	onVersionChange,
+	disabled = false,
+}: DictionaryVersionSwitcherProps) => {
 	const theme = useThemeContext();
-	const { List } = theme.icons;
-	const handleAction = (index: number) => {
-		const anchorId = `#${index}`;
-		onSelect(index);
-		window.location.hash = anchorId;
-	};
+	const { History } = theme.icons;
 
-	const menuItemsFromSchemas = schemas.map((schema, index) => ({
-		label: schema.name,
-		action: () => {
-			handleAction(index);
-		},
-	}));
+	const versionSwitcherObjectArray = dictionaryData?.map((dictionary: Dictionary, index: number) => {
+		// TODO: We should either remove the version date stamp requirement or update the date to be dynamic via
+		// lectern-client
+		return {
+			label: 'Version ' + dictionary?.version,
+			action: () => {
+				onVersionChange(index);
+			},
+		};
+	});
 
-	return schemas.length > 0 ?
-			<Dropdown leftIcon={<List />} title="Table of Contents" menuItems={menuItemsFromSchemas} disabled={disabled} />
-		:	null;
+	// If there is only one version, we don't need to show the dropdown as per specifications
+	const displayVersionSwitcher = versionSwitcherObjectArray && versionSwitcherObjectArray.length > 1;
+
+	return (
+		displayVersionSwitcher && (
+			<Dropdown
+				leftIcon={<History />}
+				menuItems={versionSwitcherObjectArray}
+				title={`Version ${dictionaryData?.[dictionaryIndex].version}`}
+				disabled={disabled}
+			/>
+		)
+	);
 };
 
-export default TableOfContentsDropdown;
+export default DictionaryVersionSwitcher;

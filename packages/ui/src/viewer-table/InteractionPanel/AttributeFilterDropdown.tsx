@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -16,39 +15,41 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
-import type { Schema } from '@overture-stack/lectern-dictionary';
 import React from 'react';
-import Dropdown from '../../common/Dropdown/Dropdown';
-import { useThemeContext } from '../../theme/ThemeContext';
 
-export type TableOfContentsDropdownProps = {
-	schemas: Schema[];
-	onSelect: (schemaIndex: number) => void;
+import Dropdown from '../../common/Dropdown/Dropdown';
+
+export type AttributeFilterDropdownProps = {
+	filters: FilterOptions[];
+	setFilters: (filters: FilterOptions[]) => void;
 	disabled?: boolean;
 };
 
-const TableOfContentsDropdown = ({ schemas, onSelect, disabled }: TableOfContentsDropdownProps) => {
-	const theme = useThemeContext();
-	const { List } = theme.icons;
-	const handleAction = (index: number) => {
-		const anchorId = `#${index}`;
-		onSelect(index);
-		window.location.hash = anchorId;
+export type FilterOptions = 'Required' | 'All Fields';
+
+const AttributeFilterDropdown = ({ filters, setFilters, disabled }: AttributeFilterDropdownProps) => {
+	const handleFilterSelect = (selectedFilterName: FilterOptions) => {
+		// Toggles selected filter on click
+		if (filters?.includes(selectedFilterName)) {
+			setFilters([]);
+			return;
+		}
+		setFilters([selectedFilterName]);
 	};
-
-	const menuItemsFromSchemas = schemas.map((schema, index) => ({
-		label: schema.name,
-		action: () => {
-			handleAction(index);
+	const menuItems = [
+		{
+			label: 'Required Only',
+			action: () => handleFilterSelect('Required'),
 		},
-	}));
+		{
+			label: 'All Fields',
+			action: () => handleFilterSelect('All Fields'),
+		},
+	];
 
-	return schemas.length > 0 ?
-			<Dropdown leftIcon={<List />} title="Table of Contents" menuItems={menuItemsFromSchemas} disabled={disabled} />
-		:	null;
+	return <Dropdown title="Filter By" menuItems={menuItems} disabled={disabled} />;
 };
 
-export default TableOfContentsDropdown;
+export default AttributeFilterDropdown;
