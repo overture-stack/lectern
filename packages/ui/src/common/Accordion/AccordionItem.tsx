@@ -143,6 +143,30 @@ const contentInnerContainerStyle = (theme: Theme) => css`
 	${theme.typography?.data};
 `;
 
+const handleInitialHashCheck = (
+	windowLocationHash: string,
+	accordionData: AccordionData,
+	openState: AccordionOpenState,
+	indexString: string,
+) => {
+	if (window.location.hash === windowLocationHash) {
+		if (!accordionData.openOnInit) {
+			openState.toggle();
+		}
+		document.getElementById(indexString)?.scrollIntoView({ behavior: 'smooth' });
+	}
+};
+
+const hashOnClick = (
+	event: MouseEvent<HTMLSpanElement>,
+	windowLocationHash: string,
+	setClipboardContents: (currentSchema: string) => void,
+) => {
+	event.stopPropagation();
+	window.location.hash = windowLocationHash;
+	setClipboardContents(window.location.href);
+};
+
 const AccordionItem = ({ index, accordionData, openState, setClipboardContents }: AccordionItemProps) => {
 	const theme = useThemeContext();
 	const { description, title, content, dictionaryDownloadButtonProps } = accordionData;
@@ -151,23 +175,9 @@ const AccordionItem = ({ index, accordionData, openState, setClipboardContents }
 	const indexString = index.toString();
 	const windowLocationHash = `#${index}`;
 
-	const handleInitialHashCheck = () => {
-		if (window.location.hash === windowLocationHash) {
-			if (!accordionData.openOnInit) {
-				openState.toggle();
-			}
-			document.getElementById(indexString)?.scrollIntoView({ behavior: 'smooth' });
-		}
-	};
 	useEffect(() => {
-		handleInitialHashCheck();
+		handleInitialHashCheck(windowLocationHash, accordionData, openState, indexString);
 	}, []);
-
-	const hashOnClick = (event: MouseEvent<HTMLSpanElement>) => {
-		event.stopPropagation();
-		window.location.hash = windowLocationHash;
-		setClipboardContents(window.location.href);
-	};
 
 	return (
 		<li css={accordionItemStyle(theme)} id={indexString}>
@@ -177,7 +187,10 @@ const AccordionItem = ({ index, accordionData, openState, setClipboardContents }
 					<div css={contentContainerStyle}>
 						<span css={titleStyle}>
 							{title}
-							<span css={hashIconStyle(theme)} onClick={hashOnClick}>
+							<span
+								css={hashIconStyle(theme)}
+								onClick={(event) => hashOnClick(event, windowLocationHash, setClipboardContents)}
+							>
 								<Hash width={20} height={20} fill={theme.colors.secondary} />
 							</span>
 						</span>

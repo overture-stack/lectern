@@ -83,14 +83,6 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 	const handleToggle = (index: number) => {
 		setOpenStates((prev) => prev.map((isOpen, i) => (i === index ? !isOpen : isOpen)));
 	};
-
-	const setOpenState = (index: number): AccordionOpenState => {
-		return {
-			isOpen: openStates[index],
-			toggle: () => handleToggle(index),
-		};
-	};
-
 	return (
 		<ul css={accordionStyle}>
 			{accordionItems.map((item, index) => (
@@ -98,7 +90,10 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 					index={index}
 					key={index}
 					accordionData={item}
-					openState={setOpenState(index)}
+					openState={{
+						isOpen: openStates[index],
+						toggle: () => handleToggle(index),
+					}}
 					setClipboardContents={setClipboardContents}
 				/>
 			))}
