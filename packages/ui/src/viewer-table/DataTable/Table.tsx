@@ -70,6 +70,7 @@ const tableContainerStyle = css`
 `;
 
 const tableStyle = css`
+	width: 100%;
 	min-width: 1200px;
 	border-collapse: collapse;
 	border: 1px solid lightgray;
