@@ -22,7 +22,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css, SerializedStyles } from '@emotion/react';
-import { FC, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
