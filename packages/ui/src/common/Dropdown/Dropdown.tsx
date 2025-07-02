@@ -23,11 +23,17 @@
 
 import { css } from '@emotion/react';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import DropDownItem from './DropdownItem';
 
-const dropdownButtonStyle = (theme: Theme, width?: string, disabled?: boolean) => css`
+const disabledButtonStyle = css`
+	cursor: not-allowed;
+	opacity: 0.7;
+`;
+
+const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?: string; disabled?: boolean }) => css`
 	display: flex;
 	flex-wrap: nowrap;
 	white-space: nowrap;
@@ -46,7 +52,9 @@ const dropdownButtonStyle = (theme: Theme, width?: string, disabled?: boolean) =
 	cursor: ${disabled ? 'not-allowed' : 'pointer'};
 	transition: all 0.2s ease;
 	z-index: 1000;
-	opacity: ${disabled ? 0.7 : 1};
+	opacity: 1;
+
+	${disabled && disabledButtonStyle}
 `;
 
 const parentStyle = css`
@@ -129,7 +137,7 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDow
 	return (
 		<div ref={dropdownRef} css={parentStyle}>
 			<div>
-				<div css={dropdownButtonStyle(theme, undefined, disabled)} onClick={handleToggle}>
+				<div css={dropdownButtonStyle({ theme, disabled })} onClick={handleToggle}>
 					{leftIcon}
 					<span css={dropDownTitleStyle(theme)}>{title}</span>
 					<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} style={chevronStyle(open)} />

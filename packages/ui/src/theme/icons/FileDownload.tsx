@@ -21,8 +21,9 @@
 
 /** @jsxImportSource @emotion/react */
 
-import IconProps from './IconProps';
 import { css } from '@emotion/react';
+
+import IconProps from './IconProps';
 
 const FileDownload = ({ fill, height, width, style }: IconProps) => {
 	return (
