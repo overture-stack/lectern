@@ -52,6 +52,7 @@ export type AccordionItemProps = {
 
 const accordionItemStyle = (theme: Theme) => css`
 	list-style: none;
+	width: 100%;
 	border-radius: 8px;
 	margin-bottom: 1px;
 	overflow: hidden;
@@ -68,7 +69,12 @@ const accordionItemStyle = (theme: Theme) => css`
 
 const accordionItemTitleStyle = css`
 	margin: 0;
-	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 24px 20px;
+	background-color: #ffffff;
+	transition: all 0.2s ease;
 `;
 
 const accordionItemButtonStyle = (theme: Theme) => css`
@@ -96,7 +102,7 @@ const contentContainerStyle = css`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 16px;
+	gap: 0;
 	flex: 1;
 	min-width: 0;
 	flex-wrap: wrap;
@@ -112,7 +118,17 @@ const hashIconStyle = (theme: Theme) => css`
 	opacity: 0;
 	margin-left: 8px;
 	transition: opacity 0.2s ease;
-	border-bottom: 2px solid ${theme.colors.secondary};
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	padding: 0;
+	display: inline-flex;
+	align-items: center;
+
+	svg {
+		border-bottom: 2px solid ${theme.colors.secondary};
+	}
+
 	&:hover {
 		opacity: 1;
 	}
@@ -132,7 +148,7 @@ const accordionCollapseStyle = (isOpen: boolean) => css`
 	transition: max-height 0.3s ease;
 `;
 
-const accordionItemContentStyle = (theme: Theme) => css`
+const accordionItemContentStyle = css`
 	padding: 30px;
 	background-color: #ffffff;
 `;
@@ -182,29 +198,33 @@ const AccordionItem = ({ index, accordionData, openState, setClipboardContents }
 	return (
 		<li css={accordionItemStyle(theme)} id={indexString}>
 			<h2 css={accordionItemTitleStyle}>
-				<button type="button" css={accordionItemButtonStyle(theme)} onClick={openState.toggle}>
-					<ChevronDown fill={theme.colors.accent_dark} width={16} height={16} style={chevronStyle(openState.isOpen)} />
-					<div css={contentContainerStyle}>
-						<span css={titleStyle}>
-							{title}
-							<span
-								css={hashIconStyle(theme)}
-								onClick={(event) => hashOnClick(event, windowLocationHash, setClipboardContents)}
-							>
-								<Hash width={20} height={20} fill={theme.colors.secondary} />
-							</span>
-						</span>
-						{description && (
-							<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle}>
-								{description}
-							</ReadMoreText>
-						)}
-					</div>
-					<DictionaryDownloadButton {...dictionaryDownloadButtonProps} />
-				</button>
+				<div css={contentContainerStyle}>
+					<button type="button" css={accordionItemButtonStyle(theme)} onClick={openState.toggle}>
+						<ChevronDown
+							fill={theme.colors.accent_dark}
+							width={16}
+							height={16}
+							style={chevronStyle(openState.isOpen)}
+						/>
+						<span css={titleStyle}>{title}</span>
+					</button>
+					<button
+						type="button"
+						css={hashIconStyle(theme)}
+						onClick={(event) => hashOnClick(event, windowLocationHash, setClipboardContents)}
+					>
+						<Hash width={20} height={20} fill={theme.colors.secondary} />
+					</button>
+					{description && (
+						<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle}>
+							{description}
+						</ReadMoreText>
+					)}
+				</div>
+				<DictionaryDownloadButton {...dictionaryDownloadButtonProps} />
 			</h2>
 			<div css={accordionCollapseStyle(openState.isOpen)}>
-				<div css={accordionItemContentStyle(theme)}>
+				<div css={accordionItemContentStyle}>
 					<div css={contentInnerContainerStyle(theme)}>{content}</div>
 				</div>
 			</div>
