@@ -49,7 +49,6 @@ const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?:
 	border-radius: 9px;
 	height: 42px;
 	box-sizing: border-box;
-	cursor: ${disabled ? 'not-allowed' : 'pointer'};
 	transition: all 0.2s ease;
 	z-index: 1000;
 	opacity: 1;
