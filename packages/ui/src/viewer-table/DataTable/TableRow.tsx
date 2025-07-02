@@ -23,6 +23,7 @@
 
 import { css } from '@emotion/react';
 import { Row, flexRender } from '@tanstack/react-table';
+
 import ReadMoreText from '../../common/ReadMoreText';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';

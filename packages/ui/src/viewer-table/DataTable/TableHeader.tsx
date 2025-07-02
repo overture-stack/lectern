@@ -23,8 +23,9 @@
 
 import { css } from '@emotion/react';
 import { flexRender, HeaderGroup } from '@tanstack/react-table';
-import { useThemeContext } from '../../theme/ThemeContext';
+
 import { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
 
 const thStyle = (theme: Theme, index: number) => css`
 	${theme.typography.heading};

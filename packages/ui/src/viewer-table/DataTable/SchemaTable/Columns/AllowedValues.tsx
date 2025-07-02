@@ -18,9 +18,11 @@
  */
 
 /** @jsxImportSource @emotion/react */
+
 import { css } from '@emotion/react';
 import { MatchRuleCount, RestrictionRange, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
+
 import Pill from '../../../../common/Pill';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
@@ -217,7 +219,7 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 		lineHeight: '20px',
 		fontSize: '13px',
 	};
-
+	//TODO: implement the modal
 	const handleViewDetails = () => {
 		alert('Modal has been opened\n\n\n Hello World');
 	};

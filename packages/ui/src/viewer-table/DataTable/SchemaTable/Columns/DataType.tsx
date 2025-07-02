@@ -18,9 +18,11 @@
  */
 
 /** @jsxImportSource @emotion/react */
+
 import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
+
 import React from 'react';
 import Pill from '../../../../common/Pill';
 
