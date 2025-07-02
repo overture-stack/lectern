@@ -1,17 +1,32 @@
 /** @jsxImportSource @emotion/react */
 
+import { css } from '@emotion/react';
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
+
 import type { FilterOptions } from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
 import AdvancedDictionary from '../../fixtures/TorontoMapleLeafs.json';
 import themeDecorator from '../../themeDecorator';
+
+const storybookStyles = css`
+	padding-bottom: 200px;
+`;
 
 const meta = {
 	component: InteractionPanel,
 	title: 'Viewer - Table/Interaction - Panel/InteractionPanel',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	render: (args) => (
+		<div
+			style={{
+				paddingBottom: '200px',
+			}}
+		>
+			<InteractionPanel {...args} />
+		</div>
+	),
 } satisfies Meta<typeof InteractionPanel>;
 
 export default meta;
@@ -32,7 +47,7 @@ const mockProps = {
 	onSelect: (schemaNameIndex) => {
 		alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
 	},
-	currDictionary: {
+	dictionaryConfig: {
 		lecternUrl: '',
 		dictionaryIndex: 0,
 		onVersionChange: (index: number) => {
@@ -49,10 +64,11 @@ const mockProps = {
 export const Default: Story = {
 	args: {
 		...mockProps,
-		currDictionary: {
-			...mockProps.currDictionary,
+		dictionaryConfig: {
+			...mockProps.dictionaryConfig,
 			dictionaryData: MultipleDictionaryData,
 		},
+		styles: storybookStyles,
 	},
 };
 
@@ -60,8 +76,8 @@ export const Default: Story = {
 export const WithSingleVersion: Story = {
 	args: {
 		...mockProps,
-		currDictionary: {
-			...mockProps.currDictionary,
+		dictionaryConfig: {
+			...mockProps.dictionaryConfig,
 			dictionaryData: SingleDictionaryData,
 		},
 	},
@@ -70,8 +86,8 @@ export const WithSingleVersion: Story = {
 export const Disabled: Story = {
 	args: {
 		...mockProps,
-		currDictionary: {
-			...mockProps.currDictionary,
+		dictionaryConfig: {
+			...mockProps.dictionaryConfig,
 			dictionaryData: MultipleDictionaryData,
 		},
 		disabled: true,

@@ -1,13 +1,39 @@
-/** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
-import { useState, useMemo, useCallback } from 'react';
-import AccordionItem, { AccordionData } from './AccordionItem';
-import DownloadTemplatesButton from '../../viewer-table/InteractionPanel/DownloadTemplatesButton';
+/*
+ *
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ *  This program and the accompanying materials are made available under the terms of
+ *  the GNU Affero General Public License v3.0. You should have received a copy of the
+ *  GNU Affero General Public License along with this program.
+ *   If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ *  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ *  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
 
-type AccordionProps = {
+/** @jsxImportSource @emotion/react */
+
+import { css } from '@emotion/react';
+
+import { useMemo, useState } from 'react';
+import AccordionItem, { AccordionData } from './AccordionItem';
+
+export type AccordionProps = {
 	accordionItems: Array<AccordionData>;
 };
 
+export type AccordionOpenState = {
+	isOpen: boolean;
+	toggle: () => void;
+};
 const accordionStyle = css`
 	list-style: none;
 	padding: 0;
@@ -17,49 +43,14 @@ const accordionStyle = css`
 	gap: 24px;
 `;
 
-/**
- * Accordion component to display collapsible items with titles and content.
- * @param {AccordionProps} props - The properties for the Accordion component.
- * @param {Array<AccordionData>} props.accordionItems - An array of accordion items, each containing a title, description and content.
- * @returns {JSX.Element} The rendered Accordion component.
- * @example
- * const accordionItems = [
- *  { title: 'Item 1', description: 'Description 1', openOnInit: true, content: 'Content for item 1' },
- *  { title: 'Item 2', description: 'Description 2', openOnInit: false, content: 'Content for item 2' },
- * ];
- * <Accordion accordionItems={accordionItems} />
- * Essentially pass in an an array of objects that are of type AccordionData, and it will render an accordion with those items.
- */
-
 const Accordion = ({ accordionItems }: AccordionProps) => {
-	//TODO: Some random buttons that we want to add to the accordion items, we will actually need to figure out some schema filtering logic,
-	// and download based on that, but for now we just add a button to each item.
-	const accordionItemsWithButtons = useMemo(() => {
-		return accordionItems.map((item) => ({
-			...item,
-			downloadButton: (
-				<DownloadTemplatesButton
-					version={'1.0'}
-					name={'example-dictionary'}
-					lecternUrl="http://localhost:3031"
-					disabled={false}
-					iconOnly={true}
-					fileType="tsv"
-				/>
-			),
-		}));
-	}, [accordionItems]);
-
-	// This state keeps track of the clipboard contents, which can be set by the accordion items.
-	// Each individual accordion item can set this state when it's tag has been clicked, however only one item can be set at a time.
-
 	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
 	const [isCopying, setIsCopying] = useState(false);
 	const [copySuccess, setCopySuccess] = useState(false);
 
 	const handleCopy = (text: string) => {
 		if (isCopying) {
-			return; // We don't want to copy if we are already copying
+			return;
 		}
 		setIsCopying(true);
 		navigator.clipboard
@@ -68,7 +59,7 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 				setCopySuccess(true);
 				setTimeout(() => {
 					setIsCopying(false);
-				}, 2000); // Reset copy success after 2 seconds as well as the isCopying state
+				}, 2000);
 			})
 			.catch((err) => {
 				console.error('Failed to copy text: ', err);
@@ -76,7 +67,6 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 				setIsCopying(false);
 			});
 		if (copySuccess) {
-			// Update the clipboard contents
 			const currentURL = window.location.href;
 			setClipboardContents(currentURL);
 		}
@@ -89,20 +79,17 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 		}
 	}, [clipboardContents]);
 
-	// This state keeps track of the currently open accordion item index via a boolean array, since each item can be opened or closed independently.
-	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map((item) => item.openOnInit)); // Inits the component with the openOnInit prop
-
+	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map((item) => item.openOnInit));
 	const handleToggle = (index: number) => {
 		setOpenStates((prev) => prev.map((isOpen, i) => (i === index ? !isOpen : isOpen)));
 	};
-
 	return (
 		<ul css={accordionStyle}>
 			{accordionItems.map((item, index) => (
 				<AccordionItem
 					index={index}
 					key={index}
-					data={item}
+					accordionData={item}
 					openState={{
 						isOpen: openStates[index],
 						toggle: () => handleToggle(index),
