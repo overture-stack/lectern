@@ -21,9 +21,9 @@
 
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { useState } from 'react';
 import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
+import ReadMoreText from '../common/ReadMoreText';
 import colours from './styles/colours';
 
 export type DictionaryHeaderProps = {
@@ -32,32 +32,28 @@ export type DictionaryHeaderProps = {
 	version?: string;
 };
 
-const getChevronStyle = (isExpanded: boolean) => css`
-	margin-left: 4px;
-	${isExpanded && `transform: rotate(180deg);`}
-`;
-
-const linkStyle = (theme: Theme) => css`
-	${theme.typography?.subheading}
-	color: white;
-	cursor: pointer;
-	display: inline-flex;
-	align-items: center;
-
-	&:hover {
-		text-decoration: underline;
-	}
-`;
-
 // Was unable to find the appropriate font size for the version numbering in the current design system, that matches
 // Figma mockup so we are using something that is somewhat close with a hard coded font size
 
-const descriptionStyle = (theme: Theme) => css`
+const descriptionWrapperStyle = (theme: Theme) => css`
 	${theme.typography?.data}
 	font-size: 16px;
 	color: white;
-	margin: 0;
-	display: inline;
+	padding: 0;
+
+	button {
+		${theme.typography?.subheading}
+		color: white;
+		margin-top: 4px;
+
+		&:hover {
+			text-decoration: underline;
+		}
+
+		svg {
+			fill: white;
+		}
+	}
 `;
 
 const containerStyle = (theme: Theme) => css`
@@ -109,20 +105,8 @@ const descriptionColumnStyle = css`
 	justify-content: center;
 `;
 
-const DESCRIPTION_LENGTH_THRESHOLD = 140; // Chosen to display ~2-3 lines of text before truncation based on typical container width
-
 const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps) => {
 	const theme = useThemeContext();
-	const { ChevronDown } = theme.icons;
-	const [isExpanded, setIsExpanded] = useState(false);
-
-	// Determine if the description is long enough to need a toggle, based off of how many characters we want to show by default
-	// according to the figma styling
-	const needsToggle = description && description.length > DESCRIPTION_LENGTH_THRESHOLD;
-	// We want to show all the text if it is not long or if it is already expanded via state variable
-	const showFull = isExpanded || !needsToggle;
-	// Based off of showFull, we determine the text to show, either its the full description or a truncated version
-	const textToShow = showFull ? description : description.slice(0, DESCRIPTION_LENGTH_THRESHOLD) + '... ';
 
 	return (
 		<div css={containerStyle(theme)}>
@@ -133,16 +117,14 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 				</div>
 				{description && (
 					<div css={descriptionColumnStyle}>
-						<div>
-							<span css={descriptionStyle(theme)}>{textToShow}</span>
-							{needsToggle && (
-								<span css={linkStyle(theme)} onClick={() => setIsExpanded((prev) => !prev)}>
-									{' '}
-									{isExpanded ? 'Read less' : 'Show more'}
-									<ChevronDown style={getChevronStyle(isExpanded)} fill="white" width={10} height={10} />
-								</span>
-							)}
-						</div>
+						<ReadMoreText
+							maxLines={2}
+							wrapperStyle={descriptionWrapperStyle}
+							expandedText="Read less"
+							collapsedText="Show more"
+						>
+							{description}
+						</ReadMoreText>
 					</div>
 				)}
 			</div>
