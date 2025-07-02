@@ -28,8 +28,8 @@ import Accordion from '../common/Accordion/Accordion';
 import { AccordionData } from '../common/Accordion/AccordionItem';
 import SchemaTable from './DataTable/SchemaTable/SchemaTable';
 import DictionaryHeader from './DictionaryHeader';
-import InteractionPanel from './InteractionPanel/InteractionPanel';
 import { FilterOptions } from './InteractionPanel/AttributeFilterDropdown';
+import InteractionPanel from './InteractionPanel/InteractionPanel';
 
 const interactionPanelSpacing = css`
 	margin-bottom: 24px;
