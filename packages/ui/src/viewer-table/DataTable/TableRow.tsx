@@ -49,13 +49,12 @@ const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 	border: 1px solid #DCDDE1;
 `;
 
-type TableRowProps<R> = {
-	row: Row<R>;
+export type TableRowProps<T> = {
+	row: Row<T>;
 	index: number;
-	columnSlice?: [number, number] | [number];
 };
 
-const TableRow = <R,>({ row, index }: TableRowProps<R>) => {
+const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
 	const theme = useThemeContext();
 	return (
 		<tr key={row.id} css={rowStyle(index)}>
