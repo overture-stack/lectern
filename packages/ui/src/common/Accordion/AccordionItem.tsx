@@ -174,7 +174,7 @@ const handleInitialHashCheck = (
 };
 
 const hashOnClick = (
-	event: MouseEvent<HTMLSpanElement>,
+	event: MouseEvent<HTMLButtonElement>,
 	windowLocationHash: string,
 	setClipboardContents: (currentSchema: string) => void,
 ) => {
