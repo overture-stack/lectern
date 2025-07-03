@@ -95,7 +95,7 @@ const ReadMoreText = ({
 			const div = contentRef.current;
 			setNeedsToggle(div.scrollHeight > div.clientHeight + 1);
 		}
-	}, [children]);
+	}, []);
 
 	const handleToggle = (e: React.MouseEvent) => {
 		e.stopPropagation();
