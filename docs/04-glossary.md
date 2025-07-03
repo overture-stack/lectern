@@ -1,4 +1,4 @@
-# Important Concepts
+# Glossary
 
 This document is a reference of commonly used terms and definitions.
 
