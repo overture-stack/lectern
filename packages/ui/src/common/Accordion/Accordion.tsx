@@ -22,8 +22,8 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-
 import { useMemo, useState } from 'react';
+
 import AccordionItem, { AccordionData } from './AccordionItem';
 
 export type AccordionProps = {
@@ -34,16 +34,8 @@ export type AccordionOpenState = {
 	isOpen: boolean;
 	toggle: () => void;
 };
-const accordionStyle = css`
-	list-style: none;
-	padding: 0;
-	margin: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 24px;
-`;
 
-const Accordion = ({ accordionItems }: AccordionProps) => {
+const useClipboard = () => {
 	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
 	const [isCopying, setIsCopying] = useState(false);
 	const [copySuccess, setCopySuccess] = useState(false);
@@ -79,6 +71,25 @@ const Accordion = ({ accordionItems }: AccordionProps) => {
 		}
 	}, [clipboardContents]);
 
+	return {
+		clipboardContents,
+		setClipboardContents,
+		isCopying,
+		copySuccess,
+		handleCopy,
+	};
+};
+const accordionStyle = css`
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+`;
+
+const Accordion = ({ accordionItems }: AccordionProps) => {
+	const { setClipboardContents } = useClipboard();
 	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map((item) => item.openOnInit));
 	const handleToggle = (index: number) => {
 		setOpenStates((prev) => prev.map((isOpen, i) => (i === index ? !isOpen : isOpen)));

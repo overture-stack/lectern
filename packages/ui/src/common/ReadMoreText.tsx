@@ -86,6 +86,7 @@ const ReadMoreText = ({
 	const contentRef = useRef<HTMLDivElement>(null);
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [needsToggle, setNeedsToggle] = useState(false);
+
 	const theme = useThemeContext();
 	const { ChevronDown } = theme.icons;
 
@@ -94,7 +95,7 @@ const ReadMoreText = ({
 			const div = contentRef.current;
 			setNeedsToggle(div.scrollHeight > div.clientHeight + 1);
 		}
-	}, [children]);
+	}, []);
 
 	const handleToggle = (e: React.MouseEvent) => {
 		e.stopPropagation();
