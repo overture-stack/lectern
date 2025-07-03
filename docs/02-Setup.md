@@ -6,222 +6,223 @@ This guide provides instructions for setting up a complete development environme
 
 Before beginning, ensure you have the following installed on your system:
 
-- PNPM (package manager - used instead of npm)
-- Node.js (v18 or higher)
-- Docker (for running containerized services)
+- **PNPM** (package manager - used instead of npm)
+- **Node.js** (v18 or higher)
+- **Docker** (for running containerized services)
 
-## Developer Setup
+## Development Environment Setup
 
-This guide will walk you through setting up a complete development environment for Lectern Server, including its complementary services.
+### 1. Database Setup
 
-### Setting up supporting services
+Lectern requires a MongoDB database to store dictionaries and metadata. Choose one of the following setup methods:
 
-Lectern Server requires a MongoDB database to store dictionaries and metadata.
+**Option A: Using Docker Compose (Recommended)**
 
-1. **MongoDB Database Setup**
+```bash
+# Navigate to the server directory
+cd apps/server
 
-   Use the provided docker-compose configuration to start MongoDB:
+# Start MongoDB using docker-compose
+docker-compose up -d
+```
 
-   ```bash
-   # Navigate to the server directory
-   cd apps/server
-   
-   # Start MongoDB using docker-compose
-   docker-compose up -d
-   ```
+**Option B: Manual Docker Setup**
 
-   Alternatively, you can start MongoDB manually:
-
-   ```bash
-   docker run --name lectern-mongo \
-     -e MONGO_INITDB_ROOT_USERNAME=admin \
-     -e MONGO_INITDB_ROOT_PASSWORD=password \
-     -p 27017:27017 \
-     -d mongo:latest
-   ```
+```bash
+docker run --name lectern-mongo \
+-e MONGO_INITDB_ROOT_USERNAME=admin \
+-e MONGO_INITDB_ROOT_PASSWORD=password \
+-p 27017:27017 \
+-d mongo:latest
+```
 
    <details>
-   <summary>**Click here for a detailed breakdown**</summary>
+   <summary><strong>Database Service Details</strong></summary>
 
-   This command will set up the database service for Lectern Server development as follows:
+   | Service | Port  | Description                           | Purpose                                      |
+   |---------|-------|---------------------------------------|----------------------------------------------|
+   | MongoDB | 27017 | NoSQL database for dictionary storage | Stores data dictionaries, versions, and metadata |
 
-   | Service         | Port   | Description                    | Purpose in Lectern Server Development |
-   | --------------- | ------ | ------------------------------ | ------------------------------------ |
-   | MongoDB         | 27017  | NoSQL database for dictionary storage | Stores data dictionaries, versions, and metadata |
+   **Important Notes:**
+   - Ensure port 27017 is available on your system
+   - Default credentials: `admin/password`
+   - Adjust port configuration if conflicts exist with other services
 
-   - Ensure port 27017 is free on your system before starting the database.
-   - The default configuration uses `admin/password` for MongoDB credentials.
-   - You may need to adjust the port in the configuration file if you have conflicts with existing services.
+   </details>
 
-    </details>
+### 2. Server Setup
 
-In the next steps, we will run a Lectern development server against these supporting services.
-
-### Running the Development Server
-
-1. Clone Lectern and move into its directory:
+1. **Clone the Repository**
 
    ```bash
    git clone https://github.com/overture-stack/lectern.git
    cd lectern
    ```
 
-2. Install all dependencies for the entire monorepo:
+2. **Install Dependencies**
 
    ```bash
+   # Install all dependencies for the entire monorepo
    pnpm install
    ```
 
-3. Navigate to the server directory:
+3. **Configure Environment**
 
    ```bash
    cd apps/server
-   ```
-
-4. Configure environment variables:
-
-   ```bash
    cp .env.example .env
    ```
 
-    :::info
+   The `.env` file comes preconfigured with development defaults:
 
-    This `.env` file is preconfigured as follows for the Lectern Server environment:
+   ```env
+   # Express Configuration
+   PORT=3000
    
-    ```env
-    # Express Configuration
-    PORT=3000
-    
-    # Swagger Docs Config
-    OPENAPI_PATH=/api-docs
-    
-    # Mongo Configuration
-    MONGO_HOST=localhost
-    MONGO_PORT=27017
-    MONGO_DB=lectern
-    MONGO_USER=
-    MONGO_PASS=
-    
-    # Auth Configuration
-    AUTH_ENABLED=false
-    EGO_API=
-    SCOPE=
-    
-    # CORS allowed origins can be a comma separated list of the allowed domains.
-    # Leave empty to not allow any web connections (default). Use * to allow all.
-    CORS_ALLOWED_ORIGINS=
-    
-    # Vault Configuration
-    VAULT_ENABLED=false
-    VAULT_URL=http://localhost:8200
-    VAULT_SECRETS_PATH=/kv/lectern
-    VAULT_TOKEN=00000000-0000-0000-0000-000000000000
-    VAULT_ROLE=
-    ```
+   # Swagger Documentation
+   OPENAPI_PATH=/api-docs
+   
+   # MongoDB Configuration
+   MONGO_HOST=localhost
+   MONGO_PORT=27017
+   MONGO_DB=lectern
+   MONGO_USER=
+   MONGO_PASS=
+   
+   # Authentication (disabled by default)
+   AUTH_ENABLED=false
+   EGO_API=
+   SCOPE=
+   
+   # CORS Configuration
+   CORS_ALLOWED_ORIGINS=
+   
+   # Vault Configuration (disabled by default)
+   VAULT_ENABLED=false
+   VAULT_URL=http://localhost:8200
+   VAULT_SECRETS_PATH=/kv/lectern
+   VAULT_TOKEN=00000000-0000-0000-0000-000000000000
+   VAULT_ROLE=
+   ```
 
-    <details>
-    <summary>**Click here for an explanation of Lectern Server environment variables**</summary>
+   <details>
+   <summary><strong>Environment Variables Reference</strong></summary>
 
-    - **Express Configuration**
-        - `PORT`: Port number for the Lectern Server web application (default: 3000)
-        - `OPENAPI_PATH`: Path to Swagger UI with API documentation (default: /api-docs)
+   **Express Configuration**
+   - `PORT`: Server port (default: 3000)
+   - `OPENAPI_PATH`: Swagger UI path (default: /api-docs)
 
-    - **MongoDB Configuration**
-        - `MONGO_HOST`: MongoDB server hostname (default: localhost)
-        - `MONGO_PORT`: MongoDB server port (default: 27017)
-        - `MONGO_DB`: Database name to use (default: lectern)
-        - `MONGO_USER`: Username for MongoDB connection (optional)
-        - `MONGO_PASS`: Password for MongoDB connection (optional)
+   **MongoDB Configuration**
+   - `MONGO_HOST`: Database hostname (default: localhost)
+   - `MONGO_PORT`: Database port (default: 27017)
+   - `MONGO_DB`: Database name (default: lectern)
+   - `MONGO_USER`: Database username (optional)
+   - `MONGO_PASS`: Database password (optional)
 
-    - **Authorization** (optional)
-        - `AUTH_ENABLED`: Enable/disable authorization (default: false)
-        - `EGO_API`: URL to the EGO API for JWT validation
-        - `SCOPE`: Policy name to look for in JWT scope
-        - `CORS_ALLOWED_ORIGINS`: Comma-separated list of allowed CORS origins
+   **Authentication (Optional)**
+   - `AUTH_ENABLED`: Enable JWT-based authorization (default: false)
+   - `EGO_API`: EGO API URL for JWT validation
+   - `SCOPE`: Required policy name in JWT scope
+   - `CORS_ALLOWED_ORIGINS`: Comma-separated list of allowed origins
 
-    - **Vault Configuration** (optional)
-        - `VAULT_ENABLED`: Enable/disable Vault integration (default: false)
-        - `VAULT_URL`: URL to Vault server
-        - `VAULT_SECRETS_PATH`: Path to secrets in Vault
-        - `VAULT_TOKEN`: Access token for Vault
-        - `VAULT_ROLE`: Role to use for Vault connection
+   **Vault Integration (Optional)**
+   - `VAULT_ENABLED`: Enable HashiCorp Vault integration (default: false)
+   - `VAULT_URL`: Vault server URL
+   - `VAULT_SECRETS_PATH`: Path to secrets in Vault
+   - `VAULT_TOKEN`: Vault access token
+   - `VAULT_ROLE`: Vault role for authentication
 
-    </details>
+   </details>
 
-5. Build the Lectern Server and its dependencies:
+4. **Build the Application**
 
    ```bash
+   # From workspace root
    pnpm nx build @overture-stack/lectern-server
-   # or from the server directory:
-   # pnpm build
+   
+   # Or from apps/server directory
+   pnpm build
    ```
 
-6. Start the Lectern Server development server:
+5. **Start the Development Server**
 
    ```bash
+   # Production mode
    pnpm nx start @overture-stack/lectern-server
-   # or for development mode with hot reloading:
-   # pnpm nx debug server
+   
+   # Development mode with hot reloading
+   pnpm nx debug server
    ```
 
-### Verification
+## Verification & Testing
 
-After installation and configuration, verify that Lectern Server is functioning correctly:
+### API Health Check
 
-1. **Test Dictionary Management**
+Verify that Lectern is running correctly:
 
-   - Access the API documentation at `http://localhost:3000/api-docs`
-   - Try creating a new data dictionary using the REST API
-   - Expected result: Should be able to create, view, and manage data dictionaries
-   - Troubleshooting:
-     - Check MongoDB connection and ensure database is accessible
-     - Verify API endpoints are responding correctly
-     - Check server logs for any validation errors
+```bash
+# Health endpoint
+curl http://localhost:3000/health
 
-2. **Test API Endpoints**
-   - Health check: `curl http://localhost:3000/health`
-   - API documentation: Navigate to `http://localhost:3000/api-docs`
-   - Expected result: Health endpoint should return 200 OK, Swagger docs should load
+# Expected response: 200 OK
+```
 
-**Optional: Enabling Authorization**
+### API Documentation
 
-For production use, you should enable authorization:
+Access the interactive API documentation at:
+- **Swagger UI**: `http://localhost:3000/api-docs`
+
+### Dictionary Management Testing
+
+1. Navigate to the Swagger UI
+2. Test creating a new data dictionary using the REST API
+3. Verify dictionary creation, retrieval, and management operations
+
+**Troubleshooting:**
+- Ensure MongoDB is running and accessible
+- Check server logs for validation errors
+- Verify API endpoints are responding correctly
+
+
+:::info Need Help?
+If you encounter any issues or have questions about our API, please don't hesitate to reach out through our relevant [**community support channels**](https://docs.overture.bio/community/support).
+:::
+
+## Advanced Configuration
+
+### Enabling Authorization
+
+For production environments, enable JWT-based authorization:
 
 1. Set `AUTH_ENABLED=true` in your `.env` file
 2. Configure `EGO_API` to point to your Ego authorization service
 3. Set the appropriate `SCOPE` for your permissions
 
-**Optional: Vault Integration**
+### Vault Integration
 
-If you use HashiCorp Vault for secret management:
+For secure secret management using HashiCorp Vault:
 
 1. Set `VAULT_ENABLED=true` in your `.env` file
-2. Configure the Vault connection parameters
-3. Lectern will read MongoDB credentials from Vault instead of environment variables
+2. Configure Vault connection parameters
+3. Lectern will retrieve MongoDB credentials from Vault instead of environment variables
 
-For further assistance, open an issue on [GitHub](https://github.com/overture-stack/lectern/issues).
+## Development Commands Reference
 
-:::warning
-This guide is meant for development purposes and is not intended for production use. If you use this in any public or production environment, please implement appropriate security measures and configure your environment variables accordingly.
-:::
+### From Workspace Root
 
----
-
-## **Additional Development Commands**
-
-### From the workspace root:
 ```bash
-# Build Lectern Server
+# Build server
 pnpm nx build @overture-stack/lectern-server
 
-# Start Lectern Server
+# Start server
 pnpm nx start @overture-stack/lectern-server
 
-# Run in debug mode (with hot reloading)
+# Debug mode (hot reloading)
 pnpm nx debug server
 ```
 
-### From the apps/server directory:
+### From apps/server Directory
+
 ```bash
 # Build
 pnpm build
@@ -233,8 +234,14 @@ pnpm start
 pnpm debug
 ```
 
-### Building Docker Image:
+### Docker Operations
+
 ```bash
-# From workspace root
+# Build Docker image
 docker build --no-cache -t lectern -f apps/server/Dockerfile .
 ```
+
+
+:::warning
+This guide is intended for development purposes only. For production deployments, implement appropriate security measures, configure authentication, and review all environment variables for your specific use case.
+:::
