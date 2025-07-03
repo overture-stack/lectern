@@ -196,10 +196,10 @@ const AccordionItem = ({ index, accordionData, openState, setClipboardContents }
 	}, []);
 
 	return (
-		<li css={accordionItemStyle(theme)} id={indexString}>
+		<li role="button" css={accordionItemStyle(theme)} id={indexString} onClick={openState.toggle}>
 			<h2 css={accordionItemTitleStyle}>
 				<div css={contentContainerStyle}>
-					<button type="button" css={accordionItemButtonStyle(theme)} onClick={openState.toggle}>
+					<button type="button" css={accordionItemButtonStyle(theme)}>
 						<ChevronDown
 							fill={theme.colors.accent_dark}
 							width={16}
