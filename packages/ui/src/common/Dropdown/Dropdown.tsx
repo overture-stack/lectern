@@ -82,6 +82,7 @@ const dropdownMenuStyle = (theme: Theme) => css`
 	padding-top: 5px;
 	border-radius: 9px;
 	padding-bottom: 5px;
+	z-index: 100;
 `;
 
 type MenuItem = {
