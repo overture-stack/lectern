@@ -39,7 +39,6 @@ const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 	white-space: pre-wrap;
 	overflow-wrap: break-word;
 	word-break: break-word;
-	vertical-align: top;
 	${cellIndex === 0 &&
 	`
 		position: sticky;
