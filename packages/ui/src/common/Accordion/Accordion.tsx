@@ -22,8 +22,8 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-
 import { useMemo, useState } from 'react';
+
 import AccordionItem, { AccordionData } from './AccordionItem';
 
 export type AccordionProps = {
