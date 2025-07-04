@@ -48,7 +48,7 @@ const DataDictionaryPage = ({
 	onVersionChange,
 }: DataDictionaryPageProps) => {
 	const [filters, setFilters] = useState<FilterOptions[]>([]);
-	const [isCollapsed, setIsCollapsed] = useState(false);
+	const [isCollapsed, setIsCollapsed] = useState(true);
 
 	const dictionary = dictionaries[dictionaryIndex];
 
@@ -92,7 +92,6 @@ const DataDictionaryPage = ({
 	const accordionItems: AccordionData[] =
 		filteredDictionary?.schemas?.map((schema) => ({
 			title: schema.name,
-			openOnInit: !isCollapsed,
 			description: schema.description,
 			content: <SchemaTable schema={schema} />,
 			schemaName: 'schemaName',
@@ -124,7 +123,7 @@ const DataDictionaryPage = ({
 					/>
 				</div>
 			</div>
-			<Accordion accordionItems={accordionItems} />
+			<Accordion collapseAll={!isCollapsed} accordionItems={accordionItems} />
 		</div>
 	);
 };

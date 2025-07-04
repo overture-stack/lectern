@@ -51,7 +51,7 @@ const accordionItemStyle = (theme: Theme) => css`
 		0 0 0 0.3px ${theme.colors.black};
 	&:hover {
 		box-shadow:
-			0 2px 6px rgba(70, 63, 63, 0.15),
+			0 2px 6px rgba(70, 63, 63, 0.2),
 			0 0 0 0.3px ${theme.colors.black};
 	}
 	transition: all 0.3s ease;
@@ -71,13 +71,14 @@ const accordionItemButtonStyle = (theme: Theme) => css`
 	display: flex;
 	border: none;
 	align-items: center;
-	color: ${theme.colors.accent_dark};
 	cursor: pointer;
-	${theme.typography?.button};
-	text-align: left;
 	background: transparent;
-	padding: 8px 0;
-	flex: 1;
+	padding: 8px 0px;
+`;
+const titleStyle = (theme: Theme) => css`
+	${theme.typography?.button};
+	color: ${theme.colors.accent_dark};
+	text-align: left;
 `;
 
 const chevronStyle = (isOpen: boolean) => css`
@@ -91,14 +92,15 @@ const contentContainerStyle = css`
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	flex: 1;
 `;
 
 const titleRowStyle = css`
 	display: flex;
+	gap: 2px;
 	align-items: center;
-	width: 100%;
 	margin-bottom: 10px;
+	flex-direction: auto;
+	flex-wrap: wrap;
 `;
 
 const hashIconStyle = (theme: Theme) => css`
@@ -119,10 +121,10 @@ const hashIconStyle = (theme: Theme) => css`
 `;
 
 const descriptionWrapperStyle = (theme: Theme) => css`
-	${theme.typography?.label2};
-	color: ${theme.colors.grey_5};
+	${theme.typography?.data};
+	color: ${theme.colors.black};
 	overflow-wrap: break-word;
-	width: 100%;
+	margin-left: 16px;
 `;
 
 const downloadButtonContainerStyle = css`
@@ -137,7 +139,7 @@ const accordionCollapseStyle = (isOpen: boolean) => css`
 `;
 
 const accordionItemContentStyle = css`
-	padding: 30px;
+	padding: 0px 30px 30px 30px;
 `;
 
 const contentInnerContainerStyle = (theme: Theme) => css`
@@ -154,9 +156,7 @@ const handleInitialHashCheck = (
 	accordionRef: RefObject<HTMLLIElement | null>,
 ) => {
 	if (window.location.hash === windowLocationHash) {
-		if (!accordionData.openOnInit) {
-			openState.toggle();
-		}
+		openState.toggle();
 		accordionRef.current?.id === indexString ? accordionRef.current.scrollIntoView({ behavior: 'smooth' }) : null;
 	}
 };
@@ -182,7 +182,9 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 	const windowLocationHash = `#${index}`;
 
 	useEffect(() => {
-		handleInitialHashCheck(windowLocationHash, accordionData, openState, indexString, accordionRef);
+		setTimeout(() => {
+			handleInitialHashCheck(windowLocationHash, accordionData, openState, indexString, accordionRef);
+		}, 100);
 	}, []);
 
 	return (
@@ -197,8 +199,8 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 								height={16}
 								style={chevronStyle(openState.isOpen)}
 							/>
-							<span>{title}</span>
 						</button>
+						<span css={titleStyle(theme)}>{title}</span>
 						<button
 							type="button"
 							css={hashIconStyle(theme)}
@@ -206,10 +208,10 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 						>
 							<Hash width={20} height={20} fill={theme.colors.secondary} />
 						</button>
+						<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle}>
+							{description}
+						</ReadMoreText>
 					</div>
-					<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle}>
-						{description}
-					</ReadMoreText>
 				</div>
 				<div css={downloadButtonContainerStyle}>
 					{/* Mock props for the dictionary since we haven't implemented the download per schema yet */}
