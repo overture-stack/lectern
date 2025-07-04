@@ -24,8 +24,7 @@
 import { css } from '@emotion/react';
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 import React, { useState } from 'react';
-import Accordion from '../common/Accordion/Accordion';
-import { AccordionData } from '../common/Accordion/AccordionItem';
+import Accordion, { AccordionData } from '../common/Accordion/Accordion';
 import SchemaTable from './DataTable/SchemaTable/SchemaTable';
 import DictionaryHeader from './DictionaryHeader';
 import { FilterOptions } from './InteractionPanel/AttributeFilterDropdown';
@@ -88,26 +87,36 @@ const DataDictionaryPage = ({
 			iconOnly: true,
 			disabled: false,
 		},
+		schemaName: 'schemaName',
 	}));
 
 	return (
 		<div>
-			<DictionaryHeader name={dictionary.name} description={dictionary.description} version={dictionary.version} />
-			<div css={interactionPanelSpacing}>
-				<InteractionPanel
-					setIsCollapsed={setIsCollapsed}
-					onSelect={handleSelect}
-					dictionaryConfig={{
-						lecternUrl,
-						dictionaryIndex,
-						dictionaryData: dictionaries,
-						onVersionChange: handleVersionChange,
-						filters,
-						setFilters,
-					}}
-				/>
+			<div
+				css={css`
+					position: sticky;
+					top: 0;
+					z-index: 10;
+					background-color: white;
+				`}
+			>
+				<DictionaryHeader name={dictionary.name} description={dictionary.description} version={dictionary.version} />
+				<div css={interactionPanelSpacing}>
+					<InteractionPanel
+						setIsCollapsed={setIsCollapsed}
+						onSelect={handleSelect}
+						dictionaryConfig={{
+							lecternUrl,
+							dictionaryIndex,
+							dictionaryData: dictionaries,
+							onVersionChange: handleVersionChange,
+							filters,
+							setFilters,
+						}}
+					/>
+				</div>
 			</div>
-			<Accordion key={`accordion-${isCollapsed}-${filters.join('-')}`} accordionItems={accordionItems} />
+			<Accordion accordionItems={accordionItems} />
 		</div>
 	);
 };
