@@ -91,14 +91,10 @@ const contentContainerStyle = css`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 0;
-	flex: 1;
-	min-width: 0;
-	flex-wrap: wrap;
-	max-width: calc(100% - 100px);
 `;
 
 const titleStyle = css`
+	width: 100%;
 	display: flex;
 	align-items: center;
 `;
@@ -126,7 +122,9 @@ const hashIconStyle = (theme: Theme) => css`
 const descriptionWrapperStyle = (theme: Theme) => css`
 	${theme.typography?.label2};
 	color: ${theme.colors.grey_5};
-	padding: 4px 8px;
+	padding-right: 24px;
+	padding-left: 24px;
+	padding-bottom: 20px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 `;
@@ -189,7 +187,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 
 	return (
 		<li ref={accordionRef} role="button" css={accordionItemStyle(theme)} id={indexString} onClick={openState.toggle}>
-			<h2 css={accordionItemTitleStyle}>
+			<div css={accordionItemTitleStyle}>
 				<div css={contentContainerStyle}>
 					<button type="button" css={accordionItemButtonStyle(theme)}>
 						<ChevronDown
@@ -207,11 +205,6 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 					>
 						<Hash width={20} height={20} fill={theme.colors.secondary} />
 					</button>
-					{description && (
-						<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle}>
-							{description}
-						</ReadMoreText>
-					)}
 				</div>
 				{/* Mock props for the dictionary since we haven't implemented the download per schema yet */}
 				<DictionaryDownloadButton
@@ -222,7 +215,10 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 					iconOnly={true}
 					disabled={true}
 				/>
-			</h2>
+			</div>
+			<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle}>
+				{description}
+			</ReadMoreText>
 			<div css={accordionCollapseStyle(openState.isOpen)}>
 				<div css={accordionItemContentStyle}>
 					<div css={contentInnerContainerStyle(theme)}>{content}</div>
