@@ -131,7 +131,7 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDow
 
 	const renderMenuItems = () => {
 		return menuItems.map(({ label, action }) => (
-			<DropDownItem key={label} action={action}>
+			<DropDownItem key={label} action={action} onItemClick={() => setOpen(false)}>
 				{label}
 			</DropDownItem>
 		));

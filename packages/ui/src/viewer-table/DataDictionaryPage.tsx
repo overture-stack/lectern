@@ -66,11 +66,9 @@ const DataDictionaryPage = ({
 	// Filter fields based on the selected filters
 	const getFilteredSchema = (schema: any) => {
 		if (filters.includes('Required')) {
-			// Only show required fields
 			const filteredFields = schema.fields.filter((field: any) => field.restrictions?.required === true);
 			return { ...schema, fields: filteredFields };
 		}
-		// 'All Fields' or no filter - show all fields
 		return schema;
 	};
 

@@ -37,7 +37,6 @@ const thStyle = (theme: Theme, index: number) => css`
 	`
 		position: sticky;
 		left: 0;
-		z-index: 20;
 		background-color: #e5edf3;
 	`}
 	border: 1px solid #DCDDE1;
