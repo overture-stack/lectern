@@ -213,7 +213,15 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 						</ReadMoreText>
 					)}
 				</div>
-				<DictionaryDownloadButton lecternUrl="" version="" fileType="tsv" name={schemaName} />
+				{/* Mock props for the dictionary since we haven't implemented the download per schema yet */}
+				<DictionaryDownloadButton
+					lecternUrl=""
+					version=""
+					fileType="tsv"
+					name={schemaName}
+					iconOnly={true}
+					disabled={true}
+				/>
 			</h2>
 			<div css={accordionCollapseStyle(openState.isOpen)}>
 				<div css={accordionItemContentStyle}>
