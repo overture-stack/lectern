@@ -1,12 +1,12 @@
-# Dictionary Syntax
+# Building Dictionaries
 
 A Lectern Dictionary is a JSON configuration that defines the structure and validation rules for tabular data files. It consists of schemas that describe individual file formats, with each schema containing field definitions and validation constraints.
 
-## Basic Dictionary Structure
+## Dictionary Structure
 
-A Lectern Dictionary is a JSON configuration file that defines the structure and validation rules for your data files. At its core, every dictionary must contain three essential components: a **name**, **version**, and at least one **schema**. Additional optional components like descriptions, metadata, and references can enhance functionality.
+A Lectern Dictionary is a JSON configuration file that defines the structure and validation rules for your data files. At its core, every dictionary must contain three essential components: a **name**, **version**, and **schemas**. 
 
-```json showLineNumbers {2-3,9-26}
+```json showLineNumbers {2-3,9-11}
 {
   "name": "clinical_data_dictionary",
   "version": "1.2.0",
@@ -16,47 +16,34 @@ A Lectern Dictionary is a JSON configuration file that defines the structure and
     "created": "2024-01-15"
   },
   "schemas": [
-    {
-      "name": "patient",
-      "description": "Patient demographic and clinical information",
-      "fields": [
-        {
-          "name": "patient_id",
-          "valueType": "string",
-          "restrictions": {
-            "required": true,
-            "regex": "^PAT-\\d{6}$"
-          },
-          "unique": true,
-          "description": "Unique patient identifier in format PAT-XXXXXX"
-        }
-      ]
-    }
+    { ... }
   ],
   "references": {
-    "customRegex": {
-      "dateFormat": "^\\d{4}-\\d{2}-\\d{2}$"
+    "regex": {
+      "patient_id_format": "^PAT-\\d{6}$",
     }
   }
 }
 ```
 
-### Basic Dictionary Properties
+Optional components like descriptions, metadata, and references which can also be used are described in the table below.
+
+#### Dictionary Properties
 
 | Property      | Type            | Required | Description                            | Example                                         |
 | ------------- | --------------- | -------- | -------------------------------------- | ----------------------------------------------- |
 | `name`        | `string`        | ✓        | Display name of the dictionary         | `"clinical_data_dictionary"`                    |
 | `version`     | `string`        | ✓        | Semantic version (major.minor.patch)   | `"1.2.0"`                                       |
-| `schemas`     | `Array<Schema>` | ✓        | List of schema definitions (minimum 1) | See [Schema Structure](#basic-schema-structure) |
+| `schemas`     | `Array` | ✓        | List of schema definitions (minimum 1) | See [Schema Structure](#schema-structure) |
 | `description` | `string`        | ✗        | A human-readable description           | `"Clinical trial data schemas"`                 |
-| `meta`        | `object`        | ✗        | Custom metadata fields                 | `{"author": "Clinical Data Team"}`              |
+| `meta`        | `object`        | ✗        | Any custom defined metadata fields                 | `{"author": "Clinical Data Team"}`              |
 | `references`  | `object`        | ✗        | Reusable reference values              | See [References](#references)                   |
 
-## Basic Schema Structure
+## Schema Structure
 
-Each schema defines the structure of a single tabular data file. Every dictionary must have a **name** and **fields** array.
+Each **schema** defines the structure of a single tabular data file. Every dictionary must have a **name** field and **fields** array.
 
-```json showLineNumbers {11,13-26}
+```json showLineNumbers {9-24}
 {
   "name": "clinical_data_dictionary",
   "version": "1.2.0",
@@ -67,44 +54,39 @@ Each schema defines the structure of a single tabular data file. Every dictionar
   },
   "schemas": [
     {
-      "name": "patient",
+      "name": "patientSchema",
       "description": "Patient demographic and clinical information",
       "fields": [
-        {
-          "name": "patient_id",
-          "valueType": "string",
-          "restrictions": {
-            "required": true,
-            "regex": "^PAT-\\d{6}$"
-          },
-          "unique": true,
-          "description": "Unique patient identifier in format PAT-XXXXXX"
-        }
-      ]
+        { ... },
+      ],
+    },
+    {
+      "name": "sampleSchema",
+      "description": "Data derived from patient samples",
+      "fields": [
+        { ... },
+      ],
     }
-  ],
-  "references": {
-    "customRegex": {
-      "dateFormat": "^\\d{4}-\\d{2}-\\d{2}$"
-    }
-  }
+  ]
 }
 ```
 
-### Schema Properties
+At the schema-level descriptions and metadata can also be optionally added.
+
+#### Schema Properties
 
 | Property      | Type           | Required | Description                           |
 | ------------- | -------------- | -------- | ------------------------------------- |
-| `name`        | `string`       | ✓        | Schema identifier (no spaces or dots) |
-| `fields`      | `Array<Field>` | ✓        | List of field definitions             |
-| `description` | `string`       | ✗        | Human-readable description            |
-| `meta`        | `object`       | ✗        | Custom metadata                       |
+| `name`        | `string`       | ✓        | The schema identifier (no spaces or dots) |
+| `fields`      | `Array` | ✓        | List of field definitions, see [Field Structure](#field-structure)       |
+| `description` | `string`       | ✗        | A human-readable description            |
+| `meta`        | `object`       | ✗        | Any custom defined metadata fields                    |
 
-## Field Definitions
+## Field Structure
 
-Fields define the individual columns in your data files, at minimum a field object must have a **name** and **valueType**.
+**Fields** define the individual columns in your data files, at minimum a field object must have a **name** and **valueType**.
 
-```json showLineNumbers {15,17,25,27}
+```json showLineNumbers {13-32}
 {
   "name": "clinical_data_dictionary",
   "version": "1.2.0",
@@ -122,37 +104,42 @@ Fields define the individual columns in your data files, at minimum a field obje
           "name": "patient_id",
           "description": "Unique patient identifier in format PAT-XXXXXX",
           "valueType": "string",
-          "restrictions": {
-            "required": true,
-            "regex": "^PAT-\\d{6}$"
-          },
-          "unique": true
+          "restrictions": { ... },
+        }
+        {
+          "name": "field2",
+          "valueType": "boolean",
         },
         {
-          "name": "diagnosis_date",
-          "description": "Date of initial diagnosis in YYYY-MM-DD format",
-          "valueType": "string",
-          "meta": {
-            "displayName": "Diagnosis Date",
-            "category": "clinical"
-          },
-          "restrictions": {
-            "required": true,
-            "regex": "dateFormat"
-          }
-        }
+          "name": "field3",
+          "valueType": "integer",
+        },
+        {
+          "name": "field4",
+          "valueType": "number",
+        },
       ]
     }
   ],
-  "references": {
-    "customRegex": {
-      "dateFormat": "^\\d{4}-\\d{2}-\\d{2}$"
-    }
-  }
 }
 ```
 
-### Field Properties
+#### Field Value Types
+
+The allowed values for `valueType` include:
+
+
+| Type      | Description                                         | Valid Examples                   | Invalid Examples       |
+| --------- | --------------------------------------------------- | -------------------------------- | ---------------------- |
+| `string`  | Text values (any characters except array delimiter) | `"Hello"`, `"PAT-001234"`, `""`  | N/A (accepts any text) |
+| `integer` | Whole numbers only                                  | `42`, `-17`, `0`                 | `3.14`, `1.0`, `2.5`   |
+| `number`  | Any numeric value                                   | `42`, `3.14`, `-17.5`, `0`       | `"abc"`, `"N/A"`       |
+| `boolean` | True/false (case-insensitive)                       | `true`, `True`, `FALSE`, `false` | `yes`, `1`, `0`, `Y`   |
+
+
+#### Field Properties
+
+At the field-level the following properties can also be included:
 
 | Property       | Type           | Required | Default | Description                                               |
 | -------------- | -------------- | -------- | ------- | --------------------------------------------------------- |
@@ -162,54 +149,48 @@ Fields define the individual columns in your data files, at minimum a field obje
 | `isArray`      | `boolean`      | ✗        | `false` | Whether field accepts multiple values                     |
 | `delimiter`    | `string`       | ✗        | `","`   | Separator for array values                                |
 | `unique`       | `boolean`      | ✗        | `false` | Whether values must be unique across records              |
-| `restrictions` | `object/array` | ✗        | `{}`    | Where the validation rules/logic for the field is defined |
-| `meta`         | `object`       | ✗        | `{}`    | Custom metadata                                           |
+| `restrictions` | `object/array` | ✗        | `{}`    | Where the validation rules/logic for the field is defined, see [Field Restrictions](#field-restrictions) |
+| `meta`         | `object`       | ✗        | `{}`    | Any custom defined metadata fields                                           |
 
-### Field Data Types
+## Field Restrictions
 
-| Type      | Description                                         | Valid Examples                   | Invalid Examples       |
-| --------- | --------------------------------------------------- | -------------------------------- | ---------------------- |
-| `string`  | Text values (any characters except array delimiter) | `"Hello"`, `"PAT-001234"`, `""`  | N/A (accepts any text) |
-| `integer` | Whole numbers only                                  | `42`, `-17`, `0`                 | `3.14`, `1.0`, `2.5`   |
-| `number`  | Any numeric value                                   | `42`, `3.14`, `-17.5`, `0`       | `"abc"`, `"N/A"`       |
-| `boolean` | True/false (case-insensitive)                       | `true`, `True`, `FALSE`, `false` | `yes`, `1`, `0`, `Y`   |
+Field restrictions define the rules that field values must satisfy to be considered valid. Here's an example of a field that defines and validates the age of a patient:
 
-### Field Restrictions
+```json
+{
+  "name": "patient_age",
+  "valueType": "integer",
+  "restrictions": {
+    "required": true,
+    "range": {
+      "min": 0,
+      "max": 150
+    }
+  }
+}
+```
 
-Field restrictions define validation rules that field values must satisfy to be considered valid. These rules ensure data integrity by enforcing specific constraints on field content.
+:::note What this means: 
+Age must be provided and must be between 0-150 years old. 
+:::
 
-The `restrictions` property accepts either:
-
-- A single restrictions object
-- An array of restrictions objects
-
-When multiple restrictions are provided in an array, they are evaluated sequentially. Data is only considered valid if it passes every restriction in the array.
 
 Each restrictions object can contain:
 
 - **Standard Restrictions** (detailed in the sections below)
-- **Conditional restrictions** that apply validation logic based on specific conditions
-
-## Standard Restrictions
+- **Conditional restrictions** that apply validation logic based on specific [`conditions`](#conditions)
 
 ### `required`
 
 Ensures a field has a value.
 
 ```json showLineNumbers
-{
-  "name": "patient_id",
-  "valueType": "string",
-  "restrictions": { "required": true }
-}
+  {
+    "name": "patient_id",
+    "valueType": "string",
+    "restrictions": { "required": true }
+  }
 ```
-
-**Validation behavior:**
-
-- Empty strings `""` are rejected
-- Zero `0` is accepted for numbers
-- `false` is accepted for booleans
-- Arrays must contain at least one element
 
 ### `codeList`
 
@@ -217,13 +198,17 @@ Restricts values to a predefined list of acceptable options.
 
 ```json showLineNumbers
 {
-  "name": "gender",
+  "name": "treatment_response",
   "valueType": "string",
   "restrictions": {
-    "codeList": ["Male", "Female", "Other", "Unknown"]
+    "codeList": ["Complete Response", "Partial Response", "Stable Disease", "Progressive Disease"]
   }
 }
 ```
+
+:::note **What this means:**
+The `treatment_response` field will only accept values that exactly match one of the four options in the list. Any other value will be rejected.
+:::
 
 ### `range`
 
@@ -245,9 +230,18 @@ Sets numeric boundaries for `integer` and `number` fields.
 - `exclusiveMin` / `exclusiveMax` - Exclusive boundaries
 
 ```json showLineNumbers
-// Age must be 18 or older, but less than 65
-{ "range": { "min": 18, "exclusiveMax": 65 } }
+{
+  "name": "adult_age",
+  "valueType": "integer",
+  "restrictions": {
+    "range": { "min": 18, "exclusiveMax": 65 }
+  }
+}
 ```
+
+:::note **What this means:**
+Age must be 18 or older (inclusive), but less than 65 (exclusive). So valid values are 18-64.
+:::
 
 ### `regex`
 
@@ -263,23 +257,36 @@ Applies pattern matching validation to string fields.
 }
 ```
 
-### `empty`
-
-Requires a field to be empty. This is typically used within conditional restrictions.
+For human readability we recommend using the `description` property and creating a `meta` property `examples` to clearly document the regex restriction.
 
 ```json showLineNumbers
 {
-  "restrictions": { "empty": true }
+  "name": "email",
+  "valueType": "string",
+  "description": "Contact email address for patient communication and records. Valid email format: username@domain.extension (minimum 2-letter extension). Accepts letters, numbers, dots, hyphens, and underscores in username and domain.",
+  "restrictions": {
+    "required": true,
+    "regex": "^[\\w\\.-]+@[\\w\\.-]+\\.[a-zA-Z]{2,}$"
+  },
+  "meta": {
+    "examples": [
+      "patient@example.com", 
+      "john.doe@hospital.org", 
+      "contact123@healthcare.gov"
+    ]
+  }
 }
 ```
 
-## Array-Specific Restrictions
+:::note **What this means:**
+Email address must be provided and follow standard email format with a username, @ symbol, domain name, and valid extension. The examples show acceptable formats while the pattern description explains what characters are allowed.
+:::
 
 ### `count`
 
-Controls the number of elements allowed in array fields.
+Count is an **array specific** condition that controls the number of elements allowed in array fields.
 
-```json showLineNumbers
+```json showLineNumbers {4,6}
 {
   "name": "medications",
   "valueType": "string",
@@ -292,35 +299,55 @@ Controls the number of elements allowed in array fields.
 
 Uses the same boundary options as `range`: `min`, `max`, `exclusiveMin`, `exclusiveMax`.
 
-## Field Comparison Restrictions
+:::note **What this means:**
+The medications array must contain between 1 and 10 medication entries. Empty arrays or arrays with more than 10 items will be rejected.
+:::
 
-### `compare`
 
-Compares field values with other fields in the same record.
+### `empty`
+
+Requires a field to have no value. 
 
 ```json showLineNumbers
 {
-  "name": "age_at_death",
-  "valueType": "integer",
-  "restrictions": {
-    "compare": {
-      "fields": ["age_at_diagnosis"],
-      "relation": "greaterThanOrEqual"
-    }
-  }
+  "name": "date_of_death",
+  "valueType": "string",
+  "restrictions": { "empty": true }
 }
 ```
 
-**Available comparison relations:**
+:::note **What this means:**
+The field must have no value - only empty strings, null, or undefined values are accepted. Any actual content will be rejected.
+:::
 
-- `equal` / `notEqual` - Value equality comparison
-- `greaterThan` / `greaterThanOrEqual` - Numeric comparison
-- `lessThan` / `lessThanOrEqual` - Numeric comparison
-- `contains` / `containedIn` - String containment comparison
+<details>
+<summary>**Here is a more practical example using conditional logic**</summary>
 
-## Conditional Restrictions
+The `empty` restriction becomes particularly useful when combined with [conditional restrictions](#conditions)  to create logical data rules:
 
-Conditional restrictions allow you to apply different validation rules based on values in other fields within the same record. This enables dynamic validation where the requirements for one field change depending on the data in other fields.
+  ```json showLineNumbers
+  {
+    "name": "date_of_death",
+    "valueType": "string",
+    "restrictions": {
+      "if": {
+        "conditions": [
+          { "fields": ["patient_status"], "match": { "value": "alive" } }
+        ]
+      },
+      "then": { "empty": true },
+      "else": { "required": true }
+    }
+  }
+  ```
+
+**What this means:** If the patient status is "alive", then the date of death field must be empty. If the patient status is anything other than "alive", then the date of death field is required.
+
+</details>
+
+### `conditions`
+
+Conditional restrictions allow you to apply different validation rules based on the values in other fields. This enables more complex validation rules where the requirements for one field change depending on the data in other fields.
 
 Think of conditional restrictions as "if-then-else" logic for your data validation:
 
@@ -328,15 +355,14 @@ Think of conditional restrictions as "if-then-else" logic for your data validati
 - **THEN** apply these validation rules
 - **ELSE** apply different validation rules (optional)
 
-### Basic Structure
+#### Basic Structure
 
 ```json showLineNumbers
-{
+"restrictions": {
   "if": {
     "conditions": [
       /* conditions to check */
     ],
-    "case": "all" // how many conditions must be true
   },
   "then": {
     /* validation rules when conditions are true */
@@ -347,9 +373,31 @@ Think of conditional restrictions as "if-then-else" logic for your data validati
 }
 ```
 
-### Simple Example
+**Match Criteria**
 
-Let's start with a straightforward example:
+The `match` object defines what you're looking for:
+
+```json showLineNumbers
+// Exact value
+{ "match": { "value": "Treatment_A" } }
+
+// Value from list
+{ "match": { "codeList": ["Stage_III", "Stage_IV"] } }
+
+// Numeric range
+{ "match": { "range": { "min": 18, "max": 65 } } }
+
+// Pattern matching
+{ "match": { "regex": "^PAT-\\d{6}$" } }
+
+// Field has any value
+{ "match": { "exists": true } }
+
+// Array length
+{ "match": { "count": { "min": 1 } } }
+```
+
+#### Simple Example
 
 ```json showLineNumbers
 {
@@ -367,13 +415,11 @@ Let's start with a straightforward example:
 }
 ```
 
-**What this means:**
+:::note **What this means:**
+If the `patient_status` field equals "deceased", then the `date_of_death` field is required. Otherwise, the `date_of_death` field must be empty.
+:::
 
-- **IF** the `patient_status` field equals "deceased"
-- **THEN** the `date_of_death` field is required
-- **ELSE** the `date_of_death` field must be empty
-
-### Multiple Conditions
+#### Case Logic
 
 When you need to check multiple conditions, use the `case` property to specify how many must be true:
 
@@ -394,12 +440,11 @@ When you need to check multiple conditions, use the `case` property to specify h
 }
 ```
 
-**What this means:**
+:::note **What this means:**
+If `patient_status` equals "active" AND `enrollment_date` has a value, then `treatment_details` is required.
+:::
 
-- **IF** `patient_status` equals "active" **AND** `enrollment_date` has a value
-- **THEN** `treatment_details` is required
-
-### Case Options
+**Case Options:**
 
 | Case Value        | Description                         | Example                                          |
 | ----------------- | ----------------------------------- | ------------------------------------------------ |
@@ -407,171 +452,61 @@ When you need to check multiple conditions, use the `case` property to specify h
 | `"any"`           | At least one condition must be true | Patient is active OR has enrollment date         |
 | `"none"`          | No conditions can be true           | Patient is NOT active AND has NO enrollment date |
 
-## Building Conditions
 
-Each condition has three parts:
+**Working with Arrays**
 
-1. **`fields`** - Which fields to check
-2. **`match`** - What to look for in those fields
-3. **`case`** - How many fields must match (when checking multiple fields)
+When checking array fields, use `arrayFieldCase` to specify how many array elements must match. Here's a practical example using a medications field:
 
-### Basic Condition Structure
-
-```json showLineNumbers {6-9}
+```json showLineNumbers {10}
 {
-  "name": "treatment_details",
-  "valueType": "string",
+  "name": "follow_up_required",
+  "valueType": "boolean", 
   "restrictions": {
     "if": {
       "conditions": [
-        { "fields": ["patient_status"], "match": { "value": "active" } },
-        { "fields": ["enrollment_date"], "match": { "exists": true } }
-      ],
-      "case": "all"
+        {
+          "fields": ["current_medications"],
+          "match": { "codeList": ["chemotherapy", "immunotherapy", "targeted_therapy"] },
+          "arrayFieldCase": "any"
+        }
+      ]
     },
     "then": { "required": true }
   }
 }
 ```
 
-The basic condition structure highlighted above is as follows:
+:::note **What this means:**
+If the patient is taking ANY cancer treatment medication (chemotherapy, immunotherapy, or targeted therapy) in their medications array, then follow-up is required.
+:::
+
+**Array Field Case Options:**
+
+| Value    | Description                          | Example Use Case |
+| -------- | ------------------------------------ | ---------------- |
+| `"all"`  | All elements in the array must match | All medications must be from an approved list |
+| `"any"`  | At least one element must match      | Patient has at least one high-risk medication |
+| `"none"` | No elements can match                | Patient cannot have any contraindicated drugs |
+
+**Additional Array Examples:**
 
 ```json showLineNumbers
-"conditions": [
-  {
-    "fields": ["field_name"],
-    "match": {
-      "value": "specific_value"
-    }
-  }
-],
-```
-
-### Checking Multiple Fields
-
-```json showLineNumbers
-{
-  "fields": ["field1", "field2", "field3"],
-  "match": { "value": "active" },
-  "case": "any" // at least one field must equal "active"
-}
-```
-
-### Match Criteria
-
-The `match` object defines what you're looking for. Here are the available options:
-
-### Exact Value Match
-
-```json showLineNumbers
-{
-  "fields": ["treatment_arm"],
-  "match": { "value": "Treatment_A" }
-}
-```
-
-### Value from List
-
-```json showLineNumbers
-{
-  "fields": ["disease_stage"],
-  "match": { "codeList": ["Stage_III", "Stage_IV"] }
-}
-```
-
-### Numeric Range
-
-```json showLineNumbers
-{
-  "fields": ["age"],
-  "match": { "range": { "min": 18, "max": 65 } }
-}
-```
-
-### Pattern Matching
-
-```json showLineNumbers
-{
-  "fields": ["patient_id"],
-  "match": { "regex": "^PAT-\\d{6}$" }
-}
-```
-
-### Field Has Value
-
-```json showLineNumbers
-{
-  "fields": ["consent_date"],
-  "match": { "exists": true }
-}
-```
-
-### Array Length
-
-```json showLineNumbers
+// Example: All medications must be FDA approved
 {
   "fields": ["medications"],
-  "match": { "count": { "min": 1 } }
+  "match": { "regex": "^FDA-\\d+" },
+  "arrayFieldCase": "all"
 }
-```
 
-```json showLineNumbers
+// Example: Patient cannot have any experimental drugs
 {
-  "name": "sociodem_question_detail",
-  "valueType": "string",
-  "restrictions": {
-    "if": {
-      "conditions": [
-        {
-          "fields": ["sociodem_question"],
-          "match": {
-            "codeList": ["PCGL reference question", "Another question"]
-          },
-          "case": "any"
-        }
-      ]
-    },
-    "then": { "required": true },
-    "else": {
-      "required": false,
-      "empty": true
-    }
-  }
+  "fields": ["medications"], 
+  "match": { "codeList": ["experimental_drug_A", "experimental_drug_B"] },
+  "arrayFieldCase": "none"
 }
 ```
 
-### Working with Arrays
-
-When checking array fields, use `arrayFieldCase` to specify how many array elements must match:
-
-```json showLineNumbers
-{
-  "name": "diabetes_medication",
-  "valueType": "string",
-  "restrictions": {
-    "if": {
-      "conditions": [
-        {
-          "fields": ["medical_history"],
-          "match": { "value": "diabetes" },
-          "arrayFieldCase": "any" // any element in the array can match
-        }
-      ]
-    },
-    "then": { "required": true }
-  }
-}
-```
-
-### Array Field Case Options
-
-| Value    | Description                          |
-| -------- | ------------------------------------ |
-| `"all"`  | All elements in the array must match |
-| `"any"`  | At least one element must match      |
-| `"none"` | No elements can match                |
-
-### Complex Conditional Logic
+#### Complex Example
 
 You can combine multiple conditions with different logic:
 
@@ -586,7 +521,10 @@ You can combine multiple conditions with different logic:
           "fields": ["treatment_response"],
           "match": { "codeList": ["partial_response", "stable_disease"] }
         },
-        { "fields": ["adverse_events"], "match": { "count": { "min": 1 } } }
+        { 
+          "fields": ["adverse_events"], 
+          "match": { "count": { "min": 1 } } 
+        }
       ],
       "case": "any" // either condition can trigger the requirement
     },
@@ -595,10 +533,444 @@ You can combine multiple conditions with different logic:
 }
 ```
 
-## Source Code Reference
+:::note **What this means:**
+If the treatment response is "partial_response" OR "stable_disease", OR if there's at least one adverse event, then follow-up is required.
+:::
 
-Source code for the Lectern Dictionary meta-schema is available through the package [@overture-stack/lectern-dictionary](../packages/dictionary/). The meta-schema is formally defined in TypeScript and exported as the type `Dictionary` from [`dictionary/src/types/dictionaryTypes.ts`](../packages/dictionary/src/types/dictionaryTypes.ts). This definition uses [Zod](https://zod.dev/) schemas, which are also exported for validation purposes.
+## Schema Restrictions
 
-:::info Need Help?
-If you encounter any issues or have questions about our API, please don't hesitate to reach out through our relevant [**community support channels**](https://docs.overture.bio/community/support).
+In addition to field-level restrictions, Lectern Dictionaries support schema-level restrictions that establish relationships between schemas.
+
+### `uniqueKey` 
+
+Primary keys identify unique records within a schema using the `uniqueKey` restriction applied at the schema level. They ensure that each record can be distinctly identified by one or more field values.
+
+#### Single Field Primary Key
+
+```json showLineNumbers {18-20}
+{
+  "schemas": [
+    {
+      "name": "participant",
+      "description": "The collection of all data related to a specific individual",
+      "fields": [
+        {
+          "name": "submitter_participant_id",
+          "description": "Unique identifier of the participant within the study, assigned by the data provider",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+          },
+          "unique": true
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": ["submitter_participant_id"]
+      }
+    }
+  ]
+}
+```
+
+:::note **What this means:**
+Each `submitter_participant_id` value must be unique across all records in the participant schema - no two participants can have the same ID.
+:::
+
+#### Compound Primary Key
+
+For cases where uniqueness requires multiple field combinations:
+
+```json showLineNumbers {24-26}
+{
+  "schemas": [
+    {
+      "name": "patient_visit",
+      "description": "Patient visits identified by participant and visit number",
+      "fields": [
+        {
+          "name": "submitter_participant_id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+          }
+        },
+        {
+          "name": "visit_number", 
+          "valueType": "integer",
+          "restrictions": {
+            "required": true,
+            "range": { "min": 1 }
+          }
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": ["submitter_participant_id", "visit_number"]
+      }
+    }
+  ]
+}
+```
+
+:::note **What this means:**
+The combination of `submitter_participant_id` and `visit_number` must be unique. A participant can have multiple visits, and visit numbers can repeat across participants, but the same participant cannot have duplicate visit numbers.
+:::
+
+### `foreignKey`
+
+Foreign keys establish relationships between schemas by referencing primary keys in other schemas. They ensure referential integrity by validating that referenced records actually exist.
+
+#### Basic Foreign Key
+
+```json showLineNumbers {37-47}
+{
+  "schemas": [
+    {
+      "name": "participant",
+      "description": "Study participants",
+      "fields": [
+        {
+          "name": "submitter_participant_id",
+          "description": "Unique identifier of the participant within the study",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+          },
+          "unique": true
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": ["submitter_participant_id"]
+      }
+    },
+    {
+      "name": "sociodemographic", 
+      "description": "Captures sociodemographic characteristics",
+      "fields": [
+        {
+          "name": "submitter_participant_id",
+          "description": "Unique identifier of the participant within the study, assigned by the data provider",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+          }
+        }
+      ],
+      "restrictions": {
+        "foreignKey": [
+          {
+            "schema": "participant",
+            "mappings": [
+              {
+                "local": "submitter_participant_id",
+                "foreign": "submitter_participant_id"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+:::note **What this means:**
+Every `submitter_participant_id` in the sociodemographic schema must match an existing `submitter_participant_id` in the participant schema. You cannot create sociodemographic records for participants that don't exist.
+:::
+
+
+#### Foreign Key Properties
+
+| Property   | Type                    | Required | Description                                   |
+| ---------- | ----------------------- | -------- | --------------------------------------------- |
+| `schema`   | `string`               | ✓        | Name of the referenced schema                 |
+| `mappings` | `Array<MappingObject>` | ✓        | Array of field mappings between schemas      |
+
+#### Mapping Object Properties
+
+| Property  | Type     | Required | Description                           |
+| --------- | -------- | -------- | ------------------------------------- |
+| `local`   | `string` | ✓        | Field name in the current schema      |
+| `foreign` | `string` | ✓        | Field name in the referenced schema   |
+
+#### Validation Rules
+
+Foreign key validation enforces these requirements:
+
+- **Referenced schema** must exist in the same dictionary
+- **Referenced fields** must be defined as a `uniqueKey` in the target schema
+- **Foreign key values** must match existing primary key values in the referenced schema
+- **Local fields** referenced in mappings must exist in the current schema
+
+#### Multiple Foreign Keys
+
+A schema can reference multiple other schemas to create complex relationships:
+
+<details>
+<summary>**Click here to view the example schema**</summary>
+```json showLineNumbers {18,45-56,93-113}
+{
+  "schemas": [
+    {
+      "name": "participant",
+      "description": "Study participants",
+      "fields": [
+        {
+          "name": "submitter_participant_id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+          },
+          "unique": true
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": ["submitter_participant_id"]
+      }
+    },
+    {
+      "name": "diagnosis",
+      "description": "Medical diagnoses for participants",
+      "fields": [
+        {
+          "name": "submitter_diagnosis_id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+          },
+          "unique": true
+        },
+        {
+          "name": "submitter_participant_id",
+          "description": "Unique identifier of the participant within the study",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+          }
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": ["submitter_diagnosis_id"],
+        "foreignKey": [
+          {
+            "schema": "participant",
+            "mappings": [
+              {
+                "local": "submitter_participant_id",
+                "foreign": "submitter_participant_id"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "treatment",
+      "description": "Medications, procedures, other actions taken for clinical management",
+      "fields": [
+        {
+          "name": "submitter_treatment_id",
+          "description": "Unique identifier of the treatment, assigned by the data provider",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+          },
+          "unique": true
+        },
+        {
+          "name": "submitter_diagnosis_id",
+          "description": "Unique identifier of the primary diagnosis event, assigned by the data provider",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+          }
+        },
+        {
+          "name": "submitter_participant_id",
+          "description": "Unique identifier of the participant within the study, assigned by the data provider",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+          }
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": ["submitter_treatment_id"],
+        "foreignKey": [
+          {
+            "schema": "diagnosis",
+            "mappings": [
+              {
+                "local": "submitter_diagnosis_id",
+                "foreign": "submitter_diagnosis_id"
+              }
+            ]
+          },
+          {
+            "schema": "participant",
+            "mappings": [
+              {
+                "local": "submitter_participant_id",
+                "foreign": "submitter_participant_id"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+</details>
+
+:::note **What this means:**
+In the example above each treatment record must reference both an existing diagnosis and an existing participant. This creates a hierarchical relationship: participant → diagnosis → treatment.
+:::
+
+#### Complete Schema Relationship Example
+
+Here's how primary and foreign keys work together to create a complete data model:
+
+```json showLineNumbers
+{
+  "name": "clinical_dictionary",
+  "version": "1.0.0",
+  "schemas": [
+    {
+      "name": "participant",
+      "description": "Study participants",
+      "fields": [
+        {
+          "name": "submitter_participant_id",
+          "description": "Unique identifier of the participant within the study",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+          },
+          "unique": true
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": ["submitter_participant_id"]
+      }
+    },
+    {
+      "name": "diagnosis", 
+      "description": "Medical diagnoses for participants",
+      "fields": [
+        {
+          "name": "submitter_diagnosis_id",
+          "description": "Unique identifier of the primary diagnosis event",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+          },
+          "unique": true
+        },
+        {
+          "name": "submitter_participant_id",
+          "description": "Unique identifier of the participant within the study",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+          }
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": ["submitter_diagnosis_id"],
+        "foreignKey": [
+          {
+            "schema": "participant",
+            "mappings": [
+              {
+                "local": "submitter_participant_id",
+                "foreign": "submitter_participant_id"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+:::note **What this relationship creates:**
+- **Participants** have unique IDs (primary key)
+- **Diagnoses** have unique IDs (primary key) 
+- **Each diagnosis** must belong to an existing participant (foreign key)
+- **Result**: A one-to-many relationship where one participant can have multiple diagnoses
+:::
+
+## References
+
+The `references` section is a **dictionary-level** property that allows you to define reusable values that can be referenced throughout your entire dictionary within all schemas. This is particularly useful for common regular expressions, shared code lists, or other values that appear in multiple places across different schemas. `references` are defined once at the dictionary level and can be used  in any schema within the dictionary. 
+
+
+```json showLineNumbers {39-47}
+{
+  "name": "clinical_data_dictionary",
+  "version": "1.2.0",
+  "description": "Clinical trial data collection schemas",
+  "meta": {
+    "author": "Clinical Data Team",
+    "created": "2024-01-15"
+  },
+  "schemas": [
+    {
+      "name": "patient",
+      "fields": [
+        {
+          "name": "bioproject_accession",
+          "valueType": "string",
+          "restrictions": {
+            "regex": "#/regex/BioProject_accession"
+          }
+        },
+        {
+          "name": "diagnosis_date",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/date"
+          }
+        },
+        {
+          "name": "country",
+          "valueType": "string",
+          "restrictions": {
+            "required": true,
+            "codeList": "#/list/geo_loc_name_country"
+          }
+        }
+      ]
+    }
+  ],
+  "references": {
+    "regex": {
+      "BioProject_accession": "^PRJN[A-Z0-9]+$",
+      "date": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "list": {
+      "geo_loc_name_country": ["Canada", "United States", "Mexico", "..."]
+    }
+  }
+}
+```
+
+:::info **Need Help?**
+If you encounter any issues or have questions, please don't hesitate to reach out through our relevant [**community support channels**](https://docs.overture.bio/community/support).
 :::
