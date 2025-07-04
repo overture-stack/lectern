@@ -21,8 +21,10 @@
 
 /** @jsxImportSource @emotion/react */
 
+import React from 'react';
 import { css, SerializedStyles } from '@emotion/react';
 import { ReactNode } from 'react';
+
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
@@ -38,8 +40,7 @@ type DropDownItemProps = {
 const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
 	display: flex;
 	min-height: 100%;
-	padding-bottom: 5px;
-	height: 100%;
+	padding: 10px;
 	align-items: center;
 	border-radius: 9px;
 	justify-content: center;
@@ -57,9 +58,9 @@ const DropDownItem = ({ children, action, customStyles }: DropDownItemProps) => 
 	const content = <div css={styledListItemStyle(theme, customStyles)}>{children}</div>;
 	if (typeof action === 'function') {
 		return (
-			<div onClick={action} css={styledListItemStyle(theme, customStyles)}>
+			<li onClick={action} css={styledListItemStyle(theme, customStyles)}>
 				{children}
-			</div>
+			</li>
 		);
 	}
 

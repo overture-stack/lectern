@@ -83,6 +83,8 @@ const dropdownMenuStyle = (theme: Theme) => css`
 	border-radius: 9px;
 	padding-bottom: 5px;
 	z-index: 100;
+	max-height: 150px;
+	overflow-y: auto;
 `;
 
 type MenuItem = {
@@ -137,15 +139,12 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDow
 
 	return (
 		<div ref={dropdownRef} css={parentStyle}>
-			<div>
-				<div css={dropdownButtonStyle({ theme, disabled })} onClick={handleToggle}>
-					{leftIcon}
-					<span css={dropDownTitleStyle(theme)}>{title}</span>
-					<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} style={chevronStyle(open)} />
-				</div>
-
-				{open && !disabled && <div css={dropdownMenuStyle(theme)}>{renderMenuItems()}</div>}
+			<div css={dropdownButtonStyle({ theme, disabled })} onClick={handleToggle}>
+				{leftIcon}
+				<span css={dropDownTitleStyle(theme)}>{title}</span>
+				<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} style={chevronStyle(open)} />
 			</div>
+			{open && !disabled && <div css={dropdownMenuStyle(theme)}>{renderMenuItems()}</div>}
 		</div>
 	);
 };
