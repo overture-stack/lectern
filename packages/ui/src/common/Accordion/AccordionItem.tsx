@@ -40,7 +40,6 @@ export type AccordionItemProps = {
 };
 
 const accordionItemStyle = (theme: Theme) => css`
-	list-style: none;
 	width: 100%;
 	border-radius: 8px;
 	margin-bottom: 1px;
@@ -85,7 +84,6 @@ const chevronStyle = (isOpen: boolean) => css`
 	transform: ${isOpen ? 'rotate(0deg)' : 'rotate(-90deg)'};
 	transition: transform 0.2s ease;
 	margin-right: 12px;
-	flex-shrink: 0;
 `;
 
 const contentContainerStyle = css`
@@ -109,12 +107,9 @@ const hashIconStyle = (theme: Theme) => css`
 	background: transparent;
 	border: none;
 	cursor: pointer;
-	padding: 0;
-
 	svg {
 		border-bottom: 2px solid ${theme.colors.secondary};
 	}
-
 	&:hover {
 		opacity: 1;
 	}
@@ -125,11 +120,6 @@ const descriptionWrapperStyle = (theme: Theme) => css`
 	color: ${theme.colors.black};
 	overflow-wrap: break-word;
 	margin-left: 16px;
-`;
-
-const downloadButtonContainerStyle = css`
-	flex-shrink: 0;
-	margin-right: 8px;
 `;
 
 const accordionCollapseStyle = (isOpen: boolean) => css`
@@ -213,7 +203,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 						</ReadMoreText>
 					</div>
 				</div>
-				<div css={downloadButtonContainerStyle}>
+				<div>
 					{/* Mock props for the dictionary since we haven't implemented the download per schema yet */}
 					<DictionaryDownloadButton
 						lecternUrl=""
