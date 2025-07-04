@@ -22,7 +22,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { Dictionary } from '@overture-stack/lectern-dictionary';
+import { Dictionary, Schema, SchemaField } from '@overture-stack/lectern-dictionary';
 import React, { useState } from 'react';
 import Accordion, { AccordionData } from '../common/Accordion/Accordion';
 import SchemaTable from './DataTable/SchemaTable/SchemaTable';
@@ -53,8 +53,7 @@ const DataDictionaryPage = ({
 	const dictionary = dictionaries[dictionaryIndex];
 
 	const handleSelect = (schemaIndex: number) => {
-		// Table of contents selection - could implement scroll here
-		console.log('Selected schema index:', schemaIndex);
+		// All we need to do is hook up to the accordion's scroll into view, since that is already implemented
 	};
 
 	const handleVersionChange = (index: number) => {
@@ -63,30 +62,41 @@ const DataDictionaryPage = ({
 		}
 	};
 
-	// Filter fields based on the selected filters
-	const getFilteredSchema = (schema: any) => {
-		if (filters.includes('Required')) {
-			const filteredFields = schema.fields.filter((field: any) => field.restrictions?.required === true);
-			return { ...schema, fields: filteredFields };
+	const displayData = (data: Dictionary[], filters: FilterOptions[], dictionaryIndex: number) => {
+		const currentDictionary = data?.[dictionaryIndex];
+		// If the filter is not active or we just have nothing to filter, return the original data
+		if (!filters?.length) {
+			return currentDictionary;
 		}
-		return schema;
+		return {
+			...currentDictionary,
+			schemas: currentDictionary?.schemas?.map((schema: Schema) => ({
+				...schema,
+				fields: schema.fields.filter((field: SchemaField) => {
+					// we are going to filter via the constraints that are given
+					if (filters?.includes('Required')) {
+						const restrictions = field?.restrictions ?? [];
+						if ('required' in restrictions && typeof restrictions !== 'function') {
+							return restrictions.required === true;
+						}
+						return false;
+					}
+					return filters?.includes('All Fields');
+				}),
+			})),
+		};
 	};
 
-	const accordionItems: AccordionData[] = dictionary.schemas.map((schema) => ({
-		title: schema.name,
-		openOnInit: !isCollapsed,
-		description: schema.description,
-		content: <SchemaTable schema={getFilteredSchema(schema)} />,
-		dictionaryDownloadButtonProps: {
-			version: dictionary.version || '1.0',
-			name: dictionary.name,
-			lecternUrl,
-			fileType: 'tsv',
-			iconOnly: true,
-			disabled: false,
-		},
-		schemaName: 'schemaName',
-	}));
+	const filteredDictionary = displayData(dictionaries, filters, dictionaryIndex);
+
+	const accordionItems: AccordionData[] =
+		filteredDictionary?.schemas?.map((schema) => ({
+			title: schema.name,
+			openOnInit: !isCollapsed,
+			description: schema.description,
+			content: <SchemaTable schema={schema} />,
+			schemaName: 'schemaName',
+		})) || [];
 
 	return (
 		<div>
