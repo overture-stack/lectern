@@ -73,6 +73,7 @@ const dropDownTitleStyle = (theme: Theme) => css`
 `;
 
 const dropdownMenuStyle = (theme: Theme) => css`
+	all: unset;
 	${theme.typography?.button};
 	position: absolute;
 	top: calc(100% + 5px);
@@ -139,12 +140,22 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDow
 
 	return (
 		<div ref={dropdownRef} css={parentStyle}>
-			<div css={dropdownButtonStyle({ theme, disabled })} onClick={handleToggle}>
+			<button
+				css={dropdownButtonStyle({ theme, disabled })}
+				onClick={handleToggle}
+				aria-haspopup="menu"
+				aria-expanded={open}
+				disabled={disabled}
+			>
 				{leftIcon}
 				<span css={dropDownTitleStyle(theme)}>{title}</span>
 				<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} style={chevronStyle(open)} />
-			</div>
-			{open && !disabled && <div css={dropdownMenuStyle(theme)}>{renderMenuItems()}</div>}
+			</button>
+			{open && !disabled && (
+				<menu role="menu" css={dropdownMenuStyle(theme)}>
+					{renderMenuItems()}
+				</menu>
+			)}
 		</div>
 	);
 };

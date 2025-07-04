@@ -67,13 +67,17 @@ const DropDownItem = ({ children, action, onItemClick, customStyles }: DropDownI
 
 	if (typeof action === 'function') {
 		return (
-			<li onClick={handleClick} css={styledListItemStyle(theme, customStyles)}>
+			<li role="menuitem" onClick={handleClick} css={styledListItemStyle(theme, customStyles)}>
 				{children}
 			</li>
 		);
 	}
 
-	return <div css={styledListItemStyle(theme, customStyles)}>{children}</div>;
+	return (
+		<li role="menuitem" css={styledListItemStyle(theme, customStyles)}>
+			{children}
+		</li>
+	);
 };
 
 export default DropDownItem;
