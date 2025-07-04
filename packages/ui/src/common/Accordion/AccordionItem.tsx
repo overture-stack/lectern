@@ -22,8 +22,8 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import type { ReactNode } from 'react';
-import { MouseEvent, useEffect } from 'react';
+import type { ReactNode, RefObject } from 'react';
+import { MouseEvent, useEffect, useRef } from 'react';
 
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
@@ -163,12 +163,13 @@ const handleInitialHashCheck = (
 	accordionData: AccordionData,
 	openState: AccordionOpenState,
 	indexString: string,
+	accordionRef: RefObject<HTMLLIElement | null>,
 ) => {
 	if (window.location.hash === windowLocationHash) {
 		if (!accordionData.openOnInit) {
 			openState.toggle();
 		}
-		document.getElementById(indexString)?.scrollIntoView({ behavior: 'smooth' });
+		accordionRef.current?.id === indexString ? accordionRef.current.scrollIntoView({ behavior: 'smooth' }) : null;
 	}
 };
 
@@ -183,6 +184,7 @@ const hashOnClick = (
 };
 
 const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) => {
+	const accordionRef = useRef<HTMLLIElement>(null);
 	const theme = useThemeContext();
 	const { setClipboardContents } = useClipboard();
 	const { description, title, content, dictionaryDownloadButtonProps } = accordionData;
@@ -192,11 +194,11 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 	const windowLocationHash = `#${index}`;
 
 	useEffect(() => {
-		handleInitialHashCheck(windowLocationHash, accordionData, openState, indexString);
+		handleInitialHashCheck(windowLocationHash, accordionData, openState, indexString, accordionRef);
 	}, []);
 
 	return (
-		<li role="button" css={accordionItemStyle(theme)} id={indexString} onClick={openState.toggle}>
+		<li ref={accordionRef} role="button" css={accordionItemStyle(theme)} id={indexString} onClick={openState.toggle}>
 			<h2 css={accordionItemTitleStyle}>
 				<div css={contentContainerStyle}>
 					<button type="button" css={accordionItemButtonStyle(theme)}>
