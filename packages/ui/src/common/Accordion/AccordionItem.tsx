@@ -31,7 +31,7 @@ import DictionaryDownloadButton, {
 	DictionaryDownloadButtonProps,
 } from '../../viewer-table/InteractionPanel/DownloadTemplatesButton';
 import ReadMoreText from '../ReadMoreText';
-import { AccordionOpenState } from './Accordion';
+import { AccordionOpenState, useClipboard } from './Accordion';
 
 const MAX_LINES_BEFORE_EXPAND = 2;
 
@@ -44,7 +44,6 @@ export type AccordionData = {
 };
 
 export type AccordionItemProps = {
-	setClipboardContents: (currentSchema: string) => void;
 	accordionData: AccordionData;
 	index: number;
 	openState: AccordionOpenState;
@@ -183,8 +182,9 @@ const hashOnClick = (
 	setClipboardContents(window.location.href);
 };
 
-const AccordionItem = ({ index, accordionData, openState, setClipboardContents }: AccordionItemProps) => {
+const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) => {
 	const theme = useThemeContext();
+	const { setClipboardContents } = useClipboard();
 	const { description, title, content, dictionaryDownloadButtonProps } = accordionData;
 	const { ChevronDown, Hash } = theme.icons;
 
