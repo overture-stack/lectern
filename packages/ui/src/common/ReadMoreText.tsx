@@ -84,23 +84,33 @@ const ReadMoreText = ({
 	collapsedText = 'Show more',
 }: ReadMoreTextProps) => {
 	const contentRef = useRef<HTMLDivElement>(null);
+
+	// Controls whether the content is expanded or collapsed
 	const [isExpanded, setIsExpanded] = useState(false);
-	const [needsToggle, setNeedsToggle] = useState(false);
+
+	// Tracks if the content is being truncated by CSS line-clamp
+	const [isTruncated, setIsTruncated] = useState(false);
 
 	const theme = useThemeContext();
 	const { ChevronDown } = theme.icons;
 
+	// Check if content needs truncation by comparing scroll height vs client height
+	// Note: contentRef.current is guaranteed to be set on first render before useEffect runs
 	useEffect(() => {
 		if (contentRef.current) {
 			const div = contentRef.current;
-			setNeedsToggle(div.scrollHeight > div.clientHeight + 1);
+			// This check determines if we are truncating based on CSS clamp
+			// by comparing the full content height (scrollHeight) to the visible height (clientHeight)
+			setIsTruncated(div.scrollHeight > div.clientHeight + 1);
 		}
 	}, []);
 
 	const handleToggle = (e: React.MouseEvent) => {
 		e.stopPropagation();
 		setIsExpanded(!isExpanded);
-		onToggleClick?.(e);
+		if (onToggleClick) {
+			onToggleClick(e);
+		}
 	};
 
 	const appliedWrapperStyle = wrapperStyle || defaultWrapperStyle;
@@ -111,7 +121,7 @@ const ReadMoreText = ({
 				{children}
 			</div>
 
-			{needsToggle && (
+			{isTruncated && (
 				<button onClick={handleToggle} css={linkStyle(theme)}>
 					{isExpanded ? expandedText : collapsedText}
 					<ChevronDown fill={theme.colors.accent_dark} width={10} height={10} style={getChevronStyle(isExpanded)} />
