@@ -43,7 +43,6 @@ const scrollWrapperStyle = css`
 const shadowStyle = css`
 	position: absolute;
 	top: 0.7%;
-	z-index: 100;
 	width: 20px;
 	height: 100%;
 	pointer-events: none;
@@ -70,6 +69,7 @@ const tableContainerStyle = css`
 `;
 
 const tableStyle = css`
+	width: 100%;
 	min-width: 1200px;
 	border-collapse: collapse;
 	border: 1px solid lightgray;

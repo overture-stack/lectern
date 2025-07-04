@@ -39,12 +39,10 @@ const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 	white-space: pre-wrap;
 	overflow-wrap: break-word;
 	word-break: break-word;
-	vertical-align: top;
 	${cellIndex === 0 &&
 	`
 		position: sticky;
 		left: 0;
-		z-index: 10;
 		background-color: ${rowIndex % 2 === 0 ? 'white' : '#F5F7F8'};
 	`}
 	border: 1px solid #DCDDE1;
