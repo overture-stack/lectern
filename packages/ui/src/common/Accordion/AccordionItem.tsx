@@ -45,6 +45,7 @@ const accordionItemStyle = (theme: Theme) => css`
 	border-radius: 8px;
 	margin-bottom: 1px;
 	overflow: hidden;
+	background-color: #ffffff;
 	box-shadow:
 		0 2px 6px rgba(70, 63, 63, 0.05),
 		0 0 0 0.3px ${theme.colors.black};
@@ -61,7 +62,6 @@ const accordionItemTitleStyle = css`
 	align-items: flex-start;
 	justify-content: space-between;
 	padding: 24px 20px;
-	background-color: #ffffff;
 	transition: all 0.2s ease;
 	width: 100%;
 	box-sizing: border-box;
@@ -138,7 +138,6 @@ const accordionCollapseStyle = (isOpen: boolean) => css`
 
 const accordionItemContentStyle = css`
 	padding: 30px;
-	background-color: #ffffff;
 `;
 
 const contentInnerContainerStyle = (theme: Theme) => css`
@@ -208,12 +207,12 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 							<Hash width={20} height={20} fill={theme.colors.secondary} />
 						</button>
 					</div>
-					{/* Mock props for the dictionary since we haven't implemented the download per schema yet */}
 					<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle}>
 						{description}
 					</ReadMoreText>
 				</div>
 				<div css={downloadButtonContainerStyle}>
+					{/* Mock props for the dictionary since we haven't implemented the download per schema yet */}
 					<DictionaryDownloadButton
 						lecternUrl=""
 						version=""
