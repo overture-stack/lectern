@@ -22,26 +22,16 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import type { ReactNode, RefObject } from 'react';
+import type { RefObject } from 'react';
 import { MouseEvent, useEffect, useRef } from 'react';
 
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
-import DictionaryDownloadButton, {
-	DictionaryDownloadButtonProps,
-} from '../../viewer-table/InteractionPanel/DownloadTemplatesButton';
+import DictionaryDownloadButton from '../../viewer-table/InteractionPanel/DownloadTemplatesButton';
 import ReadMoreText from '../ReadMoreText';
-import { AccordionOpenState, useClipboard } from './Accordion';
+import { AccordionData, AccordionOpenState, useClipboard } from './Accordion';
 
 const MAX_LINES_BEFORE_EXPAND = 2;
-
-export type AccordionData = {
-	title: string;
-	openOnInit: boolean;
-	description?: string;
-	content: ReactNode;
-	dictionaryDownloadButtonProps: DictionaryDownloadButtonProps;
-};
 
 export type AccordionItemProps = {
 	accordionData: AccordionData;
@@ -187,7 +177,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 	const accordionRef = useRef<HTMLLIElement>(null);
 	const theme = useThemeContext();
 	const { setClipboardContents } = useClipboard();
-	const { description, title, content, dictionaryDownloadButtonProps } = accordionData;
+	const { description, title, content, schemaName } = accordionData;
 	const { ChevronDown, Hash } = theme.icons;
 
 	const indexString = index.toString();
@@ -223,7 +213,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 						</ReadMoreText>
 					)}
 				</div>
-				<DictionaryDownloadButton {...dictionaryDownloadButtonProps} />
+				<DictionaryDownloadButton lecternUrl="" version="" fileType="tsv" name={schemaName} />
 			</h2>
 			<div css={accordionCollapseStyle(openState.isOpen)}>
 				<div css={accordionItemContentStyle}>

@@ -22,10 +22,17 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 
-import AccordionItem, { AccordionData } from './AccordionItem';
+import AccordionItem from './AccordionItem';
 
+export type AccordionData = {
+	title: string;
+	openOnInit: boolean;
+	description?: string;
+	content: ReactNode;
+	schemaName: string;
+};
 export type AccordionProps = {
 	accordionItems: Array<AccordionData>;
 };
