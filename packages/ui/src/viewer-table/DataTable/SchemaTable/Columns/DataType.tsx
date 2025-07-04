@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -16,48 +15,39 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { flexRender, HeaderGroup } from '@tanstack/react-table';
+import { SchemaField } from '@overture-stack/lectern-dictionary';
+import { CellContext } from '@tanstack/react-table';
 
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import React from 'react';
+import Pill from '../../../../common/Pill';
 
-const thStyle = (theme: Theme, index: number) => css`
-	${theme.typography.heading};
-	background: #e5edf3;
-	text-align: left;
-	padding: 12px;
-	border-bottom: 1px solid #dcdcdc;
-	${index === 0 &&
-	`
-		position: sticky;
-		left: 0;
-		z-index: 20;
-		background-color: #e5edf3;
-	`}
-	border: 1px solid #DCDDE1;
+export type DataTypeColumnProps = {
+	type: CellContext<SchemaField, string>;
+};
+
+const containerStyle = css`
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	gap: 10px;
 `;
 
-export type TableHeaderProps<T> = {
-	headerGroup: HeaderGroup<T>;
-};
+export const renderDataTypeColumn = (type: CellContext<SchemaField, string>) => {
+	const { valueType, isArray, unique } = type.row.original;
 
-const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
-	const theme = useThemeContext();
+	const renderContent = (): string => {
+		return isArray ? 'Array' : valueType.charAt(0).toUpperCase() + valueType.slice(1);
+	};
+
 	return (
-		<tr key={headerGroup.id}>
-			{headerGroup.headers.map((header, index) => (
-				<th key={header.id} colSpan={header.colSpan} css={thStyle(theme, index)}>
-					{flexRender(header.column.columnDef.header, header.getContext())}
-				</th>
-			))}
-		</tr>
+		<div css={containerStyle}>
+			<Pill>{renderContent()}</Pill>
+			{unique && <Pill>Unique</Pill>}
+		</div>
 	);
 };
-
-export default TableHeader;
