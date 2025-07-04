@@ -20,26 +20,27 @@
  */
 
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
+import { css, SerializedStyles } from '@emotion/react';
 import React, { ReactNode } from 'react';
-
 import { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
 
 export interface ButtonProps {
 	children?: ReactNode;
 	disabled?: boolean;
+	styleOverride?: SerializedStyles;
 	onClick?: (
 		e: React.SyntheticEvent<HTMLButtonElement>,
 	) => any | ((e: React.SyntheticEvent<HTMLButtonElement>) => Promise<any>);
 	isAsync?: boolean;
 	className?: string;
 	isLoading?: boolean;
-	leftIcon?: ReactNode;
+	icon?: ReactNode;
 	width?: string;
+	iconOnly?: boolean;
 }
 
-const getButtonContainerStyles = (theme: any, width?: string) => css`
+const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: SerializedStyles) => css`
 	display: flex;
 	flex-wrap: nowrap;
 	align-items: center;
@@ -66,6 +67,7 @@ const getButtonContainerStyles = (theme: any, width?: string) => css`
 		cursor: not-allowed;
 		opacity: 0.7;
 	}
+	${styleOverride}
 `;
 
 const getContentStyles = (theme: Theme, shouldShowLoading: boolean) => css`
@@ -102,8 +104,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 			isAsync = false,
 			className,
 			isLoading: controlledLoading,
-			leftIcon,
+			icon,
 			width,
+			iconOnly = false,
+			styleOverride,
 		}: ButtonProps,
 		ref,
 	) => {
@@ -123,10 +127,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				onClick={isAsync ? handleClick : onClick}
 				disabled={disabled || shouldShowLoading}
 				className={className}
-				css={getButtonContainerStyles(theme, width)}
+				css={getButtonContainerStyles(theme, width, styleOverride)}
 			>
-				{leftIcon && !shouldShowLoading && <span css={getIconStyles()}>{leftIcon}</span>}
-				<span css={getContentStyles(theme, shouldShowLoading)}>{children}</span>
+				{icon && !shouldShowLoading && <span css={getIconStyles()}>{icon}</span>}
+				{/* If iconOnly is true, we don't show the children */}
+				{!iconOnly && <span css={getContentStyles(theme, shouldShowLoading)}>{children}</span>}
 				<span css={getSpinnerStyles(shouldShowLoading)}>
 					<Spinner height={20} width={20} />
 				</span>

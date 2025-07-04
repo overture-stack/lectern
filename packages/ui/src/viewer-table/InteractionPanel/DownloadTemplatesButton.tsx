@@ -21,8 +21,8 @@
 
 /** @jsxImportSource @emotion/react */
 
+import { css } from '@emotion/react';
 import { useState } from 'react';
-
 import Button from '../../common/Button';
 import { useThemeContext } from '../../theme/ThemeContext';
 
@@ -32,6 +32,30 @@ export type DictionaryDownloadButtonProps = {
 	lecternUrl: string;
 	fileType: 'tsv' | 'csv';
 	disabled?: boolean;
+	iconOnly?: boolean;
+};
+
+const downloadDictionary = async ({ fetchUrl, name, version }) => {
+	const res = await fetch(fetchUrl);
+
+	if (!res.ok) {
+		throw new Error(`Failed with status ${res.status}`);
+	}
+
+	//Triggers a file download in the browser by creating a temporary link to a Blob
+	// and simulating a click.
+
+	const blob = await res.blob();
+	const url = URL.createObjectURL(blob);
+
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = `${name}_${version}_templates.zip`;
+	document.body.appendChild(a);
+	a.click();
+	document.body.removeChild(a);
+
+	URL.revokeObjectURL(url);
 };
 
 const DictionaryDownloadButton = ({
@@ -40,6 +64,7 @@ const DictionaryDownloadButton = ({
 	lecternUrl,
 	fileType = 'tsv',
 	disabled = false,
+	iconOnly = false,
 }: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const theme = useThemeContext();
@@ -51,38 +76,30 @@ const DictionaryDownloadButton = ({
 		fileType,
 	})}`;
 
-	const downloadDictionary = async () => {
-		try {
-			setIsLoading(true);
-			const res = await fetch(fetchUrl);
-
-			if (!res.ok) {
-				throw new Error(`Failed with status ${res.status}`);
-			}
-
-			//Triggers a file download in the browser by creating a temporary link to a Blob
-			// and simulating a click.
-
-			const blob = await res.blob();
-			const url = URL.createObjectURL(blob);
-
-			const a = document.createElement('a');
-			a.href = url;
-			a.download = `${name}_${version}_templates.zip`;
-			document.body.appendChild(a);
-			a.click();
-			document.body.removeChild(a);
-
-			URL.revokeObjectURL(url);
-		} catch (error) {
-			console.error('Error downloading dictionary:', error);
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
 	return (
-		<Button leftIcon={<FileDownload />} onClick={downloadDictionary} disabled={disabled || isLoading}>
+		<Button
+			iconOnly={iconOnly}
+			styleOverride={
+				iconOnly ?
+					css`
+						padding: 8px;
+					`
+				:	undefined
+			}
+			icon={<FileDownload />}
+			onClick={async (e) => {
+				e.stopPropagation();
+				setIsLoading(true);
+				try {
+					await downloadDictionary({ fetchUrl, name, version });
+				} catch (error) {
+					console.error('Error downloading dictionary:', error);
+				} finally {
+					setIsLoading(false);
+				}
+			}}
+			disabled={disabled || isLoading}
+		>
 			Submission Templates
 		</Button>
 	);

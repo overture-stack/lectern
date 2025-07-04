@@ -21,49 +21,28 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css, SerializedStyles } from '@emotion/react';
-import { ReactNode } from 'react';
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import IconProps from './IconProps';
 
-type DropDownItemProps = {
-	action?: string | (() => void);
-	children: ReactNode;
-	customStyles?: {
-		hover?: SerializedStyles;
-		base?: SerializedStyles;
-	};
+const Hash = ({ fill, width, height, style }: IconProps) => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width={width || '24'}
+			height={height || '24'}
+			viewBox="0 0 24 24"
+			css={style}
+			stroke={fill || 'currentColor'}
+			fill="none"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		>
+			<line x1="4" x2="20" y1="9" y2="9" />
+			<line x1="4" x2="20" y1="15" y2="15" />
+			<line x1="10" x2="8" y1="3" y2="21" />
+			<line x1="16" x2="14" y1="3" y2="21" />
+		</svg>
+	);
 };
 
-const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
-	display: flex;
-	min-height: 100%;
-	padding-bottom: 5px;
-	height: 100%;
-	align-items: center;
-	border-radius: 9px;
-	justify-content: center;
-	color: ${theme.colors.accent_dark};
-	cursor: pointer;
-	&:hover {
-		background-color: ${theme.colors.grey_1};
-	}
-
-	${customStyles?.base}
-`;
-
-const DropDownItem = ({ children, action, customStyles }: DropDownItemProps) => {
-	const theme = useThemeContext();
-	const content = <div css={styledListItemStyle(theme, customStyles)}>{children}</div>;
-	if (typeof action === 'function') {
-		return (
-			<div onClick={action} css={styledListItemStyle(theme, customStyles)}>
-				{children}
-			</div>
-		);
-	}
-
-	return content;
-};
-
-export default DropDownItem;
+export default Hash;
