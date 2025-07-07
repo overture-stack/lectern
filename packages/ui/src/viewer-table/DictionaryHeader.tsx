@@ -21,9 +21,9 @@
 
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
+import ReadMoreText from '../common/ReadMoreText';
 import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
-import ReadMoreText from '../common/ReadMoreText';
 
 export type DictionaryHeaderProps = {
 	name: string;
