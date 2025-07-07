@@ -21,7 +21,7 @@
 import { css } from '@emotion/react';
 import { DictionaryMeta, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { MouseEvent, useEffect, useMemo, useState } from 'react';
 
 import Pill from '../../../../common/Pill';
 import { Theme } from '../../../../theme';
@@ -52,7 +52,7 @@ export type FieldNameProps = {
 	name: string;
 	uniqueKeys: string[];
 	index: number;
-	onHashClick: () => void;
+	onHashClick: (event: MouseEvent) => void;
 	foreignKey: string;
 };
 
@@ -91,7 +91,7 @@ const FieldName = ({ name, onHashClick, uniqueKeys, foreignKey }: FieldNameProps
 	return (
 		<div css={fieldNameStyle}>
 			{name}
-			<span css={hashIconStyle(theme)} onClick={onHashClick}>
+			<span css={hashIconStyle(theme)} onClick={(event) => onHashClick(event)}>
 				<Hash width={10} height={10} fill={theme.colors.secondary} />
 			</span>
 			{displayKeys.length === 1 && !foreignKey && <Pill size="small">{displayKeys}</Pill>}
@@ -116,9 +116,13 @@ const useHashNavigation = (fieldIndex: number) => {
 };
 
 const useHashClickHandler = (fieldIndex: number, setClipboardContents: (clipboardContents: string) => void) => {
-	return () => {
+	return (event: MouseEvent) => {
+		event.stopPropagation();
 		const hashTarget = `field-${fieldIndex}`;
-		window.location.hash = `#${hashTarget}`;
+		const windowLocationHash = `#${hashTarget}`;
+		setClipboardContents(
+			`${window.location.origin}${window.location.pathname}${window.location.search}${windowLocationHash}`,
+		);
 		setClipboardContents(window.location.href);
 	};
 };

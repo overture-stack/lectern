@@ -141,7 +141,6 @@ const contentInnerContainerStyle = (theme: Theme) => css`
 
 const handleInitialHashCheck = (
 	windowLocationHash: string,
-	accordionData: AccordionData,
 	openState: AccordionOpenState,
 	indexString: string,
 	accordionRef: RefObject<HTMLLIElement | null>,
@@ -176,7 +175,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 
 	useEffect(() => {
 		setTimeout(() => {
-			handleInitialHashCheck(windowLocationHash, accordionData, openState, indexString, accordionRef);
+			handleInitialHashCheck(windowLocationHash, openState, indexString, accordionRef);
 		}, 100);
 	}, []);
 
