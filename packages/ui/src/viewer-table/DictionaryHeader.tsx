@@ -24,7 +24,6 @@ import { css } from '@emotion/react';
 import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
 import ReadMoreText from '../common/ReadMoreText';
-import colours from './styles/colours';
 
 export type DictionaryHeaderProps = {
 	name: string;
@@ -32,24 +31,17 @@ export type DictionaryHeaderProps = {
 	version?: string;
 };
 
-// Was unable to find the appropriate font size for the version numbering in the current design system, that matches
-// Figma mockup so we are using something that is somewhat close with a hard coded font size
-
 const descriptionWrapperStyle = (theme: Theme) => css`
-	${theme.typography?.data}
-	font-size: 16px;
+	${theme.typography.paragraphSmall}
 	color: white;
 	padding: 0;
-
 	button {
-		${theme.typography?.subheading}
+		${theme.typography.paragraphSmallBold}
 		color: white;
 		margin-top: 4px;
-
 		&:hover {
 			text-decoration: underline;
 		}
-
 		svg {
 			fill: white;
 		}
@@ -57,8 +49,7 @@ const descriptionWrapperStyle = (theme: Theme) => css`
 `;
 
 const containerStyle = (theme: Theme) => css`
-	background-color: ${colours.accent1_1};
-	${theme.typography.heading}
+	background-color: ${theme.colors.accent_dark};
 	display: flex;
 	margin-bottom: 1rem;
 	padding: 2.5rem;
@@ -77,25 +68,16 @@ const titleColumnStyle = css`
 	margin-right: 2rem;
 `;
 
-// Was unable to find the appropriate font size for the title in the current design system, that matches
-// Figma mockup so it is HARDCODED for now
-
-const titleStyle = css`
-	font-weight: 700;
-	font-size: 30px;
+const titleStyle = (theme: Theme) => css`
+	${theme.typography.subtitle}
 	color: white;
-	line-height: 100%;
 	margin: 0;
 	margin-bottom: 0.5rem;
 `;
 
-// Was unable to find the appropriate font size for the version numbering in the current design system, that matches
-// Figma mockup so we are using something that is somewhat close
-
 const versionStyle = (theme: Theme) => css`
-	${theme.typography.data}
+	${theme.typography.paragraphSmall}
 	color: white;
-	font-size: 17px;
 `;
 
 const descriptionColumnStyle = css`
@@ -112,7 +94,7 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 		<div css={containerStyle(theme)}>
 			<div css={rowLayoutStyle}>
 				<div css={titleColumnStyle}>
-					<h1 css={titleStyle}>{name}</h1>
+					<h1 css={titleStyle(theme)}>{name}</h1>
 					{version && <span css={versionStyle(theme)}>{version}</span>}
 				</div>
 				{description && (
