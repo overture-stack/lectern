@@ -147,7 +147,9 @@ const handleInitialHashCheck = (
 ) => {
 	if (window.location.hash === windowLocationHash) {
 		openState.toggle();
-		accordionRef.current?.id === indexString ? accordionRef.current.scrollIntoView({ behavior: 'smooth' }) : null;
+		accordionRef.current?.id === indexString ?
+			accordionRef.current.scrollIntoView({ block: 'center', behavior: 'smooth' })
+		:	null;
 	}
 };
 

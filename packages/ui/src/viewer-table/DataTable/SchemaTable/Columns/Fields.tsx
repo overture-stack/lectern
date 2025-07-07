@@ -44,6 +44,9 @@ const fieldContainerStyle = css`
 	scroll-margin: 40%;
 `;
 
+export type FieldColumnProps = {
+	field: CellContext<SchemaField, string>;
+};
 export type FieldExamplesProps = {
 	examples: DictionaryMeta[string];
 };
@@ -127,7 +130,11 @@ const useHashClickHandler = (fieldIndex: number, setClipboardContents: (clipboar
 	};
 };
 
-export const FieldsColumn = ({ field }: { field: CellContext<SchemaField, string> }) => {
+export const FieldsColumn = ({ field }: FieldColumnProps) => {
+	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
+	const [isCopying, setIsCopying] = useState(false);
+	const [copySuccess, setCopySuccess] = useState(false);
+
 	const fieldName = field.row.original.name;
 	const fieldIndex = field.row.index;
 	const fieldDescription = field.row.original.description;
@@ -135,9 +142,6 @@ export const FieldsColumn = ({ field }: { field: CellContext<SchemaField, string
 	const fieldRestrictions: SchemaRestrictions = field.row.original.restrictions;
 	const uniqueKey = fieldRestrictions && 'uniqueKey' in fieldRestrictions ? fieldRestrictions.uniqueKey : [''];
 	const foreignKey = fieldRestrictions && 'foreignKey' in fieldRestrictions && fieldRestrictions.foreignKey;
-	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
-	const [isCopying, setIsCopying] = useState(false);
-	const [copySuccess, setCopySuccess] = useState(false);
 
 	const handleCopy = (text: string) => {
 		if (isCopying) {
