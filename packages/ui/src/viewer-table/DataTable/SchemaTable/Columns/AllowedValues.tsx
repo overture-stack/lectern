@@ -251,7 +251,7 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 		<div>
 			{restrictionItems.map(renderRestrictionItem)}
 			{hasConditionalRestrictions && (
-				<div onClick={handleViewDetails} css={linkStyle(theme)}>
+				<div onClick={handleViewDetails} tabIndex={0} role="button" css={linkStyle(theme)}>
 					View details
 				</div>
 			)}

@@ -40,6 +40,7 @@ export type AccordionItemProps = {
 };
 
 const accordionItemStyle = (theme: Theme) => css`
+	list-style: none;
 	width: 100%;
 	border-radius: 8px;
 	margin-bottom: 1px;
@@ -157,6 +158,7 @@ const hashOnClick = (
 	setClipboardContents: (currentSchema: string) => void,
 ) => {
 	event.stopPropagation();
+	event.preventDefault();
 	window.location.hash = windowLocationHash;
 	setClipboardContents(window.location.href);
 };
@@ -182,7 +184,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 			<div css={accordionItemTitleStyle}>
 				<div css={contentContainerStyle}>
 					<div css={titleRowStyle}>
-						<button type="button" css={accordionItemButtonStyle(theme)}>
+						<button css={accordionItemButtonStyle(theme)}>
 							<ChevronDown
 								fill={theme.colors.accent_dark}
 								width={16}
