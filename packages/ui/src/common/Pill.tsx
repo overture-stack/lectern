@@ -33,13 +33,11 @@ const getVariantStyles = (variant: PillVariant, theme: Theme) => {
 	return VARIANT_STYLES[variant];
 };
 
-const getSizeStyles = (size: PillSize) => {
+const getSizeStyles = (size: PillSize, theme: Theme) => {
 	const sizeStyles = {
 		'extra-small': {
 			padding: '1px 6px',
-			fontSize: '8px',
-			fontWeight: '700',
-			lineHeight: '12px',
+			font: { ...theme.typography.captionBold },
 			borderRadius: '3px',
 			gap: '3px',
 			width: '65px',
@@ -47,9 +45,7 @@ const getSizeStyles = (size: PillSize) => {
 		},
 		small: {
 			padding: '2px 8px',
-			fontSize: '10px',
-			fontWeight: '700',
-			lineHeight: '14px',
+			font: { ...theme.typography.captionBold },
 			borderRadius: '4px',
 			gap: '4px',
 			width: '80px',
@@ -57,9 +53,7 @@ const getSizeStyles = (size: PillSize) => {
 		},
 		medium: {
 			padding: '4px 12px',
-			fontSize: '16px',
-			fontWeight: '700',
-			lineHeight: '16px',
+			font: { ...theme.typography.paragraphSmallBold },
 			borderRadius: '5px',
 			gap: '6px',
 			width: '95px',
@@ -67,9 +61,7 @@ const getSizeStyles = (size: PillSize) => {
 		},
 		large: {
 			padding: '6px 16px',
-			fontSize: '14px',
-			fontWeight: '700',
-			lineHeight: '20px',
+			font: { ...theme.typography.dataBold },
 			borderRadius: '6px',
 			gap: '8px',
 			width: '150px',
@@ -83,17 +75,15 @@ const getSizeStyles = (size: PillSize) => {
 const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, style }: PillProps) => {
 	const theme = useThemeContext();
 	const variantStyles = getVariantStyles(variant, theme);
-	const sizeStyles = getSizeStyles(size);
+	const sizeStyles = getSizeStyles(size, theme);
 
 	const pillStyles = css`
+		${sizeStyles.font}
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		gap: ${sizeStyles.gap};
 		padding: ${sizeStyles.padding};
-		font-size: ${sizeStyles.fontSize};
-		line-height: ${sizeStyles.lineHeight};
-		font-weight: ${sizeStyles.fontWeight};
 		border-radius: ${sizeStyles.borderRadius};
 		background-color: ${variantStyles.background};
 		color: ${variantStyles.color};
@@ -119,7 +109,6 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, s
 				.pill-icon {
 					display: flex;
 					align-items: center;
-					font-size: ${parseInt(sizeStyles.fontSize) - 2}px;
 					flex-shrink: 0;
 				}
 			`
