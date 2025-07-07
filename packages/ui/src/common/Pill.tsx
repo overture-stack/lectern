@@ -13,6 +13,7 @@ export interface PillProps {
 	icon?: ReactNode;
 	onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 	style?: CSSProperties;
+	fullWidth?: boolean;
 }
 
 const getVariantStyles = (variant: PillVariant, theme: Theme) => {
@@ -72,7 +73,7 @@ const getSizeStyles = (size: PillSize, theme: Theme) => {
 	return sizeStyles[size];
 };
 
-const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, style }: PillProps) => {
+const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, style, fullWidth }: PillProps) => {
 	const theme = useThemeContext();
 	const variantStyles = getVariantStyles(variant, theme);
 	const sizeStyles = getSizeStyles(size, theme);
@@ -90,7 +91,7 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, s
 		border: ${variantStyles.border};
 		transition: all 0.2s ease-in-out;
 		user-select: none;
-		width: ${sizeStyles.width};
+		width: ${fullWidth ? 'fit-content' : sizeStyles.width};
 		max-width: ${sizeStyles.maxWidth};
 		text-align: center;
 		word-wrap: break-word;

@@ -97,7 +97,11 @@ const FieldName = ({ name, onHashClick, uniqueKeys, foreignKey }: FieldNameProps
 			<span css={hashIconStyle(theme)} onClick={(event) => onHashClick(event)}>
 				<Hash width={10} height={10} fill={theme.colors.secondary} />
 			</span>
-			{displayKeys.length === 1 && !foreignKey && <Pill size="small">{displayKeys}</Pill>}
+			{displayKeys.length === 1 && !foreignKey && (
+				<Pill fullWidth={true} size="small">
+					{displayKeys}
+				</Pill>
+			)}
 			{displayKeys.length > 1 && !foreignKey && <OpenModalPill title="Primary Key" />}
 			{foreignKey && <OpenModalPill title="Foreign Key" />}
 		</div>

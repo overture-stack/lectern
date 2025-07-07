@@ -197,7 +197,7 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 	const theme = useThemeContext();
 
 	const linkStyle = (theme: Theme) => css`
-		${theme.typography.paragraphSmallBold};
+		${theme.typography.dataBold};
 		color: ${theme.colors.black};
 		cursor: pointer;
 		display: inline-flex;
@@ -224,7 +224,9 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 			return (
 				<div key={`${prefix}-${content}`}>
 					{prefix && <strong>{prefix}</strong>}
-					<Pill size="extra-small">{content}</Pill>
+					<Pill fullWidth={true} size="extra-small">
+						{content}
+					</Pill>
 				</div>
 			);
 		}

@@ -47,11 +47,11 @@ const accordionItemStyle = (theme: Theme) => css`
 	overflow: hidden;
 	background-color: #ffffff;
 	box-shadow:
-		0 2px 6px rgba(70, 63, 63, 0.05),
+		0 2px 6px rgba(70, 63, 63, 0.3),
 		0 0 0 0.3px ${theme.colors.black};
 	&:hover {
 		box-shadow:
-			0 2px 6px rgba(70, 63, 63, 0.2),
+			0 2px 6px rgba(70, 63, 63, 0.5),
 			0 0 0 0.3px ${theme.colors.black};
 	}
 	transition: all 0.3s ease;
