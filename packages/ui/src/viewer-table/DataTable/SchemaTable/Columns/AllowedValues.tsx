@@ -197,7 +197,7 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 	const theme = useThemeContext();
 
 	const linkStyle = (theme: Theme) => css`
-		${theme.typography?.label};
+		${theme.typography.paragraphSmallBold};
 		color: ${theme.colors.black};
 		cursor: pointer;
 		display: inline-flex;
@@ -212,27 +212,19 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 		}
 	`;
 
-	const pillStyle = {
-		fontFamily: 'B612 Mono',
-		color: theme.colors.accent_dark,
-		fontWeight: '400',
-		lineHeight: '20px',
-		fontSize: '13px',
-	};
 	//TODO: implement the modal
 	const handleViewDetails = () => {
 		alert('Modal has been opened\n\n\n Hello World');
 	};
 
+	//TODO: Fix the theming issues here with the <strong>
 	const renderRestrictionItem = (item: restrictionItem) => {
 		const { prefix, content } = item;
 		if (prefix === 'Depends on:\n') {
 			return (
 				<div key={`${prefix}-${content}`}>
 					{prefix && <strong>{prefix}</strong>}
-					<Pill size="extra-small" style={pillStyle}>
-						{content}
-					</Pill>
+					<Pill size="extra-small">{content}</Pill>
 				</div>
 			);
 		}
