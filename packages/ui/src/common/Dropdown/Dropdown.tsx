@@ -68,13 +68,13 @@ const chevronStyle = (open: boolean) => css`
 `;
 
 const dropDownTitleStyle = (theme: Theme) => css`
-	${theme.typography?.button};
+	${theme.typography?.subtitleSecondary};
 	color: ${theme.colors.accent_dark};
 `;
 
 const dropdownMenuStyle = (theme: Theme) => css`
 	all: unset;
-	${theme.typography?.button};
+	${theme.typography?.subtitleSecondary};
 	position: absolute;
 	top: calc(100% + 5px);
 	width: 100%;

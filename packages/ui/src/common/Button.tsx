@@ -74,7 +74,7 @@ const getContentStyles = (theme: Theme, shouldShowLoading: boolean) => css`
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	${theme.typography.button};
+	${theme.typography.subtitleSecondary};
 	color: inherit;
 	white-space: nowrap;
 	overflow: hidden;

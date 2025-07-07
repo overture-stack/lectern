@@ -76,7 +76,7 @@ const accordionItemButtonStyle = (theme: Theme) => css`
 	padding: 8px 0px;
 `;
 const titleStyle = (theme: Theme) => css`
-	${theme.typography?.button};
+	${theme.typography?.subtitleSecondary};
 	color: ${theme.colors.accent_dark};
 	text-align: left;
 `;
@@ -117,7 +117,7 @@ const hashIconStyle = (theme: Theme) => css`
 `;
 
 const descriptionWrapperStyle = (theme: Theme) => css`
-	${theme.typography?.data};
+	${theme.typography.paragraphSmall};
 	color: ${theme.colors.black};
 	overflow-wrap: break-word;
 	margin-left: 16px;
@@ -159,8 +159,9 @@ const hashOnClick = (
 ) => {
 	event.stopPropagation();
 	event.preventDefault();
-	window.location.hash = windowLocationHash;
-	setClipboardContents(window.location.href);
+	setClipboardContents(
+		`${window.location.origin}${window.location.pathname}${window.location.search}${windowLocationHash}`,
+	);
 };
 
 const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) => {
