@@ -71,7 +71,7 @@ const FieldExamples = ({ examples }: FieldExamplesProps) => {
 
 	return (
 		<div>
-			<p css={theme.typography.label}>
+			<p css={theme.typography.dataBold}>
 				{label} <span css={theme.typography.data}>{text}</span>
 			</p>
 		</div>
@@ -83,7 +83,7 @@ const FieldName = ({ name, onHashClick, uniqueKeys, foreignKey }: FieldNameProps
 	const { Hash } = theme.icons;
 	const displayKeys = uniqueKeys.filter((value) => value !== '');
 	const fieldNameStyle = css`
-		${theme.typography.label}
+		${theme.typography.dataBold}
 		display: flex;
 		align-items: center;
 		gap: 2px;

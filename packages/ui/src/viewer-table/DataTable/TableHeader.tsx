@@ -28,7 +28,7 @@ import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 const thStyle = (theme: Theme, index: number) => css`
-	${theme.typography.heading};
+	${theme.typography.subtitleSecondary};
 	background: #e5edf3;
 	text-align: left;
 	padding: 12px;
