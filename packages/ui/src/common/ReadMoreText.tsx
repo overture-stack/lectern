@@ -37,7 +37,7 @@ export type ReadMoreTextProps = {
 };
 
 const defaultWrapperStyle = (theme: Theme) => css`
-	${theme.typography?.label2};
+	${theme.typography.caption};
 	color: ${theme.colors.grey_5};
 	padding: 4px 8px;
 	word-wrap: break-word;
@@ -45,7 +45,7 @@ const defaultWrapperStyle = (theme: Theme) => css`
 `;
 
 const linkStyle = (theme: Theme) => css`
-	${theme.typography?.label};
+	${theme.typography.captionBold};
 	color: ${theme.colors.black};
 	cursor: pointer;
 	display: inline-flex;
