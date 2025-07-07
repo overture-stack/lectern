@@ -172,15 +172,13 @@ export const FieldsColumn = ({ field }: { field: CellContext<SchemaField, string
 
 	return (
 		<div id={`field-${fieldIndex}`} css={fieldContainerStyle}>
-			{typeof foreignKey === 'string' && (
-				<FieldName
-					name={fieldName}
-					index={fieldIndex}
-					onHashClick={handleHashClick}
-					uniqueKeys={uniqueKey as string[]}
-					foreignKey={foreignKey}
-				/>
-			)}
+			<FieldName
+				name={fieldName}
+				index={fieldIndex}
+				onHashClick={handleHashClick}
+				uniqueKeys={uniqueKey as string[]}
+				foreignKey={foreignKey as string}
+			/>
 			{fieldDescription && <FieldDescription description={fieldDescription} />}
 			{!foreignKey && fieldExamples && <FieldExamples examples={fieldExamples} />}
 		</div>
