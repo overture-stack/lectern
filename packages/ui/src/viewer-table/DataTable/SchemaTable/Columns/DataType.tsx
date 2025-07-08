@@ -23,7 +23,6 @@ import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
 
-import React from 'react';
 import Pill from '../../../../common/Pill';
 
 export type DataTypeColumnProps = {
@@ -39,14 +38,9 @@ const containerStyle = css`
 
 export const renderDataTypeColumn = (type: CellContext<SchemaField, string>) => {
 	const { valueType, isArray } = type.row.original;
-
-	const renderContent = (): string => {
-		return isArray ? 'Array' : valueType.charAt(0).toUpperCase() + valueType.slice(1);
-	};
-
 	return (
 		<div css={containerStyle}>
-			<Pill>{renderContent()}</Pill>
+			<Pill>{isArray ? 'Array' : valueType.charAt(0).toUpperCase() + valueType.slice(1)}</Pill>
 		</div>
 	);
 };
