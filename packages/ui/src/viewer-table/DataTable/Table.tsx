@@ -43,7 +43,6 @@ const scrollWrapperStyle = css`
 const shadowStyle = css`
 	position: absolute;
 	top: 0.7%;
-	z-index: 100;
 	width: 20px;
 	height: 100%;
 	pointer-events: none;
