@@ -36,9 +36,6 @@ const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 	${theme.typography.data}
 	padding: 12px;
 	max-width: 30vw;
-	white-space: pre-wrap;
-	overflow-wrap: break-word;
-	word-break: break-word;
 	vertical-align: top;
 	${cellIndex === 0 &&
 	`
