@@ -4,7 +4,7 @@ A Lectern Dictionary is a JSON configuration that defines the structure and vali
 
 ## Dictionary Structure
 
-A Lectern Dictionary is a JSON configuration file that defines the structure and validation rules for your data files. At its core, every dictionary must contain three essential components: a **name**, **version**, and **schemas**. 
+A Lectern Dictionary is a JSON configuration file that defines the structure and validation rules for your data files. At its core, every dictionary must contain three essential components: a **name**, **version**, and **schemas**.
 
 ```json showLineNumbers {2-3,9-11}
 {
@@ -30,14 +30,14 @@ Optional components like descriptions, metadata, and references which can also b
 
 #### Dictionary Properties
 
-| Property      | Type            | Required | Description                            | Example                                         |
-| ------------- | --------------- | -------- | -------------------------------------- | ----------------------------------------------- |
-| `name`        | `string`        | ✓        | Display name of the dictionary         | `"clinical_data_dictionary"`                    |
-| `version`     | `string`        | ✓        | Semantic version (major.minor.patch)   | `"1.2.0"`                                       |
-| `schemas`     | `Array` | ✓        | List of schema definitions (minimum 1) | See [Schema Structure](#schema-structure) |
-| `description` | `string`        | ✗        | A human-readable description           | `"Clinical trial data schemas"`                 |
-| `meta`        | `object`        | ✗        | Any custom defined metadata fields                 | `{"author": "Clinical Data Team"}`              |
-| `references`  | `object`        | ✗        | Reusable reference values              | See [References](#references)                   |
+| Property      | Type     | Required | Description                            | Example                                   |
+| ------------- | -------- | -------- | -------------------------------------- | ----------------------------------------- |
+| `name`        | `string` | ✓        | Display name of the dictionary         | `"clinical_data_dictionary"`              |
+| `version`     | `string` | ✓        | Semantic version (major.minor.patch)   | `"1.2.0"`                                 |
+| `schemas`     | `Array`  | ✓        | List of schema definitions (minimum 1) | See [Schema Structure](#schema-structure) |
+| `description` | `string` | ✗        | A human-readable description           | `"Clinical trial data schemas"`           |
+| `meta`        | `object` | ✗        | Any custom defined metadata fields     | `{"author": "Clinical Data Team"}`        |
+| `references`  | `object` | ✗        | Reusable reference values              | See [References](#references)             |
 
 ## Schema Structure
 
@@ -75,12 +75,12 @@ At the schema-level descriptions and metadata can also be optionally added.
 
 #### Schema Properties
 
-| Property      | Type           | Required | Description                           |
-| ------------- | -------------- | -------- | ------------------------------------- |
-| `name`        | `string`       | ✓        | The schema identifier (no spaces or dots) |
-| `fields`      | `Array` | ✓        | List of field definitions, see [Field Structure](#field-structure)       |
-| `description` | `string`       | ✗        | A human-readable description            |
-| `meta`        | `object`       | ✗        | Any custom defined metadata fields                    |
+| Property      | Type     | Required | Description                                                        |
+| ------------- | -------- | -------- | ------------------------------------------------------------------ |
+| `name`        | `string` | ✓        | The schema identifier (no spaces or dots)                          |
+| `fields`      | `Array`  | ✓        | List of field definitions, see [Field Structure](#field-structure) |
+| `description` | `string` | ✗        | A human-readable description                                       |
+| `meta`        | `object` | ✗        | Any custom defined metadata fields                                 |
 
 ## Field Structure
 
@@ -128,7 +128,6 @@ At the schema-level descriptions and metadata can also be optionally added.
 
 The allowed values for `valueType` include:
 
-
 | Type      | Description                                         | Valid Examples                   | Invalid Examples       |
 | --------- | --------------------------------------------------- | -------------------------------- | ---------------------- |
 | `string`  | Text values (any characters except array delimiter) | `"Hello"`, `"PAT-001234"`, `""`  | N/A (accepts any text) |
@@ -136,21 +135,20 @@ The allowed values for `valueType` include:
 | `number`  | Any numeric value                                   | `42`, `3.14`, `-17.5`, `0`       | `"abc"`, `"N/A"`       |
 | `boolean` | True/false (case-insensitive)                       | `true`, `True`, `FALSE`, `false` | `yes`, `1`, `0`, `Y`   |
 
-
 #### Field Properties
 
 At the field-level the following properties can also be included:
 
-| Property       | Type           | Required | Default | Description                                               |
-| -------------- | -------------- | -------- | ------- | --------------------------------------------------------- |
-| `name`         | `string`       | ✓        | -       | Field identifier (used as a column header)                |
-| `description`  | `string`       | ✗        | `""`    | Human-readable description                                |
-| `valueType`    | `string`       | ✓        | -       | Data type: `string`, `integer`, `number`, `boolean`       |
-| `isArray`      | `boolean`      | ✗        | `false` | Whether field accepts multiple values                     |
-| `delimiter`    | `string`       | ✗        | `","`   | Separator for array values                                |
-| `unique`       | `boolean`      | ✗        | `false` | Whether values must be unique across records              |
+| Property       | Type           | Required | Default | Description                                                                                              |
+| -------------- | -------------- | -------- | ------- | -------------------------------------------------------------------------------------------------------- |
+| `name`         | `string`       | ✓        | -       | Field identifier (used as a column header)                                                               |
+| `description`  | `string`       | ✗        | `""`    | Human-readable description                                                                               |
+| `valueType`    | `string`       | ✓        | -       | Data type: `string`, `integer`, `number`, `boolean`                                                      |
+| `isArray`      | `boolean`      | ✗        | `false` | Whether field accepts multiple values                                                                    |
+| `delimiter`    | `string`       | ✗        | `","`   | Separator for array values                                                                               |
+| `unique`       | `boolean`      | ✗        | `false` | Whether values must be unique across records                                                             |
 | `restrictions` | `object/array` | ✗        | `{}`    | Where the validation rules/logic for the field is defined, see [Field Restrictions](#field-restrictions) |
-| `meta`         | `object`       | ✗        | `{}`    | Any custom defined metadata fields                                           |
+| `meta`         | `object`       | ✗        | `{}`    | Any custom defined metadata fields                                                                       |
 
 ## Field Restrictions
 
@@ -170,10 +168,9 @@ Field restrictions define the rules that field values must satisfy to be conside
 }
 ```
 
-:::note What this means: 
-Age must be provided and must be between 0-150 years old. 
+:::note What this means:
+Age must be provided and must be between 0-150 years old.
 :::
-
 
 Each restrictions object can contain:
 
@@ -185,11 +182,11 @@ Each restrictions object can contain:
 Ensures a field has a value.
 
 ```json showLineNumbers
-  {
-    "name": "patient_id",
-    "valueType": "string",
-    "restrictions": { "required": true }
-  }
+{
+  "name": "patient_id",
+  "valueType": "string",
+  "restrictions": { "required": true }
+}
 ```
 
 ### `codeList`
@@ -201,7 +198,12 @@ Restricts values to a predefined list of acceptable options.
   "name": "treatment_response",
   "valueType": "string",
   "restrictions": {
-    "codeList": ["Complete Response", "Partial Response", "Stable Disease", "Progressive Disease"]
+    "codeList": [
+      "Complete Response",
+      "Partial Response",
+      "Stable Disease",
+      "Progressive Disease"
+    ]
   }
 }
 ```
@@ -270,8 +272,8 @@ For human readability we recommend using the `description` property and creating
   },
   "meta": {
     "examples": [
-      "patient@example.com", 
-      "john.doe@hospital.org", 
+      "patient@example.com",
+      "john.doe@hospital.org",
       "contact123@healthcare.gov"
     ]
   }
@@ -303,10 +305,9 @@ Uses the same boundary options as `range`: `min`, `max`, `exclusiveMin`, `exclus
 The medications array must contain between 1 and 10 medication entries. Empty arrays or arrays with more than 10 items will be rejected.
 :::
 
-
 ### `empty`
 
-Requires a field to have no value. 
+Requires a field to have no value.
 
 ```json showLineNumbers
 {
@@ -323,23 +324,23 @@ The field must have no value - only empty strings, null, or undefined values are
 <details>
 <summary>**Here is a more practical example using conditional logic**</summary>
 
-The `empty` restriction becomes particularly useful when combined with [conditional restrictions](#conditions)  to create logical data rules:
+The `empty` restriction becomes particularly useful when combined with [conditional restrictions](#conditions) to create logical data rules:
 
-  ```json showLineNumbers
-  {
-    "name": "date_of_death",
-    "valueType": "string",
-    "restrictions": {
-      "if": {
-        "conditions": [
-          { "fields": ["patient_status"], "match": { "value": "alive" } }
-        ]
-      },
-      "then": { "empty": true },
-      "else": { "required": true }
-    }
+```json showLineNumbers
+{
+  "name": "date_of_death",
+  "valueType": "string",
+  "restrictions": {
+    "if": {
+      "conditions": [
+        { "fields": ["patient_status"], "match": { "value": "alive" } }
+      ]
+    },
+    "then": { "empty": true },
+    "else": { "required": true }
   }
-  ```
+}
+```
 
 **What this means:** If the patient status is "alive", then the date of death field must be empty. If the patient status is anything other than "alive", then the date of death field is required.
 
@@ -452,7 +453,6 @@ If `patient_status` equals "active" AND `enrollment_date` has a value, then `tre
 | `"any"`           | At least one condition must be true | Patient is active OR has enrollment date         |
 | `"none"`          | No conditions can be true           | Patient is NOT active AND has NO enrollment date |
 
-
 **Working with Arrays**
 
 When checking array fields, use `arrayFieldCase` to specify how many array elements must match. Here's a practical example using a medications field:
@@ -460,13 +460,15 @@ When checking array fields, use `arrayFieldCase` to specify how many array eleme
 ```json showLineNumbers {10}
 {
   "name": "follow_up_required",
-  "valueType": "boolean", 
+  "valueType": "boolean",
   "restrictions": {
     "if": {
       "conditions": [
         {
           "fields": ["current_medications"],
-          "match": { "codeList": ["chemotherapy", "immunotherapy", "targeted_therapy"] },
+          "match": {
+            "codeList": ["chemotherapy", "immunotherapy", "targeted_therapy"]
+          },
           "arrayFieldCase": "any"
         }
       ]
@@ -482,8 +484,8 @@ If the patient is taking ANY cancer treatment medication (chemotherapy, immunoth
 
 **Array Field Case Options:**
 
-| Value    | Description                          | Example Use Case |
-| -------- | ------------------------------------ | ---------------- |
+| Value    | Description                          | Example Use Case                              |
+| -------- | ------------------------------------ | --------------------------------------------- |
 | `"all"`  | All elements in the array must match | All medications must be from an approved list |
 | `"any"`  | At least one element must match      | Patient has at least one high-risk medication |
 | `"none"` | No elements can match                | Patient cannot have any contraindicated drugs |
@@ -500,7 +502,7 @@ If the patient is taking ANY cancer treatment medication (chemotherapy, immunoth
 
 // Example: Patient cannot have any experimental drugs
 {
-  "fields": ["medications"], 
+  "fields": ["medications"],
   "match": { "codeList": ["experimental_drug_A", "experimental_drug_B"] },
   "arrayFieldCase": "none"
 }
@@ -521,9 +523,9 @@ You can combine multiple conditions with different logic:
           "fields": ["treatment_response"],
           "match": { "codeList": ["partial_response", "stable_disease"] }
         },
-        { 
-          "fields": ["adverse_events"], 
-          "match": { "count": { "min": 1 } } 
+        {
+          "fields": ["adverse_events"],
+          "match": { "count": { "min": 1 } }
         }
       ],
       "case": "any" // either condition can trigger the requirement
@@ -541,7 +543,7 @@ If the treatment response is "partial_response" OR "stable_disease", OR if there
 
 In addition to field-level restrictions, Lectern Dictionaries support schema-level restrictions that establish relationships between schemas.
 
-### `uniqueKey` 
+### `uniqueKey`
 
 Primary keys identify unique records within a schema using the `uniqueKey` restriction applied at the schema level. They ensure that each record can be distinctly identified by one or more field values.
 
@@ -597,7 +599,7 @@ For cases where uniqueness requires multiple field combinations:
           }
         },
         {
-          "name": "visit_number", 
+          "name": "visit_number",
           "valueType": "integer",
           "restrictions": {
             "required": true,
@@ -646,7 +648,7 @@ Foreign keys establish relationships between schemas by referencing primary keys
       }
     },
     {
-      "name": "sociodemographic", 
+      "name": "sociodemographic",
       "description": "Captures sociodemographic characteristics",
       "fields": [
         {
@@ -681,20 +683,19 @@ Foreign keys establish relationships between schemas by referencing primary keys
 Every `submitter_participant_id` in the sociodemographic schema must match an existing `submitter_participant_id` in the participant schema. You cannot create sociodemographic records for participants that don't exist.
 :::
 
-
 #### Foreign Key Properties
 
-| Property   | Type                    | Required | Description                                   |
-| ---------- | ----------------------- | -------- | --------------------------------------------- |
-| `schema`   | `string`               | ✓        | Name of the referenced schema                 |
-| `mappings` | `Array<MappingObject>` | ✓        | Array of field mappings between schemas      |
+| Property   | Type                   | Required | Description                             |
+| ---------- | ---------------------- | -------- | --------------------------------------- |
+| `schema`   | `string`               | ✓        | Name of the referenced schema           |
+| `mappings` | `Array<MappingObject>` | ✓        | Array of field mappings between schemas |
 
 #### Mapping Object Properties
 
-| Property  | Type     | Required | Description                           |
-| --------- | -------- | -------- | ------------------------------------- |
-| `local`   | `string` | ✓        | Field name in the current schema      |
-| `foreign` | `string` | ✓        | Field name in the referenced schema   |
+| Property  | Type     | Required | Description                         |
+| --------- | -------- | -------- | ----------------------------------- |
+| `local`   | `string` | ✓        | Field name in the current schema    |
+| `foreign` | `string` | ✓        | Field name in the referenced schema |
 
 #### Validation Rules
 
@@ -866,7 +867,7 @@ Here's how primary and foreign keys work together to create a complete data mode
       }
     },
     {
-      "name": "diagnosis", 
+      "name": "diagnosis",
       "description": "Medical diagnoses for participants",
       "fields": [
         {
@@ -909,16 +910,16 @@ Here's how primary and foreign keys work together to create a complete data mode
 ```
 
 :::note **What this relationship creates:**
+
 - **Participants** have unique IDs (primary key)
-- **Diagnoses** have unique IDs (primary key) 
+- **Diagnoses** have unique IDs (primary key)
 - **Each diagnosis** must belong to an existing participant (foreign key)
 - **Result**: A one-to-many relationship where one participant can have multiple diagnoses
-:::
+  :::
 
 ## References
 
-The `references` section is a **dictionary-level** property that allows you to define reusable values that can be referenced throughout your entire dictionary within all schemas. This is particularly useful for common regular expressions, shared code lists, or other values that appear in multiple places across different schemas. `references` are defined once at the dictionary level and can be used  in any schema within the dictionary. 
-
+The `references` section is a **dictionary-level** property that allows you to define reusable values that can be referenced throughout your entire dictionary within all schemas. This is particularly useful for common regular expressions, shared code lists, or other values that appear in multiple places across different schemas. `references` are defined once at the dictionary level and can be used in any schema within the dictionary.
 
 ```json showLineNumbers {39-47}
 {

@@ -39,16 +39,17 @@ docker run --name lectern-mongo \
    <details>
    <summary><strong>Database Service Details</strong></summary>
 
-   | Service | Port  | Description                           | Purpose                                      |
-   |---------|-------|---------------------------------------|----------------------------------------------|
-   | MongoDB | 27017 | NoSQL database for dictionary storage | Stores data dictionaries, versions, and metadata |
+| Service | Port  | Description                           | Purpose                                          |
+| ------- | ----- | ------------------------------------- | ------------------------------------------------ |
+| MongoDB | 27017 | NoSQL database for dictionary storage | Stores data dictionaries, versions, and metadata |
 
-   **Important Notes:**
-   - Ensure port 27017 is available on your system
-   - Default credentials: `admin/password`
-   - Adjust port configuration if conflicts exist with other services
+**Important Notes:**
 
-   </details>
+- Ensure port 27017 is available on your system
+- Default credentials: `admin/password`
+- Adjust port configuration if conflicts exist with other services
+
+</details>
 
 ### 2. Server Setup
 
@@ -78,25 +79,25 @@ docker run --name lectern-mongo \
    ```env
    # Express Configuration
    PORT=3000
-   
+
    # Swagger Documentation
    OPENAPI_PATH=/api-docs
-   
+
    # MongoDB Configuration
    MONGO_HOST=localhost
    MONGO_PORT=27017
    MONGO_DB=lectern
    MONGO_USER=
    MONGO_PASS=
-   
+
    # Authentication (disabled by default)
    AUTH_ENABLED=false
    EGO_API=
    SCOPE=
-   
+
    # CORS Configuration
    CORS_ALLOWED_ORIGINS=
-   
+
    # Vault Configuration (disabled by default)
    VAULT_ENABLED=false
    VAULT_URL=http://localhost:8200
@@ -109,10 +110,12 @@ docker run --name lectern-mongo \
    <summary><strong>Environment Variables Reference</strong></summary>
 
    **Express Configuration**
+
    - `PORT`: Server port (default: 3000)
    - `OPENAPI_PATH`: Swagger UI path (default: /api-docs)
 
    **MongoDB Configuration**
+
    - `MONGO_HOST`: Database hostname (default: localhost)
    - `MONGO_PORT`: Database port (default: 27017)
    - `MONGO_DB`: Database name (default: lectern)
@@ -120,12 +123,14 @@ docker run --name lectern-mongo \
    - `MONGO_PASS`: Database password (optional)
 
    **Authentication (Optional)**
+
    - `AUTH_ENABLED`: Enable JWT-based authorization (default: false)
    - `EGO_API`: EGO API URL for JWT validation
    - `SCOPE`: Required policy name in JWT scope
    - `CORS_ALLOWED_ORIGINS`: Comma-separated list of allowed origins
 
    **Vault Integration (Optional)**
+
    - `VAULT_ENABLED`: Enable HashiCorp Vault integration (default: false)
    - `VAULT_URL`: Vault server URL
    - `VAULT_SECRETS_PATH`: Path to secrets in Vault
@@ -139,7 +144,7 @@ docker run --name lectern-mongo \
    ```bash
    # From workspace root
    pnpm nx build @overture-stack/lectern-server
-   
+
    # Or from apps/server directory
    pnpm build
    ```
@@ -149,7 +154,7 @@ docker run --name lectern-mongo \
    ```bash
    # Production mode
    pnpm nx start @overture-stack/lectern-server
-   
+
    # Development mode with hot reloading
    pnpm nx debug server
    ```
@@ -170,6 +175,7 @@ curl http://localhost:3000/health
 ### API Documentation
 
 Access the interactive API documentation at:
+
 - **Swagger UI**: `http://localhost:3000/api-docs`
 
 ### Dictionary Management Testing
@@ -179,10 +185,10 @@ Access the interactive API documentation at:
 3. Verify dictionary creation, retrieval, and management operations
 
 **Troubleshooting:**
+
 - Ensure MongoDB is running and accessible
 - Check server logs for validation errors
 - Verify API endpoints are responding correctly
-
 
 :::info Need Help?
 If you encounter any issues or have questions about our API, please don't hesitate to reach out through our relevant [**community support channels**](https://docs.overture.bio/community/support).
@@ -240,7 +246,6 @@ pnpm debug
 # Build Docker image
 docker build --no-cache -t lectern -f apps/server/Dockerfile .
 ```
-
 
 :::warning
 This guide is intended for development purposes only. For production deployments, implement appropriate security measures, configure authentication, and review all environment variables for your specific use case.
