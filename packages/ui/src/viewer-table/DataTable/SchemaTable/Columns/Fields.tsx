@@ -57,10 +57,10 @@ const fieldNameStyle = (theme: Theme) => css`
 `;
 
 export type FieldExamplesProps = {
-	// examples: DictionaryMetaValue | DictionaryMeta; // this works however the following is cleaner
+	examples: DictionaryMetaValue | DictionaryMeta;
 	// examples: DictionaryMeta[keyof DictionaryMeta];
 	// Another approach would be
-	examples: DictionaryMeta[string];
+	// examples: DictionaryMeta[string];
 	theme: Theme;
 };
 
@@ -84,7 +84,7 @@ export type FieldDescriptionProps = {
 
 const useHashNavigation = (fieldIndex: number) => {
 	useEffect(() => {
-		const hashTarget = `field-${fieldIndex}`;
+		const hashTarget = `${fieldIndex}`;
 		if (window.location.hash === `#${hashTarget}`) {
 			document.getElementById(hashTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		}
@@ -146,7 +146,6 @@ const useHashClickHandler = (fieldIndex: number, setClipboardContents: (clipboar
 
 const FieldName = ({ name, onHashClick, uniqueKeys, foreignKey, theme }: FieldNameProps) => {
 	const { Hash } = theme.icons;
-
 	const displayKeys = uniqueKeys.filter((value) => value !== '');
 
 	return (
@@ -155,24 +154,10 @@ const FieldName = ({ name, onHashClick, uniqueKeys, foreignKey, theme }: FieldNa
 			<span css={hashIconStyle(theme)} onClick={onHashClick}>
 				<Hash width={10} height={10} fill={theme.colors.secondary} />
 			</span>
-			{displayKeys.length === 1 && !foreignKey && <Pill size="small">{displayKeys}</Pill>}
-			{displayKeys.length > 1 && !foreignKey && <OpenModalPill title="Primary Key" />}
+			{uniqueKeys.length === 1 && !foreignKey && <Pill size="small">{uniqueKeys}</Pill>}
+			{uniqueKeys.length > 1 && !foreignKey && <OpenModalPill title="Primary Key" />}
 			{foreignKey && <OpenModalPill title="Foreign Key" />}
 		</div>
-	);
-};
-
-const FieldDescription = ({ description, theme }: FieldDescriptionProps) => {
-	return <p css={theme.typography.data}>{description}</p>;
-};
-
-const FieldExamples = ({ examples, theme }: FieldExamplesProps) => {
-	return (
-		<p css={theme.typography.data}>
-			{' '}
-			<strong>Example(s): </strong>
-			{Array.isArray(examples) ? examples.join(', ') : examples.toString()}
-		</p>
 	);
 };
 
@@ -183,6 +168,7 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const fieldExamples = fieldRow.original.meta?.examples;
 
 	const fieldRestrictions: SchemaRestrictions = fieldRow.original.restrictions;
+	// TODO: not sure why they are undefined
 	const uniqueKey = fieldRestrictions && 'uniqueKey' in fieldRestrictions ? fieldRestrictions.uniqueKey : [''];
 	const foreignKey = fieldRestrictions && 'foreignKey' in fieldRestrictions && fieldRestrictions.foreignKey;
 
@@ -201,8 +187,13 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 				foreignKey={foreignKey as string}
 				theme={theme}
 			/>
-			{fieldDescription && <FieldDescription description={fieldDescription} theme={theme} />}
-			{!foreignKey && fieldExamples && <FieldExamples examples={fieldExamples} theme={theme} />}
+			{fieldDescription && <p css={theme.typography.data}>{fieldDescription}</p>}
+			{fieldExamples && !foreignKey && (
+				<p css={theme.typography.data}>
+					<strong>Example(s): </strong>
+					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
+				</p>
+			)}
 		</div>
 	);
 };

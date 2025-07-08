@@ -183,7 +183,6 @@ export const computeAllowedValuesColumn = (
 			content: `${regexValue}\nSee field description for examples.`,
 		});
 	}
-
 	if ('codeList' in restrictions && restrictions.codeList !== undefined && !('count' in restrictions)) {
 		const codeListDisplay =
 			Array.isArray(restrictions.codeList) ? restrictions.codeList.join(',\n') : `"${restrictions.codeList}"`;
@@ -250,6 +249,7 @@ export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, sche
 			</div>
 		);
 	};
+
 	return (
 		<div>
 			{restrictionItems.map(renderRestrictionItem)}

@@ -35,17 +35,14 @@ const containerStyle = css`
 	gap: 10px;
 `;
 
-export const renderAttributesColumn = (schemaRestrictions: SchemaRestrictions | undefined) => {
-	const handleRequiredWhen = () => {
-		return <OpenModalPill title="Required When" />;
-	};
+export const renderAttributesColumn = (schemaRestrictions: SchemaRestrictions) => {
 	if (schemaRestrictions === undefined) {
 		return;
 	}
 	return (
 		<div css={containerStyle}>
 			{'if' in schemaRestrictions ?
-				handleRequiredWhen()
+				<OpenModalPill title="Required When" />
 			:	<Pill>{'required' in schemaRestrictions ? 'Required' : 'Optional'}</Pill>}
 		</div>
 	);
