@@ -165,50 +165,47 @@ const handleDependsOn = (schemaRestrictions: SchemaRestrictions): restrictionIte
 };
 
 export const computeAllowedValuesColumn = (
-	restrictions: CellContext<SchemaField, SchemaRestrictions>,
+	restrictions: SchemaRestrictions,
+	schemaField: SchemaField,
 ): restrictionItem[] => {
-	const schemaField: SchemaField = restrictions.row.original;
-	const restrictionsValue: SchemaRestrictions = restrictions.getValue();
 	const restrictionItems: restrictionItem[] = [];
 
-	if (!restrictionsValue || Object.keys(restrictionsValue).length === 0) {
+	if (!restrictions || Object.keys(restrictions).length === 0) {
 		restrictionItems.push({ prefix: null, content: 'None' });
 		return restrictionItems;
 	}
-	restrictionItems.push(...handleDependsOn(restrictionsValue));
+	restrictionItems.push(...handleDependsOn(restrictions));
 
-	if ('regex' in restrictionsValue) {
-		const regexValue =
-			Array.isArray(restrictionsValue.regex) ? restrictionsValue.regex.join(', ') : restrictionsValue.regex;
+	if ('regex' in restrictions) {
+		const regexValue = Array.isArray(restrictions.regex) ? restrictions.regex.join(', ') : restrictions.regex;
 		restrictionItems.push({
 			prefix: 'Must match pattern: ',
 			content: `${regexValue}\nSee field description for examples.`,
 		});
 	}
 
-	if ('codeList' in restrictionsValue && restrictionsValue.codeList !== undefined && !('count' in restrictionsValue)) {
+	if ('codeList' in restrictions && restrictions.codeList !== undefined && !('count' in restrictions)) {
 		const codeListDisplay =
-			Array.isArray(restrictionsValue.codeList) ?
-				restrictionsValue.codeList.join(',\n')
-			:	`"${restrictionsValue.codeList}"`;
+			Array.isArray(restrictions.codeList) ? restrictions.codeList.join(',\n') : `"${restrictions.codeList}"`;
 		restrictionItems.push({ prefix: 'One of: \n', content: `${codeListDisplay}` });
 	}
 
-	if ('range' in restrictionsValue && restrictionsValue.range !== undefined) {
-		handleRange(restrictionsValue.range, restrictionItems);
+	if ('range' in restrictions && restrictions.range !== undefined) {
+		handleRange(restrictions.range, restrictionItems);
 	}
 
 	if (
-		'codeList' in restrictionsValue &&
-		restrictionsValue.codeList !== undefined &&
-		'count' in restrictionsValue &&
-		restrictionsValue.count != undefined
+		'codeList' in restrictions &&
+		restrictions.codeList !== undefined &&
+		'count' in restrictions &&
+		restrictions.count != undefined &&
+		schemaField.isArray !== undefined
 	) {
 		handleCodeListsWithCountRestrictions(
-			restrictionsValue.codeList,
-			restrictionsValue.count,
+			restrictions.codeList,
+			restrictions.count,
 			restrictionItems,
-			schemaField.isArray || false,
+			schemaField.isArray,
 			schemaField.delimiter ?? ',',
 		);
 	}
@@ -224,21 +221,20 @@ export const computeAllowedValuesColumn = (
 	return restrictionItems;
 };
 
-export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField, SchemaRestrictions>) => {
-	const restrictionsValue: SchemaRestrictions = restrictions.getValue();
-	const restrictionItems = computeAllowedValuesColumn(restrictions);
+export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, schemaField: SchemaField) => {
+	const restrictionItems = computeAllowedValuesColumn(restrictions, schemaField);
 
 	const theme = useThemeContext();
 
-	if (restrictionsValue === undefined) {
+	if (restrictions === undefined) {
 		return;
 	}
 
-	const renderRestrictionItem = (item: restrictionItem) => {
+	const renderRestrictionItem = (item: restrictionItem, index: number) => {
 		const { prefix, content } = item;
 		if (prefix === 'Depends on:\n') {
 			return (
-				<div key={`${prefix}-${content}`}>
+				<div key={index}>
 					{prefix && <strong>{prefix}</strong>}
 					<Pill size="extra-small" style={pillStyle(theme)}>
 						{content}
@@ -248,7 +244,7 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 		}
 
 		return (
-			<div key={`${prefix}-${content}`}>
+			<div key={index}>
 				{prefix && <strong>{prefix}</strong>}
 				{content}
 			</div>
@@ -257,7 +253,7 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 	return (
 		<div>
 			{restrictionItems.map(renderRestrictionItem)}
-			{'if' in restrictionsValue && (
+			{'if' in restrictions && (
 				<div onClick={() => alert('Mock Modal')} css={linkStyle(theme)}>
 					View details
 				</div>

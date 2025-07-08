@@ -19,8 +19,14 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { DictionaryMeta, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
-import { CellContext } from '@tanstack/react-table';
+import {
+	DictionaryMeta,
+	DictionaryMetaValue,
+	Schema,
+	SchemaField,
+	SchemaRestrictions,
+} from '@overture-stack/lectern-dictionary';
+import { CellContext, Row } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
 
 import Pill from '../../../../common/Pill';
@@ -52,7 +58,7 @@ const fieldNameStyle = (theme: Theme) => css`
 `;
 
 export type FieldExamplesProps = {
-	examples: DictionaryMeta[string];
+	examples: DictionaryMetaValue | DictionaryMeta;
 	theme: Theme;
 };
 
@@ -63,6 +69,10 @@ export type FieldNameProps = {
 	onHashClick: () => void;
 	foreignKey: string;
 	theme: Theme;
+};
+
+export type FieldColumnProps = {
+	fieldRow: Row<SchemaField>;
 };
 
 export type FieldDescriptionProps = {
@@ -171,12 +181,13 @@ const FieldExamples = ({ examples, theme }: FieldExamplesProps) => {
 	);
 };
 
-export const FieldsColumn = ({ field }: { field: CellContext<SchemaField, string> }) => {
-	const fieldName = field.row.original.name;
-	const fieldIndex = field.row.index;
-	const fieldDescription = field.row.original.description;
-	const fieldExamples = field.row.original.meta?.examples;
-	const fieldRestrictions: SchemaRestrictions = field.row.original.restrictions;
+export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
+	const fieldName = fieldRow.original.name;
+	const fieldIndex = fieldRow.index;
+	const fieldDescription = fieldRow.original.description;
+	const fieldExamples = fieldRow.original.meta?.examples;
+
+	const fieldRestrictions: SchemaRestrictions = fieldRow.original.restrictions;
 	const uniqueKey = fieldRestrictions && 'uniqueKey' in fieldRestrictions ? fieldRestrictions.uniqueKey : [''];
 	const foreignKey = fieldRestrictions && 'foreignKey' in fieldRestrictions && fieldRestrictions.foreignKey;
 
