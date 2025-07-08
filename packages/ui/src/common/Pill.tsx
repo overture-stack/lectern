@@ -1,11 +1,13 @@
 /** @jsxImportSource @emotion/react */
+
 import { css } from '@emotion/react';
 import React, { CSSProperties, MouseEvent, ReactNode } from 'react';
+
 import { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
+
 export type PillVariant = 'default' | 'button';
 export type PillSize = 'extra-small' | 'small' | 'medium' | 'large';
-
 export interface PillProps {
 	children: ReactNode;
 	variant?: PillVariant;
