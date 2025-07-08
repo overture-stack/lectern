@@ -49,7 +49,8 @@ export const getSchemaBaseColumns = () => [
 	columnHelper.accessor('valueType', {
 		header: 'Data Type',
 		cell: (type: CellContext<SchemaField, string>) => {
-			return renderDataTypeColumn(type);
+			const schemaField: SchemaField = type.row.original;
+			return renderDataTypeColumn(schemaField);
 		},
 	}),
 

@@ -21,13 +21,8 @@
 
 import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
-import { CellContext } from '@tanstack/react-table';
 
 import Pill from '../../../../common/Pill';
-
-export type DataTypeColumnProps = {
-	type: CellContext<SchemaField, string>;
-};
 
 const containerStyle = css`
 	display: flex;
@@ -36,11 +31,12 @@ const containerStyle = css`
 	gap: 10px;
 `;
 
-export const renderDataTypeColumn = (type: CellContext<SchemaField, string>) => {
-	const { valueType, isArray } = type.row.original;
+export const renderDataTypeColumn = (schemaField: SchemaField) => {
 	return (
 		<div css={containerStyle}>
-			<Pill>{isArray ? 'Array' : valueType.charAt(0).toUpperCase() + valueType.slice(1)}</Pill>
+			<Pill>
+				{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
+			</Pill>
 		</div>
 	);
 };
