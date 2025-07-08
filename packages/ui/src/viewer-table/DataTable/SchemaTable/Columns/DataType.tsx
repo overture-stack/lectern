@@ -38,7 +38,7 @@ const containerStyle = css`
 `;
 
 export const renderDataTypeColumn = (type: CellContext<SchemaField, string>) => {
-	const { valueType, isArray, unique } = type.row.original;
+	const { valueType, isArray } = type.row.original;
 
 	const renderContent = (): string => {
 		return isArray ? 'Array' : valueType.charAt(0).toUpperCase() + valueType.slice(1);
@@ -47,7 +47,6 @@ export const renderDataTypeColumn = (type: CellContext<SchemaField, string>) => 
 	return (
 		<div css={containerStyle}>
 			<Pill>{renderContent()}</Pill>
-			{unique && <Pill>Unique</Pill>}
 		</div>
 	);
 };

@@ -35,6 +35,30 @@ export type AllowedValuesColumnProps = {
 	restrictions: CellContext<SchemaField, SchemaRestrictions>;
 };
 
+const linkStyle = (theme: Theme) => css`
+	${theme.typography?.label};
+	color: ${theme.colors.black};
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	background: none;
+	border: none;
+	padding: 0;
+	margin-top: 4px;
+	text-decoration: underline;
+	&:hover {
+		text-decoration: underline;
+	}
+`;
+
+const pillStyle = (theme: Theme) => ({
+	fontFamily: 'B612 Mono',
+	color: theme.colors.accent_dark,
+	fontWeight: '400',
+	lineHeight: '20px',
+	fontSize: '13px',
+});
+
 const handleRange = (range: RestrictionRange, restrictionItems: restrictionItem[]): void => {
 	if (range.min !== undefined && range.max !== undefined) {
 		restrictionItems.push({ prefix: 'Min: ', content: `${range.min}` });
@@ -47,6 +71,40 @@ const handleRange = (range: RestrictionRange, restrictionItems: restrictionItem[
 		restrictionItems.push({ prefix: 'Greater than ', content: `${range.exclusiveMin}` });
 	} else if (range.exclusiveMax !== undefined) {
 		restrictionItems.push({ prefix: 'Less than ', content: `${range.exclusiveMax}` });
+	}
+};
+
+const handleCount = (
+	restrictionItems: restrictionItem[],
+	count: RestrictionRange,
+	codeListDisplay: string,
+	delimiterText: string,
+) => {
+	if (count.min !== undefined && count.max !== undefined) {
+		restrictionItems.push({
+			prefix: `Select ${count.min} to ${count.max}${delimiterText} from:\n`,
+			content: `${codeListDisplay}`,
+		});
+	} else if (count.min !== undefined) {
+		restrictionItems.push({
+			prefix: `At least ${count.min}${delimiterText} from:\n`,
+			content: `${codeListDisplay}`,
+		});
+	} else if (count.max !== undefined) {
+		restrictionItems.push({
+			prefix: `Up to ${count.max}${delimiterText} from:\n`,
+			content: `${codeListDisplay}`,
+		});
+	} else if (count.exclusiveMin !== undefined) {
+		restrictionItems.push({
+			prefix: `More than ${count.exclusiveMin}${delimiterText} from:\n`,
+			content: `${codeListDisplay}`,
+		});
+	} else if (count.exclusiveMax !== undefined) {
+		restrictionItems.push({
+			prefix: `Fewer than ${count.exclusiveMax}${delimiterText} from:\n`,
+			content: `${codeListDisplay}`,
+		});
 	}
 };
 
@@ -66,33 +124,44 @@ const handleCodeListsWithCountRestrictions = (
 			content: `${codeListDisplay}`,
 		});
 	} else {
-		if (count.min !== undefined && count.max !== undefined) {
+		handleCount(restrictionItems, count, codeListDisplay, delimiterText);
+	}
+};
+
+const handleDependsOn = (schemaRestrictions: SchemaRestrictions): restrictionItem[] => {
+	const restrictionItems: restrictionItem[] = [];
+
+	if (schemaRestrictions === undefined) {
+		return restrictionItems;
+	}
+
+	if (
+		'if' in schemaRestrictions &&
+		'conditions' in schemaRestrictions.if &&
+		Array.isArray(schemaRestrictions.if.conditions)
+	) {
+		const allFields: string[] = [];
+		schemaRestrictions.if.conditions.forEach((condition) => {
+			if (condition.fields !== undefined) {
+				if (Array.isArray(condition.fields)) {
+					allFields.push(...condition.fields);
+				} else if (typeof condition.fields === 'string') {
+					allFields.push(condition.fields);
+				}
+			}
+		});
+
+		// Since there can be multiple fields with multiple conditions, there is a possibility that there are duplicates
+		const uniqueFields = [...new Set(allFields)];
+		if (uniqueFields.length > 0) {
 			restrictionItems.push({
-				prefix: `Select ${count.min} to ${count.max}${delimiterText} from:\n`,
-				content: `${codeListDisplay}`,
-			});
-		} else if (count.min !== undefined) {
-			restrictionItems.push({
-				prefix: `At least ${count.min}${delimiterText} from:\n`,
-				content: `${codeListDisplay}`,
-			});
-		} else if (count.max !== undefined) {
-			restrictionItems.push({
-				prefix: `Up to ${count.max}${delimiterText} from:\n`,
-				content: `${codeListDisplay}`,
-			});
-		} else if (count.exclusiveMin !== undefined) {
-			restrictionItems.push({
-				prefix: `More than ${count.exclusiveMin}${delimiterText} from:\n`,
-				content: `${codeListDisplay}`,
-			});
-		} else if (count.exclusiveMax !== undefined) {
-			restrictionItems.push({
-				prefix: `Fewer than ${count.exclusiveMax}${delimiterText} from:\n`,
-				content: `${codeListDisplay}`,
+				prefix: 'Depends on:\n',
+				content: uniqueFields.join(', '),
 			});
 		}
 	}
+
+	return restrictionItems;
 };
 
 export const computeAllowedValuesColumn = (
@@ -108,7 +177,7 @@ export const computeAllowedValuesColumn = (
 	}
 	restrictionItems.push(...handleDependsOn(restrictionsValue));
 
-	if ('regex' in restrictionsValue && restrictionsValue.regex) {
+	if ('regex' in restrictionsValue) {
 		const regexValue =
 			Array.isArray(restrictionsValue.regex) ? restrictionsValue.regex.join(', ') : restrictionsValue.regex;
 		restrictionItems.push({
@@ -117,7 +186,7 @@ export const computeAllowedValuesColumn = (
 		});
 	}
 
-	if ('codeList' in restrictionsValue && restrictionsValue.codeList && !('count' in restrictionsValue)) {
+	if ('codeList' in restrictionsValue && restrictionsValue.codeList !== undefined && !('count' in restrictionsValue)) {
 		const codeListDisplay =
 			Array.isArray(restrictionsValue.codeList) ?
 				restrictionsValue.codeList.join(',\n')
@@ -125,15 +194,15 @@ export const computeAllowedValuesColumn = (
 		restrictionItems.push({ prefix: 'One of: \n', content: `${codeListDisplay}` });
 	}
 
-	if ('range' in restrictionsValue && restrictionsValue.range) {
+	if ('range' in restrictionsValue && restrictionsValue.range !== undefined) {
 		handleRange(restrictionsValue.range, restrictionItems);
 	}
 
 	if (
 		'codeList' in restrictionsValue &&
-		restrictionsValue.codeList &&
+		restrictionsValue.codeList !== undefined &&
 		'count' in restrictionsValue &&
-		restrictionsValue.count
+		restrictionsValue.count != undefined
 	) {
 		handleCodeListsWithCountRestrictions(
 			restrictionsValue.codeList,
@@ -155,75 +224,15 @@ export const computeAllowedValuesColumn = (
 	return restrictionItems;
 };
 
-const handleDependsOn = (schemaRestrictions: SchemaRestrictions): restrictionItem[] => {
-	const restrictionItems: restrictionItem[] = [];
-
-	if (schemaRestrictions && 'compare' in schemaRestrictions && schemaRestrictions.compare) {
-	}
-	if (
-		schemaRestrictions &&
-		'if' in schemaRestrictions &&
-		schemaRestrictions.if &&
-		'conditions' in schemaRestrictions.if &&
-		schemaRestrictions.if.conditions &&
-		Array.isArray(schemaRestrictions.if.conditions)
-	) {
-		const allFields: string[] = [];
-		schemaRestrictions.if.conditions.forEach((condition) => {
-			if (condition.fields !== undefined) {
-				if (Array.isArray(condition.fields)) {
-					allFields.push(...condition.fields);
-				} else if (typeof condition.fields === 'string') {
-					allFields.push(condition.fields);
-				}
-			}
-		});
-		// Since there can be multiple fields with multiple conditions, there is a possibility that there are duplicates
-		const uniqueFields = [...new Set(allFields)];
-		if (uniqueFields.length > 0) {
-			restrictionItems.push({
-				prefix: 'Depends on:\n',
-				content: uniqueFields.join(', '),
-			});
-		}
-	}
-
-	return restrictionItems;
-};
-
 export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField, SchemaRestrictions>) => {
-	const restrictionItems = computeAllowedValuesColumn(restrictions);
 	const restrictionsValue: SchemaRestrictions = restrictions.getValue();
+	const restrictionItems = computeAllowedValuesColumn(restrictions);
 
 	const theme = useThemeContext();
 
-	const linkStyle = (theme: Theme) => css`
-		${theme.typography?.label};
-		color: ${theme.colors.black};
-		cursor: pointer;
-		display: inline-flex;
-		align-items: center;
-		background: none;
-		border: none;
-		padding: 0;
-		margin-top: 4px;
-		text-decoration: underline;
-		&:hover {
-			text-decoration: underline;
-		}
-	`;
-
-	const pillStyle = {
-		fontFamily: 'B612 Mono',
-		color: theme.colors.accent_dark,
-		fontWeight: '400',
-		lineHeight: '20px',
-		fontSize: '13px',
-	};
-	//TODO: implement the modal
-	const handleViewDetails = () => {
-		alert('Modal has been opened\n\n\n Hello World');
-	};
+	if (restrictionsValue === undefined) {
+		return;
+	}
 
 	const renderRestrictionItem = (item: restrictionItem) => {
 		const { prefix, content } = item;
@@ -231,7 +240,7 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 			return (
 				<div key={`${prefix}-${content}`}>
 					{prefix && <strong>{prefix}</strong>}
-					<Pill size="extra-small" style={pillStyle}>
+					<Pill size="extra-small" style={pillStyle(theme)}>
 						{content}
 					</Pill>
 				</div>
@@ -245,14 +254,11 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 			</div>
 		);
 	};
-
-	const hasConditionalRestrictions = restrictionsValue && 'if' in restrictionsValue && restrictionsValue.if;
-
 	return (
 		<div>
 			{restrictionItems.map(renderRestrictionItem)}
-			{hasConditionalRestrictions && (
-				<div onClick={handleViewDetails} css={linkStyle(theme)}>
+			{'if' in restrictionsValue && (
+				<div onClick={() => alert('Mock Modal')} css={linkStyle(theme)}>
 					View details
 				</div>
 			)}

@@ -21,7 +21,6 @@
 
 import { css } from '@emotion/react';
 import { SchemaRestrictions } from '@overture-stack/lectern-dictionary';
-import React from 'react';
 
 import Pill from '../../../../common/Pill';
 import OpenModalPill from '../OpenModalPill';
@@ -40,17 +39,14 @@ export const renderAttributesColumn = (schemaRestrictions: SchemaRestrictions | 
 	const handleRequiredWhen = () => {
 		return <OpenModalPill title="Required When" />;
 	};
-
+	if (schemaRestrictions === undefined) {
+		return;
+	}
 	return (
 		<div css={containerStyle}>
-			{schemaRestrictions && 'if' in schemaRestrictions && schemaRestrictions.if ?
+			{'if' in schemaRestrictions ?
 				handleRequiredWhen()
-			:	<Pill>
-					{schemaRestrictions && 'required' in schemaRestrictions && schemaRestrictions.required ?
-						'Required'
-					:	'Optional'}
-				</Pill>
-			}
+			:	<Pill>{'required' in schemaRestrictions ? 'Required' : 'Optional'}</Pill>}
 		</div>
 	);
 };
