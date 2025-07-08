@@ -26,8 +26,6 @@ import { CellContext } from '@tanstack/react-table';
 import Pill from '../../../../common/Pill';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
-import { useState } from 'react';
-import ModalComponent from '../../../../common/Modal';
 
 export type restrictionItem = {
 	prefix: string | null;
@@ -196,7 +194,6 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 	const restrictionItems = computeAllowedValuesColumn(restrictions);
 	const restrictionsValue: SchemaRestrictions = restrictions.getValue();
 
-	const [isOpen, setIsOpen] = useState(false);
 	const theme = useThemeContext();
 
 	const linkStyle = (theme: Theme) => css`
@@ -222,7 +219,6 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 		lineHeight: '20px',
 		fontSize: '13px',
 	};
-	//TODO: implement the modal
 
 	const renderRestrictionItem = (item: restrictionItem) => {
 		const { prefix, content } = item;
@@ -252,10 +248,9 @@ export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField,
 			{restrictionItems.map(renderRestrictionItem)}
 			{hasConditionalRestrictions && (
 				<>
-					<div onClick={() => setIsOpen(true)} css={linkStyle(theme)}>
+					<div onClick={() => console.log('Modal Opened')} css={linkStyle(theme)}>
 						View details
 					</div>
-					<ModalComponent setIsOpen={setIsOpen} isOpen={isOpen} />
 				</>
 			)}
 		</div>
