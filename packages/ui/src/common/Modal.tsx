@@ -1,50 +1,37 @@
-import React from 'react';
-import Modal from 'react-modal';
+import Modal, { Styles } from 'react-modal';
+import theme, { Theme } from '../theme';
+import { css } from '@emotion/react';
+import Button from './Button';
+import { useThemeContext } from '../theme/ThemeContext';
 
 export type ModalProps = {
 	setIsOpen: (isOpen: boolean) => void;
 	isOpen: boolean;
 	onAfterOpen?: () => void;
+	children?: React.ReactNode;
 };
 
-const customStyles = {
+const customStyles = (theme: Theme): Styles => ({
 	content: {
-		top: '50%',
-		left: '50%',
-		right: 'auto',
-		bottom: 'auto',
-		marginRight: '-50%',
-		transform: 'translate(-50%, -50%)',
+		borderRadius: '8px',
+		boxShadow: `0 2px 6px rgba(70, 63, 63, 0.05), 0 0 0 0.3px ${theme.colors.black}`,
+		transition: 'all 0.3s ease',
 	},
-};
+	overlay: { backgroundColor: 'rgba(0, 28, 61, 0.8)' },
+});
 
-const ModalComponent = ({ setIsOpen, isOpen, onAfterOpen }: ModalProps) => {
-	const openModal = () => {
-		setIsOpen(true);
-	};
-
-	const closeModal = () => {
-		setIsOpen(false);
-	};
-
+const ModalComponent = ({ children, setIsOpen, isOpen, onAfterOpen }: ModalProps) => {
+	const theme = useThemeContext();
 	return (
 		<Modal
 			isOpen={isOpen}
 			onAfterOpen={onAfterOpen}
-			onRequestClose={closeModal}
-			style={customStyles}
+			onRequestClose={() => setIsOpen(false)}
+			style={customStyles(theme)}
 			contentLabel="Example Modal"
 		>
-			<h2>Hello</h2>
-			<button onClick={closeModal}>close</button>
-			<div>I am a modal</div>
-			<form>
-				<input />
-				<button>tab navigation</button>
-				<button>stays</button>
-				<button>inside</button>
-				<button>the modal</button>
-			</form>
+			<Button onClick={() => setIsOpen(false)}>close</Button>
+			{children}
 		</Modal>
 	);
 };
