@@ -19,24 +19,14 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
 
 import Pill from '../../../../common/Pill';
 
-const containerStyle = css`
-	display: flex;
-	align-items: center;
-	flex-direction: column;
-	gap: 10px;
-`;
-
 export const renderDataTypeColumn = (schemaField: SchemaField) => {
 	return (
-		<div css={containerStyle}>
-			<Pill>
-				{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
-			</Pill>
-		</div>
+		<Pill>
+			{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
+		</Pill>
 	);
 };
