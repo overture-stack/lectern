@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import React, { CSSProperties, MouseEvent, ReactNode } from 'react';
+import { CSSProperties, MouseEvent, ReactNode } from 'react';
 
 import { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
@@ -82,51 +82,51 @@ const getSizeStyles = (size: PillSize) => {
 	return sizeStyles[size];
 };
 
+const pillStyles = (sizeStyles, variantStyles, icon, onClick) => css`
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: ${sizeStyles.gap};
+	padding: ${sizeStyles.padding};
+	font-size: ${sizeStyles.fontSize};
+	line-height: ${sizeStyles.lineHeight};
+	font-weight: ${sizeStyles.fontWeight};
+	border-radius: ${sizeStyles.borderRadius};
+	background-color: ${variantStyles.background};
+	color: ${variantStyles.color};
+	border: ${variantStyles.border};
+	transition: all 0.2s ease-in-out;
+	user-select: none;
+	width: ${sizeStyles.width};
+	max-width: ${sizeStyles.maxWidth};
+	text-align: center;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	hyphens: auto;
+	${onClick ?
+		css`
+			cursor: pointer;
+			&:hover {
+				background-color: ${variantStyles.hoverBackground};
+			}
+		`
+	:	''}
+	${icon ?
+		css`
+			.pill-icon {
+				display: flex;
+				align-items: center;
+				font-size: ${parseInt(sizeStyles.fontSize) - 2}px;
+				flex-shrink: 0;
+			}
+		`
+	:	''};
+`;
+
 const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, style }: PillProps) => {
 	const theme = useThemeContext();
 	const variantStyles = getVariantStyles(variant, theme);
 	const sizeStyles = getSizeStyles(size);
-
-	const pillStyles = css`
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: ${sizeStyles.gap};
-		padding: ${sizeStyles.padding};
-		font-size: ${sizeStyles.fontSize};
-		line-height: ${sizeStyles.lineHeight};
-		font-weight: ${sizeStyles.fontWeight};
-		border-radius: ${sizeStyles.borderRadius};
-		background-color: ${variantStyles.background};
-		color: ${variantStyles.color};
-		border: ${variantStyles.border};
-		transition: all 0.2s ease-in-out;
-		user-select: none;
-		width: ${sizeStyles.width};
-		max-width: ${sizeStyles.maxWidth};
-		text-align: center;
-		word-wrap: break-word;
-		overflow-wrap: break-word;
-		hyphens: auto;
-		${onClick ?
-			css`
-				cursor: pointer;
-				&:hover {
-					background-color: ${variantStyles.hoverBackground};
-				}
-			`
-		:	''}
-		${icon ?
-			css`
-				.pill-icon {
-					display: flex;
-					align-items: center;
-					font-size: ${parseInt(sizeStyles.fontSize) - 2}px;
-					flex-shrink: 0;
-				}
-			`
-		:	''};
-	`;
 
 	const handleClick = (event: MouseEvent<HTMLDivElement>) => {
 		if (onClick) {
@@ -137,7 +137,7 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, s
 
 	return (
 		<div
-			css={pillStyles}
+			css={pillStyles(sizeStyles, variantStyles, icon, onClick)}
 			style={style}
 			onClick={handleClick}
 			role={onClick ? 'button' : undefined}
