@@ -190,6 +190,7 @@ const handleDependsOn = (schemaRestrictions: SchemaRestrictions): restrictionIte
 
 	return restrictionItems;
 };
+
 export const renderAllowedValuesColumn = (restrictions: CellContext<SchemaField, SchemaRestrictions>) => {
 	const restrictionItems = computeAllowedValuesColumn(restrictions);
 	const restrictionsValue: SchemaRestrictions = restrictions.getValue();
