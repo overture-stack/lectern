@@ -19,6 +19,7 @@ export const Default: Story = {
 	args: {
 		isOpen: false,
 		setIsOpen: () => {},
+		title: 'Modal Title',
 	},
 	render: (args) => {
 		const [isOpen, setIsOpen] = useState(false);
