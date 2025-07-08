@@ -22,11 +22,10 @@ import { css } from '@emotion/react';
 import {
 	DictionaryMeta,
 	DictionaryMetaValue,
-	Schema,
 	SchemaField,
 	SchemaRestrictions,
 } from '@overture-stack/lectern-dictionary';
-import { CellContext, Row } from '@tanstack/react-table';
+import { Row } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
 
 import Pill from '../../../../common/Pill';
@@ -58,7 +57,10 @@ const fieldNameStyle = (theme: Theme) => css`
 `;
 
 export type FieldExamplesProps = {
-	examples: DictionaryMetaValue | DictionaryMeta;
+	// examples: DictionaryMetaValue | DictionaryMeta; // this works however the following is cleaner
+	// examples: DictionaryMeta[keyof DictionaryMeta];
+	// Another approach would be
+	examples: DictionaryMeta[string];
 	theme: Theme;
 };
 
@@ -161,23 +163,16 @@ const FieldName = ({ name, onHashClick, uniqueKeys, foreignKey, theme }: FieldNa
 };
 
 const FieldDescription = ({ description, theme }: FieldDescriptionProps) => {
-	return <div css={theme.typography.data}>{description}</div>;
+	return <p css={theme.typography.data}>{description}</p>;
 };
 
 const FieldExamples = ({ examples, theme }: FieldExamplesProps) => {
-	if (!examples) {
-		return null;
-	}
-	const count = Array.isArray(examples) ? examples.length : 1;
-	const label = count > 1 ? 'Examples:' : 'Example:';
-	const text = Array.isArray(examples) ? examples.join(', ') : examples.toString();
-
 	return (
-		<div>
-			<p css={theme.typography.label}>
-				{label} <span css={theme.typography.data}>{text}</span>
-			</p>
-		</div>
+		<p css={theme.typography.data}>
+			{' '}
+			<strong>Example(s): </strong>
+			{Array.isArray(examples) ? examples.join(', ') : examples.toString()}
+		</p>
 	);
 };
 
@@ -197,7 +192,7 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const theme: Theme = useThemeContext();
 
 	return (
-		<div id={`field-${fieldIndex}`} css={fieldContainerStyle}>
+		<div id={fieldIndex.toString()} css={fieldContainerStyle}>
 			<FieldName
 				name={fieldName}
 				index={fieldIndex}
