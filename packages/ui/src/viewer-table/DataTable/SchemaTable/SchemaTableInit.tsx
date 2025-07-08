@@ -38,6 +38,7 @@ export const getSchemaBaseColumns = () => [
 			return <FieldsColumn field={field} />;
 		},
 	}),
+
 	columnHelper.accessor('restrictions.required', {
 		header: 'Attribute',
 		cell: (required: CellContext<SchemaField, unknown>) => {
@@ -51,6 +52,7 @@ export const getSchemaBaseColumns = () => [
 			return renderDataTypeColumn(type);
 		},
 	}),
+
 	columnHelper.accessor((row: SchemaField) => row.restrictions, {
 		id: 'allowedValues',
 		header: 'Allowed Values',
