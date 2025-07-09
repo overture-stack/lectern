@@ -20,12 +20,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import {
-	DictionaryMeta,
-	DictionaryMetaValue,
-	SchemaField,
-	SchemaRestrictions,
-} from '@overture-stack/lectern-dictionary';
+import { DictionaryMeta, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { Row } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
@@ -33,15 +28,6 @@ import Pill from '../../../../common/Pill';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 import OpenModalPill from '../OpenModalPill';
-
-const hashIconStyle = (theme: Theme) => css`
-	opacity: 0;
-	transition: opacity 0.2s ease;
-	border-bottom: 2px solid ${theme.colors.secondary};
-	&:hover {
-		opacity: 1;
-	}
-`;
 
 const fieldContainerStyle = css`
 	display: flex;
@@ -58,8 +44,9 @@ const fieldNameStyle = (theme: Theme) => css`
 `;
 
 export type FieldExamplesProps = {
-	examples: DictionaryMetaValue | DictionaryMeta;
-	// examples: DictionaryMeta[keyof DictionaryMeta];
+	examples: DictionaryMeta[keyof DictionaryMeta];
+	// Another implementation of this would be
+	// examples: DictionaryMetaValue | DictionaryMeta;
 	// Another approach would be
 	// examples: DictionaryMeta[string];
 	theme: Theme;
