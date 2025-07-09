@@ -82,6 +82,7 @@ export type FieldDescriptionProps = {
 	theme: Theme;
 };
 
+//TODO: Not currently used but will be used when implementing the hash-navigation
 const useClipboard = () => {
 	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
 	const [isCopying, setIsCopying] = useState(false);
@@ -145,11 +146,11 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const fieldExamples = fieldRow.original.meta?.examples;
 
 	const fieldRestrictions: SchemaRestrictions = fieldRow.original.restrictions;
+
 	// TODO: not sure why they are undefined
 	const uniqueKey = fieldRestrictions && 'uniqueKey' in fieldRestrictions ? fieldRestrictions.uniqueKey : [''];
 	const foreignKey = fieldRestrictions && 'foreignKey' in fieldRestrictions && fieldRestrictions.foreignKey;
 
-	const { setClipboardContents } = useClipboard();
 	const theme: Theme = useThemeContext();
 
 	return (
