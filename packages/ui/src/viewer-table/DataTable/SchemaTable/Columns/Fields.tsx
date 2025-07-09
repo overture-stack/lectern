@@ -16,6 +16,7 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
@@ -26,7 +27,7 @@ import {
 	SchemaRestrictions,
 } from '@overture-stack/lectern-dictionary';
 import { Row } from '@tanstack/react-table';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import Pill from '../../../../common/Pill';
 import { Theme } from '../../../../theme';
@@ -68,7 +69,6 @@ export type FieldNameProps = {
 	name: string;
 	uniqueKeys: string[];
 	index: number;
-	onHashClick: () => void;
 	foreignKey: string;
 	theme: Theme;
 };
@@ -80,15 +80,6 @@ export type FieldColumnProps = {
 export type FieldDescriptionProps = {
 	description: string;
 	theme: Theme;
-};
-
-const useHashNavigation = (fieldIndex: number) => {
-	useEffect(() => {
-		const hashTarget = `${fieldIndex}`;
-		if (window.location.hash === `#${hashTarget}`) {
-			document.getElementById(hashTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-		}
-	}, [fieldIndex]);
 };
 
 const useClipboard = () => {
@@ -136,24 +127,10 @@ const useClipboard = () => {
 	};
 };
 
-const useHashClickHandler = (fieldIndex: number, setClipboardContents: (clipboardContents: string) => void) => {
-	return () => {
-		const hashTarget = `field-${fieldIndex}`;
-		window.location.hash = `#${hashTarget}`;
-		setClipboardContents(window.location.href);
-	};
-};
-
-const FieldName = ({ name, onHashClick, uniqueKeys, foreignKey, theme }: FieldNameProps) => {
-	const { Hash } = theme.icons;
-	const displayKeys = uniqueKeys.filter((value) => value !== '');
-
+const FieldName = ({ name, uniqueKeys, foreignKey, theme }: FieldNameProps) => {
 	return (
 		<div css={fieldNameStyle(theme)}>
 			{name}
-			<span css={hashIconStyle(theme)} onClick={onHashClick}>
-				<Hash width={10} height={10} fill={theme.colors.secondary} />
-			</span>
 			{uniqueKeys.length === 1 && !foreignKey && <Pill size="small">{uniqueKeys}</Pill>}
 			{uniqueKeys.length > 1 && !foreignKey && <OpenModalPill title="Primary Key" />}
 			{foreignKey && <OpenModalPill title="Foreign Key" />}
@@ -172,9 +149,7 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const uniqueKey = fieldRestrictions && 'uniqueKey' in fieldRestrictions ? fieldRestrictions.uniqueKey : [''];
 	const foreignKey = fieldRestrictions && 'foreignKey' in fieldRestrictions && fieldRestrictions.foreignKey;
 
-	useHashNavigation(fieldIndex);
 	const { setClipboardContents } = useClipboard();
-	const handleHashClick = useHashClickHandler(fieldIndex, setClipboardContents);
 	const theme: Theme = useThemeContext();
 
 	return (
@@ -182,13 +157,12 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 			<FieldName
 				name={fieldName}
 				index={fieldIndex}
-				onHashClick={handleHashClick}
 				uniqueKeys={uniqueKey as string[]}
 				foreignKey={foreignKey as string}
 				theme={theme}
 			/>
 			{fieldDescription && <p css={theme.typography.data}>{fieldDescription}</p>}
-			{fieldExamples && !foreignKey && (
+			{fieldExamples && (
 				<p css={theme.typography.data}>
 					<strong>Example(s): </strong>
 					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
