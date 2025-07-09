@@ -27,10 +27,13 @@ import Pill from '../../../../common/Pill';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
+export type AllowedValuesBaseDisplayItem = any;
+
 export type RestrictionItem = {
-	prefix: string | null;
-	content: string | string[];
+	prefix: string | string[] | null;
+	content: string | string[] | null;
 };
+
 export type AllowedValuesColumnProps = {
 	restrictions: CellContext<SchemaField, SchemaRestrictions>;
 };
@@ -59,19 +62,43 @@ const pillStyle = (theme: Theme) => ({
 	fontSize: '13px',
 });
 
-const handleRange = (range: RestrictionRange, restrictionItems: RestrictionItem[]): void => {
-	if (range.min !== undefined && range.max !== undefined) {
-		restrictionItems.push({ prefix: 'Min: ', content: `${range.min}` });
-		restrictionItems.push({ prefix: 'Max: ', content: `${range.max}` });
-	} else if (range.min !== undefined) {
-		restrictionItems.push({ prefix: 'Min: ', content: `${range.min}` });
-	} else if (range.max !== undefined) {
-		restrictionItems.push({ prefix: 'Max: ', content: `${range.max}` });
-	} else if (range.exclusiveMin !== undefined) {
-		restrictionItems.push({ prefix: 'Greater than ', content: `${range.exclusiveMin}` });
-	} else if (range.exclusiveMax !== undefined) {
-		restrictionItems.push({ prefix: 'Less than ', content: `${range.exclusiveMax}` });
-	}
+const handleRange = (range: RestrictionRange): RestrictionItem | null => {
+	const computeRestrictions = [
+		{
+			condition: range.min !== undefined && range.max !== undefined,
+			prefix: ['Min', 'Max'],
+			content: [`${range.min}`, `${range.max}`],
+		},
+		{
+			condition: range.min !== undefined,
+			prefix: 'Min:',
+			content: `${range.min}`,
+		},
+		{
+			condition: range.max !== undefined,
+			prefix: 'Max:',
+			content: `${range.max}`,
+		},
+		{
+			condition: range.exclusiveMin !== undefined,
+			prefix: 'Greater than',
+			content: `${range.exclusiveMin}`,
+		},
+		{
+			condition: range.exclusiveMax !== undefined,
+			prefix: 'Less than',
+			content: `${range.exclusiveMax}`,
+		},
+	];
+
+	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
+
+	return computedRestrictionItem ?
+			{
+				prefix: computedRestrictionItem.prefix,
+				content: computedRestrictionItem.content,
+			}
+		:	null;
 };
 
 const handleCount = (
@@ -167,26 +194,36 @@ const handleDependsOn = (schemaRestrictions: SchemaRestrictions): RestrictionIte
 	return restrictionItems;
 };
 
+const handleRegularExpression = (regularExpression: string | string[]) => {
+	return {
+		prefix: Array.isArray(regularExpression) ? 'Must match patterns:' : 'Must match pattern:',
+		content: regularExpression,
+	};
+};
+
 export const computeAllowedValuesColumn = (
 	restrictions: SchemaRestrictions,
 	schemaField: SchemaField,
-): RestrictionItem[] => {
-	const restrictionItems: RestrictionItem[] = [];
+): AllowedValuesBaseDisplayItem => {
+	var allowedValuesBaseDisplayItem = {};
 
 	if (!restrictions || Object.keys(restrictions).length === 0) {
-		restrictionItems.push({ prefix: null, content: 'None' });
-		return restrictionItems;
+		const empty = {
+			prefix: null,
+			content: null,
+		};
+		return empty;
 	}
-	restrictionItems.push(...handleDependsOn(restrictions));
+	// restrictionItems.push(...handleDependsOn(restrictions));
 
-	if ('regex' in restrictions) {
-		const regx = restrictions.regex;
-		const regexValue = Array.isArray(restrictions.regex) ? restrictions.regex.join(', ') : restrictions.regex;
-		restrictionItems.push({
-			prefix: 'Must match pattern: ',
-			content: `${regexValue}\nSee field description for examples.`,
-		});
+	if ('regex' in restrictions && restrictions.regex !== undefined) {
+		const computedRegularExpressionRestrictionItem = handleRegularExpression(restrictions.regex);
+		allowedValuesBaseDisplayItem = {
+			...allowedValuesBaseDisplayItem,
+			regularExpression: computedRegularExpressionRestrictionItem,
+		};
 	}
+
 	if ('codeList' in restrictions && restrictions.codeList !== undefined && !('count' in restrictions)) {
 		const codeListDisplay =
 			Array.isArray(restrictions.codeList) ? restrictions.codeList.join(',\n') : `"${restrictions.codeList}"`;
@@ -194,7 +231,8 @@ export const computeAllowedValuesColumn = (
 	}
 
 	if ('range' in restrictions && restrictions.range !== undefined) {
-		handleRange(restrictions.range, restrictionItems);
+		const computedRangeRestrictionItem = handleRange(restrictions.range);
+		allowedValuesBaseDisplayItem = { ...allowedValuesBaseDisplayItem, range: computedRangeRestrictionItem };
 	}
 
 	if (
@@ -217,11 +255,7 @@ export const computeAllowedValuesColumn = (
 		restrictionItems.push({ prefix: null, content: 'Must be unique' });
 	}
 
-	if (restrictionItems.length === 0) {
-		restrictionItems.push({ prefix: null, content: 'None' });
-	}
-
-	return restrictionItems;
+	return;
 };
 
 export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, schemaField: SchemaField) => {
