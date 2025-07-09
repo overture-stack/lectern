@@ -20,8 +20,9 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { SchemaRestrictions } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 
+import { Row } from '@tanstack/react-table';
 import Pill from '../../../../common/Pill';
 import OpenModalPill from '../OpenModalPill';
 
@@ -35,7 +36,12 @@ const containerStyle = css`
 	gap: 10px;
 `;
 
-export const renderAttributesColumn = (schemaRestrictions: SchemaRestrictions) => {
+export const renderAttributesColumn = (tableRow: Row<SchemaField>) => {
+	const schemaRestrictions: SchemaRestrictions = tableRow.original.restrictions;
+	const schemaField: SchemaField = tableRow.original;
+
+	const { unique } = schemaField;
+
 	if (schemaRestrictions === undefined) {
 		return;
 	}
@@ -44,6 +50,7 @@ export const renderAttributesColumn = (schemaRestrictions: SchemaRestrictions) =
 			{'if' in schemaRestrictions ?
 				<OpenModalPill title="Required When" />
 			:	<Pill>{'required' in schemaRestrictions ? 'Required' : 'Optional'}</Pill>}
+			{unique && <Pill>Unique</Pill>}
 		</div>
 	);
 };
