@@ -22,7 +22,7 @@ import { Request } from 'express';
 import { InternalServerError, ForbiddenError } from '@overture-stack/lectern-dictionary';
 
 import { Group, UserDataResponseErrorType } from '../common/types/auth';
-import { userDataResponseSchema } from '../common/validation/auth-validation.js';
+import { userDataResponseSchema } from '../common/validation/auth-validation';
 import { authConfig } from '../config/authConfig';
 import logger from '../config/logger';
 

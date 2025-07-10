@@ -18,16 +18,17 @@
  */
 
 import { z } from 'zod';
-
+import dotenv from 'dotenv';
 import EnvironmentConfigError from './EnvironmentConfigError';
+
+dotenv.config();
+const enabled = process.env.AUTH_ENABLED === 'true';
 
 const authConfigSchema = z.object({
 	AUTHZ_ENDPOINT: z.string().url(),
 	AUTH_CLIENT_ID: z.string(),
 	AUTH_CLIENT_SECRET: z.string(),
 	AUTH_GROUP_ADMIN: z.string(),
-	AUTH_GROUP_SUBMITTER: z.string(),
-	AUTH_GROUP_DATA_EXTRACTOR: z.string(),
 });
 
 const parseResult = authConfigSchema.safeParse(process.env);
@@ -38,6 +39,7 @@ if (!parseResult.success) {
 
 export const authConfig = {
 	...parseResult.data,
+	enabled,
 };
 
 export type AuthConfig = typeof authConfig;
