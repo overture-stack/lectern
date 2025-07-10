@@ -65,9 +65,9 @@ export const fetchUserData = async (token: string) => {
 
 	const userTokenInfo = {
 		user: {
-			username: `${responseValidation.data.pcgl_id}`,
+			username: `${responseValidation.data.userinfo.pcgl_id}`,
 			isAdmin: isAdmin(responseValidation.data.groups),
-			allowedWriteOrganizations: responseValidation.data.study_authorizations.study_curator,
+			allowedWriteOrganizations: responseValidation.data.study_authorizations.editable_studies,
 			groups: extractUserGroups(responseValidation.data.groups),
 		},
 	};

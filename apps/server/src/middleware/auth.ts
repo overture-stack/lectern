@@ -17,37 +17,41 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Request } from 'express';
-
+import { NextFunction, Request, Response } from 'express';
+import { ForbiddenError } from '@overture-stack/lectern-dictionary';
 import logger from '../config/logger';
 import { extractAccessTokenFromHeader, fetchUserData } from '../external/pcglAuthZClient';
+import { authConfig } from '../config/authConfig';
 
-export const adminMiddleware = async (req: Request) => {
-	try {
-		const token = extractAccessTokenFromHeader(req);
+/**
+ * Middleware to handle authentication
+ * @returns
+ */
+export const authAdminMiddleware = () => {
+	const { enabled } = authConfig;
+	return async (req: Request, _: Response, next: NextFunction) => {
+		try {
+			// If auth is disabled, then skip fetching user information
+			if (!enabled) {
+				return next();
+			}
 
-		if (!token) {
-			return {
-				errorCode: 401,
-				errorMessage: 'Unauthorized: No token provided',
-			};
+			const token = extractAccessTokenFromHeader(req);
+
+			if (!token) {
+				throw new ForbiddenError('Unauthorized: No Access token provided');
+			}
+
+			const result = await fetchUserData(token);
+
+			if (!result.user?.isAdmin) {
+				throw new ForbiddenError('Unauthorized: You do not have access to this resource');
+			}
+
+			return next();
+		} catch (error) {
+			logger.error(error);
+			return next(error);
 		}
-
-		const result = await fetchUserData(token);
-
-		if (!result.user?.isAdmin) {
-			return {
-				errorCode: 403,
-				errorMessage: 'Forbidden: Must be an admin to access this resource',
-			};
-		}
-
-		return result;
-	} catch (error) {
-		logger.error(error);
-		return {
-			errorCode: 403,
-			errorMessage: 'Forbidden: Invalid token',
-		};
-	}
+	};
 };
