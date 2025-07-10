@@ -21,7 +21,7 @@ import { Request } from 'express';
 
 import { InternalServerError, ForbiddenError } from '@overture-stack/lectern-dictionary';
 
-import { Group, UserDataResponseErrorType } from '../common/types/auth';
+import { Group, UserDataResponse, UserDataResponseErrorType } from '../common/types/auth';
 import { userDataResponseSchema } from '../common/validation/auth-validation';
 import { authConfig } from '../config/authConfig';
 import logger from '../config/logger';
@@ -53,7 +53,7 @@ export const fetchUserData = async (token: string) => {
 		}
 	}
 
-	const result = await response.json();
+	const result: UserDataResponse = await response.json();
 
 	const responseValidation = userDataResponseSchema.safeParse(result);
 
