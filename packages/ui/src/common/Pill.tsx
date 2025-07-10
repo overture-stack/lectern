@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ *  This program and the accompanying materials are made available under the terms of
+ *  the GNU Affero General Public License v3.0. You should have received a copy of the
+ *  GNU Affero General Public License along with this program.
+ *   If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ *  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ *  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
@@ -13,7 +32,6 @@ export interface PillProps {
 	variant?: PillVariant;
 	size?: PillSize;
 	icon?: ReactNode;
-	onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 	style?: CSSProperties;
 }
 
@@ -82,7 +100,7 @@ const getSizeStyles = (size: PillSize) => {
 	return sizeStyles[size];
 };
 
-const pillStyles = (sizeStyles, variantStyles, icon, onClick) => css`
+const pillStyles = (sizeStyles, variantStyles, icon) => css`
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -103,14 +121,6 @@ const pillStyles = (sizeStyles, variantStyles, icon, onClick) => css`
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	hyphens: auto;
-	${onClick ?
-		css`
-			cursor: pointer;
-			&:hover {
-				background-color: ${variantStyles.hoverBackground};
-			}
-		`
-	:	''}
 	${icon ?
 		css`
 			.pill-icon {
@@ -123,26 +133,13 @@ const pillStyles = (sizeStyles, variantStyles, icon, onClick) => css`
 	:	''};
 `;
 
-const Pill = ({ children, variant = 'default', size = 'medium', icon, onClick, style }: PillProps) => {
+const Pill = ({ children, variant = 'default', size = 'medium', icon, style }: PillProps) => {
 	const theme = useThemeContext();
 	const variantStyles = getVariantStyles(variant, theme);
 	const sizeStyles = getSizeStyles(size);
 
-	const handleClick = (event: MouseEvent<HTMLDivElement>) => {
-		if (onClick) {
-			event.stopPropagation;
-			onClick(event);
-		}
-	};
-
 	return (
-		<div
-			css={pillStyles(sizeStyles, variantStyles, icon, onClick)}
-			style={style}
-			onClick={handleClick}
-			role={onClick ? 'button' : undefined}
-			tabIndex={onClick ? 0 : undefined}
-		>
+		<div css={pillStyles(sizeStyles, variantStyles, icon)} style={style}>
 			{icon && <span className="pill-icon">{icon}</span>}
 			<span style={{ textAlign: 'center' }}>{children}</span>
 		</div>
