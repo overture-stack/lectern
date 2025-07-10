@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { Dictionary, replaceReferences, Schema } from '@overture-stack/lectern-dictionary';
+import { Dictionary, replaceReferences } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 import SchemaTable from '../../src/viewer-table/DataTable/SchemaTable/SchemaTable';
 import Advanced from '../fixtures/TorontoMapleLeafs.json';

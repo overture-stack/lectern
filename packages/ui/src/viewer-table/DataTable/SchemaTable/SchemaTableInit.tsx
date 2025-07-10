@@ -24,7 +24,7 @@
 import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext, createColumnHelper, Row } from '@tanstack/react-table';
 
-import { renderAllowedValuesColumn } from './Columns/AllowedValues';
+import { renderAllowedValuesColumn } from './Columns/AllowedValuesColumn/RenderAllowedValues';
 import { renderAttributesColumn } from './Columns/Attribute';
 import { renderDataTypeColumn } from './Columns/DataType';
 import { FieldsColumn } from './Columns/Fields';

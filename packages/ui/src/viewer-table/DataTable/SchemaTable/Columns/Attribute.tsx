@@ -24,7 +24,6 @@ import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-diction
 
 import { Row } from '@tanstack/react-table';
 import Pill from '../../../../common/Pill';
-import OpenModalPill from '../OpenModalPill';
 
 export type Attributes = 'Required' | 'Optional' | 'Required When';
 
@@ -48,7 +47,7 @@ export const renderAttributesColumn = (tableRow: Row<SchemaField>) => {
 	return (
 		<div css={containerStyle}>
 			{'if' in schemaRestrictions ?
-				<OpenModalPill title="Required When" />
+				<Pill>Required When</Pill>
 			:	<Pill>{'required' in schemaRestrictions ? 'Required' : 'Optional'}</Pill>}
 			{unique && <Pill>Unique</Pill>}
 		</div>

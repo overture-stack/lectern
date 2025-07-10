@@ -24,16 +24,12 @@ import { DictionaryMeta, SchemaField, SchemaRestrictions } from '@overture-stack
 import { Row } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
-import Pill from '../../../../common/Pill';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
-import OpenModalPill from '../OpenModalPill';
 
 const fieldContainerStyle = css`
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
-	scroll-margin: 40%;
 `;
 
 const fieldNameStyle = (theme: Theme) => css`
@@ -115,17 +111,6 @@ const useClipboard = () => {
 	};
 };
 
-const FieldName = ({ name, uniqueKeys, foreignKey, theme }: FieldNameProps) => {
-	return (
-		<div css={fieldNameStyle(theme)}>
-			{name}
-			{uniqueKeys.length === 1 && !foreignKey && <Pill size="small">{uniqueKeys}</Pill>}
-			{uniqueKeys.length > 1 && !foreignKey && <OpenModalPill title="Primary Key" />}
-			{foreignKey && <OpenModalPill title="Foreign Key" />}
-		</div>
-	);
-};
-
 export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const fieldName = fieldRow.original.name;
 	const fieldIndex = fieldRow.index;
@@ -142,19 +127,13 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 
 	return (
 		<div id={fieldIndex.toString()} css={fieldContainerStyle}>
-			<FieldName
-				name={fieldName}
-				index={fieldIndex}
-				uniqueKeys={uniqueKey as string[]}
-				foreignKey={foreignKey as string}
-				theme={theme}
-			/>
+			<span css={fieldNameStyle(theme)}>{fieldName}</span>
 			{fieldDescription && <p css={theme.typography.data}>{fieldDescription}</p>}
 			{fieldExamples && (
-				<p css={theme.typography.data}>
+				<span css={theme.typography.data}>
 					<strong>Example(s): </strong>
 					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
-				</p>
+				</span>
 			)}
 		</div>
 	);
