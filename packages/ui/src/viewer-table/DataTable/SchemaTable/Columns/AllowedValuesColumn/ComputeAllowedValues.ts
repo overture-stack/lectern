@@ -26,9 +26,12 @@ import {
 import { CellContext } from '@tanstack/react-table';
 
 export type RestrictionItem = {
-	prefix: string | string[] | null;
-	content: string | string[] | null;
+	prefix: string | string[] | undefined;
+	content: string | string[] | undefined;
 };
+
+export type RestrictionField = RestrictionItem | undefined;
+
 export type AllowedValuesBaseDisplayItem = {
 	dependsOn?: RestrictionItem;
 	regularExpression?: RestrictionItem;
@@ -42,7 +45,8 @@ export type AllowedValuesColumnProps = {
 	restrictions: CellContext<SchemaField, SchemaRestrictions>;
 };
 
-const handleRange = (range: RestrictionRange): RestrictionItem | null => {
+//Helper functions
+const handleRange = (range: RestrictionRange): RestrictionItem | undefined => {
 	const computeRestrictions = [
 		{
 			condition: range.min !== undefined && range.max !== undefined,
@@ -78,13 +82,13 @@ const handleRange = (range: RestrictionRange): RestrictionItem | null => {
 				prefix: computedRestrictionItem.prefix,
 				content: computedRestrictionItem.content,
 			}
-		:	null;
+		:	undefined;
 };
 const handleCodeListsWithCountRestrictions = (
 	codeList: string | string[] | number[],
 	count: RestrictionRange,
 	schemaField: SchemaField,
-): RestrictionItem | null => {
+): RestrictionItem | undefined => {
 	const { isArray, delimiter } = schemaField;
 	const delimiterText = isArray ? `, delimited by "${delimiter}"` : '';
 
@@ -121,10 +125,10 @@ const handleCodeListsWithCountRestrictions = (
 				prefix: computedRestrictionItem.prefix,
 				content: Array.isArray(codeList) ? codeList.map((item: string | number) => `${item}`) : [codeList],
 			}
-		:	null;
+		:	undefined;
 };
 
-const handleDependsOn = (conditions: RestrictionCondition[]): RestrictionItem | null => {
+const handleDependsOn = (conditions: RestrictionCondition[]): RestrictionItem | undefined => {
 	const allFields: string[] = conditions.flatMap((condition: RestrictionCondition) => {
 		return condition.fields;
 	});
@@ -134,7 +138,7 @@ const handleDependsOn = (conditions: RestrictionCondition[]): RestrictionItem | 
 				prefix: 'Depends on:',
 				content: [...new Set(allFields)],
 			}
-		:	null;
+		:	undefined;
 };
 
 const handleRegularExpression = (regularExpression: string | string[]) => {
@@ -144,7 +148,7 @@ const handleRegularExpression = (regularExpression: string | string[]) => {
 	};
 };
 
-const handleCodeList = (codeList: string | string[] | number[]): RestrictionItem | null => {
+const handleCodeList = (codeList: string | string[] | number[]): RestrictionItem | undefined => {
 	return {
 		prefix: 'One of:',
 		content: Array.isArray(codeList) ? codeList.map((item: string | number) => `${item}`) : [codeList],
@@ -155,35 +159,26 @@ export const computeAllowedValuesColumn = (
 	restrictions: SchemaRestrictions,
 	schemaField: SchemaField,
 ): AllowedValuesBaseDisplayItem => {
-	var allowedValuesBaseDisplayItem = {};
+	const allowedValuesBaseDisplayItem: AllowedValuesBaseDisplayItem = {};
 
 	if (!restrictions || Object.keys(restrictions).length === 0) {
-		return allowedValuesBaseDisplayItem;
+		return {};
 	}
 
 	if ('if' in restrictions && restrictions.if !== undefined && restrictions.if.conditions !== undefined) {
-		allowedValuesBaseDisplayItem = {
-			...allowedValuesBaseDisplayItem,
-			dependsOn: handleDependsOn(restrictions.if.conditions),
-		};
+		allowedValuesBaseDisplayItem.dependsOn = handleDependsOn(restrictions.if.conditions);
 	}
 
 	if ('regex' in restrictions && restrictions.regex !== undefined) {
-		allowedValuesBaseDisplayItem = {
-			...allowedValuesBaseDisplayItem,
-			regularExpression: handleRegularExpression(restrictions.regex),
-		};
+		allowedValuesBaseDisplayItem.regularExpression = handleRegularExpression(restrictions.regex);
 	}
 
 	if ('codeList' in restrictions && restrictions.codeList !== undefined && !('count' in restrictions)) {
-		allowedValuesBaseDisplayItem = {
-			...allowedValuesBaseDisplayItem,
-			codeList: handleCodeList(restrictions.codeList),
-		};
+		allowedValuesBaseDisplayItem.codeList = handleCodeList(restrictions.codeList);
 	}
 
 	if ('range' in restrictions && restrictions.range !== undefined) {
-		allowedValuesBaseDisplayItem = { ...allowedValuesBaseDisplayItem, range: handleRange(restrictions.range) };
+		allowedValuesBaseDisplayItem.range = handleRange(restrictions.range);
 	}
 
 	if (
@@ -193,21 +188,15 @@ export const computeAllowedValuesColumn = (
 		restrictions.count != undefined &&
 		schemaField.isArray !== undefined
 	) {
-		allowedValuesBaseDisplayItem = {
-			...allowedValuesBaseDisplayItem,
-			codeListWithCountRestrictions: handleCodeListsWithCountRestrictions(
-				restrictions.codeList,
-				restrictions.count,
-				schemaField,
-			),
-		};
+		allowedValuesBaseDisplayItem.codeListWithCountRestrictions = handleCodeListsWithCountRestrictions(
+			restrictions.codeList,
+			restrictions.count,
+			schemaField,
+		);
 	}
 
 	if (schemaField.unique) {
-		allowedValuesBaseDisplayItem = {
-			...allowedValuesBaseDisplayItem,
-			unique: { prefix: null, content: 'Must be unique' },
-		};
+		allowedValuesBaseDisplayItem.unique = { prefix: undefined, content: 'Must be unique' };
 	}
 
 	return allowedValuesBaseDisplayItem;
