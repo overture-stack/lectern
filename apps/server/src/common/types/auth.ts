@@ -47,12 +47,6 @@ export type DacAuthorization = {
 	end_date: string;
 };
 
-export type StudyAuthorizations = {
-	team_member: string[];
-	study_curator: string[];
-	dac_authorizations: DacAuthorization[];
-};
-
 export type Group = {
 	id: number | string;
 	description: string;
