@@ -21,9 +21,12 @@
 
 /** @jsxImportSource @emotion/react */
 
+import { Dictionary } from '@overture-stack/lectern-dictionary';
+import { DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
-import { DictionaryServerUnion } from './InteractionPanel';
+
+export type DictionaryServerUnion = Dictionary | DictionaryServerRecord;
 
 export type DictionaryVersionSwitcherProps = {
 	dictionaryData: DictionaryServerUnion[];
