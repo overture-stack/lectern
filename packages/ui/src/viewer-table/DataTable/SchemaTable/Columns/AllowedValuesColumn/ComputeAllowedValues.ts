@@ -26,8 +26,8 @@ import {
 import { CellContext } from '@tanstack/react-table';
 
 export type RestrictionItem = {
-	prefix: string | string[] | undefined;
-	content: string | string[] | undefined;
+	prefix: string[];
+	content: string[];
 };
 
 export type RestrictionField = RestrictionItem | undefined;
@@ -50,7 +50,7 @@ const handleRange = (range: RestrictionRange): RestrictionItem | undefined => {
 	const computeRestrictions = [
 		{
 			condition: range.min !== undefined && range.max !== undefined,
-			prefix: ['Min', 'Max'],
+			prefix: ['Min:', 'Max:'],
 			content: [`${range.min}`, `${range.max}`],
 		},
 		{
@@ -79,10 +79,19 @@ const handleRange = (range: RestrictionRange): RestrictionItem | undefined => {
 
 	return computedRestrictionItem ?
 			{
-				prefix: computedRestrictionItem.prefix,
-				content: computedRestrictionItem.content,
+				prefix:
+					Array.isArray(computedRestrictionItem.prefix) ?
+						[...computedRestrictionItem.prefix]
+					:	[computedRestrictionItem.prefix],
+				content:
+					Array.isArray(computedRestrictionItem.content) ?
+						[...computedRestrictionItem.content]
+					:	[computedRestrictionItem.content],
 			}
-		:	undefined;
+		:	{
+				prefix: [],
+				content: [],
+			};
 };
 const handleCodeListsWithCountRestrictions = (
 	codeList: string | string[] | number[],
@@ -122,10 +131,13 @@ const handleCodeListsWithCountRestrictions = (
 	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
 	return computedRestrictionItem ?
 			{
-				prefix: computedRestrictionItem.prefix,
+				prefix: [computedRestrictionItem.prefix],
 				content: Array.isArray(codeList) ? codeList.map((item: string | number) => `${item}`) : [codeList],
 			}
-		:	undefined;
+		:	{
+				prefix: [],
+				content: [],
+			};
 };
 
 const handleDependsOn = (conditions: RestrictionCondition[]): RestrictionItem | undefined => {
@@ -135,22 +147,27 @@ const handleDependsOn = (conditions: RestrictionCondition[]): RestrictionItem | 
 
 	return allFields.length > 0 ?
 			{
-				prefix: 'Depends on:',
+				prefix: ['Depends on:'],
 				content: [...new Set(allFields)],
 			}
-		:	undefined;
+		:	{
+				prefix: [],
+				content: [],
+			};
 };
 
-const handleRegularExpression = (regularExpression: string | string[]) => {
+const handleRegularExpression = (regularExpression: string[] | string) => {
+	const patterns = Array.isArray(regularExpression) ? regularExpression : [regularExpression];
+
 	return {
-		prefix: Array.isArray(regularExpression) ? 'Must match patterns:' : 'Must match pattern:',
-		content: regularExpression,
+		prefix: Array.isArray(regularExpression) ? ['Must match patterns:'] : ['Must match pattern:'],
+		content: patterns,
 	};
 };
 
-const handleCodeList = (codeList: string | string[] | number[]): RestrictionItem | undefined => {
+const handleCodeList = (codeList: string | string[] | number[]): RestrictionItem => {
 	return {
-		prefix: 'One of:',
+		prefix: ['One of:'],
 		content: Array.isArray(codeList) ? codeList.map((item: string | number) => `${item}`) : [codeList],
 	};
 };
@@ -196,7 +213,7 @@ export const computeAllowedValuesColumn = (
 	}
 
 	if (schemaField.unique) {
-		allowedValuesBaseDisplayItem.unique = { prefix: undefined, content: 'Must be unique' };
+		allowedValuesBaseDisplayItem.unique = { prefix: [], content: ['Must be unique'] };
 	}
 
 	return allowedValuesBaseDisplayItem;

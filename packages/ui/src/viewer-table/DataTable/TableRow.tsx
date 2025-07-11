@@ -63,6 +63,7 @@ const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
 							collapsedText="Show All"
 							wrapperStyle={() => css`
 								${theme.typography.data}
+								white-space: pre-wrap;
 							`}
 							maxLines={4}
 						>

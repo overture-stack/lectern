@@ -20,37 +20,36 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
+import { ReactNode } from 'react';
+import Button from '../common/Button';
+import { Theme } from '../theme';
+import { useThemeContext } from '../theme/ThemeContext';
+import Eye from '../theme/icons/Eye';
 
-import { Row } from '@tanstack/react-table';
-import Pill from '../../../../common/Pill';
-import OpenModalButton from '../../../OpenModalButton';
+export type OpenModalButtonProps = {
+	onClick?: (
+		e: React.SyntheticEvent<HTMLButtonElement>,
+	) => any | ((e: React.SyntheticEvent<HTMLButtonElement>) => Promise<any>);
+	children: ReactNode;
+};
+const openModalButtonStyle = (theme: Theme) => css`
+	background: #ffff;
+	color: ${theme.colors.black};
+	border: 1px solid ${theme.colors.black};
+	transition: background 0.2s ease;
 
-export type Attributes = 'Required' | 'Optional' | 'Required When';
-
-const containerStyle = css`
-	display: flex;
-	align-items: center;
-	flex-direction: column;
-	justify-content: center;
-	gap: 10px;
+	&:hover {
+		background: #f5f5f5;
+	}
 `;
 
-export const renderAttributesColumn = (tableRow: Row<SchemaField>) => {
-	const schemaRestrictions: SchemaRestrictions = tableRow.original.restrictions;
-	const schemaField: SchemaField = tableRow.original;
-
-	const { unique } = schemaField;
-
-	if (schemaRestrictions === undefined) {
-		return;
-	}
+const OpenModalButton = ({ onClick, children }: OpenModalButtonProps) => {
+	const theme: Theme = useThemeContext();
 	return (
-		<div css={containerStyle}>
-			{'if' in schemaRestrictions ?
-				<OpenModalButton>Required When</OpenModalButton>
-			:	<Pill>{'required' in schemaRestrictions ? 'Required' : 'Optional'}</Pill>}
-			{unique && <Pill>Unique</Pill>}
-		</div>
+		<Button onClick={onClick} styleOverride={openModalButtonStyle(theme)} icon={<Eye />}>
+			{children}
+		</Button>
 	);
 };
+
+export default OpenModalButton;

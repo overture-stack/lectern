@@ -19,37 +19,53 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
 import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
-
-import { Theme } from '../../../../../theme';
-import { useThemeContext } from '../../../../../theme/ThemeContext';
+import InlineCode from '../../../../../common/InlineCode';
 import { computeAllowedValuesColumn } from './ComputeAllowedValues';
 
-const linkStyle = (theme: Theme) => css`
-	${theme.typography?.label};
-	color: ${theme.colors.black};
-	cursor: pointer;
-	display: inline-flex;
-	align-items: center;
-	background: none;
-	border: none;
-	padding: 0;
-	margin-top: 4px;
-	text-decoration: underline;
-	&:hover {
-		text-decoration: underline;
-	}
-`;
-
-const pillStyle = (theme: Theme) => ({
-	fontFamily: 'B612 Mono',
-	color: theme.colors.accent_dark,
-	fontWeight: '400',
-	lineHeight: '20px',
-	fontSize: '13px',
-});
 export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, schemaField: SchemaField) => {
 	const restrictionItems = computeAllowedValuesColumn(restrictions, schemaField);
-	const theme = useThemeContext();
+
+	if (Object.keys(restrictionItems).length === 0) {
+		return <strong>None</strong>;
+	}
+
+	return (
+		<>
+			{Object.entries(restrictionItems).map(([k, v]) => {
+				const { prefix, content } = v;
+
+				if (prefix.includes('Depends on')) {
+					return (
+						<>
+							<strong>{prefix}</strong>
+							<br />
+							{content.map((item, i) => (
+								<InlineCode key={i}>{item}</InlineCode>
+							))}
+						</>
+					);
+				}
+
+				if (prefix.length === content.length) {
+					return (
+						<>
+							{prefix.map((prefix, index) => (
+								<span key={index}>
+									<strong>{prefix}</strong> {content[index]}{' '}
+								</span>
+							))}
+						</>
+					);
+				}
+
+				return (
+					<span>
+						<strong>{prefix}</strong> <br />
+						{content.join('\n')}
+					</span>
+				);
+			})}
+		</>
+	);
 };

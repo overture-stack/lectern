@@ -20,12 +20,12 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { CSSProperties, MouseEvent, ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 
 import { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
 
-export type PillVariant = 'default' | 'button';
+export type PillVariant = 'default';
 export type PillSize = 'extra-small' | 'small' | 'medium' | 'large';
 export interface PillProps {
 	children: ReactNode;
@@ -42,12 +42,6 @@ const getVariantStyles = (variant: PillVariant, theme: Theme) => {
 			color: theme.colors.black,
 			border: 'none',
 			hoverBackground: '#D8DADD',
-		},
-		button: {
-			background: '#FFFF',
-			color: theme.colors.black,
-			border: `1px solid ${theme.colors.black}`,
-			hoverBackground: '#F5F5F5',
 		},
 	};
 	return VARIANT_STYLES[variant];
