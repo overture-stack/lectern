@@ -20,7 +20,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
-import InlineCode from '../../../../../common/InlineCode';
+import FieldBlock from '../../../../../common/FieldBlock';
 import { computeAllowedValuesColumn } from './ComputeAllowedValues';
 
 export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, schemaField: SchemaField) => {
@@ -41,7 +41,7 @@ export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, sche
 							<strong>{prefix}</strong>
 							<br />
 							{content.map((item, index) => (
-								<InlineCode key={index}>{item}</InlineCode>
+								<FieldBlock key={index}>{item}</FieldBlock>
 							))}
 						</>
 					);

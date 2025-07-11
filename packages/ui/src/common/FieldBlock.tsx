@@ -30,7 +30,7 @@ export interface InlineCodeProps {
 	style?: CSSProperties;
 }
 
-const inlineCodeStyles = (theme: Theme) => css`
+const fieldBlockStyles = (theme: Theme) => css`
 	${theme.typography.data}
 	display: inline-flex;
 	align-items: center;
@@ -47,13 +47,13 @@ const inlineCodeStyles = (theme: Theme) => css`
 	font-family: 'DM Mono', monospace;
 `;
 
-const InlineCode = ({ children, style }: InlineCodeProps) => {
+const FieldBlock = ({ children, style }: InlineCodeProps) => {
 	const theme: Theme = useThemeContext();
 	return (
-		<span css={inlineCodeStyles(theme)} style={style}>
+		<span css={fieldBlockStyles(theme)} style={style}>
 			{children}
 		</span>
 	);
 };
 
-export default InlineCode;
+export default FieldBlock;

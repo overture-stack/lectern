@@ -20,15 +20,15 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import InlineCode from '../../src/common/InlineCode';
+import FieldBlock from '../../src/common/FieldBlock';
 import themeDecorator from '../themeDecorator';
 
 const meta = {
-	component: InlineCode,
-	title: 'Common/InlineCode',
+	component: FieldBlock,
+	title: 'Common/FieldBlock',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
-} satisfies Meta<typeof InlineCode>;
+} satisfies Meta<typeof FieldBlock>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
