@@ -9,6 +9,8 @@ import InteractionPanel from '../../../src/viewer-table/InteractionPanel/Interac
 import AdvancedDictionary from '../../fixtures/advanced.json';
 import themeDecorator from '../../themeDecorator';
 
+import { type DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
+
 const storybookStyles = css`
 	padding-bottom: 200px;
 `;
@@ -18,26 +20,21 @@ const meta = {
 	title: 'Viewer - Table/Interaction - Panel/InteractionPanel',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
-	render: (args) => (
-		<div
-			style={{
-				paddingBottom: '200px',
-			}}
-		>
-			<InteractionPanel {...args} />
-		</div>
-	),
+	render: (args) => <InteractionPanel {...args} />,
 } satisfies Meta<typeof InteractionPanel>;
 
 export default meta;
 
+export type DictionaryServerUnion = Dictionary | DictionaryServerRecord;
+
 type Story = StoryObj<typeof meta>;
 
-const SingleDictionaryData: Dictionary[] = [AdvancedDictionary as Dictionary];
-const MultipleDictionaryData: Dictionary[] = [
-	{ ...AdvancedDictionary, version: '1.0' } as Dictionary,
-	{ ...AdvancedDictionary, version: '2.0' } as Dictionary,
-	{ ...AdvancedDictionary, version: '3.0' } as Dictionary,
+const SingleDictionaryData: Array<DictionaryServerUnion> = [AdvancedDictionary as DictionaryServerUnion];
+
+const MultipleDictionaryData: DictionaryServerUnion[] = [
+	{ ...AdvancedDictionary, version: '1.0', createdAt: '2025-20-20' } as DictionaryServerRecord,
+	{ ...AdvancedDictionary, version: '2.0', createdAt: '2025-20-20' } as DictionaryServerRecord,
+	{ ...AdvancedDictionary, version: '3.0', createdAt: '2025-20-20' } as DictionaryServerRecord,
 ];
 
 const mockProps = {
