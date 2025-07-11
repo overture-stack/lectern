@@ -39,17 +39,12 @@ const containerStyle = css`
 export const renderAttributesColumn = (tableRow: Row<SchemaField>) => {
 	const schemaRestrictions: SchemaRestrictions = tableRow.original.restrictions;
 	const schemaField: SchemaField = tableRow.original;
-
 	const { unique } = schemaField;
-
-	if (schemaRestrictions === undefined) {
-		return;
-	}
 	return (
 		<div css={containerStyle}>
-			{'if' in schemaRestrictions ?
+			{schemaRestrictions && 'if' in schemaRestrictions ?
 				<OpenModalButton>Required When</OpenModalButton>
-			:	<Pill>{'required' in schemaRestrictions ? 'Required' : 'Optional'}</Pill>}
+			:	<Pill>{schemaRestrictions && 'required' in schemaRestrictions ? 'Required' : 'Optional'}</Pill>}
 			{unique && <Pill>Unique</Pill>}
 		</div>
 	);
