@@ -20,11 +20,11 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { SchemaRestrictions } from '@overture-stack/lectern-dictionary';
-import React from 'react';
+import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 
+import { Row } from '@tanstack/react-table';
 import Pill from '../../../../common/Pill';
-import OpenModalPill from '../OpenModalPill';
+import OpenModalButton from '../../../OpenModalButton';
 
 export type Attributes = 'Required' | 'Optional' | 'Required When';
 
@@ -36,20 +36,16 @@ const containerStyle = css`
 	gap: 10px;
 `;
 
-export const renderAttributesColumn = (schemaRestrictions: SchemaRestrictions | undefined) => {
-	const handleRequiredWhen = () => {
-		return <OpenModalPill title="Required When" />;
-	};
+export const renderAttributesColumn = (tableRow: Row<SchemaField>) => {
+	const schemaRestrictions: SchemaRestrictions = tableRow.original.restrictions;
+	const schemaField: SchemaField = tableRow.original;
+	const { unique } = schemaField;
 	return (
 		<div css={containerStyle}>
-			{schemaRestrictions && 'if' in schemaRestrictions && schemaRestrictions.if ?
-				handleRequiredWhen()
-			:	<Pill>
-					{schemaRestrictions && 'required' in schemaRestrictions && schemaRestrictions.required ?
-						'Required'
-					:	'Optional'}
-				</Pill>
-			}
+			{schemaRestrictions && 'if' in schemaRestrictions ?
+				<OpenModalButton onClick={() => alert('Hello World')}>Required When</OpenModalButton>
+			:	<Pill>{schemaRestrictions && 'required' in schemaRestrictions ? 'Required' : 'Optional'}</Pill>}
+			{unique && <Pill>Unique</Pill>}
 		</div>
 	);
 };

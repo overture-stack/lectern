@@ -221,14 +221,10 @@
 					"delimiter": ",",
 					"description": "Up to 4 referee performance ratings.",
 					"restrictions": {
-						"codeList": [1, 2, 3, 4, 5],
-						"count": { "max": 4 }
+						"uniqueKey": ["game_id", "season_year", "game_date", "home_team_score", "away_team_score"]
 					}
 				}
-			],
-			"restrictions": {
-				"uniqueKeys": [["game_id"], ["season_year", "game_date", "home_team_score", "away_team_score"]]
-			}
+			]
 		},
 		{
 			"name": "player_profiles",

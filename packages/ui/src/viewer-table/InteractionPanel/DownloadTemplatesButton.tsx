@@ -25,7 +25,6 @@ import { css } from '@emotion/react';
 import { useState } from 'react';
 import Button from '../../common/Button';
 import { useThemeContext } from '../../theme/ThemeContext';
-import { css } from '@emotion/react';
 
 export type DictionaryDownloadButtonProps = {
 	version: string;

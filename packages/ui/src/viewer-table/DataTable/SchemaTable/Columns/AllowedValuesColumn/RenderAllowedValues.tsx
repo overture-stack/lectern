@@ -19,14 +19,54 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
+import InlineCode from '../../../../../common/InlineCode';
+import { computeAllowedValuesColumn } from './ComputeAllowedValues';
 
-import Pill from '../../../../common/Pill';
+export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, schemaField: SchemaField) => {
+	const restrictionItems = computeAllowedValuesColumn(restrictions, schemaField);
 
-export const renderDataTypeColumn = (schemaField: SchemaField) => {
+	if (Object.keys(restrictionItems).length === 0) {
+		return <strong>None</strong>;
+	}
+
 	return (
-		<Pill>
-			{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
-		</Pill>
+		<>
+			{Object.entries(restrictionItems).map(([key, value]) => {
+				const { prefix, content } = value;
+
+				if (prefix.includes('Depends on:')) {
+					return (
+						<>
+							<strong>{prefix}</strong>
+							<br />
+							{content.map((item, index) => (
+								<InlineCode key={index}>{item}</InlineCode>
+							))}
+						</>
+					);
+				}
+
+				// For case of min and max
+				if (prefix.length === content.length) {
+					return (
+						<>
+							{prefix.map((prefix, index) => (
+								<span key={index}>
+									<strong>{prefix}</strong> {content[index]}{' '}
+								</span>
+							))}
+						</>
+					);
+				}
+
+				return (
+					<span>
+						<strong>{prefix}</strong> <br />
+						{content.join(',\n')}
+					</span>
+				);
+			})}
+		</>
 	);
 };
