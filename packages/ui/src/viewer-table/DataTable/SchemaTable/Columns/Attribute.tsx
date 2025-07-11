@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -16,47 +15,37 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { flexRender, HeaderGroup } from '@tanstack/react-table';
+import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { Row } from '@tanstack/react-table';
+import Pill from '../../../../common/Pill';
+import OpenModalButton from '../../../OpenModalButton';
 
-const thStyle = (theme: Theme, index: number) => css`
-	${theme.typography.heading};
-	background: #e5edf3;
-	text-align: left;
-	padding: 12px;
-	border-bottom: 1px solid #dcdcdc;
-	${index === 0 &&
-	`
-		position: sticky;
-		left: 0;
-		background-color: #e5edf3;
-	`}
-	border: 1px solid #DCDDE1;
+export type Attributes = 'Required' | 'Optional' | 'Required When';
+
+const containerStyle = css`
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: center;
+	gap: 10px;
 `;
 
-export type TableHeaderProps<T> = {
-	headerGroup: HeaderGroup<T>;
-};
-
-const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
-	const theme = useThemeContext();
+export const renderAttributesColumn = (tableRow: Row<SchemaField>) => {
+	const schemaRestrictions: SchemaRestrictions = tableRow.original.restrictions;
+	const schemaField: SchemaField = tableRow.original;
+	const { unique } = schemaField;
 	return (
-		<tr key={headerGroup.id}>
-			{headerGroup.headers.map((header, index) => (
-				<th key={header.id} colSpan={header.colSpan} css={thStyle(theme, index)}>
-					{flexRender(header.column.columnDef.header, header.getContext())}
-				</th>
-			))}
-		</tr>
+		<div css={containerStyle}>
+			{schemaRestrictions && 'if' in schemaRestrictions ?
+				<OpenModalButton onClick={() => alert('Hello World')}>Required When</OpenModalButton>
+			:	<Pill>{schemaRestrictions && 'required' in schemaRestrictions ? 'Required' : 'Optional'}</Pill>}
+			{unique && <Pill>Unique</Pill>}
+		</div>
 	);
 };
-
-export default TableHeader;

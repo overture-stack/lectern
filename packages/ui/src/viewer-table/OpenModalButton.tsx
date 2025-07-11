@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -16,47 +15,55 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
-
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { flexRender, HeaderGroup } from '@tanstack/react-table';
+import { ReactNode } from 'react';
+import { Theme } from '../theme';
+import { useThemeContext } from '../theme/ThemeContext';
+import Eye from '../theme/icons/Eye';
 
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
-
-const thStyle = (theme: Theme, index: number) => css`
-	${theme.typography.heading};
-	background: #e5edf3;
-	text-align: left;
-	padding: 12px;
-	border-bottom: 1px solid #dcdcdc;
-	${index === 0 &&
-	`
-		position: sticky;
-		left: 0;
-		background-color: #e5edf3;
-	`}
-	border: 1px solid #DCDDE1;
-`;
-
-export type TableHeaderProps<T> = {
-	headerGroup: HeaderGroup<T>;
+export type OpenModalButtonProps = {
+	onClick?: (
+		e: React.SyntheticEvent<HTMLButtonElement>,
+	) => any | ((e: React.SyntheticEvent<HTMLButtonElement>) => Promise<any>);
+	children: ReactNode;
 };
 
-const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
-	const theme = useThemeContext();
+const pillButtonStyle = (theme: Theme) => css`
+	${theme.typography.subheading2}
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 4px 12px;
+	border-radius: 5px;
+	background-color: #ffff;
+	color: ${theme.colors.black};
+	border: 1px solid ${theme.colors.black};
+	transition: all 0.2s ease-in-out;
+	max-width: 120px;
+	text-align: center;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	hyphens: auto;
+	white-space: pre-line;
+	cursor: pointer;
+	&:hover {
+		background: #f5f5f5;
+	}
+`;
+
+const OpenModalButton = ({ onClick, children }: OpenModalButtonProps) => {
+	const theme: Theme = useThemeContext();
+
 	return (
-		<tr key={headerGroup.id}>
-			{headerGroup.headers.map((header, index) => (
-				<th key={header.id} colSpan={header.colSpan} css={thStyle(theme, index)}>
-					{flexRender(header.column.columnDef.header, header.getContext())}
-				</th>
-			))}
-		</tr>
+		<button onClick={onClick} css={pillButtonStyle(theme)}>
+			<Eye />
+			{children}
+		</button>
 	);
 };
 
-export default TableHeader;
+export default OpenModalButton;

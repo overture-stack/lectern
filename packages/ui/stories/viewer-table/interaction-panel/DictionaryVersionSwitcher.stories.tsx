@@ -3,7 +3,7 @@
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 import VersionSwitcher from '../../../src/viewer-table/InteractionPanel/DictionaryVersionSwitcher';
-import DictionarySample from '../../fixtures/advanced.json';
+import DictionarySample from '../../fixtures/TorontoMapleLeafs.json';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {

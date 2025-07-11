@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -16,64 +15,45 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { Row, flexRender } from '@tanstack/react-table';
+import { CSSProperties, ReactNode } from 'react';
 
-import ReadMoreText from '../../common/ReadMoreText';
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { Theme } from '../theme';
+import { useThemeContext } from '../theme/ThemeContext';
 
-const rowStyle = (index: number) => css`
-	background-color: ${index % 2 === 0 ? '' : '#F5F7F8'};
-`;
+export interface InlineCodeProps {
+	children: ReactNode;
+	style?: CSSProperties;
+}
 
-const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
+const fieldBlockStyles = (theme: Theme) => css`
 	${theme.typography.data}
-	padding: 12px;
-	max-width: 30vw;
-	vertical-align: top;
-	${cellIndex === 0 &&
-	`
-		position: sticky;
-		left: 0;
-		background-color: ${rowIndex % 2 === 0 ? 'white' : '#F5F7F8'};
-	`}
-	border: 1px solid #DCDDE1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	padding: 2px 5px;
+	border-radius: 3px;
+	background-color: #ececec;
+	border: 0.5px solid black;
+	transition: all 0.2s ease-in-out;
+	width: fit-content;
+	text-align: center;
+	color: ${theme.colors.accent_dark};
+	font-family: 'DM Mono', monospace;
 `;
 
-export type TableRowProps<T> = {
-	row: Row<T>;
-	index: number;
-};
-
-const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
-	const theme = useThemeContext();
+const FieldBlock = ({ children, style }: InlineCodeProps) => {
+	const theme: Theme = useThemeContext();
 	return (
-		<tr key={row.id} css={rowStyle(index)}>
-			{row.getVisibleCells().map((cell, cellIndex) => {
-				return (
-					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>
-						<ReadMoreText
-							expandedText="Show Less"
-							collapsedText="Show All"
-							wrapperStyle={() => css`
-								${theme.typography.data}
-								white-space: pre-wrap;
-							`}
-							maxLines={4}
-						>
-							{flexRender(cell.column.columnDef.cell, cell.getContext())}
-						</ReadMoreText>
-					</td>
-				);
-			})}
-		</tr>
+		<span css={fieldBlockStyles(theme)} style={style}>
+			{children}
+		</span>
 	);
 };
 
-export default TableRow;
+export default FieldBlock;
