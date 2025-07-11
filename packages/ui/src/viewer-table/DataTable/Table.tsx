@@ -33,6 +33,13 @@ export type GenericTableProps<R> = {
 	columns: ColumnDef<R, any>[];
 };
 
+type ScrollShadowsResult = {
+	scrollRef: React.RefObject<HTMLDivElement | null>;
+	showLeftShadow: boolean;
+	showRightShadow: boolean;
+	firstColumnWidth: number;
+};
+
 const scrollWrapperStyle = css`
 	position: relative;
 	overflow: hidden;
@@ -51,7 +58,7 @@ const shadowStyle = css`
 
 const leftShadowStyle = (width: number, opacity: number) => css`
 	${shadowStyle}
-	left: ${width + 25}px;
+	left: ${width}px;
 	background: linear-gradient(90deg, rgba(0, 0, 0, 0.035), transparent);
 	opacity: ${opacity};
 `;
@@ -79,26 +86,19 @@ const tableBorderStyle = css`
 	border: 1px solid #dcdde1;
 `;
 
-const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
-	const table = useReactTable({
-		data: data,
-		columns,
-		getCoreRowModel: getCoreRowModel(),
-	});
-	/***************************** MESSY SCROLLING BEHAVIOR***********************/
+export const useScrollShadows = (): ScrollShadowsResult => {
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const [showLeftShadow, setShowLeftShadow] = useState(false);
 	const [showRightShadow, setShowRightShadow] = useState(false);
 	const [firstColumnWidth, setFirstColumnWidth] = useState(0);
 
-	// We need to compute the width of the first column in order to make sure that the scrolling occurs after that point
 	const updateFirstColumnWidth = useCallback(() => {
 		if (!scrollRef.current) {
 			return;
 		}
-		const firstColumnHeader = scrollRef.current.querySelector('th:first-child');
-		if (firstColumnHeader) {
-			setFirstColumnWidth(parseFloat(window.getComputedStyle(firstColumnHeader).width));
+		const firstTh = scrollRef.current.querySelector('th:first-child');
+		if (firstTh instanceof HTMLElement) {
+			setFirstColumnWidth(firstTh.getBoundingClientRect().width);
 		}
 	}, []);
 
@@ -111,7 +111,6 @@ const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 		setShowRightShadow(scrollWidth - scrollLeft - clientWidth > 0);
 	}, []);
 
-	// Handle scroll events
 	useEffect(() => {
 		const scrollElement = scrollRef.current;
 		if (!scrollElement) {
@@ -122,16 +121,27 @@ const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 		return () => scrollElement.removeEventListener('scroll', handleScroll);
 	}, [handleScroll]);
 
-	// Handle resize events for first column width
 	useEffect(() => {
-		// Initial width calculation
 		updateFirstColumnWidth();
-
 		window.addEventListener('resize', updateFirstColumnWidth);
 		return () => window.removeEventListener('resize', updateFirstColumnWidth);
 	}, [updateFirstColumnWidth]);
-	/***************************** MESSY SCROLLING BEHAVIOR***********************/
 
+	return {
+		scrollRef,
+		showLeftShadow,
+		showRightShadow,
+		firstColumnWidth,
+	};
+};
+
+const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
+	const table = useReactTable({
+		data: data,
+		columns,
+		getCoreRowModel: getCoreRowModel(),
+	});
+	const { scrollRef, showLeftShadow, showRightShadow, firstColumnWidth } = useScrollShadows();
 	return (
 		<div css={scrollWrapperStyle}>
 			<div css={tableContainerStyle} ref={scrollRef}>
