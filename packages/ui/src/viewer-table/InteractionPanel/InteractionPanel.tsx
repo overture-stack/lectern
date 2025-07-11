@@ -24,6 +24,7 @@
 import { css, SerializedStyles } from '@emotion/react';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 
+import { type DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import AttributeFilterDropdown, { FilterOptions } from './AttributeFilterDropdown';
@@ -33,6 +34,8 @@ import DownloadTemplatesButton from './DownloadTemplatesButton';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
 
+export type DictionaryServerUnion = Dictionary | DictionaryServerRecord;
+
 export type InteractionPanelProps = {
 	disabled?: boolean;
 	setIsCollapsed: (isCollapsed: boolean) => void;
@@ -40,7 +43,7 @@ export type InteractionPanelProps = {
 	dictionaryConfig: {
 		lecternUrl: string;
 		dictionaryIndex: number;
-		dictionaryData: Dictionary[];
+		dictionaryData: DictionaryServerUnion[];
 		onVersionChange: (index: number) => void;
 		filters: FilterOptions[];
 		setFilters: (filters: FilterOptions[]) => void;
@@ -78,7 +81,8 @@ const InteractionPanel = ({
 	styles,
 }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
-	const selectedDictionary: Dictionary = dictionaryConfig.dictionaryData[dictionaryConfig.dictionaryIndex];
+	const selectedDictionary: DictionaryServerUnion = dictionaryConfig.dictionaryData[dictionaryConfig.dictionaryIndex];
+	const createdAt: string = 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : '';
 
 	return (
 		<div css={panelStyles(theme, styles)}>
@@ -99,6 +103,7 @@ const InteractionPanel = ({
 					dictionaryIndex={dictionaryConfig.dictionaryIndex}
 					onVersionChange={dictionaryConfig.onVersionChange}
 					disabled={disabled}
+					title={`Version ${selectedDictionary.version} (${createdAt})`}
 				/>
 				<DownloadTemplatesButton
 					fileType="tsv"
