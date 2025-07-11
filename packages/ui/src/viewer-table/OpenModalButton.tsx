@@ -16,12 +16,10 @@
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
 import { ReactNode } from 'react';
-import Button from '../common/Button';
 import { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
 import Eye from '../theme/icons/Eye';
@@ -32,12 +30,26 @@ export type OpenModalButtonProps = {
 	) => any | ((e: React.SyntheticEvent<HTMLButtonElement>) => Promise<any>);
 	children: ReactNode;
 };
-const openModalButtonStyle = (theme: Theme) => css`
-	background: #ffff;
+
+const pillButtonStyle = (theme: Theme) => css`
+	${theme.typography.subheading2}
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 4px 12px;
+	border-radius: 5px;
+	background-color: #ffff;
 	color: ${theme.colors.black};
 	border: 1px solid ${theme.colors.black};
-	transition: background 0.2s ease;
-
+	transition: all 0.2s ease-in-out;
+	max-width: 120px;
+	text-align: center;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	hyphens: auto;
+	white-space: pre-line;
+	cursor: pointer;
 	&:hover {
 		background: #f5f5f5;
 	}
@@ -45,10 +57,12 @@ const openModalButtonStyle = (theme: Theme) => css`
 
 const OpenModalButton = ({ onClick, children }: OpenModalButtonProps) => {
 	const theme: Theme = useThemeContext();
+
 	return (
-		<Button onClick={onClick} styleOverride={openModalButtonStyle(theme)} icon={<Eye />}>
+		<button onClick={onClick} css={pillButtonStyle(theme)}>
+			<Eye />
 			{children}
-		</Button>
+		</button>
 	);
 };
 

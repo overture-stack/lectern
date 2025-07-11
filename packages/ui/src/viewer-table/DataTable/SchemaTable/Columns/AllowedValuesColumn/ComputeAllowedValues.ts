@@ -16,7 +16,6 @@
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {
 	RestrictionCondition,
 	RestrictionRange,
@@ -65,12 +64,12 @@ const handleRange = (range: RestrictionRange): RestrictionItem | undefined => {
 		},
 		{
 			condition: range.exclusiveMin !== undefined,
-			prefix: 'Greater than',
+			prefix: 'Greater than:',
 			content: `${range.exclusiveMin}`,
 		},
 		{
 			condition: range.exclusiveMax !== undefined,
-			prefix: 'Less than',
+			prefix: 'Less than:',
 			content: `${range.exclusiveMax}`,
 		},
 	];
@@ -93,6 +92,7 @@ const handleRange = (range: RestrictionRange): RestrictionItem | undefined => {
 				content: [],
 			};
 };
+
 const handleCodeListsWithCountRestrictions = (
 	codeList: string | string[] | number[],
 	count: RestrictionRange,

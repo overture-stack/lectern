@@ -32,21 +32,22 @@ export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, sche
 
 	return (
 		<>
-			{Object.entries(restrictionItems).map(([k, v]) => {
-				const { prefix, content } = v;
+			{Object.entries(restrictionItems).map(([key, value]) => {
+				const { prefix, content } = value;
 
 				if (prefix.includes('Depends on:')) {
 					return (
 						<>
 							<strong>{prefix}</strong>
 							<br />
-							{content.map((item, i) => (
-								<InlineCode key={i}>{item}</InlineCode>
+							{content.map((item, index) => (
+								<InlineCode key={index}>{item}</InlineCode>
 							))}
 						</>
 					);
 				}
 
+				// For case of min and max
 				if (prefix.length === content.length) {
 					return (
 						<>
