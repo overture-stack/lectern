@@ -52,9 +52,9 @@ const bodyStyle = css`
 	height: calc(40vh - 56px);
 `;
 
+Modal.setAppElement('body');
 const ModalComponent = ({ children, setIsOpen, isOpen, onAfterOpen, title }: ModalProps) => {
 	const theme = useThemeContext();
-
 	return (
 		<Modal
 			isOpen={isOpen}
