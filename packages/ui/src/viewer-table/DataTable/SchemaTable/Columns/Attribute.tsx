@@ -43,7 +43,7 @@ export const renderAttributesColumn = (tableRow: Row<SchemaField>) => {
 	return (
 		<div css={containerStyle}>
 			{schemaRestrictions && 'if' in schemaRestrictions ?
-				<OpenModalButton>Required When</OpenModalButton>
+				<OpenModalButton onClick={() => alert('Hello World')}>Required When</OpenModalButton>
 			:	<Pill>{schemaRestrictions && 'required' in schemaRestrictions ? 'Required' : 'Optional'}</Pill>}
 			{unique && <Pill>Unique</Pill>}
 		</div>

@@ -35,7 +35,7 @@ export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, sche
 			{Object.entries(restrictionItems).map(([k, v]) => {
 				const { prefix, content } = v;
 
-				if (prefix.includes('Depends on')) {
+				if (prefix.includes('Depends on:')) {
 					return (
 						<>
 							<strong>{prefix}</strong>
@@ -62,7 +62,7 @@ export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, sche
 				return (
 					<span>
 						<strong>{prefix}</strong> <br />
-						{content.join('\n')}
+						{content.join(',\n')}
 					</span>
 				);
 			})}

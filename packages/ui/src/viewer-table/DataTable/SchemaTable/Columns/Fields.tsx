@@ -30,6 +30,7 @@ import { useThemeContext } from '../../../../theme/ThemeContext';
 const fieldContainerStyle = css`
 	display: flex;
 	flex-direction: column;
+	gap: 3px;
 `;
 
 const fieldNameStyle = (theme: Theme) => css`
@@ -128,9 +129,9 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	return (
 		<div id={fieldIndex.toString()} css={fieldContainerStyle}>
 			<span css={fieldNameStyle(theme)}>{fieldName}</span>
-			{fieldDescription && <p css={theme.typography.data}>{fieldDescription}</p>}
+			{fieldDescription && <span>{fieldDescription}</span>}
 			{fieldExamples && (
-				<span css={theme.typography.data}>
+				<span>
 					<strong>Example(s): </strong>
 					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
 				</span>
