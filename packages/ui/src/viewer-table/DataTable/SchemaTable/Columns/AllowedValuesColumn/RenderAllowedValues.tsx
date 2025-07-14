@@ -23,8 +23,12 @@ import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-diction
 import FieldBlock from '../../../../../common/FieldBlock';
 import { computeAllowedValuesColumn } from './ComputeAllowedValues';
 
-export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, schemaField: SchemaField) => {
-	const restrictionItems = computeAllowedValuesColumn(restrictions, schemaField);
+export const renderAllowedValuesColumn = (
+	restrictions: SchemaRestrictions,
+	currentSchemaField: SchemaField,
+	schemaFields: SchemaField[],
+) => {
+	const restrictionItems = computeAllowedValuesColumn(restrictions, currentSchemaField, schemaFields);
 
 	if (Object.keys(restrictionItems).length === 0) {
 		return <strong>None</strong>;
@@ -41,7 +45,7 @@ export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, sche
 							<strong>{prefix}</strong>
 							<br />
 							{content.map((item, index) => (
-								<FieldBlock key={index}>{item}</FieldBlock>
+								<FieldBlock key={index}>{item.content}</FieldBlock>
 							))}
 						</>
 					);
@@ -53,7 +57,7 @@ export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, sche
 						<>
 							{prefix.map((prefix, index) => (
 								<span key={index}>
-									<strong>{prefix}</strong> {content[index]}{' '}
+									<strong>{prefix}</strong> {content[index].content}{' '}
 								</span>
 							))}
 						</>
@@ -63,7 +67,7 @@ export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, sche
 				return (
 					<span>
 						<strong>{prefix}</strong> <br />
-						{content.join(',\n')}
+						{content.map((item) => item.content).join(',\n')}
 					</span>
 				);
 			})}

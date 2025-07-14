@@ -17,6 +17,7 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {
+	ForeignKeyRestriction,
 	RestrictionCondition,
 	RestrictionRange,
 	SchemaField,
@@ -24,9 +25,13 @@ import {
 } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
 
+export type ContentType = {
+	isCode?: boolean;
+	content: string;
+};
 export type RestrictionItem = {
 	prefix: string[];
-	content: string[];
+	content: ContentType[];
 };
 
 export type RestrictionField = RestrictionItem | undefined;
@@ -50,27 +55,27 @@ const handleRange = (range: RestrictionRange): RestrictionItem | undefined => {
 		{
 			condition: range.min !== undefined && range.max !== undefined,
 			prefix: ['Min:', 'Max:'],
-			content: [`${range.min}`, `${range.max}`],
+			content: [{ content: `${range.min}` }, { content: `${range.max}` }],
 		},
 		{
 			condition: range.min !== undefined,
 			prefix: 'Min:',
-			content: `${range.min}`,
+			content: { content: `${range.min}` },
 		},
 		{
 			condition: range.max !== undefined,
 			prefix: 'Max:',
-			content: `${range.max}`,
+			content: { content: `${range.max}` },
 		},
 		{
 			condition: range.exclusiveMin !== undefined,
 			prefix: 'Greater than:',
-			content: `${range.exclusiveMin}`,
+			content: { content: `${range.exclusiveMin}` },
 		},
 		{
 			condition: range.exclusiveMax !== undefined,
 			prefix: 'Less than:',
-			content: `${range.exclusiveMax}`,
+			content: { content: `${range.exclusiveMax}` },
 		},
 	];
 
@@ -96,9 +101,9 @@ const handleRange = (range: RestrictionRange): RestrictionItem | undefined => {
 const handleCodeListsWithCountRestrictions = (
 	codeList: string | string[] | number[],
 	count: RestrictionRange,
-	schemaField: SchemaField,
+	currentSchemaField: SchemaField,
 ): RestrictionItem | undefined => {
-	const { isArray, delimiter } = schemaField;
+	const { isArray, delimiter } = currentSchemaField;
 	const delimiterText = isArray ? `, delimited by "${delimiter}"` : '';
 
 	const computeRestrictions = [
@@ -132,7 +137,10 @@ const handleCodeListsWithCountRestrictions = (
 	return computedRestrictionItem ?
 			{
 				prefix: [computedRestrictionItem.prefix],
-				content: Array.isArray(codeList) ? codeList.map((item: string | number) => `${item}`) : [codeList],
+				content:
+					Array.isArray(codeList) ?
+						codeList.map((item: string | number) => ({ content: `${item}` }))
+					:	[{ content: `${codeList}` }],
 			}
 		:	{
 				prefix: [],
@@ -141,14 +149,14 @@ const handleCodeListsWithCountRestrictions = (
 };
 
 const handleDependsOn = (conditions: RestrictionCondition[]): RestrictionItem | undefined => {
-	const allFields: string[] = conditions.flatMap((condition: RestrictionCondition) => {
-		return condition.fields;
-	});
+	const allFields: ContentType[] = Array.from(
+		new Set(conditions.flatMap((condition: RestrictionCondition) => condition.fields)),
+	).map((field) => ({ content: field }));
 
 	return allFields.length > 0 ?
 			{
 				prefix: ['Depends on:'],
-				content: [...new Set(allFields)],
+				content: allFields,
 			}
 		:	{
 				prefix: [],
@@ -156,8 +164,11 @@ const handleDependsOn = (conditions: RestrictionCondition[]): RestrictionItem | 
 			};
 };
 
-const handleRegularExpression = (regularExpression: string[] | string) => {
-	const patterns = Array.isArray(regularExpression) ? regularExpression : [regularExpression];
+const handleRegularExpression = (regularExpression: string[] | string): RestrictionItem => {
+	// normalize to array, then wrap each pattern in a ContentType
+	const patterns = (Array.isArray(regularExpression) ? regularExpression : [regularExpression]).map((pattern) => ({
+		content: pattern,
+	}));
 
 	return {
 		prefix: Array.isArray(regularExpression) ? ['Must match patterns:'] : ['Must match pattern:'],
@@ -168,13 +179,75 @@ const handleRegularExpression = (regularExpression: string[] | string) => {
 const handleCodeList = (codeList: string | string[] | number[]): RestrictionItem => {
 	return {
 		prefix: ['One of:'],
-		content: Array.isArray(codeList) ? codeList.map((item: string | number) => `${item}`) : [codeList],
+		content:
+			Array.isArray(codeList) ?
+				codeList.map((item: string | number) => ({ content: `${item}` }))
+			:	[{ content: `${codeList}` }],
 	};
+};
+
+const handleKeys = (restrictions: SchemaRestrictions, currentSchemaField: SchemaField): RestrictionItem | undefined => {
+	const isUnique = currentSchemaField.unique === true;
+
+	const uniqueKeys =
+		restrictions && 'uniqueKey' in restrictions && Array.isArray(restrictions.uniqueKey) ?
+			restrictions.uniqueKey
+		:	undefined;
+
+	const foreignKey =
+		restrictions && 'foreignKey' in restrictions && restrictions.foreignKey ?
+			(restrictions.foreignKey as ForeignKeyRestriction)
+		:	undefined;
+
+	const computeRestrictions = [
+		{
+			condition: foreignKey !== undefined && foreignKey.mappings.length === 1,
+			prefix: ['Must reference an existing:'],
+			content: [
+				{ content: `${foreignKey?.schema[0]}`, isCode: true },
+				{
+					content: `as defined in the ${foreignKey?.schema} schema. Multiple sequencing records can reference the same ${foreignKey?.schema}`,
+				},
+			],
+		},
+		{
+			condition: uniqueKeys !== undefined && uniqueKeys.length > 1,
+			prefix: ['Must be unique in combination with:'],
+			content:
+				uniqueKeys?.filter((key) => key !== currentSchemaField.name).map((key) => ({ content: key, isCode: true })) ??
+				[],
+		},
+		{
+			condition:
+				isUnique && Array.isArray(uniqueKeys) && uniqueKeys.length === 1 && uniqueKeys[0] === currentSchemaField.name,
+			prefix: ['A unique value that matches the following restrictions:'],
+			content: [],
+		},
+	];
+
+	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
+
+	return computedRestrictionItem ?
+			{
+				prefix:
+					Array.isArray(computedRestrictionItem.prefix) ?
+						[...computedRestrictionItem.prefix]
+					:	[computedRestrictionItem.prefix],
+				content:
+					Array.isArray(computedRestrictionItem.content) ?
+						[...computedRestrictionItem.content]
+					:	[computedRestrictionItem.content],
+			}
+		:	{
+				prefix: [],
+				content: [],
+			};
 };
 
 export const computeAllowedValuesColumn = (
 	restrictions: SchemaRestrictions,
-	schemaField: SchemaField,
+	currentSchemaField: SchemaField,
+	schemaFields: SchemaField[],
 ): AllowedValuesBaseDisplayItem => {
 	const allowedValuesBaseDisplayItem: AllowedValuesBaseDisplayItem = {};
 
@@ -203,17 +276,17 @@ export const computeAllowedValuesColumn = (
 		restrictions.codeList !== undefined &&
 		'count' in restrictions &&
 		restrictions.count != undefined &&
-		schemaField.isArray !== undefined
+		currentSchemaField.isArray !== undefined
 	) {
 		allowedValuesBaseDisplayItem.codeListWithCountRestrictions = handleCodeListsWithCountRestrictions(
 			restrictions.codeList,
 			restrictions.count,
-			schemaField,
+			currentSchemaField,
 		);
 	}
 
-	if (schemaField.unique) {
-		allowedValuesBaseDisplayItem.unique = { prefix: [], content: ['Must be unique'] };
+	if (currentSchemaField.unique) {
+		allowedValuesBaseDisplayItem.unique = { prefix: [], content: [{ content: 'Must be unique' }] };
 	}
 
 	return allowedValuesBaseDisplayItem;

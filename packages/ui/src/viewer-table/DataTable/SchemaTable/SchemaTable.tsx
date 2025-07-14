@@ -27,7 +27,7 @@ export type SchemaTableProps = {
 };
 
 const SchemaTable = ({ schema }: SchemaTableProps) => {
-	return <Table data={schema.fields} columns={getSchemaBaseColumns()} />;
+	return <Table data={schema.fields} columns={getSchemaBaseColumns(schema.fields)} />;
 };
 
 export default SchemaTable;

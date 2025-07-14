@@ -117,7 +117,6 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const fieldIndex = fieldRow.index;
 	const fieldDescription = fieldRow.original.description;
 	const fieldExamples = fieldRow.original.meta?.examples;
-
 	const theme: Theme = useThemeContext();
 
 	return (
