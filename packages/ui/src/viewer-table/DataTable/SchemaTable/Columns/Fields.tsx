@@ -20,12 +20,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import {
-	DictionaryMeta,
-	type ForeignKeyRestriction,
-	SchemaField,
-	SchemaRestrictions,
-} from '@overture-stack/lectern-dictionary';
+import { DictionaryMeta, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { Row } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
@@ -36,14 +31,13 @@ import { useThemeContext } from '../../../../theme/ThemeContext';
 const fieldContainerStyle = css`
 	display: flex;
 	flex-direction: column;
-	gap: 3px;
+	gap: 10px;
 `;
 
 const fieldNameStyle = (theme: Theme) => css`
-	${theme.typography.label}
+	${theme.typography.introText}
 	display: flex;
 	align-items: center;
-	gap: 2px;
 `;
 
 export type FieldExamplesProps = {
@@ -137,7 +131,8 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	return (
 		<div id={fieldIndex.toString()} css={fieldContainerStyle}>
 			<span css={fieldNameStyle(theme)}>
-				{fieldName} {Array.isArray(uniqueKey) && uniqueKey.length === 1 && <Pill size="extra-small">Primary Key</Pill>}
+				<strong>{fieldName}</strong>{' '}
+				{Array.isArray(uniqueKey) && uniqueKey.length === 1 && <Pill size="extra-small">Primary Key</Pill>}
 				{Array.isArray(uniqueKey) && <Pill size="small">Compound Key</Pill>}
 				{foreignKey && <Pill size="extra-small">Foreign Key</Pill>}
 			</span>

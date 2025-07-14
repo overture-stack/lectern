@@ -34,7 +34,7 @@ const rowStyle = (index: number) => css`
 `;
 
 const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
-	${theme.typography.data}
+	${theme.typography.paragraphSmall}
 	padding: 12px;
 	max-width: 30vw;
 	white-space: pre-wrap;

@@ -70,6 +70,15 @@ const subtitleSecondary = css`
 const introText = css`
 	${baseFontSecondary}
 	font-size: 18px;
+	font-weight: 400;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+const introTextBold = css`
+	${baseFontSecondary}
+	font-size: 18px;
 	font-weight: 700;
 	font-style: normal;
 	font-stretch: normal;
