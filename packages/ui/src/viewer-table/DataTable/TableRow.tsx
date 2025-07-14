@@ -22,10 +22,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { Row, flexRender } from '@tanstack/react-table';
 
-import ReadMoreText from '../../common/ReadMoreText';
-import { Theme } from '../../theme';
 import { Row, flexRender } from '@tanstack/react-table';
 
 import ReadMoreText from '../../common/ReadMoreText';
@@ -36,8 +33,6 @@ const rowStyle = (index: number) => css`
 	background-color: ${index % 2 === 0 ? '' : '#F5F7F8'};
 `;
 
-const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
-	${theme.typography.data}
 const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 	${theme.typography.data}
 	padding: 12px;
@@ -55,7 +50,6 @@ const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 `;
 
 export type TableRowProps<T> = {
-export type TableRowProps<T> = {
 	row: Row<T>;
 	index: number;
 };
@@ -64,7 +58,6 @@ const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
 	const theme = useThemeContext();
 	return (
 		<tr key={row.id} css={rowStyle(index)}>
-			{row.getVisibleCells().map((cell, cellIndex) => {
 			{row.getVisibleCells().map((cell, cellIndex) => {
 				return (
 					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>
