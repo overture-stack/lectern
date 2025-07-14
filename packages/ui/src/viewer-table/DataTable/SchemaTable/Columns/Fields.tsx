@@ -20,16 +20,10 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import {
-	DictionaryMeta,
-	type ForeignKeyRestriction,
-	SchemaField,
-	SchemaRestrictions,
-} from '@overture-stack/lectern-dictionary';
+import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary';
 import { Row } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
-import Pill from '../../../../common/Pill';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
@@ -124,23 +118,11 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const fieldDescription = fieldRow.original.description;
 	const fieldExamples = fieldRow.original.meta?.examples;
 
-	const fieldRestrictions: SchemaRestrictions = fieldRow.original.restrictions;
-
-	// TODO: not sure why they are unknown types
-	const uniqueKey = fieldRestrictions && 'uniqueKey' in fieldRestrictions ? fieldRestrictions.uniqueKey : undefined;
-	const foreignKey =
-		fieldRestrictions && 'foreignKey' in fieldRestrictions && fieldRestrictions.foreignKey ?
-			fieldRestrictions.foreignKey
-		:	undefined;
 	const theme: Theme = useThemeContext();
 
 	return (
 		<div id={fieldIndex.toString()} css={fieldContainerStyle}>
-			<span css={fieldNameStyle(theme)}>
-				{fieldName} {Array.isArray(uniqueKey) && uniqueKey.length === 1 && <Pill size="extra-small">Primary Key</Pill>}
-				{Array.isArray(uniqueKey) && <Pill size="small">Compound Key</Pill>}
-				{foreignKey && <Pill size="extra-small">Foreign Key</Pill>}
-			</span>
+			<span css={fieldNameStyle(theme)}>{fieldName}</span>
 			{fieldDescription && <span>{fieldDescription}</span>}
 			{fieldExamples && (
 				<span>
