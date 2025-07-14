@@ -19,14 +19,41 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField } from '@overture-stack/lectern-dictionary';
+import { css } from '@emotion/react';
+import { CSSProperties, ReactNode } from 'react';
 
-import Pill from '../../../../common/Pill';
+import { Theme } from '../theme';
+import { useThemeContext } from '../theme/ThemeContext';
 
-export const renderDataTypeColumn = (schemaField: SchemaField) => {
+export interface InlineCodeProps {
+	children: ReactNode;
+	style?: CSSProperties;
+}
+
+const fieldBlockStyles = (theme: Theme) => css`
+	${theme.typography.data}
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	padding: 2px 5px;
+	border-radius: 3px;
+	background-color: #ececec;
+	border: 0.5px solid black;
+	transition: all 0.2s ease-in-out;
+	width: fit-content;
+	text-align: center;
+	color: ${theme.colors.accent_dark};
+	font-family: 'DM Mono', monospace;
+`;
+
+const FieldBlock = ({ children, style }: InlineCodeProps) => {
+	const theme: Theme = useThemeContext();
 	return (
-		<Pill>
-			{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
-		</Pill>
+		<span css={fieldBlockStyles(theme)} style={style}>
+			{children}
+		</span>
 	);
 };
+
+export default FieldBlock;

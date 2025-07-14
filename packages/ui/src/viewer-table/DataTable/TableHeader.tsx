@@ -27,6 +27,9 @@ import { flexRender, HeaderGroup } from '@tanstack/react-table';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
+import { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
+
 const thStyle = (theme: Theme, index: number) => css`
 	${theme.typography.subtitleSecondary};
 	background: #e5edf3;
@@ -40,16 +43,27 @@ const thStyle = (theme: Theme, index: number) => css`
 		background-color: #e5edf3;
 	`}
 	border: 1px solid #DCDDE1;
+	${index === 0 &&
+	`
+		position: sticky;
+		left: 0;
+		background-color: #e5edf3;
+	`}
+	border: 1px solid #DCDDE1;
 `;
 
+export type TableHeaderProps<T> = {
 export type TableHeaderProps<T> = {
 	headerGroup: HeaderGroup<T>;
 };
 
 const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
 	const theme = useThemeContext();
+	const theme = useThemeContext();
 	return (
 		<tr key={headerGroup.id}>
+			{headerGroup.headers.map((header, index) => (
+				<th key={header.id} colSpan={header.colSpan} css={thStyle(theme, index)}>
 			{headerGroup.headers.map((header, index) => (
 				<th key={header.id} colSpan={header.colSpan} css={thStyle(theme, index)}>
 					{flexRender(header.column.columnDef.header, header.getContext())}

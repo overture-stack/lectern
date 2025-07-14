@@ -19,14 +19,20 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField } from '@overture-stack/lectern-dictionary';
+import type { Meta, StoryObj } from '@storybook/react';
+import FieldBlock from '../../src/common/FieldBlock';
+import themeDecorator from '../themeDecorator';
 
-import Pill from '../../../../common/Pill';
+const meta = {
+	component: FieldBlock,
+	title: 'Common/FieldBlock',
+	tags: ['autodocs'],
+	decorators: [themeDecorator()],
+} satisfies Meta<typeof FieldBlock>;
 
-export const renderDataTypeColumn = (schemaField: SchemaField) => {
-	return (
-		<Pill>
-			{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
-		</Pill>
-	);
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+	args: { children: 'Hello World' },
 };

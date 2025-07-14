@@ -16,17 +16,54 @@
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField } from '@overture-stack/lectern-dictionary';
+import { css } from '@emotion/react';
+import { ReactNode } from 'react';
+import { Theme } from '../theme';
+import { useThemeContext } from '../theme/ThemeContext';
+import Eye from '../theme/icons/Eye';
 
-import Pill from '../../../../common/Pill';
+export type OpenModalButtonProps = {
+	onClick?: (
+		e: React.SyntheticEvent<HTMLButtonElement>,
+	) => any | ((e: React.SyntheticEvent<HTMLButtonElement>) => Promise<any>);
+	children: ReactNode;
+};
 
-export const renderDataTypeColumn = (schemaField: SchemaField) => {
+const pillButtonStyle = (theme: Theme) => css`
+	${theme.typography.subheading2}
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 4px 12px;
+	border-radius: 5px;
+	background-color: #ffff;
+	color: ${theme.colors.black};
+	border: 1px solid ${theme.colors.black};
+	transition: all 0.2s ease-in-out;
+	max-width: 120px;
+	text-align: center;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	hyphens: auto;
+	white-space: pre-line;
+	cursor: pointer;
+	&:hover {
+		background: #f5f5f5;
+	}
+`;
+
+const OpenModalButton = ({ onClick, children }: OpenModalButtonProps) => {
+	const theme: Theme = useThemeContext();
+
 	return (
-		<Pill>
-			{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
-		</Pill>
+		<button onClick={onClick} css={pillButtonStyle(theme)}>
+			<Eye />
+			{children}
+		</button>
 	);
 };
+
+export default OpenModalButton;

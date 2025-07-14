@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -16,140 +16,71 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { DictionaryMeta, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
-import { CellContext } from '@tanstack/react-table';
-import React, { MouseEvent, useEffect, useMemo, useState } from 'react';
+import {
+	DictionaryMeta,
+	type ForeignKeyRestriction,
+	SchemaField,
+	SchemaRestrictions,
+} from '@overture-stack/lectern-dictionary';
+import { Row } from '@tanstack/react-table';
+import { useMemo, useState } from 'react';
 
 import Pill from '../../../../common/Pill';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
-import OpenModalPill from '../OpenModalPill';
-
-const hashIconStyle = (theme: Theme) => css`
-	opacity: 0;
-	transition: opacity 0.2s ease;
-	border-bottom: 2px solid ${theme.colors.secondary};
-	&:hover {
-		opacity: 1;
-	}
-`;
 
 const fieldContainerStyle = css`
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
-	scroll-margin: 40%;
+	gap: 3px;
 `;
 
-export type FieldColumnProps = {
-	field: CellContext<SchemaField, string>;
-};
+const fieldNameStyle = (theme: Theme) => css`
+	${theme.typography.label}
+	display: flex;
+	align-items: center;
+	gap: 2px;
+`;
+
 export type FieldExamplesProps = {
-	examples: DictionaryMeta[string];
+	examples: DictionaryMeta[keyof DictionaryMeta];
+	// Another implementation of this would be
+	// examples: DictionaryMetaValue | DictionaryMeta;
+	// Another approach would be
+	// examples: DictionaryMeta[string];
+	theme: Theme;
 };
 
 export type FieldNameProps = {
 	name: string;
 	uniqueKeys: string[];
 	index: number;
-	onHashClick: (event: MouseEvent) => void;
 	foreignKey: string;
+	theme: Theme;
+};
+
+export type FieldColumnProps = {
+	fieldRow: Row<SchemaField>;
 };
 
 export type FieldDescriptionProps = {
 	description: string;
+	theme: Theme;
 };
 
-const FieldExamples = ({ examples }: FieldExamplesProps) => {
-	const theme = useThemeContext();
-	if (!examples) {
-		return null;
-	}
-	const count = Array.isArray(examples) ? examples.length : 1;
-	const label = count > 1 ? 'Examples:' : 'Example:';
-	const text = Array.isArray(examples) ? examples.join(', ') : String(examples);
-
-	return (
-		<div>
-			<p css={theme.typography.dataBold}>
-				{label} <span css={theme.typography.data}>{text}</span>
-			</p>
-		</div>
-	);
-};
-
-const FieldName = ({ name, onHashClick, uniqueKeys, foreignKey }: FieldNameProps) => {
-	const theme = useThemeContext();
-	const { Hash } = theme.icons;
-	const displayKeys = uniqueKeys.filter((value) => value !== '');
-	const fieldNameStyle = css`
-		${theme.typography.dataBold}
-		display: flex;
-		align-items: center;
-		gap: 2px;
-	`;
-	return (
-		<div css={fieldNameStyle}>
-			{name}
-			<span css={hashIconStyle(theme)} onClick={(event) => onHashClick(event)}>
-				<Hash width={10} height={10} fill={theme.colors.secondary} />
-			</span>
-			{displayKeys.length === 1 && !foreignKey && (
-				<Pill fullWidth={true} size="small">
-					{displayKeys}
-				</Pill>
-			)}
-			{displayKeys.length > 1 && !foreignKey && <OpenModalPill title="Primary Key" />}
-			{foreignKey && <OpenModalPill title="Foreign Key" />}
-		</div>
-	);
-};
-
-const FieldDescription = ({ description }: FieldDescriptionProps) => {
-	const theme = useThemeContext();
-	return <div css={theme.typography.data}>{description}</div>;
-};
-
-const useHashNavigation = (fieldIndex: number) => {
-	useEffect(() => {
-		const hashTarget = `field-${fieldIndex}`;
-		if (window.location.hash === `#${hashTarget}`) {
-			document.getElementById(hashTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-		}
-	}, [fieldIndex]);
-};
-
-const useHashClickHandler = (fieldIndex: number, setClipboardContents: (clipboardContents: string) => void) => {
-	return (event: MouseEvent) => {
-		event.stopPropagation();
-		const hashTarget = `field-${fieldIndex}`;
-		const windowLocationHash = `#${hashTarget}`;
-		setClipboardContents(
-			`${window.location.origin}${window.location.pathname}${window.location.search}${windowLocationHash}`,
-		);
-		setClipboardContents(window.location.href);
-	};
-};
-
-export const FieldsColumn = ({ field }: FieldColumnProps) => {
+//TODO: Not currently used but will be used when implementing the hash-navigation
+const useClipboard = () => {
 	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
 	const [isCopying, setIsCopying] = useState(false);
 	const [copySuccess, setCopySuccess] = useState(false);
 
-	const fieldName = field.row.original.name;
-	const fieldIndex = field.row.index;
-	const fieldDescription = field.row.original.description;
-	const fieldExamples = field.row.original.meta?.examples;
-	const fieldRestrictions: SchemaRestrictions = field.row.original.restrictions;
-	const uniqueKey = fieldRestrictions && 'uniqueKey' in fieldRestrictions ? fieldRestrictions.uniqueKey : [''];
-	const foreignKey = fieldRestrictions && 'foreignKey' in fieldRestrictions && fieldRestrictions.foreignKey;
-
 	const handleCopy = (text: string) => {
 		if (isCopying) {
-			return; // We don't wanna copy if we are already copying
+			return;
 		}
 		setIsCopying(true);
 		navigator.clipboard
@@ -158,7 +89,7 @@ export const FieldsColumn = ({ field }: FieldColumnProps) => {
 				setCopySuccess(true);
 				setTimeout(() => {
 					setIsCopying(false);
-				}, 2000); // Reset copy success after 2 seconds as well as the isCopying state
+				}, 2000);
 			})
 			.catch((err) => {
 				console.error('Failed to copy text: ', err);
@@ -166,7 +97,6 @@ export const FieldsColumn = ({ field }: FieldColumnProps) => {
 				setIsCopying(false);
 			});
 		if (copySuccess) {
-			// Update the clipboard contents
 			const currentURL = window.location.href;
 			setClipboardContents(currentURL);
 		}
@@ -179,20 +109,45 @@ export const FieldsColumn = ({ field }: FieldColumnProps) => {
 		}
 	}, [clipboardContents]);
 
-	useHashNavigation(fieldIndex);
-	const handleHashClick = useHashClickHandler(fieldIndex, setClipboardContents);
+	return {
+		clipboardContents,
+		setClipboardContents,
+		isCopying,
+		copySuccess,
+		handleCopy,
+	};
+};
+
+export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
+	const fieldName = fieldRow.original.name;
+	const fieldIndex = fieldRow.index;
+	const fieldDescription = fieldRow.original.description;
+	const fieldExamples = fieldRow.original.meta?.examples;
+
+	const fieldRestrictions: SchemaRestrictions = fieldRow.original.restrictions;
+
+	// TODO: not sure why they are unknown types
+	const uniqueKey = fieldRestrictions && 'uniqueKey' in fieldRestrictions ? fieldRestrictions.uniqueKey : undefined;
+	const foreignKey =
+		fieldRestrictions && 'foreignKey' in fieldRestrictions && fieldRestrictions.foreignKey ?
+			fieldRestrictions.foreignKey
+		:	undefined;
+	const theme: Theme = useThemeContext();
 
 	return (
-		<div id={`field-${fieldIndex}`} css={fieldContainerStyle}>
-			<FieldName
-				name={fieldName}
-				index={fieldIndex}
-				onHashClick={handleHashClick}
-				uniqueKeys={uniqueKey as string[]}
-				foreignKey={foreignKey as string}
-			/>
-			{fieldDescription && <FieldDescription description={fieldDescription} />}
-			{!foreignKey && fieldExamples && <FieldExamples examples={fieldExamples} />}
+		<div id={fieldIndex.toString()} css={fieldContainerStyle}>
+			<span css={fieldNameStyle(theme)}>
+				{fieldName} {Array.isArray(uniqueKey) && uniqueKey.length === 1 && <Pill size="extra-small">Primary Key</Pill>}
+				{Array.isArray(uniqueKey) && <Pill size="small">Compound Key</Pill>}
+				{foreignKey && <Pill size="extra-small">Foreign Key</Pill>}
+			</span>
+			{fieldDescription && <span>{fieldDescription}</span>}
+			{fieldExamples && (
+				<span>
+					<strong>Example(s): </strong>
+					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
+				</span>
+			)}
 		</div>
 	);
 };
