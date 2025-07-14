@@ -22,15 +22,18 @@
 /** @jsxImportSource @emotion/react */
 
 import { Dictionary } from '@overture-stack/lectern-dictionary';
-
+import { DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useThemeContext } from '../../theme/ThemeContext';
 
+export type DictionaryServerUnion = Dictionary | DictionaryServerRecord;
+
 export type DictionaryVersionSwitcherProps = {
-	dictionaryData: Dictionary[];
+	dictionaryData: DictionaryServerUnion[];
 	dictionaryIndex: number;
 	onVersionChange: (index: number) => void;
 	disabled?: boolean;
+	title: string;
 };
 
 const DictionaryVersionSwitcher = ({
@@ -38,15 +41,17 @@ const DictionaryVersionSwitcher = ({
 	dictionaryIndex,
 	onVersionChange,
 	disabled = false,
+	title,
 }: DictionaryVersionSwitcherProps) => {
 	const theme = useThemeContext();
+
 	const { History } = theme.icons;
 
-	const versionSwitcherObjectArray = dictionaryData?.map((dictionary: Dictionary, index: number) => {
-		// TODO: We should either remove the version date stamp requirement or update the date to be dynamic via
-		// lectern-client
+	const versionSwitcherObjectArray = dictionaryData?.map((dictionary: DictionaryServerUnion, index: number) => {
+		const displayVersionDate =
+			'createdAt' in dictionaryData?.[dictionaryIndex] ? `(${dictionaryData?.[dictionaryIndex].createdAt})` : '';
 		return {
-			label: 'Version ' + dictionary?.version,
+			label: `Version ${dictionary?.version} ${displayVersionDate}`,
 			action: () => {
 				onVersionChange(index);
 			},
@@ -58,12 +63,7 @@ const DictionaryVersionSwitcher = ({
 
 	return (
 		displayVersionSwitcher && (
-			<Dropdown
-				leftIcon={<History />}
-				menuItems={versionSwitcherObjectArray}
-				title={`Version ${dictionaryData?.[dictionaryIndex].version}`}
-				disabled={disabled}
-			/>
+			<Dropdown leftIcon={<History />} menuItems={versionSwitcherObjectArray} title={title} disabled={disabled} />
 		)
 	);
 };
