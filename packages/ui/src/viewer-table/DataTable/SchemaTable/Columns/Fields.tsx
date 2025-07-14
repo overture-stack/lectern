@@ -1,0 +1,153 @@
+/*
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * This program and the accompanying materials are made available under the terms of
+ * the GNU Affero General Public License v3.0. You should have received a copy of the
+ * GNU Affero General Public License along with this program.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/** @jsxImportSource @emotion/react */
+
+import { css } from '@emotion/react';
+import {
+	DictionaryMeta,
+	type ForeignKeyRestriction,
+	SchemaField,
+	SchemaRestrictions,
+} from '@overture-stack/lectern-dictionary';
+import { Row } from '@tanstack/react-table';
+import { useMemo, useState } from 'react';
+
+import Pill from '../../../../common/Pill';
+import { Theme } from '../../../../theme';
+import { useThemeContext } from '../../../../theme/ThemeContext';
+
+const fieldContainerStyle = css`
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+`;
+
+const fieldNameStyle = (theme: Theme) => css`
+	${theme.typography.label}
+	display: flex;
+	align-items: center;
+	gap: 2px;
+`;
+
+export type FieldExamplesProps = {
+	examples: DictionaryMeta[keyof DictionaryMeta];
+	// Another implementation of this would be
+	// examples: DictionaryMetaValue | DictionaryMeta;
+	// Another approach would be
+	// examples: DictionaryMeta[string];
+	theme: Theme;
+};
+
+export type FieldNameProps = {
+	name: string;
+	uniqueKeys: string[];
+	index: number;
+	foreignKey: string;
+	theme: Theme;
+};
+
+export type FieldColumnProps = {
+	fieldRow: Row<SchemaField>;
+};
+
+export type FieldDescriptionProps = {
+	description: string;
+	theme: Theme;
+};
+
+//TODO: Not currently used but will be used when implementing the hash-navigation
+const useClipboard = () => {
+	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
+	const [isCopying, setIsCopying] = useState(false);
+	const [copySuccess, setCopySuccess] = useState(false);
+
+	const handleCopy = (text: string) => {
+		if (isCopying) {
+			return;
+		}
+		setIsCopying(true);
+		navigator.clipboard
+			.writeText(text)
+			.then(() => {
+				setCopySuccess(true);
+				setTimeout(() => {
+					setIsCopying(false);
+				}, 2000);
+			})
+			.catch((err) => {
+				console.error('Failed to copy text: ', err);
+				setCopySuccess(false);
+				setIsCopying(false);
+			});
+		if (copySuccess) {
+			const currentURL = window.location.href;
+			setClipboardContents(currentURL);
+		}
+		setCopySuccess(false);
+	};
+
+	useMemo(() => {
+		if (clipboardContents) {
+			handleCopy(clipboardContents);
+		}
+	}, [clipboardContents]);
+
+	return {
+		clipboardContents,
+		setClipboardContents,
+		isCopying,
+		copySuccess,
+		handleCopy,
+	};
+};
+
+export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
+	const fieldName = fieldRow.original.name;
+	const fieldIndex = fieldRow.index;
+	const fieldDescription = fieldRow.original.description;
+	const fieldExamples = fieldRow.original.meta?.examples;
+
+	const fieldRestrictions: SchemaRestrictions = fieldRow.original.restrictions;
+
+	// TODO: not sure why they are unknown types
+	const uniqueKey = fieldRestrictions && 'uniqueKey' in fieldRestrictions ? fieldRestrictions.uniqueKey : undefined;
+	const foreignKey =
+		fieldRestrictions && 'foreignKey' in fieldRestrictions && fieldRestrictions.foreignKey ?
+			fieldRestrictions.foreignKey
+		:	undefined;
+	const theme: Theme = useThemeContext();
+
+	return (
+		<div id={fieldIndex.toString()} css={fieldContainerStyle}>
+			<span css={fieldNameStyle(theme)}>
+				{fieldName} {Array.isArray(uniqueKey) && uniqueKey.length === 1 && <Pill size="extra-small">Primary Key</Pill>}
+				{Array.isArray(uniqueKey) && <Pill size="small">Compound Key</Pill>}
+				{foreignKey && <Pill size="extra-small">Foreign Key</Pill>}
+			</span>
+			{fieldDescription && <span>{fieldDescription}</span>}
+			{fieldExamples && (
+				<span>
+					<strong>Example(s): </strong>
+					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
+				</span>
+			)}
+		</div>
+	);
+};

@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import type { FilterOptions } from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
-import AdvancedDictionary from '../../fixtures/advanced.json';
+import AdvancedDictionary from '../../fixtures/TorontoMapleLeafs.json';
 import themeDecorator from '../../themeDecorator';
 
 import { type DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';

@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -16,47 +15,58 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
-import { flexRender, HeaderGroup } from '@tanstack/react-table';
+import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
+import FieldBlock from '../../../../../common/FieldBlock';
+import { computeAllowedValuesColumn } from './ComputeAllowedValues';
 
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, schemaField: SchemaField) => {
+	const restrictionItems = computeAllowedValuesColumn(restrictions, schemaField);
 
-const thStyle = (theme: Theme, index: number) => css`
-	${theme.typography.heading};
-	background: #e5edf3;
-	text-align: left;
-	padding: 12px;
-	border-bottom: 1px solid #dcdcdc;
-	${index === 0 &&
-	`
-		position: sticky;
-		left: 0;
-		background-color: #e5edf3;
-	`}
-	border: 1px solid #DCDDE1;
-`;
+	if (Object.keys(restrictionItems).length === 0) {
+		return <strong>None</strong>;
+	}
 
-export type TableHeaderProps<T> = {
-	headerGroup: HeaderGroup<T>;
-};
-
-const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
-	const theme = useThemeContext();
 	return (
-		<tr key={headerGroup.id}>
-			{headerGroup.headers.map((header, index) => (
-				<th key={header.id} colSpan={header.colSpan} css={thStyle(theme, index)}>
-					{flexRender(header.column.columnDef.header, header.getContext())}
-				</th>
-			))}
-		</tr>
+		<>
+			{Object.entries(restrictionItems).map(([key, value]) => {
+				const { prefix, content } = value;
+
+				if (prefix.includes('Depends on:')) {
+					return (
+						<>
+							<strong>{prefix}</strong>
+							<br />
+							{content.map((item, index) => (
+								<FieldBlock key={index}>{item}</FieldBlock>
+							))}
+						</>
+					);
+				}
+
+				// For case of min and max
+				if (prefix.length === content.length) {
+					return (
+						<>
+							{prefix.map((prefix, index) => (
+								<span key={index}>
+									<strong>{prefix}</strong> {content[index]}{' '}
+								</span>
+							))}
+						</>
+					);
+				}
+
+				return (
+					<span>
+						<strong>{prefix}</strong> <br />
+						{content.join(',\n')}
+					</span>
+				);
+			})}
+		</>
 	);
 };
-
-export default TableHeader;
