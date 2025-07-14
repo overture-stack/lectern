@@ -37,8 +37,8 @@ export type ReadMoreTextProps = {
 };
 
 const defaultWrapperStyle = (theme: Theme) => css`
-	${theme.typography.caption};
-	color: ${theme.colors.grey_5};
+	${theme.typography.data};
+	color: ${theme.colors.black};
 	padding: 4px 8px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;

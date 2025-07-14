@@ -61,14 +61,7 @@ const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
 			{row.getVisibleCells().map((cell, cellIndex) => {
 				return (
 					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>
-						<ReadMoreText
-							expandedText="Show Less"
-							collapsedText="Show All"
-							wrapperStyle={() => css`
-								${theme.typography.data}
-							`}
-							maxLines={4}
-						>
+						<ReadMoreText expandedText="Show Less" collapsedText="Show All" maxLines={4}>
 							{flexRender(cell.column.columnDef.cell, cell.getContext())}
 						</ReadMoreText>
 					</td>
