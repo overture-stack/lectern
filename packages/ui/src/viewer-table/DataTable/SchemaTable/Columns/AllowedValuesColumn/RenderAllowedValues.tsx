@@ -45,6 +45,7 @@ export const renderAllowedValuesColumn = (
 									<strong>{prefix}</strong> {content[index].content}{' '}
 								</span>
 							))}
+							<br />
 						</>
 					);
 				}
@@ -62,6 +63,7 @@ export const renderAllowedValuesColumn = (
 									{index < content.length - 1 && ',\n'}
 								</span>,
 						)}
+						<br />
 					</>
 				);
 			})}
