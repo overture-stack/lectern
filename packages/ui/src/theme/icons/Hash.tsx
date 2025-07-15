@@ -21,42 +21,28 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
-import { flexRender, HeaderGroup } from '@tanstack/react-table';
+import IconProps from './IconProps';
 
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
-
-const thStyle = (theme: Theme, index: number) => css`
-	${theme.typography.heading};
-	background: #e5edf3;
-	text-align: left;
-	padding: 12px;
-	border-bottom: 1px solid #dcdcdc;
-	${index === 0 &&
-	`
-		position: sticky;
-		left: 0;
-		background-color: #e5edf3;
-	`}
-	border: 1px solid #DCDDE1;
-`;
-
-export type TableHeaderProps<T> = {
-	headerGroup: HeaderGroup<T>;
-};
-
-const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
-	const theme = useThemeContext();
+const Hash = ({ fill, width, height, style }: IconProps) => {
 	return (
-		<tr key={headerGroup.id}>
-			{headerGroup.headers.map((header, index) => (
-				<th key={header.id} colSpan={header.colSpan} css={thStyle(theme, index)}>
-					{flexRender(header.column.columnDef.header, header.getContext())}
-				</th>
-			))}
-		</tr>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width={width || '24'}
+			height={height || '24'}
+			viewBox="0 0 24 24"
+			css={style}
+			stroke={fill || 'currentColor'}
+			fill="none"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		>
+			<line x1="4" x2="20" y1="9" y2="9" />
+			<line x1="4" x2="20" y1="15" y2="15" />
+			<line x1="10" x2="8" y1="3" y2="21" />
+			<line x1="16" x2="14" y1="3" y2="21" />
+		</svg>
 	);
 };
 
-export default TableHeader;
+export default Hash;
