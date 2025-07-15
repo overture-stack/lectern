@@ -850,6 +850,95 @@
 					}
 				]
 			}
+		},
+		{
+			"name": "match_analysis",
+			"description": "Advanced analysis linking game events to player performance across multiple dimensions.",
+			"fields": [
+				{
+					"name": "analysis_id",
+					"valueType": "string",
+					"unique": true,
+					"description": "Unique identifier for each analysis record.",
+					"restrictions": {
+						"required": true,
+						"regex": "^ANA_[0-9]{8}_[0-9]{3}$"
+					}
+				},
+				{
+					"name": "game_id",
+					"valueType": "string",
+					"description": "Reference to the game being analyzed.",
+					"restrictions": {
+						"required": true
+					}
+				},
+				{
+					"name": "season_year",
+					"valueType": "integer",
+					"description": "Season year for the game.",
+					"restrictions": {
+						"required": true,
+						"range": { "min": 2000, "max": 2030 }
+					}
+				},
+				{
+					"name": "player_name",
+					"valueType": "string",
+					"description": "Name of the player being analyzed.",
+					"restrictions": {
+						"required": true
+					}
+				},
+				{
+					"name": "event_id",
+					"valueType": "string",
+					"description": "Specific event being analyzed.",
+					"restrictions": {
+						"required": true
+					}
+				},
+				{
+					"name": "performance_score",
+					"valueType": "number",
+					"description": "Calculated performance score for this analysis.",
+					"restrictions": {
+						"required": true,
+						"range": { "min": 0, "max": 100 }
+					}
+				}
+			],
+			"restrictions": {
+				"foreignKey": [
+					{
+						"schema": "game_statistics",
+						"mappings": [
+							{
+								"local": "game_id",
+								"foreign": "game_id"
+							}
+						]
+					},
+					{
+						"schema": "player_profiles",
+						"mappings": [
+							{
+								"local": "player_name",
+								"foreign": "player_name"
+							}
+						]
+					},
+					{
+						"schema": "game_events",
+						"mappings": [
+							{
+								"local": "event_id",
+								"foreign": "event_id"
+							}
+						]
+					}
+				]
+			}
 		}
 	]
 }

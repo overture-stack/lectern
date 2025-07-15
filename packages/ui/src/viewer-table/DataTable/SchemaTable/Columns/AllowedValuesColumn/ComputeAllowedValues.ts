@@ -17,6 +17,7 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {
+	ForeignKeyRestriction,
 	RestrictionCondition,
 	RestrictionRange,
 	Schema,
@@ -194,7 +195,18 @@ const handleKeys = (
 ): RestrictionItem | undefined => {
 	const isUnique = currentSchemaField.unique === true;
 	const uniqueKeys = restrictions?.uniqueKey;
-	const foreignKey = restrictions?.foreignKey;
+	const foreignKeys = restrictions?.foreignKey;
+	const found = foreignKeys
+		?.flatMap((foreignKey) =>
+			foreignKey.mappings
+				.filter((mapping) => mapping.local === currentSchemaField.name)
+				.map((mapping) => ({ foreignKey, mapping })),
+		)
+		.find((item) => !!item);
+	// not all of the foreign keys are relevant to the current field, hence we will take the first value and use that
+	const relevantForeignKey = found?.foreignKey; // foreign key that references the current field
+	const relevantMapping = found?.mapping; // mapping within that foreign key that references the current field
+
 	const computeRestrictions = [
 		{
 			condition:
@@ -203,32 +215,37 @@ const handleKeys = (
 			content: [],
 		},
 		{
-			condition: foreignKey !== undefined && foreignKey?.[0].mappings?.length > 1,
+			condition: relevantForeignKey !== undefined && relevantMapping !== undefined && relevantMapping.local.length > 1,
 			prefix: ['Must reference an existing combination of:'],
 			content: [
-				...(foreignKey?.[0].mappings?.map((mapping) => ({
-					content: `${mapping.foreign}`,
-					isFieldBlock: true,
-				})) ?? []),
-				{
-					content: `as defined in the ${foreignKey?.[0].schema} schema.`,
-				},
-			],
-		},
-		{
-			condition: foreignKey !== undefined && foreignKey[0].mappings?.length === 1,
-			prefix: ['Must reference an existing:'],
-			content: [
-				{ content: `${foreignKey?.[0]?.schema}`, isFieldBlock: true },
+				{ content: `${relevantMapping?.foreign}`, isFieldBlock: true },
 				{
 					content: 'as defined in the ',
 				},
 				{
-					content: `${foreignKey?.[0].schema} `,
+					content: `${relevantForeignKey?.schema} `,
 					isBold: true,
 				},
 				{
-					content: `schema. Multiple sequencing records can reference the same ${foreignKey?.[0].schema}`,
+					content: 'schema.',
+				},
+			],
+		},
+		{
+			condition:
+				relevantForeignKey !== undefined && relevantMapping !== undefined && relevantMapping.local.length === 1,
+			prefix: ['Must reference an existing:'],
+			content: [
+				{ content: `${relevantForeignKey?.schema}`, isFieldBlock: true },
+				{
+					content: 'as defined in the ',
+				},
+				{
+					content: `${relevantForeignKey?.schema} `,
+					isBold: true,
+				},
+				{
+					content: `schema. Multiple sequencing records can reference the same ${relevantForeignKey?.schema}`,
 				},
 			],
 		},
@@ -236,13 +253,25 @@ const handleKeys = (
 			condition:
 				uniqueKeys !== undefined &&
 				uniqueKeys?.length === 1 &&
-				foreignKey !== undefined &&
-				foreignKey[0].mappings?.length === 1,
+				relevantForeignKey !== undefined &&
+				relevantMapping !== undefined &&
+				relevantMapping.local.length === 1,
 			prefix: ['Must reference an existing:'],
 			content: [
-				{ content: `${foreignKey?.[0].schema}`, isFieldBlock: true },
+				{ content: `${relevantForeignKey?.schema}`, isFieldBlock: true },
 				{
-					content: `as defined in the ${foreignKey?.[0].schema} schema. Each record can only reference one ${foreignKey?.[0]?.schema}`,
+					content: 'as defined in the ',
+				},
+				{
+					content: `${relevantForeignKey?.schema} `,
+					isBold: true,
+				},
+				{
+					content: 'schema. Each record can only reference one ',
+				},
+				{
+					content: `${relevantForeignKey?.schema}`,
+					isBold: true,
 				},
 			],
 		},

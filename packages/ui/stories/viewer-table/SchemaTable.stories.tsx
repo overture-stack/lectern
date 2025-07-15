@@ -107,3 +107,7 @@ export const PCGLExperiment: Story = {
 export const PCGLReadGroup: Story = {
 	args: { schema: pcglDictionary.schemas[16] },
 };
+
+export const MultiForeignKeys: Story = {
+	args: { schema: torontoMapleLeafsDictionary.schemas[10] },
+};
