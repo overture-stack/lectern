@@ -25,13 +25,14 @@ import {
 } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
 
-export type ContentType = {
-	isCode?: boolean;
+export type Content = {
+	isFieldBlock?: boolean;
 	content: string;
+	isBold?: boolean;
 };
 export type RestrictionItem = {
 	prefix: string[];
-	content: ContentType[];
+	content: Content[];
 };
 
 export type RestrictionField = RestrictionItem | undefined;
@@ -43,6 +44,7 @@ export type AllowedValuesBaseDisplayItem = {
 	range?: RestrictionItem;
 	codeListWithCountRestrictions?: RestrictionItem;
 	unique?: RestrictionItem;
+	entityRelationships?: RestrictionItem;
 };
 
 export type AllowedValuesColumnProps = {
@@ -149,9 +151,9 @@ const handleCodeListsWithCountRestrictions = (
 };
 
 const handleDependsOn = (conditions: RestrictionCondition[]): RestrictionItem | undefined => {
-	const allFields: ContentType[] = Array.from(
+	const allFields: Content[] = Array.from(
 		new Set(conditions.flatMap((condition: RestrictionCondition) => condition.fields)),
-	).map((field) => ({ content: field }));
+	).map((field) => ({ content: field, isFieldBlock: true }));
 
 	return allFields.length > 0 ?
 			{
@@ -165,7 +167,7 @@ const handleDependsOn = (conditions: RestrictionCondition[]): RestrictionItem | 
 };
 
 const handleRegularExpression = (regularExpression: string[] | string): RestrictionItem => {
-	// normalize to array, then wrap each pattern in a ContentType
+	// normalize to array, then wrap each pattern in a Content
 	const patterns = (Array.isArray(regularExpression) ? regularExpression : [regularExpression]).map((pattern) => ({
 		content: pattern,
 	}));
@@ -187,6 +189,7 @@ const handleCodeList = (codeList: string | string[] | number[]): RestrictionItem
 };
 
 const handleKeys = (restrictions: SchemaRestrictions, currentSchemaField: SchemaField): RestrictionItem | undefined => {
+	console.log(currentSchemaField);
 	const isUnique = currentSchemaField.unique === true;
 
 	const uniqueKeys =
@@ -196,37 +199,72 @@ const handleKeys = (restrictions: SchemaRestrictions, currentSchemaField: Schema
 
 	const foreignKey =
 		restrictions && 'foreignKey' in restrictions && restrictions.foreignKey ?
-			(restrictions.foreignKey as ForeignKeyRestriction)
+			(restrictions.foreignKey as ForeignKeyRestriction[])
 		:	undefined;
 
 	const computeRestrictions = [
 		{
-			condition: foreignKey !== undefined && foreignKey.mappings.length === 1,
-			prefix: ['Must reference an existing:'],
+			condition:
+				isUnique && Array.isArray(uniqueKeys) && uniqueKeys?.length === 1 && uniqueKeys[0] === currentSchemaField.name,
+			prefix: ['A unique value that matches the following restrictions:'],
+			content: [],
+		},
+		{
+			condition: foreignKey !== undefined && foreignKey?.[0].mappings?.length > 1,
+			prefix: ['Must reference an existing combination of:'],
 			content: [
-				{ content: `${foreignKey?.schema[0]}`, isCode: true },
+				...(foreignKey?.[0].mappings?.map((mapping) => ({
+					content: `${mapping.foreign}`,
+					isFieldBlock: true,
+				})) ?? []),
 				{
-					content: `as defined in the ${foreignKey?.schema} schema. Multiple sequencing records can reference the same ${foreignKey?.schema}`,
+					content: `as defined in the ${foreignKey?.[0].schema} schema.`,
 				},
 			],
 		},
 		{
-			condition: uniqueKeys !== undefined && uniqueKeys.length > 1,
-			prefix: ['Must be unique in combination with:'],
-			content:
-				uniqueKeys?.filter((key) => key !== currentSchemaField.name).map((key) => ({ content: key, isCode: true })) ??
-				[],
+			condition: foreignKey !== undefined && foreignKey[0].mappings?.length === 1,
+			prefix: ['Must reference an existing:'],
+			content: [
+				{ content: `${foreignKey?.[0]?.schema}`, isFieldBlock: true },
+				{
+					content: 'as defined in the ',
+				},
+				{
+					content: `${foreignKey?.[0].schema} `,
+					isBold: true,
+				},
+				{
+					content: `schema. Multiple sequencing records can reference the same ${foreignKey?.[0].schema}`,
+				},
+			],
 		},
 		{
 			condition:
-				isUnique && Array.isArray(uniqueKeys) && uniqueKeys.length === 1 && uniqueKeys[0] === currentSchemaField.name,
-			prefix: ['A unique value that matches the following restrictions:'],
-			content: [],
+				uniqueKeys !== undefined &&
+				uniqueKeys?.length === 1 &&
+				foreignKey !== undefined &&
+				foreignKey[0].mappings?.length === 1,
+			prefix: ['Must reference an existing:'],
+			content: [
+				{ content: `${foreignKey?.[0].schema}`, isFieldBlock: true },
+				{
+					content: `as defined in the ${foreignKey?.[0].schema} schema. Each record can only reference one ${foreignKey?.[0]?.schema}`,
+				},
+			],
+		},
+		{
+			condition: uniqueKeys !== undefined && uniqueKeys?.length > 1,
+			prefix: ['Must be unique in combination with:'],
+			content:
+				uniqueKeys
+					?.filter((key) => key !== currentSchemaField.name)
+					?.map((key) => ({ content: key, isFieldBlock: true })) ?? [],
 		},
 	];
 
 	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
-
+	console.log(computedRestrictionItem);
 	return computedRestrictionItem ?
 			{
 				prefix:
@@ -251,7 +289,7 @@ export const computeAllowedValuesColumn = (
 ): AllowedValuesBaseDisplayItem => {
 	const allowedValuesBaseDisplayItem: AllowedValuesBaseDisplayItem = {};
 
-	if (!restrictions || Object.keys(restrictions).length === 0) {
+	if (!restrictions || Object.keys(restrictions)?.length === 0) {
 		return {};
 	}
 
@@ -284,7 +322,12 @@ export const computeAllowedValuesColumn = (
 			currentSchemaField,
 		);
 	}
-
+	if (
+		('foreignKey' in restrictions && restrictions.foreignKey !== undefined) ||
+		('uniqueKey' in restrictions && restrictions.uniqueKey !== undefined)
+	) {
+		allowedValuesBaseDisplayItem.entityRelationships = handleKeys(restrictions, currentSchemaField);
+	}
 	if (currentSchemaField.unique) {
 		allowedValuesBaseDisplayItem.unique = { prefix: [], content: [{ content: 'Must be unique' }] };
 	}

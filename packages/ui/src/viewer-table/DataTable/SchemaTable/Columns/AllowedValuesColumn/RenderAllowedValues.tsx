@@ -28,30 +28,16 @@ export const renderAllowedValuesColumn = (
 	currentSchemaField: SchemaField,
 	schemaFields: SchemaField[],
 ) => {
-	const restrictionItems = computeAllowedValuesColumn(restrictions, currentSchemaField, schemaFields);
-
-	if (Object.keys(restrictionItems).length === 0) {
+	const items = computeAllowedValuesColumn(restrictions, currentSchemaField, schemaFields);
+	console.log(items);
+	if (!items || Object.keys(items).length === 0) {
 		return <strong>None</strong>;
 	}
 
 	return (
 		<>
-			{Object.entries(restrictionItems).map(([key, value]) => {
+			{Object.entries(items).map(([key, value]) => {
 				const { prefix, content } = value;
-
-				if (prefix.includes('Depends on:')) {
-					return (
-						<>
-							<strong>{prefix}</strong>
-							<br />
-							{content.map((item, index) => (
-								<FieldBlock key={index}>{item.content}</FieldBlock>
-							))}
-						</>
-					);
-				}
-
-				// For case of min and max
 				if (prefix.length === content.length) {
 					return (
 						<>
@@ -63,12 +49,21 @@ export const renderAllowedValuesColumn = (
 						</>
 					);
 				}
-
 				return (
-					<span>
-						<strong>{prefix}</strong> <br />
-						{content.map((item) => item.content).join(',\n')}
-					</span>
+					<>
+						{prefix.map((prefix, index) => (
+							<strong key={index}>{prefix}</strong>
+						))}
+						<br />
+						{content.map((item, index) =>
+							item.isFieldBlock ?
+								<FieldBlock key={index}>{item.content}</FieldBlock>
+							:	<span key={index}>
+									{item.content}
+									{index < content.length - 1 && ',\n'}
+								</span>,
+						)}
+					</>
 				);
 			})}
 		</>
