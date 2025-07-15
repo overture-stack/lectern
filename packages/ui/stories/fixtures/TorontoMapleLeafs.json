@@ -64,6 +64,143 @@
 	},
 	"schemas": [
 		{
+			"name": "sequencing",
+			"fields": [
+				{
+					"name": "participant_id",
+					"description": "An example of a one to one foreign key",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^P\\w{4}$"
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["participant_id"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [
+							{
+								"local": "participant_id",
+								"foreign": "participant_id"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"name": "unique_keys",
+			"fields": [
+				{
+					"name": "firstName",
+					"description": "An example of a combination key",
+					"valueType": "string",
+					"restrictions": {
+						"required": true
+					}
+				},
+				{
+					"name": "lastName",
+					"description": "An example of a combination key",
+					"valueType": "string",
+					"restrictions": {
+						"required": true
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["firstName", "lastName"]
+			}
+		},
+		{
+			"name": "sequencing",
+			"fields": [
+				{
+					"name": "participant_id",
+					"description": "An example of a many to one foreign key",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^P\\w{4}$"
+					}
+				}
+			],
+			"restrictions": {
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [
+							{
+								"local": "participant_id",
+								"foreign": "participant_id"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"name": "sequencing",
+			"fields": [
+				{
+					"name": "participant_id",
+					"description": "An example of a one to one foreign key",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^P\\w{4}$"
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["participant_id"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [
+							{
+								"local": "participant_id",
+								"foreign": "participant_id"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"name": "lab_result",
+			"fields": [
+				{
+					"name": "participant_id",
+					"valueType": "string"
+				},
+				{
+					"name": "timepoint",
+					"valueType": "string"
+				}
+			],
+			"restrictions": {
+				"foreignKey": [
+					{
+						"schema": "sample_collection",
+						"mappings": [
+							{
+								"local": "participant_id",
+								"foreign": "participant_id"
+							},
+							{
+								"local": "timepoint",
+								"foreign": "timepoint"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
 			"name": "game_statistics",
 			"description": "A schema for recording the statistics of a single hockey game.",
 			"fields": [

@@ -17,9 +17,9 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {
-	ForeignKeyRestriction,
 	RestrictionCondition,
 	RestrictionRange,
+	Schema,
 	SchemaField,
 	SchemaRestrictions,
 } from '@overture-stack/lectern-dictionary';
@@ -188,20 +188,13 @@ const handleCodeList = (codeList: string | string[] | number[]): RestrictionItem
 	};
 };
 
-const handleKeys = (restrictions: SchemaRestrictions, currentSchemaField: SchemaField): RestrictionItem | undefined => {
-	console.log(currentSchemaField);
+const handleKeys = (
+	restrictions: Schema['restrictions'],
+	currentSchemaField: SchemaField,
+): RestrictionItem | undefined => {
 	const isUnique = currentSchemaField.unique === true;
-
-	const uniqueKeys =
-		restrictions && 'uniqueKey' in restrictions && Array.isArray(restrictions.uniqueKey) ?
-			restrictions.uniqueKey
-		:	undefined;
-
-	const foreignKey =
-		restrictions && 'foreignKey' in restrictions && restrictions.foreignKey ?
-			(restrictions.foreignKey as ForeignKeyRestriction[])
-		:	undefined;
-
+	const uniqueKeys = restrictions?.uniqueKey;
+	const foreignKey = restrictions?.foreignKey;
 	const computeRestrictions = [
 		{
 			condition:
@@ -264,7 +257,6 @@ const handleKeys = (restrictions: SchemaRestrictions, currentSchemaField: Schema
 	];
 
 	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
-	console.log(computedRestrictionItem);
 	return computedRestrictionItem ?
 			{
 				prefix:
@@ -283,54 +275,57 @@ const handleKeys = (restrictions: SchemaRestrictions, currentSchemaField: Schema
 };
 
 export const computeAllowedValuesColumn = (
-	restrictions: SchemaRestrictions,
+	fieldLevelRestrictions: SchemaRestrictions,
+	schemaLevelRestrictions: Schema['restrictions'],
 	currentSchemaField: SchemaField,
-	schemaFields: SchemaField[],
 ): AllowedValuesBaseDisplayItem => {
 	const allowedValuesBaseDisplayItem: AllowedValuesBaseDisplayItem = {};
-
-	if (!restrictions || Object.keys(restrictions)?.length === 0) {
+	if (!fieldLevelRestrictions || Object.keys(fieldLevelRestrictions)?.length === 0) {
 		return {};
 	}
 
-	if ('if' in restrictions && restrictions.if !== undefined && restrictions.if.conditions !== undefined) {
-		allowedValuesBaseDisplayItem.dependsOn = handleDependsOn(restrictions.if.conditions);
+	if (
+		'if' in fieldLevelRestrictions &&
+		fieldLevelRestrictions.if !== undefined &&
+		fieldLevelRestrictions.if.conditions !== undefined
+	) {
+		allowedValuesBaseDisplayItem.dependsOn = handleDependsOn(fieldLevelRestrictions.if.conditions);
 	}
 
-	if ('regex' in restrictions && restrictions.regex !== undefined) {
-		allowedValuesBaseDisplayItem.regularExpression = handleRegularExpression(restrictions.regex);
-	}
-
-	if ('codeList' in restrictions && restrictions.codeList !== undefined && !('count' in restrictions)) {
-		allowedValuesBaseDisplayItem.codeList = handleCodeList(restrictions.codeList);
-	}
-
-	if ('range' in restrictions && restrictions.range !== undefined) {
-		allowedValuesBaseDisplayItem.range = handleRange(restrictions.range);
+	if ('regex' in fieldLevelRestrictions && fieldLevelRestrictions.regex !== undefined) {
+		allowedValuesBaseDisplayItem.regularExpression = handleRegularExpression(fieldLevelRestrictions.regex);
 	}
 
 	if (
-		'codeList' in restrictions &&
-		restrictions.codeList !== undefined &&
-		'count' in restrictions &&
-		restrictions.count != undefined &&
+		'codeList' in fieldLevelRestrictions &&
+		fieldLevelRestrictions.codeList !== undefined &&
+		!('count' in fieldLevelRestrictions)
+	) {
+		allowedValuesBaseDisplayItem.codeList = handleCodeList(fieldLevelRestrictions.codeList);
+	}
+
+	if ('range' in fieldLevelRestrictions && fieldLevelRestrictions.range !== undefined) {
+		allowedValuesBaseDisplayItem.range = handleRange(fieldLevelRestrictions.range);
+	}
+
+	if (
+		'codeList' in fieldLevelRestrictions &&
+		fieldLevelRestrictions.codeList !== undefined &&
+		'count' in fieldLevelRestrictions &&
+		fieldLevelRestrictions.count != undefined &&
 		currentSchemaField.isArray !== undefined
 	) {
 		allowedValuesBaseDisplayItem.codeListWithCountRestrictions = handleCodeListsWithCountRestrictions(
-			restrictions.codeList,
-			restrictions.count,
+			fieldLevelRestrictions.codeList,
+			fieldLevelRestrictions.count,
 			currentSchemaField,
 		);
 	}
-	if (
-		('foreignKey' in restrictions && restrictions.foreignKey !== undefined) ||
-		('uniqueKey' in restrictions && restrictions.uniqueKey !== undefined)
-	) {
-		allowedValuesBaseDisplayItem.entityRelationships = handleKeys(restrictions, currentSchemaField);
+	if (schemaLevelRestrictions?.foreignKey !== undefined || schemaLevelRestrictions?.uniqueKey !== undefined) {
+		allowedValuesBaseDisplayItem.entityRelationships = handleKeys(schemaLevelRestrictions, currentSchemaField);
 	}
 	if (currentSchemaField.unique) {
 		allowedValuesBaseDisplayItem.unique = { prefix: [], content: [{ content: 'Must be unique' }] };
 	}
-
 	return allowedValuesBaseDisplayItem;
 };

@@ -19,17 +19,16 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
+import { Schema, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import FieldBlock from '../../../../../common/FieldBlock';
 import { computeAllowedValuesColumn } from './ComputeAllowedValues';
 
 export const renderAllowedValuesColumn = (
-	restrictions: SchemaRestrictions,
+	fieldLevelRestrictions: SchemaRestrictions,
+	schemaLevelRestrictions: Schema['restrictions'],
 	currentSchemaField: SchemaField,
-	schemaFields: SchemaField[],
 ) => {
-	const items = computeAllowedValuesColumn(restrictions, currentSchemaField, schemaFields);
-	console.log(items);
+	const items = computeAllowedValuesColumn(fieldLevelRestrictions, schemaLevelRestrictions, currentSchemaField);
 	if (!items || Object.keys(items).length === 0) {
 		return <strong>None</strong>;
 	}
@@ -56,9 +55,9 @@ export const renderAllowedValuesColumn = (
 						))}
 						<br />
 						{content.map((item, index) =>
-							item.isFieldBlock ?
-								<FieldBlock key={index}>{item.content}</FieldBlock>
-							:	<span key={index}>
+							item.isFieldBlock ? <FieldBlock key={index}>{item.content}</FieldBlock>
+							: item.isBold ? <strong>{item.content}</strong>
+							: <span key={index}>
 									{item.content}
 									{index < content.length - 1 && ',\n'}
 								</span>,
