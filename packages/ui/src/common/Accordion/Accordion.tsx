@@ -22,19 +22,19 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import AccordionItem from './AccordionItem';
 
 export type AccordionData = {
 	title: string;
-	openOnInit: boolean;
 	description?: string;
 	content: ReactNode;
 	schemaName: string;
 };
 export type AccordionProps = {
 	accordionItems: Array<AccordionData>;
+	collapseAll: boolean;
 };
 
 export type AccordionOpenState = {
@@ -93,10 +93,16 @@ const accordionStyle = css`
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
+	cursor: pointer;
 `;
 
-const Accordion = ({ accordionItems }: AccordionProps) => {
-	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map((item) => item.openOnInit));
+const Accordion = ({ accordionItems, collapseAll }: AccordionProps) => {
+	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map(() => collapseAll));
+
+	useEffect(() => {
+		setOpenStates(accordionItems.map(() => collapseAll));
+	}, [collapseAll]);
+
 	const handleToggle = (index: number) => {
 		setOpenStates((prev) => prev.map((isOpen, i) => (i === index ? !isOpen : isOpen)));
 	};
