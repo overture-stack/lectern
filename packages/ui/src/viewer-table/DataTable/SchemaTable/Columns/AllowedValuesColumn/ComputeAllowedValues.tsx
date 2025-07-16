@@ -16,8 +16,11 @@
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+/** @jsxImportSource @emotion/react */
+
+import { css } from '@emotion/react';
 import {
-	ForeignKeyRestriction,
 	RestrictionCondition,
 	RestrictionRange,
 	Schema,
@@ -25,27 +28,43 @@ import {
 	SchemaRestrictions,
 } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
+import { ReactNode } from 'react';
 
-export type Content = {
-	isFieldBlock?: boolean;
-	content: string;
-	isBold?: boolean;
-};
+import FieldBlock from '../../../../../common/FieldBlock';
+
+const restrictionItemStyle = css`
+	display: flex;
+	flex-direction: column;
+`;
+
+const contentStyle = css`
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px;
+`;
+
+const inlineTextStyle = css`
+	display: inline;
+	margin: 0;
+	padding: 0;
+`;
+
 export type RestrictionItem = {
 	prefix: string[];
-	content: Content[];
+	content: string[];
 };
 
-export type RestrictionField = RestrictionItem | undefined;
+export type RestrictionField = RestrictionItem | ReactNode | undefined;
 
 export type AllowedValuesBaseDisplayItem = {
-	dependsOn?: RestrictionItem;
+	dependsOn?: ReactNode;
 	regularExpression?: RestrictionItem;
 	codeList?: RestrictionItem;
-	range?: RestrictionItem;
+	range?: RestrictionItem | ReactNode;
 	codeListWithCountRestrictions?: RestrictionItem;
 	unique?: RestrictionItem;
-	entityRelationships?: RestrictionItem;
+	entityRelationships?: ReactNode;
 };
 
 export type AllowedValuesColumnProps = {
@@ -53,47 +72,52 @@ export type AllowedValuesColumnProps = {
 };
 
 //Helper functions
-const handleRange = (range: RestrictionRange): RestrictionItem | undefined => {
+const handleRange = (range: RestrictionRange): RestrictionItem | ReactNode => {
+	// Special case: both min and max present - return JSX with inline format
+	if (range.min !== undefined && range.max !== undefined) {
+		return (
+			<div css={restrictionItemStyle}>
+				<div css={contentStyle}>
+					<span>
+						<strong>Min:</strong> {range.min}
+					</span>
+					<span>
+						<strong>Max:</strong> {range.max}
+					</span>
+				</div>
+			</div>
+		);
+	}
+
+	// All other cases - return RestrictionItem
 	const computeRestrictions = [
-		{
-			condition: range.min !== undefined && range.max !== undefined,
-			prefix: ['Min:', 'Max:'],
-			content: [{ content: `${range.min}` }, { content: `${range.max}` }],
-		},
 		{
 			condition: range.min !== undefined,
 			prefix: 'Min:',
-			content: { content: `${range.min}` },
+			content: `${range.min}`,
 		},
 		{
 			condition: range.max !== undefined,
 			prefix: 'Max:',
-			content: { content: `${range.max}` },
+			content: `${range.max}`,
 		},
 		{
 			condition: range.exclusiveMin !== undefined,
 			prefix: 'Greater than:',
-			content: { content: `${range.exclusiveMin}` },
+			content: `${range.exclusiveMin}`,
 		},
 		{
 			condition: range.exclusiveMax !== undefined,
 			prefix: 'Less than:',
-			content: { content: `${range.exclusiveMax}` },
+			content: `${range.exclusiveMax}`,
 		},
 	];
 
 	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
-
 	return computedRestrictionItem ?
 			{
-				prefix:
-					Array.isArray(computedRestrictionItem.prefix) ?
-						[...computedRestrictionItem.prefix]
-					:	[computedRestrictionItem.prefix],
-				content:
-					Array.isArray(computedRestrictionItem.content) ?
-						[...computedRestrictionItem.content]
-					:	[computedRestrictionItem.content],
+				prefix: [computedRestrictionItem.prefix],
+				content: [computedRestrictionItem.content],
 			}
 		:	{
 				prefix: [],
@@ -140,10 +164,7 @@ const handleCodeListsWithCountRestrictions = (
 	return computedRestrictionItem ?
 			{
 				prefix: [computedRestrictionItem.prefix],
-				content:
-					Array.isArray(codeList) ?
-						codeList.map((item: string | number) => ({ content: `${item}` }))
-					:	[{ content: `${codeList}` }],
+				content: Array.isArray(codeList) ? codeList.map((item) => `${item}`) : [`${codeList}`],
 			}
 		:	{
 				prefix: [],
@@ -151,27 +172,27 @@ const handleCodeListsWithCountRestrictions = (
 			};
 };
 
-const handleDependsOn = (conditions: RestrictionCondition[]): RestrictionItem | undefined => {
-	const allFields: Content[] = Array.from(
-		new Set(conditions.flatMap((condition: RestrictionCondition) => condition.fields)),
-	).map((field) => ({ content: field, isFieldBlock: true }));
+const handleDependsOn = (conditions: RestrictionCondition[]): ReactNode => {
+	const allFields = Array.from(new Set(conditions.flatMap((condition: RestrictionCondition) => condition.fields)));
 
-	return allFields.length > 0 ?
-			{
-				prefix: ['Depends on:'],
-				content: allFields,
-			}
-		:	{
-				prefix: [],
-				content: [],
-			};
+	if (allFields.length === 0) {
+		return null;
+	}
+
+	return (
+		<div css={restrictionItemStyle}>
+			<strong>Depends on:</strong>
+			<div css={contentStyle}>
+				{allFields.map((field, index) => (
+					<FieldBlock key={index}>{field}</FieldBlock>
+				))}
+			</div>
+		</div>
+	);
 };
 
 const handleRegularExpression = (regularExpression: string[] | string): RestrictionItem => {
-	// normalize to array, then wrap each pattern in a Content
-	const patterns = (Array.isArray(regularExpression) ? regularExpression : [regularExpression]).map((pattern) => ({
-		content: pattern,
-	}));
+	const patterns = Array.isArray(regularExpression) ? regularExpression : [regularExpression];
 
 	return {
 		prefix: Array.isArray(regularExpression) ? ['Must match patterns:'] : ['Must match pattern:'],
@@ -182,17 +203,11 @@ const handleRegularExpression = (regularExpression: string[] | string): Restrict
 const handleCodeList = (codeList: string | string[] | number[]): RestrictionItem => {
 	return {
 		prefix: ['One of:'],
-		content:
-			Array.isArray(codeList) ?
-				codeList.map((item: string | number) => ({ content: `${item}` }))
-			:	[{ content: `${codeList}` }],
+		content: Array.isArray(codeList) ? codeList.map((item) => `${item}`) : [`${codeList}`],
 	};
 };
 
-const handleKeys = (
-	restrictions: Schema['restrictions'],
-	currentSchemaField: SchemaField,
-): RestrictionItem | undefined => {
+const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: SchemaField): ReactNode => {
 	const isUnique = currentSchemaField.unique === true;
 	const uniqueKeys = restrictions?.uniqueKey;
 	const foreignKeys = restrictions?.foreignKey;
@@ -211,43 +226,43 @@ const handleKeys = (
 		{
 			condition:
 				isUnique && Array.isArray(uniqueKeys) && uniqueKeys?.length === 1 && uniqueKeys[0] === currentSchemaField.name,
-			prefix: ['A unique value that matches the following restrictions:'],
-			content: [],
+			element: (
+				<div css={restrictionItemStyle}>
+					<strong>A unique value that matches the following restrictions:</strong>
+				</div>
+			),
 		},
 		{
 			condition: relevantForeignKey !== undefined && relevantMapping !== undefined && relevantMapping.local.length > 1,
-			prefix: ['Must reference an existing combination of:'],
-			content: [
-				{ content: `${relevantMapping?.foreign}`, isFieldBlock: true },
-				{
-					content: 'as defined in the ',
-				},
-				{
-					content: `${relevantForeignKey?.schema} `,
-					isBold: true,
-				},
-				{
-					content: 'schema.',
-				},
-			],
+			element: (
+				<div css={restrictionItemStyle}>
+					<strong>Must reference an existing combination of:</strong>
+
+					<div css={contentStyle}>
+						<FieldBlock>{relevantMapping?.foreign}</FieldBlock>
+						<span>
+							<p css={inlineTextStyle}>as defined in the </p>
+							<strong>{relevantForeignKey?.schema} </strong>
+							<p css={inlineTextStyle}>schema.</p>
+						</span>
+					</div>
+				</div>
+			),
 		},
 		{
 			condition:
 				relevantForeignKey !== undefined && relevantMapping !== undefined && relevantMapping.local.length === 1,
-			prefix: ['Must reference an existing:'],
-			content: [
-				{ content: `${relevantForeignKey?.schema}`, isFieldBlock: true },
-				{
-					content: 'as defined in the ',
-				},
-				{
-					content: `${relevantForeignKey?.schema} `,
-					isBold: true,
-				},
-				{
-					content: `schema. Multiple sequencing records can reference the same ${relevantForeignKey?.schema}`,
-				},
-			],
+			element: (
+				<div css={restrictionItemStyle}>
+					<strong>Must reference an existing:</strong>
+					<div css={contentStyle}>
+						<FieldBlock>{relevantForeignKey?.schema}</FieldBlock>
+						<p>as defined in the </p>
+						<strong>{relevantForeignKey?.schema} </strong>
+						<p>schema. Multiple sequencing records can reference the same {relevantForeignKey?.schema}</p>
+					</div>
+				</div>
+			),
 		},
 		{
 			condition:
@@ -256,51 +271,36 @@ const handleKeys = (
 				relevantForeignKey !== undefined &&
 				relevantMapping !== undefined &&
 				relevantMapping.local.length === 1,
-			prefix: ['Must reference an existing:'],
-			content: [
-				{ content: `${relevantForeignKey?.schema}`, isFieldBlock: true },
-				{
-					content: 'as defined in the ',
-				},
-				{
-					content: `${relevantForeignKey?.schema} `,
-					isBold: true,
-				},
-				{
-					content: 'schema. Each record can only reference one ',
-				},
-				{
-					content: `${relevantForeignKey?.schema}`,
-					isBold: true,
-				},
-			],
+			element: (
+				<div css={restrictionItemStyle}>
+					<strong>Must reference an existing:</strong>
+					<div css={contentStyle}>
+						<FieldBlock>{relevantForeignKey?.schema}</FieldBlock>
+						<p>as defined in the </p>
+						<strong>{relevantForeignKey?.schema} </strong>
+						<p>schema. Each record can only reference one </p>
+						<strong>{relevantForeignKey?.schema}</strong>
+					</div>
+				</div>
+			),
 		},
 		{
 			condition: uniqueKeys !== undefined && uniqueKeys?.length > 1,
-			prefix: ['Must be unique in combination with:'],
-			content:
-				uniqueKeys
-					?.filter((key) => key !== currentSchemaField.name)
-					?.map((key) => ({ content: key, isFieldBlock: true })) ?? [],
+			element: (
+				<div css={restrictionItemStyle}>
+					<strong>Must be unique in combination with:</strong>
+					<div css={contentStyle}>
+						{uniqueKeys
+							?.filter((key) => key !== currentSchemaField.name)
+							?.map((key, index) => <FieldBlock key={index}>{key}</FieldBlock>)}
+					</div>
+				</div>
+			),
 		},
 	];
 
 	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
-	return computedRestrictionItem ?
-			{
-				prefix:
-					Array.isArray(computedRestrictionItem.prefix) ?
-						[...computedRestrictionItem.prefix]
-					:	[computedRestrictionItem.prefix],
-				content:
-					Array.isArray(computedRestrictionItem.content) ?
-						[...computedRestrictionItem.content]
-					:	[computedRestrictionItem.content],
-			}
-		:	{
-				prefix: [],
-				content: [],
-			};
+	return computedRestrictionItem?.element || undefined;
 };
 
 export const computeAllowedValuesColumn = (
@@ -350,10 +350,13 @@ export const computeAllowedValuesColumn = (
 		}
 	}
 	if (schemaLevelRestrictions?.foreignKey !== undefined || schemaLevelRestrictions?.uniqueKey !== undefined) {
-		allowedValuesBaseDisplayItem.entityRelationships = handleKeys(schemaLevelRestrictions, currentSchemaField);
+		const entityRelationships = handleKeys(schemaLevelRestrictions, currentSchemaField);
+		if (entityRelationships) {
+			allowedValuesBaseDisplayItem.entityRelationships = entityRelationships;
+		}
 	}
 	if (currentSchemaField.unique) {
-		allowedValuesBaseDisplayItem.unique = { prefix: [], content: [{ content: 'Must be unique' }] };
+		allowedValuesBaseDisplayItem.unique = { prefix: [], content: ['Must be unique'] };
 	}
 	return allowedValuesBaseDisplayItem;
 };

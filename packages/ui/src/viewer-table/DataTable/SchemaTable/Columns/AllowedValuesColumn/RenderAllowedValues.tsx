@@ -21,15 +21,14 @@
 
 import { css } from '@emotion/react';
 import { Schema, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
-
-import FieldBlock from '../../../../../common/FieldBlock';
-import { useThemeContext } from '../../../../../theme/ThemeContext';
-import { computeAllowedValuesColumn } from './ComputeAllowedValues';
+import React, { ReactNode } from 'react';
+import ReadMoreText from '../../../../../common/ReadMoreText';
+import { computeAllowedValuesColumn, type RestrictionItem } from './ComputeAllowedValues';
 
 const allowedValuesContainerStyle = css`
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 4px;
 `;
 
 const restrictionItemStyle = css`
@@ -51,59 +50,43 @@ const contentStyle = css`
 	line-height: 1.4;
 `;
 
+const renderRestrictionItem = (value: RestrictionItem, key: string): ReactNode => {
+	const { prefix, content } = value;
+	return (
+		<ReadMoreText key={key} wrapperStyle={() => restrictionItemStyle}>
+			{prefix.length > 0 && <div css={prefixStyle}>{prefix.join(' ')}</div>}
+			{content.length > 0 && (
+				<div css={() => contentStyle}>
+					{content.map((item, index) => (
+						<span key={index}>{item}</span>
+					))}
+				</div>
+			)}
+		</ReadMoreText>
+	);
+};
+
 export const renderAllowedValuesColumn = (
 	fieldLevelRestrictions: SchemaRestrictions,
 	schemaLevelRestrictions: Schema['restrictions'],
 	currentSchemaField: SchemaField,
 ) => {
-	const theme = useThemeContext();
 	const items = computeAllowedValuesColumn(fieldLevelRestrictions, schemaLevelRestrictions, currentSchemaField);
-
 	if (!items || Object.keys(items).length === 0) {
 		return <strong>None</strong>;
 	}
 
 	return (
-		<div css={allowedValuesContainerStyle}>
+		<ReadMoreText wrapperStyle={() => allowedValuesContainerStyle}>
 			{Object.entries(items).map(([key, value]) => {
-				const { prefix, content } = value;
-
-				if (prefix.length === content.length && !content.every((item) => item.isFieldBlock)) {
-					return (
-						<div key={key} css={restrictionItemStyle}>
-							<div css={contentStyle}>
-								{prefix.map((prefixItem, index) => (
-									<span key={index}>
-										<strong>{prefixItem}</strong> {content[index].content}
-									</span>
-								))}
-							</div>
-						</div>
-					);
+				if (value && typeof value === 'object' && 'prefix' in value && 'content' in value) {
+					return renderRestrictionItem(value, key);
 				}
-
-				return (
-					<div key={key} css={restrictionItemStyle}>
-						{prefix.length > 0 && <div css={prefixStyle}>{prefix.join(' ')}</div>}
-
-						{content.length > 0 && (
-							<div css={contentStyle}>
-								{content.map((item, index) => {
-									if (item.isFieldBlock) {
-										return <FieldBlock key={index}>{item.content}</FieldBlock>;
-									}
-
-									if (item.isBold) {
-										return <strong key={index}>{item.content}</strong>;
-									}
-
-									return <span key={index}>{item.content}</span>;
-								})}
-							</div>
-						)}
-					</div>
-				);
+				if (value) {
+					return <div key={key}>{value}</div>;
+				}
+				return null;
 			})}
-		</div>
+		</ReadMoreText>
 	);
 };
