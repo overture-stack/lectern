@@ -44,7 +44,7 @@ export const getSchemaBaseColumns = (schema: Schema) => [
 		header: 'Attribute',
 		cell: (attribute: CellContext<SchemaField, unknown>) => {
 			const schemaRestrictions: SchemaFieldRestrictions = attribute.row.original.restrictions;
-			return renderAttributesColumn(schemaRestrictions);
+			return renderAttributesColumn(schemaRestrictions, attribute.row.original.unique);
 		},
 	}),
 
