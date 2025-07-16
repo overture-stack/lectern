@@ -26,8 +26,10 @@ import { useMemo, useState } from 'react';
 
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
+import ReadMoreText from '../../../../common/ReadMoreText';
 
-const fieldContainerStyle = css`
+const fieldContainerStyle = (theme: Theme) => css`
+	${theme.typography.data}
 	display: flex;
 	flex-direction: column;
 	gap: 3px;
@@ -120,15 +122,15 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const theme: Theme = useThemeContext();
 
 	return (
-		<div id={fieldIndex.toString()} css={fieldContainerStyle}>
+		<ReadMoreText wrapperStyle={() => fieldContainerStyle(theme)}>
 			<span css={fieldNameStyle(theme)}>{fieldName}</span>
 			{fieldDescription && <span>{fieldDescription}</span>}
 			{fieldExamples && (
 				<span>
-					<strong>Example(s): </strong>
+					<strong> Example(s): </strong>
 					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
 				</span>
 			)}
-		</div>
+		</ReadMoreText>
 	);
 };

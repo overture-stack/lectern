@@ -209,6 +209,7 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 	const isUnique = currentSchemaField.unique === true;
 	const uniqueKeys = restrictions?.uniqueKey;
 	const foreignKeys = restrictions?.foreignKey;
+
 	const found = foreignKeys
 		?.flatMap((foreignKey) =>
 			foreignKey.mappings

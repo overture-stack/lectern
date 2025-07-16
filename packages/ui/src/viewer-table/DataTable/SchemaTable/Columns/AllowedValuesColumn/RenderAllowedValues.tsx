@@ -21,10 +21,11 @@
 
 import { css } from '@emotion/react';
 import { SchemaField, SchemaFieldRestrictions, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import ReadMoreText from '../../../../../common/ReadMoreText';
 import { computeAllowedValuesColumn, type RestrictionItem } from './ComputeAllowedValues';
-
+import { useThemeContext } from '../../../../../theme/ThemeContext';
+import { Theme } from '../../../../../theme';
 const allowedValuesContainerStyle = css`
 	display: flex;
 	flex-direction: column;
@@ -42,27 +43,32 @@ const prefixStyle = css`
 	line-height: 1.4;
 `;
 
-const contentStyle = css`
+const codeListContentStyle = css`
 	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-	align-items: center;
+	flex-direction: column;
+	gap: 2px;
 	line-height: 1.4;
 `;
 
 const renderRestrictionItem = (value: RestrictionItem, key: string): ReactNode => {
 	const { prefix, content } = value;
+	const theme: Theme = useThemeContext();
 	return (
-		<ReadMoreText key={key} wrapperStyle={() => restrictionItemStyle}>
-			{prefix.length > 0 && <div css={prefixStyle}>{prefix.join(' ')}</div>}
+		<div key={key} css={restrictionItemStyle}>
+			<div css={prefixStyle}>{prefix.join(' ')}</div>
 			{content.length > 0 && (
-				<div css={() => contentStyle}>
-					{content.map((item, index) => (
-						<span key={index}>{item}</span>
-					))}
-				</div>
+				<ReadMoreText wrapperStyle={() => codeListContentStyle}>
+					<span
+						css={css`
+							whitespace: 'pre-line';
+							${theme.typography.data}
+						`}
+					>
+						{content.join('\n')}
+					</span>
+				</ReadMoreText>
 			)}
-		</ReadMoreText>
+		</div>
 	);
 };
 
@@ -73,19 +79,19 @@ export const renderAllowedValuesColumn = (
 ) => {
 	const items = computeAllowedValuesColumn(fieldLevelRestrictions, schemaLevelRestrictions, currentSchemaField);
 	if (!items || Object.keys(items).length === 0) {
-		return <strong>None</strong>;
+		return <strong>No restrictions provided for this field</strong>;
 	}
 
 	return (
 		<ReadMoreText wrapperStyle={() => allowedValuesContainerStyle}>
 			{Object.entries(items).map(([key, value]) => {
-				if (value && typeof value === 'object' && 'prefix' in value && 'content' in value) {
-					return renderRestrictionItem(value, key);
-				}
-				if (value) {
-					return <div key={key}>{value}</div>;
-				}
-				return null;
+				return (
+					value ?
+						typeof value === 'object' && 'prefix' in value && 'content' in value ?
+							renderRestrictionItem(value, key)
+						:	<div key={key}>{value}</div>
+					:	null
+				);
 			})}
 		</ReadMoreText>
 	);
