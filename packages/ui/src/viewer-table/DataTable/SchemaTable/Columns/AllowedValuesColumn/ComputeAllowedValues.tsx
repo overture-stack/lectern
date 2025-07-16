@@ -72,9 +72,7 @@ export type AllowedValuesColumnProps = {
 	restrictions: CellContext<SchemaField, SchemaRestrictions>;
 };
 
-//Helper functions
 const handleRange = (range: RestrictionRange): RestrictionItem | ReactNode => {
-	// Special case: both min and max present - return JSX with inline format
 	if (range.min !== undefined && range.max !== undefined) {
 		return (
 			<div css={restrictionItemStyle}>
@@ -90,7 +88,6 @@ const handleRange = (range: RestrictionRange): RestrictionItem | ReactNode => {
 		);
 	}
 
-	// All other cases - return RestrictionItem
 	const computeRestrictions = [
 		{
 			condition: range.min !== undefined,
@@ -227,7 +224,7 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 		{
 			condition:
 				isUnique && Array.isArray(uniqueKeys) && uniqueKeys?.length === 1 && uniqueKeys[0] === currentSchemaField.name,
-			element: (
+			content: (
 				<div css={restrictionItemStyle}>
 					<strong>A unique value that matches the following restrictions:</strong>
 				</div>
@@ -235,10 +232,9 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 		},
 		{
 			condition: relevantForeignKey !== undefined && relevantMapping !== undefined && relevantMapping.local.length > 1,
-			element: (
+			content: (
 				<div css={restrictionItemStyle}>
 					<strong>Must reference an existing combination of:</strong>
-
 					<div css={contentStyle}>
 						<FieldBlock>{relevantMapping?.foreign}</FieldBlock>
 						<span>
@@ -253,7 +249,7 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 		{
 			condition:
 				relevantForeignKey !== undefined && relevantMapping !== undefined && relevantMapping.local.length === 1,
-			element: (
+			content: (
 				<div css={restrictionItemStyle}>
 					<strong>Must reference an existing:</strong>
 					<div css={contentStyle}>
@@ -272,7 +268,7 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 				relevantForeignKey !== undefined &&
 				relevantMapping !== undefined &&
 				relevantMapping.local.length === 1,
-			element: (
+			content: (
 				<div css={restrictionItemStyle}>
 					<strong>Must reference an existing:</strong>
 					<div css={contentStyle}>
@@ -287,7 +283,7 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 		},
 		{
 			condition: uniqueKeys !== undefined && uniqueKeys?.length > 1,
-			element: (
+			content: (
 				<div css={restrictionItemStyle}>
 					<strong>Must be unique in combination with:</strong>
 					<div css={contentStyle}>
@@ -301,7 +297,7 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 	];
 
 	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
-	return computedRestrictionItem?.element || undefined;
+	return computedRestrictionItem?.content || undefined;
 };
 
 export const computeAllowedValuesColumn = (
