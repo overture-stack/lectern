@@ -65,6 +65,7 @@ const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
 								${theme.typography.data}
 								white-space: pre-wrap;
 							`}
+							maxLines={4}
 						>
 							{flexRender(cell.column.columnDef.cell, cell.getContext())}
 						</ReadMoreText>
