@@ -20,12 +20,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import {
-	DictionaryMeta,
-	type ForeignKeyRestriction,
-	SchemaField,
-	SchemaRestrictions,
-} from '@overture-stack/lectern-dictionary';
+import { DictionaryMeta, SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import { Row } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
@@ -124,7 +119,7 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const fieldDescription = fieldRow.original.description;
 	const fieldExamples = fieldRow.original.meta?.examples;
 
-	const fieldRestrictions: SchemaRestrictions = fieldRow.original.restrictions;
+	const fieldRestrictions: SchemaFieldRestrictions = fieldRow.original.restrictions;
 
 	// TODO: not sure why they are unknown types
 	const uniqueKey = fieldRestrictions && 'uniqueKey' in fieldRestrictions ? fieldRestrictions.uniqueKey : undefined;

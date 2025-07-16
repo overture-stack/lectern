@@ -229,7 +229,7 @@ export const SchemaField = zod.discriminatedUnion('valueType', [
 ]);
 export type SchemaField = zod.infer<typeof SchemaField>;
 
-export type SchemaRestrictions = SchemaField['restrictions'];
+export type SchemaFieldRestrictions = SchemaField['restrictions'];
 
 /* ****** *
  * Schema *
@@ -296,6 +296,8 @@ export const Schema = zod
 		}
 	});
 export type Schema = zod.infer<typeof Schema>;
+
+export type SchemaRestrictions = Schema['restrictions'];
 
 /* ********** *
  * Dictionary *
