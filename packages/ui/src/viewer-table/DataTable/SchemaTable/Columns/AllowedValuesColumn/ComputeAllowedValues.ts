@@ -20,7 +20,7 @@ import {
 	RestrictionCondition,
 	RestrictionRange,
 	SchemaField,
-	SchemaRestrictions,
+	SchemaFieldRestrictions,
 } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
 
@@ -41,7 +41,7 @@ export type AllowedValuesBaseDisplayItem = {
 };
 
 export type AllowedValuesColumnProps = {
-	restrictions: CellContext<SchemaField, SchemaRestrictions>;
+	restrictions: CellContext<SchemaField, SchemaFieldRestrictions>;
 };
 
 //Helper functions
@@ -173,7 +173,7 @@ const handleCodeList = (codeList: string | string[] | number[]): RestrictionItem
 };
 
 export const computeAllowedValuesColumn = (
-	restrictions: SchemaRestrictions,
+	restrictions: SchemaFieldRestrictions,
 	schemaField: SchemaField,
 ): AllowedValuesBaseDisplayItem => {
 	const allowedValuesBaseDisplayItem: AllowedValuesBaseDisplayItem = {};
