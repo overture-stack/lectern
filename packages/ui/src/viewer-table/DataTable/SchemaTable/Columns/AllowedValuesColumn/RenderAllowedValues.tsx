@@ -71,7 +71,7 @@ export const renderAllowedValuesColumn = (
 	schemaLevelRestrictions: SchemaRestrictions,
 	currentSchemaField: SchemaField,
 ) => {
-	const items = computeAllowedValuesColumn(fieldLevelRestrictions, currentSchemaField);
+	const items = computeAllowedValuesColumn(fieldLevelRestrictions, schemaLevelRestrictions, currentSchemaField);
 	if (!items || Object.keys(items).length === 0) {
 		return <strong>None</strong>;
 	}

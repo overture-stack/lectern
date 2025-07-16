@@ -36,12 +36,12 @@ const containerStyle = css`
 	gap: 10px;
 `;
 
-export const renderAttributesColumn = (schemaRestrictions: SchemaRestrictions) => {
+export const renderAttributesColumn = (schemaFieldRestrictions: SchemaFieldRestrictions) => {
 	return (
 		<div css={containerStyle}>
 			{schemaFieldRestrictions && 'if' in schemaFieldRestrictions ?
 				<OpenModalButton onClick={() => alert('Hello World')}>Required When</OpenModalButton>
-			:	<Pill>{schemaRestrictions && 'required' in schemaRestrictions ? 'Required' : 'Optional'}</Pill>}
+			:	<Pill>{schemaFieldRestrictions && 'required' in schemaFieldRestrictions ? 'Required' : 'Optional'}</Pill>}
 		</div>
 	);
 };

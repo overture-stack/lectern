@@ -21,7 +21,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { Schema, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
+import { Schema, SchemaField, SchemaFieldRestrictions, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext, createColumnHelper, Row } from '@tanstack/react-table';
 
 import { renderAllowedValuesColumn } from './Columns/AllowedValuesColumn/RenderAllowedValues';
@@ -43,7 +43,7 @@ export const getSchemaBaseColumns = (schema: Schema) => [
 	columnHelper.accessor('restrictions.required', {
 		header: 'Attribute',
 		cell: (attribute: CellContext<SchemaField, unknown>) => {
-			const schemaRestrictions: SchemaRestrictions = attribute.row.original.restrictions;
+			const schemaRestrictions: SchemaFieldRestrictions = attribute.row.original.restrictions;
 			return renderAttributesColumn(schemaRestrictions);
 		},
 	}),
