@@ -25,6 +25,7 @@ import {
 	RestrictionRange,
 	Schema,
 	SchemaField,
+	SchemaFieldRestrictions,
 	SchemaRestrictions,
 } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
@@ -304,8 +305,8 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 };
 
 export const computeAllowedValuesColumn = (
-	fieldLevelRestrictions: SchemaRestrictions,
-	schemaLevelRestrictions: Schema['restrictions'],
+	fieldLevelRestrictions: SchemaFieldRestrictions,
+	schemaLevelRestrictions: SchemaRestrictions,
 	currentSchemaField: SchemaField,
 ): AllowedValuesBaseDisplayItem => {
 	const allowedValuesBaseDisplayItem: AllowedValuesBaseDisplayItem = {};

@@ -20,7 +20,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { Schema, SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaFieldRestrictions, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import React, { ReactNode } from 'react';
 import ReadMoreText from '../../../../../common/ReadMoreText';
 import { computeAllowedValuesColumn, type RestrictionItem } from './ComputeAllowedValues';
@@ -67,11 +67,11 @@ const renderRestrictionItem = (value: RestrictionItem, key: string): ReactNode =
 };
 
 export const renderAllowedValuesColumn = (
-	fieldLevelRestrictions: SchemaRestrictions,
-	schemaLevelRestrictions: Schema['restrictions'],
+	fieldLevelRestrictions: SchemaFieldRestrictions,
+	schemaLevelRestrictions: SchemaRestrictions,
 	currentSchemaField: SchemaField,
 ) => {
-	const items = computeAllowedValuesColumn(fieldLevelRestrictions, schemaLevelRestrictions, currentSchemaField);
+	const items = computeAllowedValuesColumn(fieldLevelRestrictions, currentSchemaField);
 	if (!items || Object.keys(items).length === 0) {
 		return <strong>None</strong>;
 	}
