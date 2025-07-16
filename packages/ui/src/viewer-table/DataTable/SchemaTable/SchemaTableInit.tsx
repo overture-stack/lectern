@@ -59,7 +59,7 @@ export const getSchemaBaseColumns = (schema: Schema) => [
 	columnHelper.accessor((row: SchemaField) => row.restrictions, {
 		id: 'allowedValues',
 		header: 'Allowed Values',
-		cell: (restrictions: CellContext<SchemaField, SchemaRestrictions>) => {
+		cell: (restrictions: CellContext<SchemaField, SchemaFieldRestrictions>) => {
 			const schemaField: SchemaField = restrictions.row.original;
 			const fieldLevelRestrictions = schemaField.restrictions;
 			const schemaLevelRestrictions = schema.restrictions;
