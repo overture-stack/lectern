@@ -33,6 +33,7 @@ const allowedValuesContainerStyle = css`
 `;
 
 const restrictionItemStyle = css`
+	margin-top: 4px;
 	display: flex;
 	flex-direction: column;
 	gap: 4px;

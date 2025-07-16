@@ -64,7 +64,6 @@ export type AllowedValuesBaseDisplayItem = {
 	codeList?: RestrictionItem;
 	range?: RestrictionItem | ReactNode;
 	codeListWithCountRestrictions?: RestrictionItem;
-	unique?: RestrictionItem;
 	entityRelationships?: ReactNode;
 };
 
@@ -308,6 +307,13 @@ export const computeAllowedValuesColumn = (
 ): AllowedValuesBaseDisplayItem => {
 	const allowedValuesBaseDisplayItem: AllowedValuesBaseDisplayItem = {};
 
+	if (schemaLevelRestrictions?.foreignKey !== undefined || schemaLevelRestrictions?.uniqueKey !== undefined) {
+		const entityRelationships = handleKeys(schemaLevelRestrictions, currentSchemaField);
+		if (entityRelationships) {
+			allowedValuesBaseDisplayItem.entityRelationships = entityRelationships;
+		}
+	}
+
 	if (fieldLevelRestrictions !== undefined) {
 		if (
 			'if' in fieldLevelRestrictions &&
@@ -346,15 +352,6 @@ export const computeAllowedValuesColumn = (
 				currentSchemaField,
 			);
 		}
-	}
-	if (schemaLevelRestrictions?.foreignKey !== undefined || schemaLevelRestrictions?.uniqueKey !== undefined) {
-		const entityRelationships = handleKeys(schemaLevelRestrictions, currentSchemaField);
-		if (entityRelationships) {
-			allowedValuesBaseDisplayItem.entityRelationships = entityRelationships;
-		}
-	}
-	if (currentSchemaField.unique) {
-		allowedValuesBaseDisplayItem.unique = { prefix: [], content: ['Must be unique'] };
 	}
 	return allowedValuesBaseDisplayItem;
 };
