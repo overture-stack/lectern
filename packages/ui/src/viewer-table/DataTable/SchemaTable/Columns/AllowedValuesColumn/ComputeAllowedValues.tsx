@@ -206,7 +206,6 @@ const handleCodeList = (codeList: string | string[] | number[]): RestrictionItem
 };
 
 const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: SchemaField): ReactNode => {
-	const isUnique = currentSchemaField.unique === true;
 	const uniqueKeys = restrictions?.uniqueKey;
 	const foreignKeys = restrictions?.foreignKey;
 
@@ -215,16 +214,16 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 			.filter((mapping) => mapping.local === currentSchemaField.name)
 			.map((mapping) => ({ foreignKey, mapping })),
 	);
-	console.log(found?.length);
 	const relevantForeignKeys = found?.map((item) => item.foreignKey);
 	const relevantMappings = found?.map((item) => item.mapping);
-	let workAround;
-	if (found && found?.length > 1) {
-		workAround = {
-			field: currentSchemaField.name,
-			associatedSchemas: relevantForeignKeys?.map((item) => item.schema),
-		};
-	}
+	const multipleSchemaReferences =
+		found && found?.length > 1 ?
+			{
+				field: currentSchemaField.name,
+				associatedSchemas: relevantForeignKeys?.map((item) => item.schema),
+			}
+		:	undefined;
+
 	const computeRestrictions = [
 		{
 			condition:
@@ -232,9 +231,9 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 			content: (
 				<div css={contentStyle}>
 					<b>Must reference an existing </b>
-					<FieldBlock>{workAround?.field}</FieldBlock>
+					<FieldBlock>{multipleSchemaReferences?.field}</FieldBlock>
 					<span> within the </span>
-					<b>{workAround?.associatedSchemas.join(', ')}</b>
+					<b>{multipleSchemaReferences?.associatedSchemas?.join(', ')}</b>
 					<span> schemas.</span>
 				</div>
 			),
