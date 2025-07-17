@@ -229,44 +229,43 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 			condition:
 				relevantForeignKeys && relevantForeignKeys.length > 1 && relevantMappings && relevantMappings.length > 1,
 			content: (
-				<div css={contentStyle}>
-					<b>Must reference an existing </b>
-					<FieldBlock>{multipleSchemaReferences?.field}</FieldBlock>
-					<span> within the </span>
-					<b>{multipleSchemaReferences?.associatedSchemas?.join(', ')}</b>
-					<span> schemas.</span>
-				</div>
+				<span>
+					Must reference an existing <FieldBlock>{multipleSchemaReferences?.field}</FieldBlock> within the{' '}
+					<b>
+						{multipleSchemaReferences?.associatedSchemas && multipleSchemaReferences.associatedSchemas.length > 1 ?
+							multipleSchemaReferences.associatedSchemas.slice(0, -1).join(', ') +
+							' and ' +
+							multipleSchemaReferences.associatedSchemas.slice(-1)
+						:	multipleSchemaReferences?.associatedSchemas?.[0]}
+					</b>{' '}
+					schemas.
+				</span>
 			),
 		},
 		{
 			condition:
 				relevantForeignKeys && relevantForeignKeys.length === 1 && relevantMappings && relevantMappings.length > 1,
 			content: (
-				<div css={contentStyle}>
-					<b>Must reference an existing combination of: </b>
+				<span>
+					Must reference an existing combination of:{' '}
 					{relevantMappings?.map((mapping, index) => (
-						<span key={index} css={contentStyle}>
-							<FieldBlock>{currentSchemaField.name}</FieldBlock>
-							<span> as defined in the </span>
-							<b>{relevantForeignKeys?.[index]?.schema}</b>
-							<span> schema{index < relevantMappings.length - 1 ? ',' : '.'}</span>
-						</span>
+						<>
+							<FieldBlock key={index}>{currentSchemaField.name}</FieldBlock>
+							{` as defined in the ${relevantForeignKeys?.[index]?.schema} schema `}
+						</>
 					))}
-				</div>
+				</span>
 			),
 		},
 		{
 			condition:
 				relevantForeignKeys && relevantForeignKeys.length === 1 && relevantMappings && relevantMappings.length === 1,
 			content: (
-				<div css={contentStyle}>
-					<b>Must reference an existing </b>
-					<FieldBlock>{currentSchemaField.name}</FieldBlock>
-					<span> as defined in the</span>
-					<b>{relevantForeignKeys?.[0]?.schema}</b>
-					<span>schema. Multiple sequencing records can reference the same </span>
-					<b>{relevantForeignKeys?.[0]?.schema}</b>
-				</div>
+				<span>
+					Must reference an existing <FieldBlock>{currentSchemaField.name}</FieldBlock> as defined in the{' '}
+					<b>{relevantForeignKeys?.[0]?.schema}</b> schema. Multiple sequencing records can reference the same{' '}
+					<b>{relevantForeignKeys?.[0]?.schema}</b>.
+				</span>
 			),
 		},
 		{
@@ -278,33 +277,33 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 				relevantMappings &&
 				relevantMappings.length > 0,
 			content: (
-				<div css={contentStyle}>
-					<b>Must reference an existing: </b>
+				<span>
+					Must reference an existing:{' '}
 					{relevantForeignKeys?.map((foreignKey, index) => (
-						<span key={index} css={contentStyle}>
-							<FieldBlock>{currentSchemaField.name}</FieldBlock>
-							<span> as defined in the </span>
+						<>
+							<FieldBlock key={index}>{currentSchemaField.name}</FieldBlock>
+							{' as defined in the '}
 							<b>{foreignKey?.schema}</b>
-							<span> schema. Each record can only reference one </span>
+							{` schema. Each record can only reference one `}
 							<b>{foreignKey?.schema}</b>
-						</span>
+						</>
 					))}
-				</div>
+				</span>
 			),
 		},
 		{
 			condition: uniqueKeys !== undefined && uniqueKeys?.length > 1,
 			content: (
-				<div css={contentStyle}>
-					<b>Must be unique in combination with: </b>
+				<span>
+					Must be unique in combination with:{' '}
 					{uniqueKeys
 						?.filter((key) => key !== currentSchemaField.name)
 						?.map((key, index) => (
-							<span key={index}>
-								<FieldBlock>{key}</FieldBlock>
-							</span>
+							<>
+								<FieldBlock key={index}>{key}</FieldBlock>
+							</>
 						))}
-				</div>
+				</span>
 			),
 		},
 	];
