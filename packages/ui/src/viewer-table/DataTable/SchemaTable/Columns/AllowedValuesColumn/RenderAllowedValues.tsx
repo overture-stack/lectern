@@ -22,10 +22,12 @@
 import { css } from '@emotion/react';
 import { SchemaField, SchemaFieldRestrictions, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { ReactNode } from 'react';
+
 import ReadMoreText from '../../../../../common/ReadMoreText';
-import { computeAllowedValuesColumn, type RestrictionItem } from './ComputeAllowedValues';
-import { useThemeContext } from '../../../../../theme/ThemeContext';
 import { Theme } from '../../../../../theme';
+import { useThemeContext } from '../../../../../theme/ThemeContext';
+import { computeAllowedValuesColumn, type RestrictionItem } from './ComputeAllowedValues';
+
 const allowedValuesContainerStyle = css`
 	display: flex;
 	flex-direction: column;

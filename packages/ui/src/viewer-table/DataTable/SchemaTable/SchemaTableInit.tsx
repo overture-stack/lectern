@@ -21,7 +21,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { Schema, SchemaField, SchemaFieldRestrictions, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
+import { Schema, SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext, createColumnHelper, Row } from '@tanstack/react-table';
 
 import { renderAllowedValuesColumn } from './Columns/AllowedValuesColumn/RenderAllowedValues';

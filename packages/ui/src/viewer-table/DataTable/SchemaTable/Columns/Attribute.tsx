@@ -20,9 +20,8 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
-import { Row } from '@tanstack/react-table';
 import Pill from '../../../../common/Pill';
 import OpenModalButton from '../../../OpenModalButton';
 
@@ -36,7 +35,10 @@ const containerStyle = css`
 	gap: 10px;
 `;
 
-export const renderAttributesColumn = (schemaFieldRestrictions: SchemaFieldRestrictions, unique) => {
+export const renderAttributesColumn = (
+	schemaFieldRestrictions: SchemaFieldRestrictions,
+	unique: boolean | undefined,
+) => {
 	return (
 		<div css={containerStyle}>
 			{schemaFieldRestrictions && 'if' in schemaFieldRestrictions ?

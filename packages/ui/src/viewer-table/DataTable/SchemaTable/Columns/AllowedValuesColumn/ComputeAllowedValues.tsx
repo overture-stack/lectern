@@ -161,7 +161,7 @@ const handleCodeListsWithCountRestrictions = (
 	return computedRestrictionItem ?
 			{
 				prefix: [computedRestrictionItem.prefix],
-				content: Array.isArray(codeList) ? codeList.map((item) => `${item}`) : [`${codeList}`],
+				content: Array.isArray(codeList) ? codeList.map((item: string | number) => `${item}`) : [`${codeList}`],
 			}
 		:	{
 				prefix: [],

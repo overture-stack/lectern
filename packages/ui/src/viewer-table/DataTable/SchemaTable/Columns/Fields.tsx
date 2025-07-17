@@ -24,9 +24,9 @@ import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary'
 import { Row } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
+import ReadMoreText from '../../../../common/ReadMoreText';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
-import ReadMoreText from '../../../../common/ReadMoreText';
 
 const fieldContainerStyle = (theme: Theme) => css`
 	${theme.typography.data}
