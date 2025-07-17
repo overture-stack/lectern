@@ -209,16 +209,14 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 	const uniqueKeys = restrictions?.uniqueKey;
 	const foreignKeys = restrictions?.foreignKey;
 
-	const found = foreignKeys
-		?.flatMap((foreignKey) =>
-			foreignKey.mappings
-				.filter((mapping) => mapping.local === currentSchemaField.name)
-				.map((mapping) => ({ foreignKey, mapping })),
-		)
-		.find((item) => !!item);
-	// not all of the foreign keys are relevant to the current field, hence we will take the first value and use that
-	const relevantForeignKey = found?.foreignKey; // foreign key that references the current field
-	const relevantMapping = found?.mapping; // mapping within that foreign key that references the current field
+	const found = foreignKeys?.flatMap((foreignKey) =>
+		foreignKey.mappings
+			.filter((mapping) => mapping.local === currentSchemaField.name)
+			.map((mapping) => ({ foreignKey, mapping })),
+	);
+
+	const relevantForeignKeys = found?.map((item) => item.foreignKey);
+	const relevantMappings = found?.map((item) => item.mapping);
 
 	const computeRestrictions = [
 		{
@@ -231,32 +229,43 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 			),
 		},
 		{
-			condition: relevantForeignKey !== undefined && relevantMapping !== undefined && relevantMapping.local.length > 1,
+			condition:
+				relevantForeignKeys && relevantForeignKeys.length > 1 && relevantMappings && relevantMappings.length > 1,
 			content: (
 				<div css={restrictionItemStyle}>
 					<strong>Must reference an existing combination of:</strong>
 					<div css={contentStyle}>
-						<FieldBlock>{relevantMapping?.foreign}</FieldBlock>
-						<span>
-							<p css={inlineTextStyle}>as defined in the </p>
-							<strong>{relevantForeignKey?.schema} </strong>
-							<p css={inlineTextStyle}>schema.</p>
-						</span>
+						{relevantMappings?.map((mapping, index) => (
+							<div key={index} css={contentStyle}>
+								<FieldBlock>{mapping?.foreign}</FieldBlock>
+								<p css={inlineTextStyle}>
+									as defined in the <b>{relevantForeignKeys?.[index]?.schema} </b>
+									schema.
+								</p>
+							</div>
+						))}
 					</div>
 				</div>
 			),
 		},
 		{
 			condition:
-				relevantForeignKey !== undefined && relevantMapping !== undefined && relevantMapping.local.length === 1,
+				relevantForeignKeys && relevantForeignKeys.length === 1 && relevantMappings && relevantMappings.length === 1,
 			content: (
 				<div css={restrictionItemStyle}>
 					<strong>Must reference an existing:</strong>
 					<div css={contentStyle}>
-						<FieldBlock>{relevantForeignKey?.schema}</FieldBlock>
-						<p>as defined in the </p>
-						<strong>{relevantForeignKey?.schema} </strong>
-						<p>schema. Multiple sequencing records can reference the same {relevantForeignKey?.schema}</p>
+						{relevantForeignKeys?.map((foreignKey, index) => (
+							<div key={index} css={contentStyle}>
+								<span>
+									<FieldBlock>{currentSchemaField.name}</FieldBlock>{' '}
+									<p css={inlineTextStyle}>
+										as defined in the <b>{foreignKey?.schema} </b> schema. Multiple sequencing records can reference the
+										same {foreignKey?.schema}
+									</p>
+								</span>
+							</div>
+						))}
 					</div>
 				</div>
 			),
@@ -265,18 +274,23 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 			condition:
 				uniqueKeys !== undefined &&
 				uniqueKeys?.length === 1 &&
-				relevantForeignKey !== undefined &&
-				relevantMapping !== undefined &&
-				relevantMapping.local.length === 1,
+				relevantForeignKeys &&
+				relevantForeignKeys.length > 0 &&
+				relevantMappings &&
+				relevantMappings.length > 0,
 			content: (
 				<div css={restrictionItemStyle}>
 					<strong>Must reference an existing:</strong>
 					<div css={contentStyle}>
-						<FieldBlock>{relevantForeignKey?.schema}</FieldBlock>
-						<p>as defined in the </p>
-						<strong>{relevantForeignKey?.schema} </strong>
-						<p>schema. Each record can only reference one </p>
-						<strong>{relevantForeignKey?.schema}</strong>
+						{relevantForeignKeys?.map((foreignKey, index) => (
+							<div key={index} css={contentStyle}>
+								<FieldBlock>{currentSchemaField.name}</FieldBlock>
+								<p>as defined in the </p>
+								<strong>{foreignKey?.schema} </strong>
+								<p>schema. Each record can only reference one </p>
+								<strong>{foreignKey?.schema}</strong>
+							</div>
+						))}
 					</div>
 				</div>
 			),

@@ -74,7 +74,7 @@ export const renderAllowedValuesColumn = (
 	}
 
 	return (
-		<ReadMoreText wrapperStyle={() => allowedValuesContainerStyle}>
+		<ReadMoreText maxLines={3} wrapperStyle={() => allowedValuesContainerStyle}>
 			{Object.entries(items).map(([key, value]) => {
 				return (
 					value ?

@@ -116,10 +116,10 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 			<b css={fieldNameStyle(theme)}>{fieldName}</b>
 			{fieldDescription && <p>{fieldDescription}</p>}
 			{fieldExamples && (
-				<p>
+				<div>
 					<b>Example(s): </b>
 					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
-				</p>
+				</div>
 			)}
 		</ReadMoreText>
 	);
