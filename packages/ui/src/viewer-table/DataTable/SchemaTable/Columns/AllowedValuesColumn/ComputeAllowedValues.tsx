@@ -237,7 +237,7 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 					<div css={contentStyle}>
 						{relevantMappings?.map((mapping, index) => (
 							<div key={index} css={contentStyle}>
-								<FieldBlock>{mapping?.foreign}</FieldBlock>
+								<FieldBlock>{currentSchemaField.name}</FieldBlock>
 								<p css={inlineTextStyle}>
 									as defined in the <b>{relevantForeignKeys?.[index]?.schema} </b>
 									schema.
