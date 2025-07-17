@@ -39,23 +39,17 @@ const restrictionItemStyle = css`
 	gap: 4px;
 `;
 
-const prefixStyle = css`
-	font-weight: bold;
-	line-height: 1.4;
-`;
-
 const codeListContentStyle = css`
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
-	line-height: 1.4;
 `;
 
 const renderRestrictionItem = (value: RestrictionItem, key: string): ReactNode => {
 	const { prefix, content } = value;
 	return (
 		<div key={key} css={restrictionItemStyle}>
-			<div css={prefixStyle}>{prefix}</div>
+			<b>{prefix}</b>
 			{content.length > 0 && (
 				<ReadMoreText wrapperStyle={() => codeListContentStyle}>{content.join('\n')}</ReadMoreText>
 			)}
@@ -70,7 +64,7 @@ export const renderAllowedValuesColumn = (
 ) => {
 	const items = computeAllowedValuesColumn(fieldLevelRestrictions, schemaLevelRestrictions, currentSchemaField);
 	if (!items || Object.keys(items).length === 0) {
-		return <strong>No restrictions provided for this field</strong>;
+		return <b>No restrictions provided for this field</b>;
 	}
 
 	return (
