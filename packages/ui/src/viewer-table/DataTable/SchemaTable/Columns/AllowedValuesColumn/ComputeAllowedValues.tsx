@@ -65,6 +65,7 @@ export type AllowedValuesBaseDisplayItem = {
 	range?: RestrictionItem | ReactNode;
 	codeListWithCountRestrictions?: RestrictionItem;
 	entityRelationships?: ReactNode;
+	unique?: RestrictionItem;
 };
 
 export type AllowedValuesColumnProps = {
@@ -77,10 +78,10 @@ const handleRange = (range: RestrictionRange): RestrictionItem | ReactNode => {
 			<div css={restrictionItemStyle}>
 				<div css={contentStyle}>
 					<span>
-						<strong>Min:</strong> {range.min}
+						<b>Min:</b> {range.min}
 					</span>
 					<span>
-						<strong>Max:</strong> {range.max}
+						<b>Max:</b> {range.max}
 					</span>
 				</div>
 			</div>
@@ -178,7 +179,7 @@ const handleDependsOn = (conditions: RestrictionCondition[]): ReactNode => {
 
 	return (
 		<div css={restrictionItemStyle}>
-			<strong>Depends on:</strong>
+			<b>Depends on:</b>
 			<div css={contentStyle}>
 				{allFields.map((field, index) => (
 					<FieldBlock key={index}>{field}</FieldBlock>
@@ -214,37 +215,44 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 			.filter((mapping) => mapping.local === currentSchemaField.name)
 			.map((mapping) => ({ foreignKey, mapping })),
 	);
-
+	console.log(found?.length);
 	const relevantForeignKeys = found?.map((item) => item.foreignKey);
 	const relevantMappings = found?.map((item) => item.mapping);
-
+	let workAround;
+	if (found && found?.length > 1) {
+		workAround = {
+			field: currentSchemaField.name,
+			associatedSchemas: relevantForeignKeys?.map((item) => item.schema),
+		};
+	}
 	const computeRestrictions = [
 		{
 			condition:
-				isUnique && Array.isArray(uniqueKeys) && uniqueKeys?.length === 1 && uniqueKeys[0] === currentSchemaField.name,
+				relevantForeignKeys && relevantForeignKeys.length > 1 && relevantMappings && relevantMappings.length > 1,
 			content: (
-				<div css={restrictionItemStyle}>
-					<strong>A unique value that matches the following restrictions:</strong>
+				<div css={contentStyle}>
+					<b>Must reference an existing </b>
+					<FieldBlock>{workAround?.field}</FieldBlock>
+					<span> within the </span>
+					<b>{workAround?.associatedSchemas.join(', ')}</b>
+					<span> schemas.</span>
 				</div>
 			),
 		},
 		{
 			condition:
-				relevantForeignKeys && relevantForeignKeys.length > 1 && relevantMappings && relevantMappings.length > 1,
+				relevantForeignKeys && relevantForeignKeys.length === 1 && relevantMappings && relevantMappings.length > 1,
 			content: (
-				<div css={restrictionItemStyle}>
-					<strong>Must reference an existing combination of:</strong>
-					<div css={contentStyle}>
-						{relevantMappings?.map((mapping, index) => (
-							<div key={index} css={contentStyle}>
-								<FieldBlock>{currentSchemaField.name}</FieldBlock>
-								<p css={inlineTextStyle}>
-									as defined in the <b>{relevantForeignKeys?.[index]?.schema} </b>
-									schema.
-								</p>
-							</div>
-						))}
-					</div>
+				<div css={contentStyle}>
+					<b>Must reference an existing combination of: </b>
+					{relevantMappings?.map((mapping, index) => (
+						<span key={index} css={contentStyle}>
+							<FieldBlock>{currentSchemaField.name}</FieldBlock>
+							<span> as defined in the </span>
+							<b>{relevantForeignKeys?.[index]?.schema}</b>
+							<span> schema{index < relevantMappings.length - 1 ? ',' : '.'}</span>
+						</span>
+					))}
 				</div>
 			),
 		},
@@ -252,21 +260,13 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 			condition:
 				relevantForeignKeys && relevantForeignKeys.length === 1 && relevantMappings && relevantMappings.length === 1,
 			content: (
-				<div css={restrictionItemStyle}>
-					<strong>Must reference an existing:</strong>
-					<div css={contentStyle}>
-						{relevantForeignKeys?.map((foreignKey, index) => (
-							<div key={index} css={contentStyle}>
-								<span>
-									<FieldBlock>{currentSchemaField.name}</FieldBlock>{' '}
-									<p css={inlineTextStyle}>
-										as defined in the <b>{foreignKey?.schema} </b> schema. Multiple sequencing records can reference the
-										same {foreignKey?.schema}
-									</p>
-								</span>
-							</div>
-						))}
-					</div>
+				<div css={contentStyle}>
+					<b>Must reference an existing </b>
+					<FieldBlock>{currentSchemaField.name}</FieldBlock>
+					<span> as defined in the</span>
+					<b>{relevantForeignKeys?.[0]?.schema}</b>
+					<span>schema. Multiple sequencing records can reference the same </span>
+					<b>{relevantForeignKeys?.[0]?.schema}</b>
 				</div>
 			),
 		},
@@ -279,32 +279,32 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 				relevantMappings &&
 				relevantMappings.length > 0,
 			content: (
-				<div css={restrictionItemStyle}>
-					<strong>Must reference an existing:</strong>
-					<div css={contentStyle}>
-						{relevantForeignKeys?.map((foreignKey, index) => (
-							<div key={index} css={contentStyle}>
-								<FieldBlock>{currentSchemaField.name}</FieldBlock>
-								<p>as defined in the </p>
-								<strong>{foreignKey?.schema} </strong>
-								<p>schema. Each record can only reference one </p>
-								<strong>{foreignKey?.schema}</strong>
-							</div>
-						))}
-					</div>
+				<div css={contentStyle}>
+					<b>Must reference an existing: </b>
+					{relevantForeignKeys?.map((foreignKey, index) => (
+						<span key={index} css={contentStyle}>
+							<FieldBlock>{currentSchemaField.name}</FieldBlock>
+							<span> as defined in the </span>
+							<b>{foreignKey?.schema}</b>
+							<span> schema. Each record can only reference one </span>
+							<b>{foreignKey?.schema}</b>
+						</span>
+					))}
 				</div>
 			),
 		},
 		{
 			condition: uniqueKeys !== undefined && uniqueKeys?.length > 1,
 			content: (
-				<div css={restrictionItemStyle}>
-					<strong>Must be unique in combination with:</strong>
-					<div css={contentStyle}>
-						{uniqueKeys
-							?.filter((key) => key !== currentSchemaField.name)
-							?.map((key, index) => <FieldBlock key={index}>{key}</FieldBlock>)}
-					</div>
+				<div css={contentStyle}>
+					<b>Must be unique in combination with: </b>
+					{uniqueKeys
+						?.filter((key) => key !== currentSchemaField.name)
+						?.map((key, index) => (
+							<span key={index}>
+								<FieldBlock>{key}</FieldBlock>
+							</span>
+						))}
 				</div>
 			),
 		},
@@ -325,7 +325,20 @@ export const computeAllowedValuesColumn = (
 		const entityRelationships = handleKeys(schemaLevelRestrictions, currentSchemaField);
 		if (entityRelationships) {
 			allowedValuesBaseDisplayItem.entityRelationships = entityRelationships;
+			return allowedValuesBaseDisplayItem;
 		}
+	}
+
+	if (
+		currentSchemaField.unique === true ||
+		(Array.isArray(schemaLevelRestrictions?.uniqueKey) &&
+			schemaLevelRestrictions?.uniqueKey?.length === 1 &&
+			schemaLevelRestrictions?.uniqueKey[0] === currentSchemaField.name)
+	) {
+		allowedValuesBaseDisplayItem.unique = {
+			prefix: ['A unique value that matches the following restrictions'],
+			content: [],
+		};
 	}
 
 	if (fieldLevelRestrictions !== undefined) {

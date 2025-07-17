@@ -76,10 +76,62 @@ export const PCGLParticipant: Story = {
 	args: { schema: pcglDictionary.schemas[0] },
 };
 
+export const PCGLSociodemographic: Story = {
+	args: { schema: pcglDictionary.schemas[1] },
+};
+
+export const PCGLDemographic: Story = {
+	args: { schema: pcglDictionary.schemas[2] },
+};
+
 export const PCGLDiagnosis: Story = {
 	args: { schema: pcglDictionary.schemas[3] },
 };
 
+export const PCGLTreatment: Story = {
+	args: { schema: pcglDictionary.schemas[4] },
+};
+
+export const PCGLFollowup: Story = {
+	args: { schema: pcglDictionary.schemas[5] },
+};
+
+export const PCGLProcedure: Story = {
+	args: { schema: pcglDictionary.schemas[6] },
+};
+
+export const PCGLMedication: Story = {
+	args: { schema: pcglDictionary.schemas[7] },
+};
+
+export const PCGLRadiation: Story = {
+	args: { schema: pcglDictionary.schemas[8] },
+};
+
+export const PCGLMeasurement: Story = {
+	args: { schema: pcglDictionary.schemas[9] },
+};
+
+export const PCGLPhenotype: Story = {
+	args: { schema: pcglDictionary.schemas[10] },
+};
+
+export const PCGLExposure: Story = {
+	args: { schema: pcglDictionary.schemas[11] },
+};
+
 export const PCGLSpecimen: Story = {
+	args: { schema: pcglDictionary.schemas[12] },
+};
+
+export const PCGLSample: Story = {
 	args: { schema: pcglDictionary.schemas[13] },
+};
+
+export const PCGLExperiment: Story = {
+	args: { schema: pcglDictionary.schemas[14] },
+};
+
+export const PCGLReadGroup: Story = {
+	args: { schema: pcglDictionary.schemas[15] },
 };

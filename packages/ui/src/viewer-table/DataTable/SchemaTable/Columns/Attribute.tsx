@@ -22,7 +22,7 @@
 import { css } from '@emotion/react';
 import { SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
-import Pill from '../../../../common/Pill';
+import { useThemeContext } from '../../../../theme/ThemeContext';
 import OpenModalButton from '../../../OpenModalButton';
 
 export type Attributes = 'Required' | 'Optional' | 'Required When';
@@ -35,16 +35,20 @@ const containerStyle = css`
 	gap: 10px;
 `;
 
-export const renderAttributesColumn = (
-	schemaFieldRestrictions: SchemaFieldRestrictions,
-	unique: boolean | undefined,
-) => {
+export const renderAttributesColumn = (schemaFieldRestrictions: SchemaFieldRestrictions) => {
+	const theme = useThemeContext();
 	return (
 		<div css={containerStyle}>
 			{schemaFieldRestrictions && 'if' in schemaFieldRestrictions ?
 				<OpenModalButton onClick={() => alert('Hello World')}>Required When</OpenModalButton>
-			:	<Pill>{schemaFieldRestrictions && 'required' in schemaFieldRestrictions ? 'Required' : 'Optional'}</Pill>}
-			{unique && <Pill>Unique</Pill>}
+			:	<div
+					css={css`
+						${theme.typography.subheading}
+					`}
+				>
+					{schemaFieldRestrictions && 'required' in schemaFieldRestrictions ? 'Required' : 'Optional'}
+				</div>
+			}
 		</div>
 	);
 };
