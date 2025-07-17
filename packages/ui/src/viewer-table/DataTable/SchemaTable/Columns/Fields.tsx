@@ -35,19 +35,10 @@ const fieldContainerStyle = (theme: Theme) => css`
 	gap: 3px;
 `;
 
-const fieldNameStyle = (theme: Theme) => css`
-	${theme.typography.label}
-	display: flex;
-	align-items: center;
-	gap: 2px;
-`;
+const fieldNameStyle = (theme: Theme) => css``;
 
 export type FieldExamplesProps = {
 	examples: DictionaryMeta[keyof DictionaryMeta];
-	// Another implementation of this would be
-	// examples: DictionaryMetaValue | DictionaryMeta;
-	// Another approach would be
-	// examples: DictionaryMeta[string];
 	theme: Theme;
 };
 
@@ -116,20 +107,19 @@ const useClipboard = () => {
 
 export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const fieldName = fieldRow.original.name;
-	const fieldIndex = fieldRow.index;
 	const fieldDescription = fieldRow.original.description;
 	const fieldExamples = fieldRow.original.meta?.examples;
 	const theme: Theme = useThemeContext();
 
 	return (
 		<ReadMoreText wrapperStyle={() => fieldContainerStyle(theme)}>
-			<span css={fieldNameStyle(theme)}>{fieldName}</span>
-			{fieldDescription && <span>{fieldDescription}</span>}
+			<b css={fieldNameStyle(theme)}>{fieldName}</b>
+			{fieldDescription && <p>{fieldDescription}</p>}
 			{fieldExamples && (
-				<span>
-					<strong> Example(s): </strong>
+				<p>
+					<b>Example(s): </b>
 					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
-				</span>
+				</p>
 			)}
 		</ReadMoreText>
 	);

@@ -24,8 +24,6 @@ import { SchemaField, SchemaFieldRestrictions, SchemaRestrictions } from '@overt
 import { ReactNode } from 'react';
 
 import ReadMoreText from '../../../../../common/ReadMoreText';
-import { Theme } from '../../../../../theme';
-import { useThemeContext } from '../../../../../theme/ThemeContext';
 import { computeAllowedValuesColumn, type RestrictionItem } from './ComputeAllowedValues';
 
 const allowedValuesContainerStyle = css`
@@ -55,21 +53,11 @@ const codeListContentStyle = css`
 
 const renderRestrictionItem = (value: RestrictionItem, key: string): ReactNode => {
 	const { prefix, content } = value;
-	const theme: Theme = useThemeContext();
 	return (
 		<div key={key} css={restrictionItemStyle}>
-			<div css={prefixStyle}>{prefix.join(' ')}</div>
+			<div css={prefixStyle}>{prefix}</div>
 			{content.length > 0 && (
-				<ReadMoreText wrapperStyle={() => codeListContentStyle}>
-					<span
-						css={css`
-							whitespace: 'pre-line';
-							${theme.typography.data}
-						`}
-					>
-						{content.join('\n')}
-					</span>
-				</ReadMoreText>
+				<ReadMoreText wrapperStyle={() => codeListContentStyle}>{content.join('\n')}</ReadMoreText>
 			)}
 		</div>
 	);
