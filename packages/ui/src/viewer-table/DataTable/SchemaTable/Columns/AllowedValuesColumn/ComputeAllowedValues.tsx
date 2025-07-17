@@ -298,11 +298,7 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 					Must be unique in combination with:{' '}
 					{uniqueKeys
 						?.filter((key) => key !== currentSchemaField.name)
-						?.map((key, index) => (
-							<>
-								<FieldBlock key={index}>{key}</FieldBlock>
-							</>
-						))}
+						?.map((key, index) => <FieldBlock key={index}>{key}</FieldBlock>)}
 				</span>
 			),
 		},
