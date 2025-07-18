@@ -1,5 +1,25 @@
+/*
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ *  This program and the accompanying materials are made available under the terms of
+ *  the GNU Affero General Public License v3.0. You should have received a copy of the
+ *  GNU Affero General Public License along with this program.
+ *   If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ *  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ *  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 import { RestrictionCondition } from '@overture-stack/lectern-dictionary';
 import React from 'react';
+
 import FieldBlock from '../../common/FieldBlock';
 
 export type MatchCase = RestrictionCondition['case'];
@@ -14,6 +34,7 @@ const getCaseText = (matchCase: MatchCase): string => {
 			return 'EQUALS';
 	}
 };
+
 const getConjunctionText = (matchCase: MatchCase): string => {
 	return matchCase === 'all' || matchCase === 'none' ? 'AND' : 'OR';
 };
@@ -24,28 +45,28 @@ const renderFields = (fields: string[], matchCase: MatchCase) => {
 			{fields.map((field, index) => (
 				<>
 					<FieldBlock key={field}>{field}</FieldBlock>
-					{index < fields.length - 1 && getConjunctionText(matchCase)}
+					{index < fields.length - 1 && ` ${getConjunctionText(matchCase)} `}
 				</>
 			))}
-			{getCaseText(matchCase)}
 		</>
 	);
 };
 
 const valueMatch = (restrictionCondition: RestrictionCondition) => {
 	const valueMatch = restrictionCondition.match.value;
-	return <>{valueMatch}</>;
+	const caseText = getCaseText(restrictionCondition.case);
+	return (
+		<>
+			{' '}
+			{caseText} "{valueMatch}"
+		</>
+	);
 };
 
 const codeListMatch = (restrictionCondition: RestrictionCondition) => {
 	const valueMatch = restrictionCondition.match.codeList;
 	const codeList = valueMatch?.join(', ');
-	return (
-		<>
-			is one of:
-			{codeList}
-		</>
-	);
+	return <> is one of: {codeList}</>;
 };
 
 const regularExpressionMatch = (restrictionCondition: RestrictionCondition) => {
@@ -53,8 +74,8 @@ const regularExpressionMatch = (restrictionCondition: RestrictionCondition) => {
 	const regularExpression = Array.isArray(valueMatch) ? valueMatch.join(', ') : valueMatch;
 	return (
 		<>
-			{Array.isArray(valueMatch) ? 'matches patterns:' : 'matches pattern:'}
-			{regularExpression}
+			{' '}
+			{Array.isArray(valueMatch) ? 'matches patterns:' : 'matches pattern:'} {regularExpression}
 		</>
 	);
 };
@@ -69,6 +90,7 @@ const rangeMatch = (restrictionCondition: RestrictionCondition) => {
 	if (range.min !== undefined && range.max !== undefined) {
 		return (
 			<>
+				{' '}
 				is between {range.min} and {range.max}
 			</>
 		);
@@ -100,6 +122,7 @@ const rangeMatch = (restrictionCondition: RestrictionCondition) => {
 	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
 	return computedRestrictionItem ?
 			<>
+				{' '}
 				{computedRestrictionItem.prefix} {computedRestrictionItem.content}
 			</>
 		:	undefined;
@@ -107,7 +130,7 @@ const rangeMatch = (restrictionCondition: RestrictionCondition) => {
 
 const existsMatch = (restrictionCondition: RestrictionCondition) => {
 	const exists = restrictionCondition.match.exists;
-	return <>{exists ? 'has a value' : 'is empty'}</>;
+	return <> {exists ? 'has a value' : 'is empty'}</>;
 };
 
 const countMatch = (restrictionCondition: RestrictionCondition) => {
@@ -120,6 +143,7 @@ const countMatch = (restrictionCondition: RestrictionCondition) => {
 	if (typeof count === 'number') {
 		return (
 			<>
+				{' '}
 				has exactly {count} item{count === 1 ? '' : 's'}
 			</>
 		);
@@ -128,6 +152,7 @@ const countMatch = (restrictionCondition: RestrictionCondition) => {
 	if (count.min !== undefined && count.max !== undefined) {
 		return (
 			<>
+				{' '}
 				has between {count.min} and {count.max} items
 			</>
 		);
@@ -160,12 +185,13 @@ const countMatch = (restrictionCondition: RestrictionCondition) => {
 
 	return computedRestrictionItem ?
 			<>
+				{' '}
 				{computedRestrictionItem.prefix} {computedRestrictionItem.content}
 			</>
 		:	undefined;
 };
 
-export const renderConditions = (conditions: RestrictionCondition[], matchCase: MatchCase = 'all') => {
+export const renderConditions = (conditions: RestrictionCondition[], matchCase: MatchCase) => {
 	const conjunctionText = getConjunctionText(matchCase);
 
 	return (
@@ -174,12 +200,13 @@ export const renderConditions = (conditions: RestrictionCondition[], matchCase: 
 				const { fields, match } = condition;
 				return (
 					<>
-						{renderFields(fields, condition.case)} {match.value && valueMatch(condition)}
-						{match.codeList && codeListMatch(condition)}
-						{match.regex && regularExpressionMatch(condition)}
-						{match.range && rangeMatch(condition)}
-						{match.exists && existsMatch(condition)}
-						{match.count && countMatch(condition)}
+						{renderFields(fields, condition.case)}
+						{match.value !== undefined && valueMatch(condition)}
+						{match.codeList !== undefined && codeListMatch(condition)}
+						{match.regex !== undefined && regularExpressionMatch(condition)}
+						{match.range !== undefined && rangeMatch(condition)}
+						{match.exists !== undefined && existsMatch(condition)}
+						{match.count !== undefined && countMatch(condition)}
 						{index < conditions.length - 1 && <> {conjunctionText} </>}
 					</>
 				);
