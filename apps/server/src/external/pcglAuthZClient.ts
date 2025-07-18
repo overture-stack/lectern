@@ -36,7 +36,7 @@ const authZClient = async (resource: string, token: string, options?: RequestIni
 	});
 
 	try {
-		return await fetch(`${url.href.toString()}`, { headers, ...options });
+		return await fetch(url.href.toString(), { headers, ...options });
 	} catch (error) {
 		logger.error(`Bad request: Error occurred during fetch`, error);
 		throw new InternalServerError(`Bad request: Something went wrong fetching from authz service`);
