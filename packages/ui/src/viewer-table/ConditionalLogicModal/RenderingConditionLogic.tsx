@@ -2,8 +2,6 @@ import { RestrictionCondition } from '@overture-stack/lectern-dictionary';
 import React from 'react';
 import FieldBlock from '../../common/FieldBlock';
 
-const computeCondition = () => {};
-
 export type MatchCase = RestrictionCondition['case'];
 
 const getCaseText = (matchCase: MatchCase): string => {
@@ -71,9 +69,7 @@ const rangeMatch = (restrictionCondition: RestrictionCondition) => {
 	if (range.min !== undefined && range.max !== undefined) {
 		return (
 			<>
-				<span>
-					is between {range.min} and {range.max}
-				</span>
+				is between {range.min} and {range.max}
 			</>
 		);
 	}
@@ -104,9 +100,7 @@ const rangeMatch = (restrictionCondition: RestrictionCondition) => {
 	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
 	return computedRestrictionItem ?
 			<>
-				<span>
-					{computedRestrictionItem.prefix} {computedRestrictionItem.content}
-				</span>
+				{computedRestrictionItem.prefix} {computedRestrictionItem.content}
 			</>
 		:	undefined;
 };
