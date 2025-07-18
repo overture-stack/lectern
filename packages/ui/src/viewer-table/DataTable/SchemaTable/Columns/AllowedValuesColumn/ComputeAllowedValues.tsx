@@ -214,10 +214,23 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 			.filter((mapping) => mapping.local === currentSchemaField.name)
 			.map((mapping) => ({ foreignKey, mapping })),
 	);
+
 	const relevantForeignKeys = found?.map((item) => item.foreignKey);
-	const relevantMappings = found?.map((item) => item.mapping);
+
+	const isBasicUniqueKey =
+		Array.isArray(uniqueKeys) && uniqueKeys.length === 1 && uniqueKeys[0] === currentSchemaField.name;
+
+	const isCompoundUniqueKey =
+		Array.isArray(uniqueKeys) && uniqueKeys.length > 1 && uniqueKeys.includes(currentSchemaField.name);
+
+	const compoundForeignKey = foreignKeys?.find(
+		(foreignKey) =>
+			foreignKey.mappings.length > 1 &&
+			foreignKey.mappings.some((mapping) => mapping.local === currentSchemaField.name),
+	);
+
 	const multipleSchemaReferences =
-		found && found?.length > 1 ?
+		found && found.length > 1 ?
 			{
 				field: currentSchemaField.name,
 				associatedSchemas: relevantForeignKeys?.map((item) => item.schema),
@@ -226,8 +239,7 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 
 	const computeRestrictions = [
 		{
-			condition:
-				relevantForeignKeys && relevantForeignKeys.length > 1 && relevantMappings && relevantMappings.length > 1,
+			condition: multipleSchemaReferences !== undefined,
 			content: (
 				<span>
 					Must reference an existing <FieldBlock>{multipleSchemaReferences?.field}</FieldBlock> within the{' '}
@@ -243,62 +255,50 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 			),
 		},
 		{
-			condition:
-				relevantForeignKeys && relevantForeignKeys.length === 1 && relevantMappings && relevantMappings.length > 1,
+			condition: compoundForeignKey !== undefined,
 			content: (
 				<span>
 					Must reference an existing combination of:{' '}
-					{relevantMappings?.map((mapping, index) => (
-						<>
-							<FieldBlock key={index}>{currentSchemaField.name}</FieldBlock>
-							{` as defined in the ${relevantForeignKeys?.[index]?.schema} schema `}
-						</>
-					))}
+					<span
+						css={css`
+							display: inline-flex;
+							gap: 2px;
+						`}
+					>
+						{compoundForeignKey?.mappings.map((mapping, idx, arr) => <FieldBlock>{mapping.local}</FieldBlock>)}
+					</span>{' '}
+					as defined in the <b>{compoundForeignKey?.schema}</b> schema.
 				</span>
 			),
 		},
 		{
-			condition:
-				relevantForeignKeys && relevantForeignKeys.length === 1 && relevantMappings && relevantMappings.length === 1,
+			condition: isBasicUniqueKey && relevantForeignKeys && relevantForeignKeys.length === 1,
 			content: (
 				<span>
-					Must reference an existing <FieldBlock>{currentSchemaField.name}</FieldBlock> as defined in the{' '}
-					<b>{relevantForeignKeys?.[0]?.schema}</b> schema. Multiple sequencing records can reference the same{' '}
+					Must reference an existing: <FieldBlock>{currentSchemaField.name}</FieldBlock> as defined in the{' '}
+					<b>{relevantForeignKeys?.[0]?.schema}</b> schema. Each record can only reference one{' '}
 					<b>{relevantForeignKeys?.[0]?.schema}</b>.
 				</span>
 			),
 		},
 		{
-			condition:
-				uniqueKeys !== undefined &&
-				uniqueKeys?.length === 1 &&
-				relevantForeignKeys &&
-				relevantForeignKeys.length > 0 &&
-				relevantMappings &&
-				relevantMappings.length > 0,
+			condition: !isBasicUniqueKey && relevantForeignKeys && relevantForeignKeys.length === 1,
 			content: (
 				<span>
-					Must reference an existing:{' '}
-					{relevantForeignKeys?.map((foreignKey, index) => (
-						<>
-							<FieldBlock key={index}>{currentSchemaField.name}</FieldBlock>
-							{' as defined in the '}
-							<b>{foreignKey?.schema}</b>
-							{` schema. Each record can only reference one `}
-							<b>{foreignKey?.schema}</b>
-						</>
-					))}
+					Must reference an existing: <FieldBlock>{currentSchemaField.name}</FieldBlock> as defined in the{' '}
+					<b>{relevantForeignKeys?.[0]?.schema}</b> schema. Multiple records can reference the same{' '}
+					<b>{relevantForeignKeys?.[0]?.schema}</b>.
 				</span>
 			),
 		},
 		{
-			condition: uniqueKeys !== undefined && uniqueKeys?.length > 1,
+			condition: isCompoundUniqueKey,
 			content: (
 				<span>
 					Must be unique in combination with:{' '}
 					{uniqueKeys
 						?.filter((key) => key !== currentSchemaField.name)
-						?.map((key, index) => <FieldBlock key={index}>{key}</FieldBlock>)}
+						?.map((key, idx) => <FieldBlock key={idx}>{key}</FieldBlock>)}
 				</span>
 			),
 		},
