@@ -24,7 +24,6 @@
 import { css } from '@emotion/react';
 import { Row, flexRender } from '@tanstack/react-table';
 
-import ReadMoreText from '../../common/ReadMoreText';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
@@ -58,17 +57,14 @@ const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
 			{row.getVisibleCells().map((cell, cellIndex) => {
 				return (
 					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>
-						<ReadMoreText
-							expandedText="Show Less"
-							collapsedText="Show All"
-							wrapperStyle={() => css`
+						<div
+							css={css`
 								${theme.typography.data}
 								white-space: pre-wrap;
 							`}
-							maxLines={4}
 						>
 							{flexRender(cell.column.columnDef.cell, cell.getContext())}
-						</ReadMoreText>
+						</div>
 					</td>
 				);
 			})}
