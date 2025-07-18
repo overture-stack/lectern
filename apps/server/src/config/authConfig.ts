@@ -28,7 +28,7 @@ const authConfigSchema = z.object({
 	AUTHZ_ENDPOINT: z.string().url(),
 	AUTH_CLIENT_ID: z.string(),
 	AUTH_CLIENT_SECRET: z.string(),
-	AUTH_GROUP_ADMIN: z.string(),
+	AUTHZ_GROUP_ADMIN: z.string(),
 });
 
 const parseResult = authConfigSchema.safeParse(process.env);

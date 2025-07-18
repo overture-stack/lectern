@@ -26,30 +26,41 @@ import { userDataResponseSchema } from '../common/validation/auth-validation';
 import { authConfig } from '../config/authConfig';
 import logger from '../config/logger';
 
-/**
- * @param token Access token from Authz
- * @returns validated object of UserDataResponse
- */
-export const fetchUserData = async (token: string) => {
+const authZClient = async (resource: string, token: string, options?: RequestInit) => {
 	const { AUTHZ_ENDPOINT } = authConfig;
-	const url = `${AUTHZ_ENDPOINT}/user/me`;
 
+	const url = new URL(resource, AUTHZ_ENDPOINT);
 	const headers = new Headers({
 		Authorization: `Bearer ${token}`,
 		'Content-Type': 'application/json',
 	});
 
-	const response = await fetch(url, { headers });
+	try {
+		return await fetch(`${url.href.toString()}`, { headers, ...options });
+	} catch (error) {
+		logger.error(`Bad request: Error occurred during fetch`, error);
+		throw new InternalServerError(`Bad request: Something went wrong fetching from authz service`);
+	}
+};
+
+/**
+ * @param token Access token from Authz
+ * @returns validated object of UserDataResponse
+ */
+export const fetchUserData = async (token: string) => {
+	// NOTE: path will not work if `/` is prepended, if added `new URL(...)` will replace any existing path
+	const response = await authZClient(`/user/me`, token);
 
 	if (!response.ok) {
 		const errorResponse: UserDataResponseErrorType = await response.json();
+		console.log(errorResponse);
 
-		logger.error(`Error retrieving user data.`, errorResponse.error);
+		logger.error(`Error retrieving user data.`, errorResponse);
 		switch (response.status) {
 			case 403:
-				throw new ForbiddenError(errorResponse.error);
+				throw new ForbiddenError(`${errorResponse.detail}`);
 			default:
-				throw new InternalServerError(errorResponse.error);
+				throw new InternalServerError(`Error with authz: ${errorResponse.detail}`);
 		}
 	}
 
@@ -92,9 +103,9 @@ export const extractAccessTokenFromHeader = (req: Request): string | undefined =
  * @returns boolean if user has admin group
  */
 const isAdmin = (groups: Group[]): boolean => {
-	const { AUTH_GROUP_ADMIN } = authConfig;
+	const { AUTHZ_GROUP_ADMIN } = authConfig;
 
-	return groups.some((val) => val.name === AUTH_GROUP_ADMIN);
+	return groups.some((val) => val.name === AUTHZ_GROUP_ADMIN);
 };
 
 /**
