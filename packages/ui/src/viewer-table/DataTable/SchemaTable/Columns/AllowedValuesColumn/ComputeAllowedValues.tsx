@@ -265,7 +265,7 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 							gap: 2px;
 						`}
 					>
-						{compoundForeignKey?.mappings.map((mapping, idx, arr) => <FieldBlock>{mapping.local}</FieldBlock>)}
+						{compoundForeignKey?.mappings.map((mapping) => <FieldBlock>{mapping.local}</FieldBlock>)}
 					</span>{' '}
 					as defined in the <b>{compoundForeignKey?.schema}</b> schema.
 				</span>
@@ -298,7 +298,7 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 					Must be unique in combination with:{' '}
 					{uniqueKeys
 						?.filter((key) => key !== currentSchemaField.name)
-						?.map((key, idx) => <FieldBlock key={idx}>{key}</FieldBlock>)}
+						?.map((key, index) => <FieldBlock key={index}>{key}</FieldBlock>)}
 				</span>
 			),
 		},
@@ -324,10 +324,11 @@ export const computeAllowedValuesColumn = (
 	}
 
 	if (
-		currentSchemaField.unique === true ||
-		(Array.isArray(schemaLevelRestrictions?.uniqueKey) &&
+		(currentSchemaField.unique === true &&
+			Array.isArray(schemaLevelRestrictions?.uniqueKey) &&
 			schemaLevelRestrictions?.uniqueKey?.length === 1 &&
-			schemaLevelRestrictions?.uniqueKey[0] === currentSchemaField.name)
+			schemaLevelRestrictions?.uniqueKey[0] === currentSchemaField.name) ||
+		currentSchemaField.unique === true
 	) {
 		allowedValuesBaseDisplayItem.unique = {
 			prefix: ['A unique value that matches the following restrictions'],
