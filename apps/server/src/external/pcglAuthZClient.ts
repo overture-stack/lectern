@@ -71,7 +71,7 @@ export const fetchUserData = async (token: string) => {
 	if (!responseValidation.success) {
 		logger.error(`Error retrieving user data.`, responseValidation.error);
 
-		throw new InternalServerError('The required fields groups and pcgl_id were not returned in the response object');
+		throw new InternalServerError('User object response has unexpected format');
 	}
 
 	const userTokenInfo = {
