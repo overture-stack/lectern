@@ -53,7 +53,6 @@ export const fetchUserData = async (token: string) => {
 
 	if (!response.ok) {
 		const errorResponse: UserDataResponseErrorType = await response.json();
-		console.log(errorResponse);
 
 		logger.error(`Error retrieving user data.`, errorResponse);
 		switch (response.status) {
