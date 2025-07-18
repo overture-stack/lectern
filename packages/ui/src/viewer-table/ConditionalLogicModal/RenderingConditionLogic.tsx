@@ -16,15 +16,17 @@ const getCaseText = (matchCase: MatchCase): string => {
 			return 'EQUALS';
 	}
 };
+const getConjunctionText = (matchCase: MatchCase): string => {
+	return matchCase === 'all' || matchCase === 'none' ? 'AND' : 'OR';
+};
 
 const renderFields = (fields: string[], matchCase: MatchCase) => {
-	const conjunctionText = matchCase === 'all' || matchCase === 'none' ? 'AND' : 'OR';
 	return (
 		<>
 			{fields.map((field, index) => (
 				<>
 					<FieldBlock key={field}>{field}</FieldBlock>
-					{index < fields.length - 1 && conjunctionText}
+					{index < fields.length - 1 && getConjunctionText(matchCase)}
 				</>
 			))}
 			{getCaseText(matchCase)}
@@ -167,4 +169,27 @@ const countMatch = (restrictionCondition: RestrictionCondition) => {
 				{computedRestrictionItem.prefix} {computedRestrictionItem.content}
 			</>
 		:	undefined;
+};
+
+export const renderConditions = (conditions: RestrictionCondition[], matchCase: MatchCase = 'all') => {
+	const conjunctionText = getConjunctionText(matchCase);
+
+	return (
+		<>
+			{conditions.map((condition, index) => {
+				const { fields, match } = condition;
+				return (
+					<>
+						{renderFields(fields, condition.case)} {match.value && valueMatch(condition)}
+						{match.codeList && codeListMatch(condition)}
+						{match.regex && regularExpressionMatch(condition)}
+						{match.range && rangeMatch(condition)}
+						{match.exists && existsMatch(condition)}
+						{match.count && countMatch(condition)}
+						{index < conditions.length - 1 && <> {conjunctionText} </>}
+					</>
+				);
+			})}
+		</>
+	);
 };
