@@ -17,7 +17,12 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { ArrayTestCase, RestrictionCondition } from '@overture-stack/lectern-dictionary';
+import {
+	ArrayTestCase,
+	MatchRuleRange,
+	MatchRuleRegex,
+	RestrictionCondition,
+} from '@overture-stack/lectern-dictionary';
 import React, { Fragment } from 'react';
 
 import FieldBlock from '../../common/FieldBlock';
@@ -73,51 +78,44 @@ const codeListMatch = (restrictionCondition: RestrictionCondition) => {
 	return <Fragment>is one of: {codeList}</Fragment>;
 };
 
-const regularExpressionMatch = (restrictionCondition: RestrictionCondition) => {
-	const valueMatch = restrictionCondition.match.regex;
-	const regularExpression = Array.isArray(valueMatch) ? valueMatch.join(', ') : valueMatch;
+const regularExpressionMatch = (regexMatch: MatchRuleRegex) => {
+	const regularExpression = Array.isArray(regexMatch) ? regexMatch.join(', ') : regexMatch;
 	return (
 		<Fragment>
-			{Array.isArray(valueMatch) ? 'matches patterns:' : 'matches pattern:'} {regularExpression}
+			{Array.isArray(regexMatch) ? 'matches patterns:' : 'matches pattern:'} {regularExpression}
 		</Fragment>
 	);
 };
 
-const rangeMatch = (restrictionCondition: RestrictionCondition) => {
-	const range = restrictionCondition.match.range;
-
-	if (range === undefined) {
-		return;
-	}
-
-	if (range.min !== undefined && range.max !== undefined) {
+const rangeMatch = (rangeMatch: MatchRuleRange) => {
+	if (rangeMatch.min !== undefined && rangeMatch.max !== undefined) {
 		return (
 			<Fragment>
-				is between {range.min} and {range.max}
+				is between {rangeMatch.min} and {rangeMatch.max}
 			</Fragment>
 		);
 	}
 
 	const computeRestrictions = [
 		{
-			condition: range.min !== undefined,
+			condition: rangeMatch.min !== undefined,
 			prefix: 'is at least',
-			content: `${range.min}`,
+			content: `${rangeMatch.min}`,
 		},
 		{
-			condition: range.max !== undefined,
+			condition: rangeMatch.max !== undefined,
 			prefix: 'is at most',
-			content: `${range.max}`,
+			content: `${rangeMatch.max}`,
 		},
 		{
-			condition: range.exclusiveMin !== undefined,
+			condition: rangeMatch.exclusiveMin !== undefined,
 			prefix: 'is greater than',
-			content: `${range.exclusiveMin}`,
+			content: `${rangeMatch.exclusiveMin}`,
 		},
 		{
-			condition: range.exclusiveMax !== undefined,
+			condition: rangeMatch.exclusiveMax !== undefined,
 			prefix: 'is less than',
-			content: `${range.exclusiveMax}`,
+			content: `${rangeMatch.exclusiveMax}`,
 		},
 	];
 
@@ -180,14 +178,25 @@ const countMatch = (restrictionCondition: RestrictionCondition) => {
 		},
 	];
 
-	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
+	const computedRestrictionItems = computeRestrictions.filter((item) => item.condition);
 
-	return computedRestrictionItem ?
+	return computedRestrictionItems.length > 0 ?
 			<Fragment>
-				{computedRestrictionItem.prefix} {computedRestrictionItem.content}
+				{computedRestrictionItems.map((item) => (
+					<Fragment key={item.prefix}>
+						{item.prefix} {item.content}
+					</Fragment>
+				))}
 			</Fragment>
 		:	undefined;
 };
+
+/**
+ * Renders conditional restriction details as formatted text based on the provided conditions and match case.
+ * @param conditions Array of restriction conditions to be rendered.
+ * @param matchCase Specifies how the conditions are joined (all, any, none).
+ * @returns JSX elements containing the formatted conditional restriction details.
+ */
 
 export const ConditionalRestrictionDetails = (conditions: RestrictionCondition[], matchCase: ArrayTestCase) => {
 	const conjunctionText = getConjunctionText(matchCase);
@@ -201,8 +210,8 @@ export const ConditionalRestrictionDetails = (conditions: RestrictionCondition[]
 						{condition.case && renderFields(fields, condition.case)}
 						{match.value !== undefined && <> {valueMatch(condition)}</>}
 						{match.codeList !== undefined && <> {codeListMatch(condition)}</>}
-						{match.regex !== undefined && <> {regularExpressionMatch(condition)}</>}
-						{match.range !== undefined && <> {rangeMatch(condition)}</>}
+						{match.regex !== undefined && <> {regularExpressionMatch(match.regex)}</>}
+						{match.range !== undefined && <> {rangeMatch(match.range)}</>}
 						{match.exists !== undefined && <> {existsMatch(condition)}</>}
 						{match.count !== undefined && <> {countMatch(condition)}</>}
 						{index < conditions.length - 1 && <> {conjunctionText} </>}
