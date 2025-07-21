@@ -19,8 +19,12 @@
 
 import {
 	ArrayTestCase,
+	MatchRuleCodeList,
+	MatchRuleCount,
+	MatchRuleExists,
 	MatchRuleRange,
 	MatchRuleRegex,
+	MatchRuleValue,
 	RestrictionCondition,
 } from '@overture-stack/lectern-dictionary';
 import React, { Fragment } from 'react';
@@ -62,9 +66,8 @@ const renderFields = (fields: string[], matchCase: ArrayTestCase) => {
 	);
 };
 
-const valueMatch = (restrictionCondition: RestrictionCondition) => {
-	const valueMatch = restrictionCondition.match.value;
-	const caseText = restrictionCondition.case ? getCaseText(restrictionCondition.case) : '';
+const valueMatch = (valueMatch: MatchRuleValue, matchCase: ArrayTestCase) => {
+	const caseText = matchCase ? getCaseText(matchCase) : '';
 	return (
 		<Fragment>
 			{caseText} "{valueMatch}"
@@ -72,9 +75,8 @@ const valueMatch = (restrictionCondition: RestrictionCondition) => {
 	);
 };
 
-const codeListMatch = (restrictionCondition: RestrictionCondition) => {
-	const valueMatch = restrictionCondition.match.codeList;
-	const codeList = valueMatch?.join(', ');
+const codeListMatch = (codeListMatch: MatchRuleCodeList) => {
+	const codeList = codeListMatch?.join(', ');
 	return <Fragment>is one of: {codeList}</Fragment>;
 };
 
@@ -127,54 +129,47 @@ const rangeMatch = (rangeMatch: MatchRuleRange) => {
 		:	undefined;
 };
 
-const existsMatch = (restrictionCondition: RestrictionCondition) => {
-	const exists = restrictionCondition.match.exists;
-	return <>{exists ? 'has a value' : 'is empty'}</>;
+const existsMatch = (existsMatch: MatchRuleExists) => {
+	return <Fragment>{existsMatch ? 'has a value' : 'is empty'}</Fragment>;
 };
 
-const countMatch = (restrictionCondition: RestrictionCondition) => {
-	const count = restrictionCondition.match.count;
-
-	if (count === undefined) {
-		return;
-	}
-
-	if (typeof count === 'number') {
+const countMatch = (countMatch: MatchRuleCount) => {
+	if (typeof countMatch === 'number') {
 		return (
 			<Fragment>
-				has exactly {count} item{count === 1 ? '' : 's'}
+				has exactly {countMatch} item{countMatch === 1 ? '' : 's'}
 			</Fragment>
 		);
 	}
 
-	if (count.min !== undefined && count.max !== undefined) {
+	if (countMatch.min !== undefined && countMatch.max !== undefined) {
 		return (
 			<Fragment>
-				has between {count.min} and {count.max} items
+				has between {countMatch.min} and {countMatch.max} items
 			</Fragment>
 		);
 	}
 
 	const computeRestrictions = [
 		{
-			condition: count.min !== undefined,
+			condition: countMatch.min !== undefined,
 			prefix: 'has',
-			content: `${count.min} or more items`,
+			content: `${countMatch.min} or more items`,
 		},
 		{
-			condition: count.max !== undefined,
+			condition: countMatch.max !== undefined,
 			prefix: 'has',
-			content: `${count.max} or fewer items`,
+			content: `${countMatch.max} or fewer items`,
 		},
 		{
-			condition: count.exclusiveMin !== undefined,
+			condition: countMatch.exclusiveMin !== undefined,
 			prefix: 'has',
-			content: `more than ${count.exclusiveMin} items`,
+			content: `more than ${countMatch.exclusiveMin} items`,
 		},
 		{
-			condition: count.exclusiveMax !== undefined,
+			condition: countMatch.exclusiveMax !== undefined,
 			prefix: 'has',
-			content: `fewer than ${count.exclusiveMax} items`,
+			content: `fewer than ${countMatch.exclusiveMax} items`,
 		},
 	];
 
@@ -208,13 +203,15 @@ export const ConditionalRestrictionDetails = (conditions: RestrictionCondition[]
 				return (
 					<Fragment key={index}>
 						{condition.case && renderFields(fields, condition.case)}
-						{match.value !== undefined && <> {valueMatch(condition)}</>}
-						{match.codeList !== undefined && <> {codeListMatch(condition)}</>}
-						{match.regex !== undefined && <> {regularExpressionMatch(match.regex)}</>}
-						{match.range !== undefined && <> {rangeMatch(match.range)}</>}
-						{match.exists !== undefined && <> {existsMatch(condition)}</>}
-						{match.count !== undefined && <> {countMatch(condition)}</>}
-						{index < conditions.length - 1 && <> {conjunctionText} </>}
+						{match.value !== undefined && condition.case !== undefined && (
+							<Fragment> {valueMatch(match.value, condition.case)}</Fragment>
+						)}
+						{match.codeList !== undefined && <Fragment> {codeListMatch(match.codeList)}</Fragment>}
+						{match.regex !== undefined && <Fragment> {regularExpressionMatch(match.regex)}</Fragment>}
+						{match.range !== undefined && <Fragment> {rangeMatch(match.range)}</Fragment>}
+						{match.exists !== undefined && <Fragment> {existsMatch(match.exists)}</Fragment>}
+						{match.count !== undefined && <Fragment> {countMatch(match.count)}</Fragment>}
+						{index < conditions.length - 1 && <Fragment> {conjunctionText} </Fragment>}
 					</Fragment>
 				);
 			})}
