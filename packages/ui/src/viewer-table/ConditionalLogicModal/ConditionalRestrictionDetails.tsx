@@ -17,66 +17,69 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { RestrictionCondition } from '@overture-stack/lectern-dictionary';
-import React from 'react';
+import { ArrayTestCase, RestrictionCondition } from '@overture-stack/lectern-dictionary';
+import React, { Fragment } from 'react';
 
 import FieldBlock from '../../common/FieldBlock';
 
-export type MatchCase = RestrictionCondition['case'];
-
-const getCaseText = (matchCase: MatchCase): string => {
+const getCaseText = (matchCase: ArrayTestCase): string => {
 	switch (matchCase) {
-		case 'none':
-			return 'NOT EQUAL';
 		case 'all':
 			return 'EQUAL';
-		default:
+		case 'any':
 			return 'EQUALS';
+		case 'none':
+			return 'NOT EQUAL';
 	}
 };
 
-const getConjunctionText = (matchCase: MatchCase): string => {
-	return matchCase === 'all' || matchCase === 'none' ? 'AND' : 'OR';
+const getConjunctionText = (matchCase: ArrayTestCase): string => {
+	switch (matchCase) {
+		case 'all':
+			return 'AND';
+		case 'none':
+			return 'AND';
+		case 'any':
+			return 'OR';
+	}
 };
 
-const renderFields = (fields: string[], matchCase: MatchCase) => {
+const renderFields = (fields: string[], matchCase: ArrayTestCase) => {
 	return (
-		<>
+		<Fragment>
 			{fields.map((field, index) => (
-				<>
-					<FieldBlock key={field}>{field}</FieldBlock>
+				<Fragment key={field}>
+					<FieldBlock>{field}</FieldBlock>
 					{index < fields.length - 1 && ` ${getConjunctionText(matchCase)} `}
-				</>
+				</Fragment>
 			))}
-		</>
+		</Fragment>
 	);
 };
 
 const valueMatch = (restrictionCondition: RestrictionCondition) => {
 	const valueMatch = restrictionCondition.match.value;
-	const caseText = getCaseText(restrictionCondition.case);
+	const caseText = restrictionCondition.case ? getCaseText(restrictionCondition.case) : '';
 	return (
-		<>
-			{' '}
+		<Fragment>
 			{caseText} "{valueMatch}"
-		</>
+		</Fragment>
 	);
 };
 
 const codeListMatch = (restrictionCondition: RestrictionCondition) => {
 	const valueMatch = restrictionCondition.match.codeList;
 	const codeList = valueMatch?.join(', ');
-	return <> is one of: {codeList}</>;
+	return <Fragment>is one of: {codeList}</Fragment>;
 };
 
 const regularExpressionMatch = (restrictionCondition: RestrictionCondition) => {
 	const valueMatch = restrictionCondition.match.regex;
 	const regularExpression = Array.isArray(valueMatch) ? valueMatch.join(', ') : valueMatch;
 	return (
-		<>
-			{' '}
+		<Fragment>
 			{Array.isArray(valueMatch) ? 'matches patterns:' : 'matches pattern:'} {regularExpression}
-		</>
+		</Fragment>
 	);
 };
 
@@ -89,10 +92,9 @@ const rangeMatch = (restrictionCondition: RestrictionCondition) => {
 
 	if (range.min !== undefined && range.max !== undefined) {
 		return (
-			<>
-				{' '}
+			<Fragment>
 				is between {range.min} and {range.max}
-			</>
+			</Fragment>
 		);
 	}
 
@@ -121,16 +123,15 @@ const rangeMatch = (restrictionCondition: RestrictionCondition) => {
 
 	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
 	return computedRestrictionItem ?
-			<>
-				{' '}
+			<Fragment>
 				{computedRestrictionItem.prefix} {computedRestrictionItem.content}
-			</>
+			</Fragment>
 		:	undefined;
 };
 
 const existsMatch = (restrictionCondition: RestrictionCondition) => {
 	const exists = restrictionCondition.match.exists;
-	return <> {exists ? 'has a value' : 'is empty'}</>;
+	return <>{exists ? 'has a value' : 'is empty'}</>;
 };
 
 const countMatch = (restrictionCondition: RestrictionCondition) => {
@@ -142,19 +143,17 @@ const countMatch = (restrictionCondition: RestrictionCondition) => {
 
 	if (typeof count === 'number') {
 		return (
-			<>
-				{' '}
+			<Fragment>
 				has exactly {count} item{count === 1 ? '' : 's'}
-			</>
+			</Fragment>
 		);
 	}
 
 	if (count.min !== undefined && count.max !== undefined) {
 		return (
-			<>
-				{' '}
+			<Fragment>
 				has between {count.min} and {count.max} items
-			</>
+			</Fragment>
 		);
 	}
 
@@ -184,14 +183,13 @@ const countMatch = (restrictionCondition: RestrictionCondition) => {
 	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
 
 	return computedRestrictionItem ?
-			<>
-				{' '}
+			<Fragment>
 				{computedRestrictionItem.prefix} {computedRestrictionItem.content}
-			</>
+			</Fragment>
 		:	undefined;
 };
 
-export const ConditionalRestrictionDetails = (conditions: RestrictionCondition[], matchCase: MatchCase) => {
+export const ConditionalRestrictionDetails = (conditions: RestrictionCondition[], matchCase: ArrayTestCase) => {
 	const conjunctionText = getConjunctionText(matchCase);
 
 	return (
@@ -199,16 +197,16 @@ export const ConditionalRestrictionDetails = (conditions: RestrictionCondition[]
 			{conditions.map((condition, index) => {
 				const { fields, match } = condition;
 				return (
-					<>
-						{renderFields(fields, condition.case)}
-						{match.value !== undefined && valueMatch(condition)}
-						{match.codeList !== undefined && codeListMatch(condition)}
-						{match.regex !== undefined && regularExpressionMatch(condition)}
-						{match.range !== undefined && rangeMatch(condition)}
-						{match.exists !== undefined && existsMatch(condition)}
-						{match.count !== undefined && countMatch(condition)}
+					<Fragment key={index}>
+						{condition.case && renderFields(fields, condition.case)}
+						{match.value !== undefined && <> {valueMatch(condition)}</>}
+						{match.codeList !== undefined && <> {codeListMatch(condition)}</>}
+						{match.regex !== undefined && <> {regularExpressionMatch(condition)}</>}
+						{match.range !== undefined && <> {rangeMatch(condition)}</>}
+						{match.exists !== undefined && <> {existsMatch(condition)}</>}
+						{match.count !== undefined && <> {countMatch(condition)}</>}
 						{index < conditions.length - 1 && <> {conjunctionText} </>}
-					</>
+					</Fragment>
 				);
 			})}
 		</>
