@@ -191,7 +191,7 @@ const countMatch = (restrictionCondition: RestrictionCondition) => {
 		:	undefined;
 };
 
-export const renderConditions = (conditions: RestrictionCondition[], matchCase: MatchCase) => {
+export const ConditionalRestrictionDetails = (conditions: RestrictionCondition[], matchCase: MatchCase) => {
 	const conjunctionText = getConjunctionText(matchCase);
 
 	return (
