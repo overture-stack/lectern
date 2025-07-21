@@ -28,17 +28,18 @@ import {
 	RestrictionCondition,
 } from '@overture-stack/lectern-dictionary';
 import React, { Fragment } from 'react';
-
 import FieldBlock from '../../common/FieldBlock';
 
-const getCaseText = (matchCase: ArrayTestCase): string => {
+const getCaseText = (matchCase: ArrayTestCase, fieldCount: number): string => {
+	const isPlural = fieldCount > 1 && matchCase !== 'any';
+
 	switch (matchCase) {
 		case 'all':
-			return 'EQUAL';
+			return isPlural ? 'EQUAL' : 'EQUALS';
 		case 'any':
 			return 'EQUALS';
 		case 'none':
-			return 'NOT EQUAL';
+			return isPlural ? 'DO NOT EQUAL' : 'DOES NOT EQUAL';
 	}
 };
 
@@ -66,11 +67,10 @@ const renderFields = (fields: string[], matchCase: ArrayTestCase) => {
 	);
 };
 
-const valueMatch = (valueMatch: MatchRuleValue, matchCase: ArrayTestCase) => {
-	const caseText = matchCase ? getCaseText(matchCase) : '';
+const valueMatch = (valueMatch: MatchRuleValue, matchCase: ArrayTestCase, fieldCount: number) => {
 	return (
 		<Fragment>
-			{caseText} "{valueMatch}"
+			{getCaseText(matchCase, fieldCount)} "{valueMatch}"
 		</Fragment>
 	);
 };
@@ -90,14 +90,6 @@ const regularExpressionMatch = (regexMatch: MatchRuleRegex) => {
 };
 
 const rangeMatch = (rangeMatch: MatchRuleRange) => {
-	if (rangeMatch.min !== undefined && rangeMatch.max !== undefined) {
-		return (
-			<Fragment>
-				is between {rangeMatch.min} and {rangeMatch.max}
-			</Fragment>
-		);
-	}
-
 	const computeRestrictions = [
 		{
 			condition: rangeMatch.min !== undefined,
@@ -105,14 +97,14 @@ const rangeMatch = (rangeMatch: MatchRuleRange) => {
 			content: `${rangeMatch.min}`,
 		},
 		{
-			condition: rangeMatch.max !== undefined,
-			prefix: 'is at most',
-			content: `${rangeMatch.max}`,
-		},
-		{
 			condition: rangeMatch.exclusiveMin !== undefined,
 			prefix: 'is greater than',
 			content: `${rangeMatch.exclusiveMin}`,
+		},
+		{
+			condition: rangeMatch.max !== undefined,
+			prefix: 'is at most',
+			content: `${rangeMatch.max}`,
 		},
 		{
 			condition: rangeMatch.exclusiveMax !== undefined,
@@ -121,10 +113,12 @@ const rangeMatch = (rangeMatch: MatchRuleRange) => {
 		},
 	];
 
-	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
-	return computedRestrictionItem ?
+	const computedRestrictionItems = computeRestrictions.filter((item) => item.condition);
+	return computedRestrictionItems ?
 			<Fragment>
-				{computedRestrictionItem.prefix} {computedRestrictionItem.content}
+				{computedRestrictionItems
+					.map((computedRestrictionItem) => `${computedRestrictionItem.prefix} ${computedRestrictionItem.content}`)
+					.join(' and ')}
 			</Fragment>
 		:	undefined;
 };
@@ -142,14 +136,6 @@ const countMatch = (countMatch: MatchRuleCount) => {
 		);
 	}
 
-	if (countMatch.min !== undefined && countMatch.max !== undefined) {
-		return (
-			<Fragment>
-				has between {countMatch.min} and {countMatch.max} items
-			</Fragment>
-		);
-	}
-
 	const computeRestrictions = [
 		{
 			condition: countMatch.min !== undefined,
@@ -157,14 +143,14 @@ const countMatch = (countMatch: MatchRuleCount) => {
 			content: `${countMatch.min} or more items`,
 		},
 		{
-			condition: countMatch.max !== undefined,
-			prefix: 'has',
-			content: `${countMatch.max} or fewer items`,
-		},
-		{
 			condition: countMatch.exclusiveMin !== undefined,
 			prefix: 'has',
 			content: `more than ${countMatch.exclusiveMin} items`,
+		},
+		{
+			condition: countMatch.max !== undefined,
+			prefix: 'has',
+			content: `${countMatch.max} or fewer items`,
 		},
 		{
 			condition: countMatch.exclusiveMax !== undefined,
@@ -176,13 +162,7 @@ const countMatch = (countMatch: MatchRuleCount) => {
 	const computedRestrictionItems = computeRestrictions.filter((item) => item.condition);
 
 	return computedRestrictionItems.length > 0 ?
-			<Fragment>
-				{computedRestrictionItems.map((item) => (
-					<Fragment key={item.prefix}>
-						{item.prefix} {item.content}
-					</Fragment>
-				))}
-			</Fragment>
+			<Fragment>{computedRestrictionItems.map((item) => `${item.prefix} ${item.content}`).join(' and ')}</Fragment>
 		:	undefined;
 };
 
@@ -197,14 +177,14 @@ export const ConditionalRestrictionDetails = (conditions: RestrictionCondition[]
 	const conjunctionText = getConjunctionText(matchCase);
 
 	return (
-		<>
+		<Fragment>
 			{conditions.map((condition, index) => {
 				const { fields, match } = condition;
 				return (
 					<Fragment key={index}>
 						{condition.case && renderFields(fields, condition.case)}
 						{match.value !== undefined && condition.case !== undefined && (
-							<Fragment> {valueMatch(match.value, condition.case)}</Fragment>
+							<Fragment> {valueMatch(match.value, condition.case, fields.length)}</Fragment>
 						)}
 						{match.codeList !== undefined && <Fragment> {codeListMatch(match.codeList)}</Fragment>}
 						{match.regex !== undefined && <Fragment> {regularExpressionMatch(match.regex)}</Fragment>}
@@ -215,6 +195,6 @@ export const ConditionalRestrictionDetails = (conditions: RestrictionCondition[]
 					</Fragment>
 				);
 			})}
-		</>
+		</Fragment>
 	);
 };
