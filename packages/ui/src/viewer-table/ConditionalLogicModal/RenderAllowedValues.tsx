@@ -92,6 +92,7 @@ const CodeListContainer = ({ items }: CodeListContainerProps) => {
 		</div>
 	);
 };
+
 /**
  * Renders human-readable field restrictions including required , regex patterns, and code lists.
  *
