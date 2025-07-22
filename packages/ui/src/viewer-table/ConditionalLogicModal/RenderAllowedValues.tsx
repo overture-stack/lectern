@@ -1,21 +1,39 @@
+/*
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ *  This program and the accompanying materials are made available under the terms of
+ *  the GNU Affero General Public License v3.0. You should have received a copy of the
+ *  GNU Affero General Public License along with this program.
+ *   If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ *  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ *  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 /** @jsxImportSource @emotion/react */
-import { SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+
+import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import React, { Fragment } from 'react';
 
 import { css } from '@emotion/react';
 import FieldBlock from '../../common/FieldBlock';
 import ListItem from '../../common/ListItem';
+import { isFieldRequired } from '../../utils/isFieldRequired';
 
 export type RenderAllowedValuesProps = {
 	restrictions: SchemaFieldRestrictions;
-	currentSchemaFieldName: string;
+	currentSchemaField: SchemaField;
 };
 
-const requiredMatch = (restrictions: SchemaFieldRestrictions) => {
-	if (restrictions && 'required' in restrictions && restrictions.required !== undefined) {
-		return <Fragment>be provided</Fragment>;
-	}
-	return undefined;
+export type CodeListContainerProps = {
+	items: (string | number)[];
 };
 
 const regularExpressionMatch = (restrictions: SchemaFieldRestrictions) => {
@@ -50,14 +68,14 @@ const codeListMatch = (restrictions: SchemaFieldRestrictions) => {
 	return undefined;
 };
 
-const emptyMatch = (restrictions: SchemaFieldRestrictions) => {
-	if (restrictions && 'empty' in restrictions && restrictions.empty !== undefined) {
+const emptyRestriction = (restrictions: SchemaFieldRestrictions) => {
+	if (restrictions && 'empty' in restrictions && restrictions.empty === true) {
 		return <Fragment>be empty</Fragment>;
 	}
 	return undefined;
 };
 
-const CodeListContainer = ({ items }: { items: (string | number)[] }) => {
+const CodeListContainer = ({ items }: CodeListContainerProps) => {
 	return (
 		<div
 			css={css`
@@ -75,23 +93,26 @@ const CodeListContainer = ({ items }: { items: (string | number)[] }) => {
 	);
 };
 
-const RenderAllowedValues = ({ restrictions, currentSchemaFieldName }: RenderAllowedValuesProps) => {
+const RenderAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowedValuesProps) => {
+	if (restrictions === undefined) {
+		return <Fragment>No restrictions</Fragment>;
+	}
 	const computeRestrictions = [
 		{
-			condition: restrictions && 'required' in restrictions && restrictions.required !== undefined,
-			content: requiredMatch(restrictions),
+			condition: isFieldRequired(currentSchemaField),
+			content: <Fragment>be provided</Fragment>,
 		},
 		{
-			condition: restrictions && 'regex' in restrictions && restrictions.regex !== undefined,
+			condition: 'regex' in restrictions && restrictions.regex !== undefined,
 			content: regularExpressionMatch(restrictions),
 		},
 		{
-			condition: restrictions && 'codeList' in restrictions && restrictions.codeList !== undefined,
+			condition: 'codeList' in restrictions && restrictions.codeList !== undefined,
 			content: codeListMatch(restrictions),
 		},
 		{
-			condition: restrictions && 'empty' in restrictions && restrictions.empty !== undefined,
-			content: emptyMatch(restrictions),
+			condition: 'empty' in restrictions && restrictions.empty !== undefined,
+			content: emptyRestriction(restrictions),
 		},
 	];
 
@@ -101,7 +122,7 @@ const RenderAllowedValues = ({ restrictions, currentSchemaFieldName }: RenderAll
 		<div>
 			{computedRestrictionItems.length > 0 ?
 				<Fragment>
-					<FieldBlock>{currentSchemaFieldName}</FieldBlock> must{' '}
+					<FieldBlock>{currentSchemaField.name}</FieldBlock> must{' '}
 					{computedRestrictionItems.map((item, index) => (
 						<Fragment key={index}>
 							{index > 0 && ', '}
