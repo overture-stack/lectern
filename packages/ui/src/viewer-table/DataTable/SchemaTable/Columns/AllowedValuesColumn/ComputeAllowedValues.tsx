@@ -105,7 +105,7 @@ const handleRange = (range: RestrictionRange): ReactNode => {
 	return (
 		<Fragment>
 			{computedRestrictionItems.map((item, index) => (
-				<Fragment key={index}>
+				<Fragment key={item.prefix}>
 					{index > 0 && ' and '}
 					<b>{item.prefix}</b> {item.content}
 				</Fragment>
@@ -172,8 +172,8 @@ const handleDependsOn = (conditions: RestrictionCondition[]): ReactNode => {
 		<div css={restrictionItemStyle}>
 			<b>Depends on:</b>
 			<div css={contentStyle}>
-				{allFields.map((field, index) => (
-					<FieldBlock key={index}>{field}</FieldBlock>
+				{allFields.map((field) => (
+					<FieldBlock key={field}>{field}</FieldBlock>
 				))}
 			</div>
 		</div>
@@ -256,7 +256,9 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 							gap: 2px;
 						`}
 					>
-						{compoundForeignKey?.mappings.map((mapping) => <FieldBlock>{mapping.local}</FieldBlock>)}
+						{compoundForeignKey?.mappings.map((mapping) => (
+							<FieldBlock key={mapping.local}>{mapping.local}</FieldBlock>
+						))}
 					</span>{' '}
 					as defined in the <b>{compoundForeignKey?.schema}</b> schema.
 				</span>
@@ -289,7 +291,7 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 					Must be unique in combination with:{' '}
 					{uniqueKeys
 						?.filter((key) => key !== currentSchemaField.name)
-						?.map((key, index) => <FieldBlock key={index}>{key}</FieldBlock>)}
+						?.map((key) => <FieldBlock key={key}>{key}</FieldBlock>)}
 				</span>
 			),
 		},
