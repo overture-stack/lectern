@@ -245,6 +245,136 @@ export const CountExclusiveMin: Story = {
 	},
 };
 
+export const CodeListWithCountRestrictions: Story = {
+	args: {
+		conditions: [
+			{
+				fields: ['items'],
+				match: { count: { max: 10 }, codeList: ['hello world', 'bye world'] },
+				case: 'all',
+			},
+		],
+		matchCase: 'all',
+	},
+};
+
+export const CodeListWithCountExact: Story = {
+	args: {
+		conditions: [
+			{
+				fields: ['colors'],
+				match: { codeList: ['Red', 'Blue', 'Green'], count: 2 },
+				case: 'all',
+			},
+		],
+		matchCase: 'all',
+	},
+};
+
+export const CodeListWithCountMinMax: Story = {
+	args: {
+		conditions: [
+			{
+				fields: ['options'],
+				match: { codeList: ['A', 'B', 'C', 'D'], count: { min: 2, max: 4 } },
+				case: 'all',
+			},
+		],
+		matchCase: 'all',
+	},
+};
+
+export const CodeListWithCountMinExclusiveMax: Story = {
+	args: {
+		conditions: [
+			{
+				fields: ['selections'],
+				match: { codeList: ['Option1', 'Option2', 'Option3'], count: { min: 1, exclusiveMax: 3 } },
+				case: 'all',
+			},
+		],
+		matchCase: 'all',
+	},
+};
+
+export const CodeListWithCountExclusiveMinMax: Story = {
+	args: {
+		conditions: [
+			{
+				fields: ['choices'],
+				match: { codeList: ['X', 'Y', 'Z'], count: { exclusiveMin: 0, max: 2 } },
+				case: 'all',
+			},
+		],
+		matchCase: 'all',
+	},
+};
+
+export const CodeListWithCountExclusiveMinExclusiveMax: Story = {
+	args: {
+		conditions: [
+			{
+				fields: ['items'],
+				match: { codeList: ['Alpha', 'Beta', 'Gamma'], count: { exclusiveMin: 1, exclusiveMax: 4 } },
+				case: 'all',
+			},
+		],
+		matchCase: 'all',
+	},
+};
+
+export const CodeListWithCountMinOnly: Story = {
+	args: {
+		conditions: [
+			{
+				fields: ['tags'],
+				match: { codeList: ['tag1', 'tag2', 'tag3', 'tag4'], count: { min: 2 } },
+				case: 'all',
+			},
+		],
+		matchCase: 'all',
+	},
+};
+
+export const CodeListWithCountMaxOnly: Story = {
+	args: {
+		conditions: [
+			{
+				fields: ['categories'],
+				match: { codeList: ['cat1', 'cat2', 'cat3'], count: { max: 2 } },
+				case: 'all',
+			},
+		],
+		matchCase: 'all',
+	},
+};
+
+export const CodeListWithCountExclusiveMinOnly: Story = {
+	args: {
+		conditions: [
+			{
+				fields: ['elements'],
+				match: { codeList: ['elem1', 'elem2', 'elem3'], count: { exclusiveMin: 0 } },
+				case: 'all',
+			},
+		],
+		matchCase: 'all',
+	},
+};
+
+export const CodeListWithCountExclusiveMaxOnly: Story = {
+	args: {
+		conditions: [
+			{
+				fields: ['values'],
+				match: { codeList: ['val1', 'val2', 'val3', 'val4'], count: { exclusiveMax: 3 } },
+				case: 'all',
+			},
+		],
+		matchCase: 'all',
+	},
+};
+
 export const MultipleConditionsAll: Story = {
 	args: {
 		conditions: [
@@ -331,6 +461,49 @@ export const AllMatchTypes: Story = {
 				fields: ['tags'],
 				match: { count: { min: 1, max: 5 } },
 				case: 'all',
+			},
+		],
+		matchCase: 'all',
+	},
+};
+
+export const AllMatchTypesWithCodeListCount: Story = {
+	args: {
+		conditions: [
+			{
+				fields: ['status'],
+				match: { value: 'active' },
+				case: 'all',
+			},
+			{
+				fields: ['categories'],
+				match: { codeList: ['premium', 'standard', 'basic'], count: { min: 1, max: 2 } },
+				case: 'all',
+			},
+			{
+				fields: ['identifier'],
+				match: { regex: '^NCIT:C\\d+$' },
+				case: 'all',
+			},
+			{
+				fields: ['age'],
+				match: { range: { min: 18, max: 65 } },
+				case: 'all',
+			},
+			{
+				fields: ['optional_field'],
+				match: { exists: true },
+				case: 'all',
+			},
+			{
+				fields: ['colors'],
+				match: { codeList: ['Red', 'Blue', 'Green', 'Yellow'], count: 3 },
+				case: 'any',
+			},
+			{
+				fields: ['permissions'],
+				match: { codeList: ['read', 'write', 'admin'], count: { exclusiveMin: 0, exclusiveMax: 3 } },
+				case: 'none',
 			},
 		],
 		matchCase: 'all',

@@ -27,7 +27,7 @@ import {
 	MatchRuleValue,
 	RestrictionCondition,
 } from '@overture-stack/lectern-dictionary';
-import { Fragment } from 'react';
+import React, { Fragment } from 'react';
 
 import FieldBlock from '../../common/FieldBlock';
 
@@ -167,6 +167,45 @@ const countMatch = (countMatch: MatchRuleCount) => {
 		:	undefined;
 };
 
+const handleCodeListWithCountMatch = (codeListMatch: MatchRuleCodeList, countMatch: MatchRuleCount) => {
+	const codeList = codeListMatch?.join(', ');
+
+	if (typeof countMatch === 'number') {
+		return (
+			<Fragment>
+				has exactly {countMatch} from: {codeList}
+			</Fragment>
+		);
+	}
+
+	const computeRestrictions = [
+		{
+			condition: countMatch.min !== undefined,
+			content: `at least ${countMatch.min}`,
+		},
+		{
+			condition: countMatch.exclusiveMin !== undefined,
+			content: `more than ${countMatch.exclusiveMin}`,
+		},
+		{
+			condition: countMatch.max !== undefined,
+			content: `at most ${countMatch.max}`,
+		},
+		{
+			condition: countMatch.exclusiveMax !== undefined,
+			content: `fewer than ${countMatch.exclusiveMax}`,
+		},
+	];
+
+	const computedRestrictionItems = computeRestrictions.filter((item) => item.condition);
+
+	return computedRestrictionItems.length > 0 ?
+			<Fragment>
+				has {computedRestrictionItems.map((item) => item.content).join(' and ')} from: {codeList}
+			</Fragment>
+		:	<Fragment>from: {codeList}</Fragment>;
+};
+
 /**
  * Renders conditional restriction details as formatted text based on the provided conditions and match case.
  * @param conditions Array of restriction conditions to be rendered.
@@ -181,17 +220,20 @@ export const ConditionalRestrictionDetails = (conditions: RestrictionCondition[]
 		<Fragment>
 			{conditions.map((condition, index) => {
 				const { fields, match } = condition;
+				const hasBothCodeListAndCount = match.codeList !== undefined && match.count !== undefined;
+
 				return (
 					<Fragment key={index}>
 						{condition.case && renderFields(fields, condition.case)}
 						{match.value !== undefined &&
 							condition.case !== undefined &&
 							valueMatch(match.value, condition.case, fields.length)}
-						{match.codeList !== undefined && codeListMatch(match.codeList)}
+						{hasBothCodeListAndCount && handleCodeListWithCountMatch(match.codeList!, match.count!)}
+						{!hasBothCodeListAndCount && match.count !== undefined && countMatch(match.count)}
+						{!hasBothCodeListAndCount && match.codeList !== undefined && codeListMatch(match.codeList)}
 						{match.regex !== undefined && regularExpressionMatch(match.regex)}
 						{match.range !== undefined && rangeMatch(match.range)}
 						{match.exists !== undefined && existsMatch(match.exists)}
-						{match.count !== undefined && countMatch(match.count)}
 						{index < conditions.length - 1 && conjunctionText}
 					</Fragment>
 				);
