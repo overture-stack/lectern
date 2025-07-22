@@ -36,7 +36,7 @@ export type CodeListContainerProps = {
 	items: (string | number)[];
 };
 
-const regularExpressionMatch = (restrictions: SchemaFieldRestrictions) => {
+const handleRegularExpression = (restrictions: SchemaFieldRestrictions) => {
 	if (restrictions && 'regex' in restrictions && restrictions.regex !== undefined) {
 		return (
 			<Fragment>
@@ -48,7 +48,7 @@ const regularExpressionMatch = (restrictions: SchemaFieldRestrictions) => {
 	return undefined;
 };
 
-const codeListMatch = (restrictions: SchemaFieldRestrictions) => {
+const handleCodeList = (restrictions: SchemaFieldRestrictions) => {
 	if (restrictions && 'codeList' in restrictions && restrictions.codeList !== undefined) {
 		const items = Array.isArray(restrictions.codeList) ? restrictions.codeList : [restrictions.codeList];
 		return (
@@ -104,11 +104,11 @@ const RenderAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowed
 		},
 		{
 			condition: 'regex' in restrictions && restrictions.regex !== undefined,
-			content: regularExpressionMatch(restrictions),
+			content: handleRegularExpression(restrictions),
 		},
 		{
 			condition: 'codeList' in restrictions && restrictions.codeList !== undefined,
-			content: codeListMatch(restrictions),
+			content: handleCodeList(restrictions),
 		},
 		{
 			condition: 'empty' in restrictions && restrictions.empty !== undefined,
@@ -125,7 +125,7 @@ const RenderAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowed
 					<FieldBlock>{currentSchemaField.name}</FieldBlock> must{' '}
 					{computedRestrictionItems.map((item, index) => (
 						<Fragment key={index}>
-							{index > 0 && ', '}
+							{index > 0 && ' and '}
 							{item.content}
 						</Fragment>
 					))}

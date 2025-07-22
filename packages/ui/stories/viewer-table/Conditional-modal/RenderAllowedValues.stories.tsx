@@ -4,10 +4,10 @@ import { Dictionary, replaceReferences } from '@overture-stack/lectern-dictionar
 import type { Meta, StoryObj } from '@storybook/react';
 
 import RenderAllowedValues from '../../../src/viewer-table/ConditionalLogicModal/RenderAllowedValues';
-import TorontoMapleLeafs from '../../fixtures/TorontoMapleLeafs.json';
+import pcgl from '../../fixtures/pcgl.json';
 import themeDecorator from '../../themeDecorator';
 
-const torontoMapleLeafsDictionary: Dictionary = replaceReferences(TorontoMapleLeafs as Dictionary);
+const pcglDictionary: Dictionary = replaceReferences(pcgl as Dictionary);
 
 const meta = {
 	component: RenderAllowedValues,
@@ -21,7 +21,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Required: Story = {
 	args: {
-		currentSchemaField: torontoMapleLeafsDictionary.schemas[1].fields[0], // player_name field
+		currentSchemaField: pcglDictionary.schemas[0].fields[0], // submitter_participant_id field
 		restrictions: {
 			required: true,
 		},
@@ -30,92 +30,74 @@ export const Required: Story = {
 
 export const RegularExpressionSingle: Story = {
 	args: {
-		currentSchemaField: torontoMapleLeafsDictionary.schemas[0].fields[0], // game_id field
+		currentSchemaField: pcglDictionary.schemas[2].fields[0], // submitter_diagnosis_id field
 		restrictions: {
-			regex: '^[A-Z]{3}-\\d{4}$',
+			regex: '^[A-Za-z0-9\\-\\._]{1,64}$',
 		},
 	},
 };
 
 export const RegularExpressionMultiple: Story = {
 	args: {
-		currentSchemaField: torontoMapleLeafsDictionary.schemas[2].fields[5], // time_in_period field
+		currentSchemaField: pcglDictionary.schemas[0].fields[2], // disease_specific_modifier field
 		restrictions: {
-			regex: ['^[A-Z]{3}-\\d{4}$', '^[a-z]+@[a-z]+\\.[a-z]{2,3}$', '^\\d{10}$'],
+			regex: ['^MONDO:\\d{7}$', '^[A-Z]{2,4}-\\d{4}$', '^[a-z]+@[a-z]+\\.[a-z]{2,3}$'],
 		},
 	},
 };
 
 export const CodeListStrings: Story = {
 	args: {
-		currentSchemaField: torontoMapleLeafsDictionary.schemas[0].fields[7], // game_tags field
+		currentSchemaField: pcglDictionary.schemas[0].fields[4], // duo_permission field
 		restrictions: {
-			codeList: ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'],
+			codeList: [
+				'DUO:0000042 (general research use)',
+				'DUO:0000006 (health or medical or biomedical research)',
+				'DUO:0000007 (disease specific research)',
+				'DUO:0000011 (population origins or ancestry research only)',
+				'DUO:0000004 (no restriction)',
+			],
 		},
 	},
 };
 
 export const CodeListNumbers: Story = {
 	args: {
-		currentSchemaField: torontoMapleLeafsDictionary.schemas[2].fields[4], // period field with integer codeList
+		currentSchemaField: pcglDictionary.schemas[1].fields[2], // age_at_sociodem_collection field
 		restrictions: {
-			codeList: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
+			codeList: [0, 365, 730, 1095, 1460, 1825, 2190, 2555, 2920, 3285],
 		},
 	},
 };
 
 export const CodeListLargeSet: Story = {
 	args: {
-		currentSchemaField: torontoMapleLeafsDictionary.schemas[0].fields[6], // three_stars_of_the_game field
+		currentSchemaField: pcglDictionary.schemas[1].fields[3], // education field
 		restrictions: {
 			codeList: [
-				'BRCA1',
-				'BRCA2',
-				'TP53',
-				'APOE',
-				'CFTR',
-				'HTT',
-				'EGFR',
-				'MYC',
-				'RAS',
-				'PTEN',
-				'APC',
-				'RB1',
-				'ATR',
-				'PALB',
-				'CDK2',
-				'VHL',
-				'NF1',
-				'MLH1',
-				'MSH2',
-				'ATM',
-				'PALB2',
-				'CDH1',
-				'STK11',
-				'CHEK2',
-				'NBN',
-				'RAD51',
-				'FANCF',
-				'CHEK1',
-				'WINT',
-				'KISS',
+				'No formal education',
+				'Elementary school or equivalent',
+				'High school (secondary school) diploma or equivalency certificate',
+				'College, CEGEP, or other non-university certificate or diploma',
+				"Bachelor's degree",
+				'Degree in medicine, dentistry, veterinary medicine or optometry',
+				"Master's degree",
+				'Doctoral degree',
+				'Post-doctoral fellowship or training',
+				'Prefer not to answer',
+				'Not applicable',
+				'Missing - Unknown',
+				'Missing - Not collected',
+				'Missing - Not provided',
+				'Missing - Restricted access',
 			],
-		},
-	},
-};
-
-export const CodeListSingleValue: Story = {
-	args: {
-		currentSchemaField: torontoMapleLeafsDictionary.schemas[1].fields[6], // player_status field
-		restrictions: {
-			codeList: 'OnlyOption',
 		},
 	},
 };
 
 export const EmptyAllowed: Story = {
 	args: {
-		currentSchemaField: torontoMapleLeafsDictionary.schemas[1].fields[7], // injury_details field
+		currentSchemaField: pcglDictionary.schemas[0].fields[2], // disease_specific_modifier field
 		restrictions: {
 			empty: true,
 		},
@@ -124,28 +106,17 @@ export const EmptyAllowed: Story = {
 
 export const MultipleRestrictions: Story = {
 	args: {
-		currentSchemaField: torontoMapleLeafsDictionary.schemas[0].fields[0], // game_id field
+		currentSchemaField: pcglDictionary.schemas[0].fields[0], // submitter_participant_id field
 		restrictions: {
 			required: true,
-			regex: '^[A-Z]{2,4}$',
-			codeList: ['USA', 'CAN', 'UK', 'FR', 'DE', 'JP', 'AU', 'BR', 'IN', 'CN'],
-		},
-	},
-};
-
-export const PipelineExample: Story = {
-	args: {
-		currentSchemaField: torontoMapleLeafsDictionary.schemas[2].fields[3], // event_type field
-		restrictions: {
-			required: true,
-			codeList: ['pipelineA', 'pipelineC', 'pipelineD'],
+			regex: '^[A-Za-z0-9\\-\\._]{1,64}$',
 		},
 	},
 };
 
 export const NoRestrictions: Story = {
 	args: {
-		currentSchemaField: torontoMapleLeafsDictionary.schemas[4].fields[1], // optional_field
+		currentSchemaField: pcglDictionary.schemas[1].fields[1], // submitter_participant_id in sociodemographic
 		restrictions: {},
 	},
 };
