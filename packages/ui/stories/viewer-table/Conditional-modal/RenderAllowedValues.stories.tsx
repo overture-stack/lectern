@@ -2,8 +2,8 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import RenderAllowedValues from '../../src/viewer-table/RenderAllowedValues';
-import themeDecorator from '../themeDecorator';
+import RenderAllowedValues from '../../../src/viewer-table/ConditionalLogicModal/RenderAllowedValues';
+import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: RenderAllowedValues,
@@ -17,6 +17,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Required: Story = {
 	args: {
+		currentSchemaFieldName: 'required',
 		restrictions: {
 			required: true,
 		},
@@ -25,6 +26,7 @@ export const Required: Story = {
 
 export const RegularExpressionSingle: Story = {
 	args: {
+		currentSchemaFieldName: 'regex',
 		restrictions: {
 			regex: '^[A-Z]{3}-\\d{4}$',
 		},
@@ -33,6 +35,7 @@ export const RegularExpressionSingle: Story = {
 
 export const RegularExpressionMultiple: Story = {
 	args: {
+		currentSchemaFieldName: 'regex',
 		restrictions: {
 			regex: ['^[A-Z]{3}-\\d{4}$', '^[a-z]+@[a-z]+\\.[a-z]{2,3}$', '^\\d{10}$'],
 		},
@@ -41,6 +44,7 @@ export const RegularExpressionMultiple: Story = {
 
 export const CodeListStrings: Story = {
 	args: {
+		currentSchemaFieldName: 'codeList',
 		restrictions: {
 			codeList: ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'],
 		},
@@ -49,6 +53,7 @@ export const CodeListStrings: Story = {
 
 export const CodeListNumbers: Story = {
 	args: {
+		currentSchemaFieldName: 'codeList',
 		restrictions: {
 			codeList: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
 		},
@@ -57,6 +62,7 @@ export const CodeListNumbers: Story = {
 
 export const CodeListLargeSet: Story = {
 	args: {
+		currentSchemaFieldName: 'codeList',
 		restrictions: {
 			codeList: [
 				'BRCA1',
@@ -96,6 +102,7 @@ export const CodeListLargeSet: Story = {
 
 export const CodeListSingleValue: Story = {
 	args: {
+		currentSchemaFieldName: 'codeList',
 		restrictions: {
 			codeList: 'OnlyOption',
 		},
@@ -104,6 +111,7 @@ export const CodeListSingleValue: Story = {
 
 export const EmptyAllowed: Story = {
 	args: {
+		currentSchemaFieldName: 'codeList',
 		restrictions: {
 			empty: true,
 		},
@@ -112,6 +120,7 @@ export const EmptyAllowed: Story = {
 
 export const MultipleRestrictions: Story = {
 	args: {
+		currentSchemaFieldName: 'codeList',
 		restrictions: {
 			required: true,
 			regex: '^[A-Z]{2,4}$',
@@ -122,6 +131,7 @@ export const MultipleRestrictions: Story = {
 
 export const PipelineExample: Story = {
 	args: {
+		currentSchemaFieldName: 'codeList',
 		restrictions: {
 			required: true,
 			codeList: ['pipelineA', 'pipelineC', 'pipelineD'],
@@ -131,6 +141,7 @@ export const PipelineExample: Story = {
 
 export const NoRestrictions: Story = {
 	args: {
+		currentSchemaFieldName: 'codeList',
 		restrictions: {},
 	},
 };
