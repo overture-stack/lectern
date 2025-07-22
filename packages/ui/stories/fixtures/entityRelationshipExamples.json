@@ -829,6 +829,152 @@
 			"restrictions": {
 				"uniqueKey": ["record_id"]
 			}
+		},
+		{
+			"name": "range_combinations_comprehensive",
+			"description": "Comprehensive examples of all min/max range restriction combinations",
+			"fields": [
+				{
+					"name": "record_id",
+					"description": "Unique identifier",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^RNGCOMP_\\w{4}$"
+					}
+				},
+				{
+					"name": "both_inclusive_int",
+					"description": "Integer with inclusive min (10) and max (20) boundaries",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "min": 10, "max": 20 }
+					}
+				},
+				{
+					"name": "both_exclusive_int",
+					"description": "Integer with exclusive min (5) and max (15) boundaries",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "exclusiveMin": 5, "exclusiveMax": 15 }
+					}
+				},
+				{
+					"name": "mixed_min_inclusive_max_exclusive_int",
+					"description": "Integer with inclusive min (0) and exclusive max (10)",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "min": 0, "exclusiveMax": 10 }
+					}
+				},
+				{
+					"name": "mixed_min_exclusive_max_inclusive_int",
+					"description": "Integer with exclusive min (0) and inclusive max (100)",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "exclusiveMin": 0, "max": 100 }
+					}
+				},
+				{
+					"name": "only_inclusive_min_int",
+					"description": "Integer with only inclusive minimum (18)",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "min": 18 }
+					}
+				},
+				{
+					"name": "only_inclusive_max_int",
+					"description": "Integer with only inclusive maximum (65)",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "max": 65 }
+					}
+				},
+				{
+					"name": "only_exclusive_min_int",
+					"description": "Integer with only exclusive minimum (0)",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "exclusiveMin": 0 }
+					}
+				},
+				{
+					"name": "only_exclusive_max_int",
+					"description": "Integer with only exclusive maximum (1000)",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "exclusiveMax": 1000 }
+					}
+				},
+				{
+					"name": "both_inclusive_number",
+					"description": "Number with inclusive min (0.5) and max (99.9) boundaries",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "min": 0.5, "max": 99.9 }
+					}
+				},
+				{
+					"name": "both_exclusive_number",
+					"description": "Number with exclusive min (0.0) and max (100.0) boundaries",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "exclusiveMin": 0.0, "exclusiveMax": 100.0 }
+					}
+				},
+				{
+					"name": "mixed_min_inclusive_max_exclusive_number",
+					"description": "Number with inclusive min (1.0) and exclusive max (10.0)",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "min": 1.0, "exclusiveMax": 10.0 }
+					}
+				},
+				{
+					"name": "mixed_min_exclusive_max_inclusive_number",
+					"description": "Number with exclusive min (-1.0) and inclusive max (1.0)",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "exclusiveMin": -1.0, "max": 1.0 }
+					}
+				},
+				{
+					"name": "only_inclusive_min_number",
+					"description": "Number with only inclusive minimum (0.0)",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "min": 0.0 }
+					}
+				},
+				{
+					"name": "only_inclusive_max_number",
+					"description": "Number with only inclusive maximum (100.0)",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "max": 100.0 }
+					}
+				},
+				{
+					"name": "only_exclusive_min_number",
+					"description": "Number with only exclusive minimum (0.0)",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "exclusiveMin": 0.0 }
+					}
+				},
+				{
+					"name": "only_exclusive_max_number",
+					"description": "Number with only exclusive maximum (1.0)",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "exclusiveMax": 1.0 }
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["record_id"]
+			}
 		}
 	]
 }

@@ -29,7 +29,7 @@ import {
 	SchemaRestrictions,
 } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
-import { ReactNode } from 'react';
+import { Fragment, ReactNode } from 'react';
 
 import FieldBlock from '../../../../../common/FieldBlock';
 
@@ -72,37 +72,22 @@ export type AllowedValuesColumnProps = {
 	restrictions: CellContext<SchemaField, SchemaRestrictions>;
 };
 
-const handleRange = (range: RestrictionRange): RestrictionItem | ReactNode => {
-	if (range.min !== undefined && range.max !== undefined) {
-		return (
-			<div css={restrictionItemStyle}>
-				<div css={contentStyle}>
-					<span>
-						<b>Min:</b> {range.min}
-					</span>
-					<span>
-						<b>Max:</b> {range.max}
-					</span>
-				</div>
-			</div>
-		);
-	}
-
+const handleRange = (range: RestrictionRange): ReactNode => {
 	const computeRestrictions = [
 		{
 			condition: range.min !== undefined,
-			prefix: 'Min:',
+			prefix: 'Minimum:',
 			content: `${range.min}`,
-		},
-		{
-			condition: range.max !== undefined,
-			prefix: 'Max:',
-			content: `${range.max}`,
 		},
 		{
 			condition: range.exclusiveMin !== undefined,
 			prefix: 'Greater than:',
 			content: `${range.exclusiveMin}`,
+		},
+		{
+			condition: range.max !== undefined,
+			prefix: 'Maximum:',
+			content: `${range.max}`,
 		},
 		{
 			condition: range.exclusiveMax !== undefined,
@@ -111,16 +96,22 @@ const handleRange = (range: RestrictionRange): RestrictionItem | ReactNode => {
 		},
 	];
 
-	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
-	return computedRestrictionItem ?
-			{
-				prefix: [computedRestrictionItem.prefix],
-				content: [computedRestrictionItem.content],
-			}
-		:	{
-				prefix: [],
-				content: [],
-			};
+	const computedRestrictionItems = computeRestrictions.filter((item) => item.condition);
+
+	if (computedRestrictionItems.length === 0) {
+		return undefined;
+	}
+
+	return (
+		<Fragment>
+			{computedRestrictionItems.map((item, index) => (
+				<Fragment key={index}>
+					{index > 0 && ' and '}
+					<b>{item.prefix}</b> {item.content}
+				</Fragment>
+			))}
+		</Fragment>
+	);
 };
 
 const handleCodeListsWithCountRestrictions = (

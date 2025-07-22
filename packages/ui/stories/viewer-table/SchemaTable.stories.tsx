@@ -72,6 +72,10 @@ export const BasicCodelists: Story = {
 	args: { schema: entityRelationshipDictionary.schemas[14] },
 };
 
+export const RangeCombinationsComprehensive: Story = {
+	args: { schema: entityRelationshipDictionary.schemas[15] },
+};
+
 export const PCGLParticipant: Story = {
 	args: { schema: pcglDictionary.schemas[0] },
 };
