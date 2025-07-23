@@ -48,7 +48,7 @@ const descriptionWrapperStyle = (theme: Theme) => css`
 	}
 `;
 
-const containerStyle = (theme: Theme) => css`
+const containerStyle = () => css`
 	background-color: white;
 	padding: 2.5rem;
 	margin-bottom: 1rem;
@@ -72,7 +72,7 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 	const theme = useThemeContext();
 
 	return (
-		<div css={containerStyle(theme)}>
+		<div css={containerStyle}>
 			<h1 css={titleStyle(theme)}>{name}</h1>
 			{description && (
 				<ReadMoreText
