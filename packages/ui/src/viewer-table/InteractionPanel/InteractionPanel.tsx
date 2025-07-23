@@ -21,7 +21,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css, SerializedStyles } from '@emotion/react';
+import { css } from '@emotion/react';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 
 import { type DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
@@ -48,20 +48,19 @@ export type InteractionPanelProps = {
 		filters: FilterOptions[];
 		setFilters: (filters: FilterOptions[]) => void;
 	};
-	styles?: SerializedStyles;
 };
 
-const panelStyles = (theme: Theme, styles?: SerializedStyles) => css`
+const panelStyles = (theme: Theme) => css`
 	display: flex;
+	width: 100%;
 	align-items: center;
 	justify-content: space-between;
-	padding: 12px 16px;
-	border-bottom: 1px solid ${theme.colors.grey_4};
+	padding: 8px 16px;
+	border-bottom: 1px solid #d1d8df;
 	background-color: ${theme.colors.white};
-	min-height: 70px;
 	flex-wrap: nowrap;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	${styles}
+	min-height: 80px;
 `;
 
 const sectionStyles = css`
@@ -70,19 +69,13 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const InteractionPanel = ({
-	disabled = false,
-	setIsCollapsed,
-	onSelect,
-	dictionaryConfig,
-	styles,
-}: InteractionPanelProps) => {
+const InteractionPanel = ({ disabled = false, setIsCollapsed, onSelect, dictionaryConfig }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
 	const selectedDictionary: DictionaryServerUnion = dictionaryConfig.dictionaryData[dictionaryConfig.dictionaryIndex];
 	const createdAt: string = 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : '';
 
 	return (
-		<div css={panelStyles(theme, styles)}>
+		<div css={panelStyles(theme)}>
 			<div css={sectionStyles}>
 				<TableOfContentsDropdown schemas={selectedDictionary.schemas} onSelect={onSelect} disabled={disabled} />
 				<AttributeFilterDropdown

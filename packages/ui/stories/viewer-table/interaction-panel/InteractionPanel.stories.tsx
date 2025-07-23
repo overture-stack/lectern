@@ -11,16 +11,14 @@ import themeDecorator from '../../themeDecorator';
 
 import { type DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
 
-const storybookStyles = css`
-	padding-bottom: 200px;
-`;
-
 const meta = {
 	component: InteractionPanel,
 	title: 'Viewer - Table/Interaction - Panel/InteractionPanel',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
-	render: (args) => <InteractionPanel {...args} />,
+	parameters: {
+		layout: 'fullscreen',
+	},
 } satisfies Meta<typeof InteractionPanel>;
 
 export default meta;
@@ -32,9 +30,9 @@ type Story = StoryObj<typeof meta>;
 const SingleDictionaryData: Array<DictionaryServerUnion> = [AdvancedDictionary as DictionaryServerUnion];
 
 const MultipleDictionaryData: DictionaryServerUnion[] = [
-	{ ...AdvancedDictionary, version: '1.0', createdAt: '2025-20-20' } as DictionaryServerRecord,
-	{ ...AdvancedDictionary, version: '2.0', createdAt: '2025-20-20' } as DictionaryServerRecord,
-	{ ...AdvancedDictionary, version: '3.0', createdAt: '2025-20-20' } as DictionaryServerRecord,
+	{ ...AdvancedDictionary, version: '1.0', _id: '1', createdAt: '2025-20-20' } as DictionaryServerRecord,
+	{ ...AdvancedDictionary, version: '2.0', _id: '2', createdAt: '2025-20-20' } as DictionaryServerRecord,
+	{ ...AdvancedDictionary, version: '3.0', _id: '3', createdAt: '2025-20-20' } as DictionaryServerRecord,
 ];
 
 const mockProps = {
@@ -57,7 +55,6 @@ const mockProps = {
 	},
 };
 
-// When we are at multiple versions, then the version switcher is now rendered, this is to test that behavior
 export const Default: Story = {
 	args: {
 		...mockProps,
@@ -65,11 +62,9 @@ export const Default: Story = {
 			...mockProps.dictionaryConfig,
 			dictionaryData: MultipleDictionaryData,
 		},
-		styles: storybookStyles,
 	},
 };
 
-// The reason why this story exists is to test the behavior when the dictionary version switcher button is not rendered
 export const WithSingleVersion: Story = {
 	args: {
 		...mockProps,

@@ -45,7 +45,7 @@ const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?:
 	padding: 8px 16px;
 	background-color: #f7f7f7;
 	color: ${theme.colors.accent_dark};
-	border: 1px solid #beb2b294;
+	border: 2px solid #beb2b294;
 	border-radius: 9px;
 	height: 42px;
 	box-sizing: border-box;
@@ -68,7 +68,7 @@ const chevronStyle = (open: boolean) => css`
 `;
 
 const dropDownTitleStyle = (theme: Theme) => css`
-	${theme.typography?.subtitleSecondary};
+	${theme.typography?.buttonText};
 	color: ${theme.colors.accent_dark};
 `;
 
@@ -79,7 +79,7 @@ const dropdownMenuStyle = (theme: Theme) => css`
 	top: calc(100% + 5px);
 	width: 100%;
 	background-color: #f7f7f7;
-	border: 1px solid #beb2b294;
+	border: 2px solid #beb2b294;
 	padding-top: 5px;
 	border-radius: 9px;
 	padding-bottom: 5px;
