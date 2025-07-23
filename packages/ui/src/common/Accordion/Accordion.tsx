@@ -96,6 +96,32 @@ const accordionStyle = css`
 	cursor: pointer;
 `;
 
+/**
+ *
+ * @param accordionItems - Array of accordion items to render
+ * @param collapseAll - Controls initial state and dynamic collapse/expand of all items. true = collapsed, false = expanded
+ *
+ * @example
+ * ```tsx
+ * const schemaItems = [
+ *   {
+ *     title: "Patient Demographics",
+ *     description: "Core patient information fields",
+ *     content: <SchemaTable schema={demographicsSchema} />,
+ *     schemaName: "patient_demographics"
+ *   },
+ *   {
+ *     title: "Medical History",
+ *     description: "Historical medical data and conditions",
+ *     content: <SchemaTable schema={historySchema} />,
+ *     schemaName: "medical_history"
+ *   }
+ * ];
+ *
+ * <Accordion accordionItems={schemaItems} collapseAll={true} />
+ * ```
+ */
+
 const Accordion = ({ accordionItems, collapseAll }: AccordionProps) => {
 	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map(() => collapseAll));
 

@@ -208,7 +208,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 					</div>
 				</div>
 				<div>
-					{/* Mock props for the dictionary since we haven't implemented the download per schema yet */}
+					{/* TODO: Mock props for the dictionary since we haven't implemented the download per schema yet */}
 					<DictionaryDownloadButton
 						lecternUrl=""
 						version=""
