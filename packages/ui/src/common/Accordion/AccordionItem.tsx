@@ -27,7 +27,6 @@ import { MouseEvent, useEffect, useRef } from 'react';
 
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
-import DictionaryDownloadButton from '../../viewer-table/InteractionPanel/DownloadTemplatesButton';
 import ReadMoreText from '../ReadMoreText';
 import { AccordionData, AccordionOpenState, useClipboard } from './Accordion';
 
@@ -207,17 +206,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 						</ReadMoreText>
 					</div>
 				</div>
-				<div>
-					{/* TODO: Mock props for the dictionary since we haven't implemented the download per schema yet */}
-					<DictionaryDownloadButton
-						lecternUrl=""
-						version=""
-						fileType="tsv"
-						name={schemaName}
-						iconOnly={true}
-						disabled={true}
-					/>
-				</div>
+				{/* TODO: implement download dictionary button feature for individual schemas */}
 			</div>
 			<div css={accordionCollapseStyle(openState.isOpen)}>
 				<div css={accordionItemContentStyle}>
