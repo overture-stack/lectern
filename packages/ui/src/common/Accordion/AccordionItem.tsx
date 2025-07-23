@@ -85,7 +85,7 @@ const contentColumnStyle = css`
 `;
 
 const titleStyle = (theme: Theme) => css`
-	${theme.typography?.accordionTitle};
+	${theme.typography?.headingSmall};
 	text-align: left;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
@@ -119,7 +119,7 @@ const hashIconStyle = (theme: Theme) => css`
 `;
 
 const descriptionWrapperStyle = (theme: Theme) => css`
-	${theme.typography.accordionDescription};
+	${theme.typography.body};
 	color: ${theme.colors.black};
 	overflow-wrap: break-word;
 `;

@@ -32,59 +32,40 @@ export type DictionaryHeaderProps = {
 };
 
 const descriptionWrapperStyle = (theme: Theme) => css`
-	${theme.typography.paragraphSmall}
-	color: white;
+	${theme.typography.body}
+	color: ${theme.colors.accent_dark};
 	padding: 0;
 	button {
-		${theme.typography.paragraphSmallBold}
-		color: white;
+		${theme.typography.bodyBold}
+		color: ${theme.colors.accent_dark};
 		margin-top: 4px;
 		&:hover {
 			text-decoration: underline;
 		}
 		svg {
-			fill: white;
+			fill: ${theme.colors.accent_dark};
 		}
 	}
 `;
 
 const containerStyle = (theme: Theme) => css`
-	background-color: ${theme.colors.accent_dark};
-	display: flex;
-	margin-bottom: 1rem;
+	background-color: white;
 	padding: 2.5rem;
-`;
-
-const rowLayoutStyle = css`
-	display: flex;
-	flex-direction: row;
-	width: 100%;
-`;
-
-const titleColumnStyle = css`
+	margin-bottom: 1rem;
 	display: flex;
 	flex-direction: column;
-	flex: 1;
-	margin-right: 2rem;
+	gap: 0.5rem;
 `;
 
 const titleStyle = (theme: Theme) => css`
-	${theme.typography.subtitle}
-	color: white;
+	${theme.typography.subtitleBold}
+	color: ${theme.colors.accent_dark};
 	margin: 0;
-	margin-bottom: 0.5rem;
 `;
 
 const versionStyle = (theme: Theme) => css`
-	${theme.typography.paragraphSmall}
-	color: white;
-`;
-
-const descriptionColumnStyle = css`
-	flex: 2;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
+	${theme.typography.bodyBold}
+	color: ${theme.colors.accent_dark};
 `;
 
 const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps) => {
@@ -92,24 +73,18 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 
 	return (
 		<div css={containerStyle(theme)}>
-			<div css={rowLayoutStyle}>
-				<div css={titleColumnStyle}>
-					<h1 css={titleStyle(theme)}>{name}</h1>
-					{version && <span css={versionStyle(theme)}>{version}</span>}
-				</div>
-				{description && (
-					<div css={descriptionColumnStyle}>
-						<ReadMoreText
-							maxLines={2}
-							wrapperStyle={descriptionWrapperStyle}
-							expandedText="Read less"
-							collapsedText="Show more"
-						>
-							{description}
-						</ReadMoreText>
-					</div>
-				)}
-			</div>
+			<h1 css={titleStyle(theme)}>{name}</h1>
+			{description && (
+				<ReadMoreText
+					maxLines={2}
+					wrapperStyle={descriptionWrapperStyle}
+					expandedText="Read less"
+					collapsedText="Show more"
+				>
+					{description}
+				</ReadMoreText>
+			)}
+			{version && <span css={versionStyle(theme)}>{version}</span>}
 		</div>
 	);
 };

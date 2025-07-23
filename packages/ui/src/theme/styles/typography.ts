@@ -61,6 +61,16 @@ const subtitle = css`
 	letter-spacing: 0%;
 `;
 
+const subtitleBold = css`
+	${baseFont}
+	font-size: 30px;
+	font-weight: 700;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
 const subtitleSecondary = css`
 	${baseFont}
 	font-size: 20px;
@@ -181,7 +191,7 @@ const captionBold = css`
 	letter-spacing: 0%;
 `;
 
-const accordionTitle = css`
+const headingSmall = css`
 	${baseFont}
 	font-size: 24px;
 	font-weight: 700;
@@ -200,10 +210,18 @@ const buttonText = css`
 	vertical-align: middle;
 `;
 
-const accordionDescription = css`
+const body = css`
 	${baseFont}
 	font-size: 18px;
 	font-weight: 400;
+	font-style: normal;
+	letter-spacing: 0%;
+`;
+
+const bodyBold = css`
+	${baseFont}
+	font-size: 18px;
+	font-weight: 700;
 	font-style: normal;
 	letter-spacing: 0%;
 `;
@@ -234,6 +252,7 @@ export default {
 	hero,
 	title,
 	subtitle,
+	subtitleBold,
 	subtitleSecondary,
 	introText,
 	introTextBold,
@@ -246,9 +265,10 @@ export default {
 	dataBold,
 	caption,
 	captionBold,
-	accordionTitle,
+	headingSmall,
 	buttonText,
-	accordionDescription,
+	body,
+	bodyBold,
 	fieldBlock,
 	tableHeader,
 };
