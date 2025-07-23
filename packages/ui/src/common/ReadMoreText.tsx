@@ -37,16 +37,16 @@ export type ReadMoreTextProps = {
 };
 
 const defaultWrapperStyle = (theme: Theme) => css`
-	${theme.typography?.label2};
-	color: ${theme.colors.grey_5};
+	${theme.typography.paragraphSmall};
+	color: ${theme.colors.black};
 	padding: 4px 8px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 `;
 
 const linkStyle = (theme: Theme) => css`
-	${theme.typography?.label2};
-	color: ${theme.colors.accent_dark};
+	${theme.typography.captionBold};
+	color: ${theme.colors.black};
 	cursor: pointer;
 	display: inline-flex;
 	align-items: center;

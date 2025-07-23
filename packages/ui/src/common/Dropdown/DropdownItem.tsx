@@ -22,13 +22,15 @@
 /** @jsxImportSource @emotion/react */
 
 import { css, SerializedStyles } from '@emotion/react';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
+
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 type DropDownItemProps = {
 	action?: string | (() => void);
 	children: ReactNode;
+	onItemClick?: () => void;
 	customStyles?: {
 		hover?: SerializedStyles;
 		base?: SerializedStyles;
@@ -38,8 +40,7 @@ type DropDownItemProps = {
 const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
 	display: flex;
 	min-height: 100%;
-	padding-bottom: 5px;
-	height: 100%;
+	padding: 10px;
 	align-items: center;
 	border-radius: 9px;
 	justify-content: center;
@@ -52,18 +53,31 @@ const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
 	${customStyles?.base}
 `;
 
-const DropDownItem = ({ children, action, customStyles }: DropDownItemProps) => {
+const DropDownItem = ({ children, action, onItemClick, customStyles }: DropDownItemProps) => {
 	const theme = useThemeContext();
-	const content = <div css={styledListItemStyle(theme, customStyles)}>{children}</div>;
+
+	const handleClick = () => {
+		if (typeof action === 'function') {
+			action();
+		}
+		if (onItemClick) {
+			onItemClick();
+		}
+	};
+
 	if (typeof action === 'function') {
 		return (
-			<div onClick={action} css={styledListItemStyle(theme, customStyles)}>
+			<li role="menuitem" onClick={handleClick} css={styledListItemStyle(theme, customStyles)}>
 				{children}
-			</div>
+			</li>
 		);
 	}
 
-	return content;
+	return (
+		<li role="menuitem" css={styledListItemStyle(theme, customStyles)}>
+			{children}
+		</li>
+	);
 };
 
 export default DropDownItem;

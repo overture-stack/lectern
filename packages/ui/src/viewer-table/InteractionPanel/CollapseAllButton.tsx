@@ -32,7 +32,7 @@ const CollapseAllButton = ({ onClick, disabled }: CollapseAllButtonProps) => {
 	const { Collapse } = theme.icons;
 
 	return (
-		<Button leftIcon={<Collapse />} onClick={onClick} disabled={disabled}>
+		<Button icon={<Collapse />} onClick={onClick} disabled={disabled}>
 			Collapse All
 		</Button>
 	);

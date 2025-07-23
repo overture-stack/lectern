@@ -33,7 +33,7 @@ const ExpandAllButton = ({ onClick, disabled }: ExpandAllButtonProps) => {
 	const { Eye } = theme.icons;
 
 	return (
-		<Button leftIcon={<Eye />} onClick={onClick} disabled={disabled}>
+		<Button icon={<Eye />} onClick={onClick} disabled={disabled}>
 			Expand All
 		</Button>
 	);

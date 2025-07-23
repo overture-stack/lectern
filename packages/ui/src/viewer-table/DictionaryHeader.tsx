@@ -21,10 +21,9 @@
 
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { useState } from 'react';
+import ReadMoreText from '../common/ReadMoreText';
 import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
-import colours from './styles/colours';
 
 export type DictionaryHeaderProps = {
 	name: string;
@@ -32,37 +31,25 @@ export type DictionaryHeaderProps = {
 	version?: string;
 };
 
-const getChevronStyle = (isExpanded: boolean) => css`
-	margin-left: 4px;
-	${isExpanded && `transform: rotate(180deg);`}
-`;
-
-const linkStyle = (theme: Theme) => css`
-	${theme.typography?.subheading}
+const descriptionWrapperStyle = (theme: Theme) => css`
+	${theme.typography.paragraphSmall}
 	color: white;
-	cursor: pointer;
-	display: inline-flex;
-	align-items: center;
-
-	&:hover {
-		text-decoration: underline;
+	padding: 0;
+	button {
+		${theme.typography.paragraphSmallBold}
+		color: white;
+		margin-top: 4px;
+		&:hover {
+			text-decoration: underline;
+		}
+		svg {
+			fill: white;
+		}
 	}
 `;
 
-// Was unable to find the appropriate font size for the version numbering in the current design system, that matches
-// Figma mockup so we are using something that is somewhat close with a hard coded font size
-
-const descriptionStyle = (theme: Theme) => css`
-	${theme.typography?.data}
-	font-size: 16px;
-	color: white;
-	margin: 0;
-	display: inline;
-`;
-
 const containerStyle = (theme: Theme) => css`
-	background-color: ${colours.accent1_1};
-	${theme.typography.heading}
+	background-color: ${theme.colors.accent_dark};
 	display: flex;
 	margin-bottom: 1rem;
 	padding: 2.5rem;
@@ -81,25 +68,16 @@ const titleColumnStyle = css`
 	margin-right: 2rem;
 `;
 
-// Was unable to find the appropriate font size for the title in the current design system, that matches
-// Figma mockup so it is HARDCODED for now
-
-const titleStyle = css`
-	font-weight: 700;
-	font-size: 30px;
+const titleStyle = (theme: Theme) => css`
+	${theme.typography.subtitle}
 	color: white;
-	line-height: 100%;
 	margin: 0;
 	margin-bottom: 0.5rem;
 `;
 
-// Was unable to find the appropriate font size for the version numbering in the current design system, that matches
-// Figma mockup so we are using something that is somewhat close
-
 const versionStyle = (theme: Theme) => css`
-	${theme.typography.data}
+	${theme.typography.paragraphSmall}
 	color: white;
-	font-size: 17px;
 `;
 
 const descriptionColumnStyle = css`
@@ -109,40 +87,26 @@ const descriptionColumnStyle = css`
 	justify-content: center;
 `;
 
-const DESCRIPTION_LENGTH_THRESHOLD = 140; // Chosen to display ~2-3 lines of text before truncation based on typical container width
-
 const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps) => {
 	const theme = useThemeContext();
-	const { ChevronDown } = theme.icons;
-	const [isExpanded, setIsExpanded] = useState(false);
-
-	// Determine if the description is long enough to need a toggle, based off of how many characters we want to show by default
-	// according to the figma styling
-	const needsToggle = description && description.length > DESCRIPTION_LENGTH_THRESHOLD;
-	// We want to show all the text if it is not long or if it is already expanded via state variable
-	const showFull = isExpanded || !needsToggle;
-	// Based off of showFull, we determine the text to show, either its the full description or a truncated version
-	const textToShow = showFull ? description : description.slice(0, DESCRIPTION_LENGTH_THRESHOLD) + '... ';
 
 	return (
 		<div css={containerStyle(theme)}>
 			<div css={rowLayoutStyle}>
 				<div css={titleColumnStyle}>
-					<h1 css={titleStyle}>{name}</h1>
+					<h1 css={titleStyle(theme)}>{name}</h1>
 					{version && <span css={versionStyle(theme)}>{version}</span>}
 				</div>
 				{description && (
 					<div css={descriptionColumnStyle}>
-						<div>
-							<span css={descriptionStyle(theme)}>{textToShow}</span>
-							{needsToggle && (
-								<span css={linkStyle(theme)} onClick={() => setIsExpanded((prev) => !prev)}>
-									{' '}
-									{isExpanded ? 'Read less' : 'Show more'}
-									<ChevronDown style={getChevronStyle(isExpanded)} fill="white" width={10} height={10} />
-								</span>
-							)}
-						</div>
+						<ReadMoreText
+							maxLines={2}
+							wrapperStyle={descriptionWrapperStyle}
+							expandedText="Read less"
+							collapsedText="Show more"
+						>
+							{description}
+						</ReadMoreText>
 					</div>
 				)}
 			</div>

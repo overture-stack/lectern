@@ -28,11 +28,18 @@ import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 const thStyle = (theme: Theme, index: number) => css`
-	${theme.typography.heading};
+	${theme.typography.subtitleSecondary};
 	background: #e5edf3;
 	text-align: left;
 	padding: 12px;
 	border-bottom: 1px solid #dcdcdc;
+	${index === 0 &&
+	`
+		position: sticky;
+		left: 0;
+		background-color: #e5edf3;
+	`}
+	border: 1px solid #DCDDE1;
 	${index === 0 &&
 	`
 		position: sticky;
