@@ -19,11 +19,11 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import FieldBlock from '../../../../../common/FieldBlock';
 import { computeAllowedValuesColumn } from './ComputeAllowedValues';
 
-export const renderAllowedValuesColumn = (restrictions: SchemaRestrictions, schemaField: SchemaField) => {
+export const renderAllowedValuesColumn = (restrictions: SchemaFieldRestrictions, schemaField: SchemaField) => {
 	const restrictionItems = computeAllowedValuesColumn(restrictions, schemaField);
 
 	if (Object.keys(restrictionItems).length === 0) {

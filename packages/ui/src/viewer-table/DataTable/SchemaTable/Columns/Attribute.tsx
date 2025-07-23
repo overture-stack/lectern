@@ -20,7 +20,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { SchemaField, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
 import { Row } from '@tanstack/react-table';
 import Pill from '../../../../common/Pill';
@@ -37,14 +37,14 @@ const containerStyle = css`
 `;
 
 export const renderAttributesColumn = (tableRow: Row<SchemaField>) => {
-	const schemaRestrictions: SchemaRestrictions = tableRow.original.restrictions;
+	const schemaFieldRestrictions: SchemaFieldRestrictions = tableRow.original.restrictions;
 	const schemaField: SchemaField = tableRow.original;
 	const { unique } = schemaField;
 	return (
 		<div css={containerStyle}>
-			{schemaRestrictions && 'if' in schemaRestrictions ?
+			{schemaFieldRestrictions && 'if' in schemaFieldRestrictions ?
 				<OpenModalButton onClick={() => alert('Hello World')}>Required When</OpenModalButton>
-			:	<Pill>{schemaRestrictions && 'required' in schemaRestrictions ? 'Required' : 'Optional'}</Pill>}
+			:	<Pill>{schemaFieldRestrictions && 'required' in schemaFieldRestrictions ? 'Required' : 'Optional'}</Pill>}
 			{unique && <Pill>Unique</Pill>}
 		</div>
 	);
