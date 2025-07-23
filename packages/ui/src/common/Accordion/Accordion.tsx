@@ -123,10 +123,10 @@ const accordionStyle = css`
  */
 
 const Accordion = ({ accordionItems, collapseAll }: AccordionProps) => {
-	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map(() => collapseAll));
+	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map(() => !collapseAll));
 
 	useEffect(() => {
-		setOpenStates(accordionItems.map(() => collapseAll));
+		setOpenStates(accordionItems.map(() => !collapseAll));
 	}, [collapseAll]);
 
 	const handleToggle = (index: number) => {

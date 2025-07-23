@@ -48,7 +48,6 @@ const accordionItemStyle = (theme: Theme) => css`
 	box-shadow: 0px 4px 4px 0px #0000001a;
 	border: 0.25px solid #000000;
 	&:hover {
-		border: 0.35px solid #000000;
 		box-shadow: 0px 4px 4px 0px #0000001a;
 	}
 	transition: all 0.3s ease;

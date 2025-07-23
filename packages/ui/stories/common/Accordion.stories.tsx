@@ -16,7 +16,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	args: {
-		collapseAll: false,
+		collapseAll: true,
 		accordionItems: [
 			{
 				title: 'Study',
@@ -30,7 +30,7 @@ export const Default: Story = {
 
 export const LongDescription: Story = {
 	args: {
-		collapseAll: false,
+		collapseAll: true,
 		accordionItems: [
 			{
 				title: 'Study with a long description',
@@ -44,7 +44,7 @@ export const LongDescription: Story = {
 };
 export const Expanded: Story = {
 	args: {
-		collapseAll: true,
+		collapseAll: false,
 		accordionItems: [
 			{
 				title: 'Study',
