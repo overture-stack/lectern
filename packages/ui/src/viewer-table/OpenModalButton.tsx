@@ -32,7 +32,7 @@ export type OpenModalButtonProps = {
 };
 
 const pillButtonStyle = (theme: Theme) => css`
-	${theme.typography.caption}
+	${theme.typography.buttonText}
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -43,7 +43,7 @@ const pillButtonStyle = (theme: Theme) => css`
 	color: ${theme.colors.black};
 	border: 1px solid ${theme.colors.black};
 	transition: all 0.2s ease-in-out;
-	max-width: 120px;
+	max-width: 160px;
 	text-align: center;
 	word-wrap: break-word;
 	overflow-wrap: break-word;

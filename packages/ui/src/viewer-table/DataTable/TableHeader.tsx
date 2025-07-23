@@ -29,7 +29,7 @@ import { useThemeContext } from '../../theme/ThemeContext';
 
 const thStyle = (theme: Theme, index: number) => css`
 	${theme.typography.tableHeader};
-	text-align: left;
+	text-align: ${index === 0 || index === 3 ? 'left' : 'center'};
 	padding: 12px;
 	border-bottom: 1px solid ${theme.colors.border_medium};
 	${index === 0 &&

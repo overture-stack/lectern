@@ -39,6 +39,8 @@ const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 	white-space: pre-wrap;
 	overflow-wrap: break-word;
 	word-break: break-word;
+	text-align: ${cellIndex === 1 || cellIndex === 2 ? 'center' : 'left'};
+	vertical-align: middle;
 	${cellIndex === 0 &&
 	`
 		position: sticky;
@@ -60,14 +62,7 @@ const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
 			{row.getVisibleCells().map((cell, cellIndex) => {
 				return (
 					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>
-						<div
-							css={css`
-								${theme.typography.data}
-								white-space: pre-wrap;
-							`}
-						>
-							{flexRender(cell.column.columnDef.cell, cell.getContext())}
-						</div>
+						{flexRender(cell.column.columnDef.cell, cell.getContext())}
 					</td>
 				);
 			})}

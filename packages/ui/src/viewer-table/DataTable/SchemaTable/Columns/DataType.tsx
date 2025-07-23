@@ -28,10 +28,12 @@ export const renderDataTypeColumn = (schemaField: SchemaField) => {
 	return (
 		<div
 			css={css`
-				${theme.typography.subheading}
+				${theme.typography.body}
 			`}
 		>
-			{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
+			<b>
+				{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
+			</b>
 		</div>
 	);
 };
