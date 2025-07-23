@@ -27,6 +27,10 @@ const baseFontSecondary = css`
 	font-family: 'Open Sans', sans-serif;
 `;
 
+const baseFontMono = css`
+	font-family: 'B612 Mono', monospace;
+`;
+
 const hero = css`
 	${baseFont}
 	font-size: 40px;
@@ -76,6 +80,7 @@ const introText = css`
 	line-height: 100%;
 	letter-spacing: 0%;
 `;
+
 const introTextBold = css`
 	${baseFontSecondary}
 	font-size: 18px;
@@ -176,12 +181,51 @@ const captionBold = css`
 	letter-spacing: 0%;
 `;
 
+const accordionTitle = css`
+	${baseFont}
+	font-size: 24px;
+	font-weight: 700;
+	font-style: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
+const buttonText = css`
+	${baseFont}
+	font-size: 20px;
+	font-weight: 700;
+	font-style: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+	vertical-align: middle;
+`;
+
+const accordionDescription = css`
+	${baseFont}
+	font-size: 18px;
+	font-weight: 400;
+	font-style: normal;
+	letter-spacing: 0%;
+`;
+
+const fieldBlock = css`
+	${baseFontMono}
+	font-size: 12px;
+	font-weight: 400;
+	font-style: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+	text-align: center;
+	vertical-align: middle;
+`;
+
 export default {
 	hero,
 	title,
 	subtitle,
 	subtitleSecondary,
 	introText,
+	introTextBold,
 	regular,
 	paragraph,
 	paragraphBold,
@@ -191,4 +235,8 @@ export default {
 	dataBold,
 	caption,
 	captionBold,
+	accordionTitle,
+	buttonText,
+	accordionDescription,
+	fieldBlock,
 };
