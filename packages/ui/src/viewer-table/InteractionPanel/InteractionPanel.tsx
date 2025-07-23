@@ -56,10 +56,10 @@ const panelStyles = (theme: Theme) => css`
 	align-items: center;
 	justify-content: space-between;
 	padding: 8px 16px;
-	border-bottom: 1px solid #d1d8df;
+	border-bottom: 1px solid ${theme.colors.border_muted};
 	background-color: ${theme.colors.white};
 	flex-wrap: nowrap;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 2px 4px ${theme.shadow.standard};
 	min-height: 80px;
 `;
 

@@ -49,9 +49,9 @@ const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: Se
 	width: ${width || 'auto'};
 	min-width: fit-content;
 	padding: 8px 16px;
-	background-color: #f7f7f7;
+	background-color: ${theme.colors.background_light};
 	color: ${theme.colors.black};
-	border: 2px solid #beb2b294;
+	border: 2px solid ${theme.colors.border_button};
 	border-radius: 9px;
 	height: 42px;
 	box-sizing: border-box;

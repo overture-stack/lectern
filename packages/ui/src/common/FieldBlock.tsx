@@ -38,8 +38,8 @@ const fieldBlockStyles = (theme: Theme) => css`
 	gap: 4px;
 	padding: 2px 5px;
 	border-radius: 3px;
-	background-color: #ececec;
-	border: 0.5px solid black;
+	background-color: ${theme.colors.background_muted};
+	border: 0.5px solid ${theme.colors.black};
 	transition: all 0.2s ease-in-out;
 	width: fit-content;
 	text-align: center;

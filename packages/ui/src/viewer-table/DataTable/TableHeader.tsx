@@ -28,25 +28,16 @@ import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 const thStyle = (theme: Theme, index: number) => css`
-	${theme.typography.subtitleSecondary};
-	background: #e5edf3;
+	${theme.typography.tableHeader};
 	text-align: left;
 	padding: 12px;
-	border-bottom: 1px solid #dcdcdc;
+	border-bottom: 1px solid ${theme.colors.border_medium};
 	${index === 0 &&
 	`
 		position: sticky;
 		left: 0;
-		background-color: #e5edf3;
 	`}
-	border: 1px solid #DCDDE1;
-	${index === 0 &&
-	`
-		position: sticky;
-		left: 0;
-		background-color: #e5edf3;
-	`}
-	border: 1px solid #DCDDE1;
+	border: 1px solid ${theme.colors.border_light};
 `;
 
 export type TableHeaderProps<T> = {

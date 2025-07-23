@@ -43,9 +43,9 @@ const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?:
 	width: ${width || 'auto'};
 	min-width: fit-content;
 	padding: 8px 16px;
-	background-color: #f7f7f7;
+	background-color: ${theme.colors.background_light};
 	color: ${theme.colors.accent_dark};
-	border: 2px solid #beb2b294;
+	border: 2px solid ${theme.colors.border_button};
 	border-radius: 9px;
 	height: 42px;
 	box-sizing: border-box;
@@ -78,8 +78,8 @@ const dropdownMenuStyle = (theme: Theme) => css`
 	position: absolute;
 	top: calc(100% + 5px);
 	width: 100%;
-	background-color: #f7f7f7;
-	border: 2px solid #beb2b294;
+	background-color: ${theme.colors.background_light};
+	border: 2px solid ${theme.colors.border_button};
 	padding-top: 5px;
 	border-radius: 9px;
 	padding-bottom: 5px;

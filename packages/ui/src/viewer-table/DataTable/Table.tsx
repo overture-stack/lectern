@@ -25,6 +25,8 @@ import { css } from '@emotion/react';
 import { ColumnDef, getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
 
@@ -56,17 +58,17 @@ const shadowStyle = css`
 	transition: opacity 0.3s ease;
 `;
 
-const leftShadowStyle = (width: number, opacity: number) => css`
+const leftShadowStyle = (width: number, opacity: number, theme: Theme) => css`
 	${shadowStyle}
 	left: ${width}px;
-	background: linear-gradient(90deg, rgba(0, 0, 0, 0.035), transparent);
+	background: linear-gradient(90deg, ${theme.shadow.medium}, transparent);
 	opacity: ${opacity};
 `;
 
-const rightShadowStyle = (opacity: number) => css`
+const rightShadowStyle = (opacity: number, theme: Theme) => css`
 	${shadowStyle}
 	right: 0;
-	background: linear-gradient(270deg, rgba(0, 0, 0, 0.06), transparent);
+	background: linear-gradient(270deg, ${theme.shadow.standard}, transparent);
 	opacity: ${opacity};
 `;
 
@@ -75,15 +77,15 @@ const tableContainerStyle = css`
 	max-width: 100%;
 `;
 
-const tableStyle = css`
+const tableStyle = (theme: Theme) => css`
 	min-width: 1200px;
 	border-collapse: collapse;
-	border: 1px solid lightgray;
+	border: 1px solid ${theme.colors.grey_3};
 	margin-top: 8px;
 	position: relative;
 `;
-const tableBorderStyle = css`
-	border: 1px solid #dcdde1;
+const tableBorderStyle = (theme: Theme) => css`
+	border: 1px solid ${theme.colors.border_light};
 `;
 
 export const useScrollShadows = (): ScrollShadowsResult => {
@@ -136,6 +138,7 @@ export const useScrollShadows = (): ScrollShadowsResult => {
 };
 
 const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
+	const theme = useThemeContext();
 	const table = useReactTable({
 		data: data,
 		columns,
@@ -145,15 +148,15 @@ const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 	return (
 		<div css={scrollWrapperStyle}>
 			<div css={tableContainerStyle} ref={scrollRef}>
-				<div css={leftShadowStyle(firstColumnWidth, showLeftShadow ? 1 : 0)} />
-				<div css={rightShadowStyle(showRightShadow ? 1 : 0)} />
-				<table css={tableStyle}>
-					<thead css={tableBorderStyle}>
+				<div css={leftShadowStyle(firstColumnWidth, showLeftShadow ? 1 : 0, theme)} />
+				<div css={rightShadowStyle(showRightShadow ? 1 : 0, theme)} />
+				<table css={tableStyle(theme)}>
+					<thead css={tableBorderStyle(theme)}>
 						{table.getHeaderGroups().map((headerGroup: HeaderGroup<R>) => (
 							<TableHeader key={headerGroup.id} headerGroup={headerGroup} />
 						))}
 					</thead>
-					<tbody css={tableBorderStyle}>
+					<tbody css={tableBorderStyle(theme)}>
 						{table.getRowModel().rows.map((row, i: number) => (
 							<TableRow key={row.id} row={row} index={i} />
 						))}

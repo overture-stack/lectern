@@ -219,6 +219,17 @@ const fieldBlock = css`
 	vertical-align: middle;
 `;
 
+const tableHeader = css`
+	${baseFont}
+	font-size: 20px;
+	font-weight: 600;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 20px;
+	letter-spacing: 0%;
+	vertical-align: middle;
+`;
+
 export default {
 	hero,
 	title,
@@ -239,4 +250,5 @@ export default {
 	buttonText,
 	accordionDescription,
 	fieldBlock,
+	tableHeader,
 };

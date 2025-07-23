@@ -44,11 +44,11 @@ const accordionItemStyle = (theme: Theme) => css`
 	border-radius: 8px;
 	margin-bottom: 1px;
 	overflow: hidden;
-	background-color: #ffffff;
-	box-shadow: 0px 4px 4px 0px #0000001a;
-	border: 0.25px solid #000000;
+	background-color: ${theme.colors.white};
+	box-shadow: 0px 4px 4px 0px ${theme.shadow.accordion};
+	border: 0.25px solid ${theme.colors.black};
 	&:hover {
-		box-shadow: 0px 4px 4px 0px #0000001a;
+		box-shadow: 0px 4px 4px 0px ${theme.shadow.accordion};
 	}
 	transition: all 0.3s ease;
 `;
@@ -187,12 +187,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 			<div css={accordionItemTitleStyle}>
 				<div css={chevronColumnStyle}>
 					<button css={accordionItemButtonStyle(theme)}>
-						<ChevronDown
-							fill={theme.colors.accent_dark}
-							width={16}
-							height={16}
-							style={chevronStyle(openState.isOpen)}
-						/>
+						<ChevronDown fill={theme.colors.black} width={16} height={16} style={chevronStyle(openState.isOpen)} />
 					</button>
 				</div>
 				<div css={contentColumnStyle}>
