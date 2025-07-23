@@ -25,7 +25,6 @@ import {
 	MatchRuleRegex,
 	RestrictionCondition,
 	RestrictionRange,
-	Schema,
 	SchemaField,
 	SchemaFieldRestrictions,
 	SchemaRestrictions,
