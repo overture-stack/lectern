@@ -267,7 +267,6 @@ const handleCodeList = (codeList: MatchRuleCodeList | string): RestrictionItem =
 const handleKeys = (restrictions: SchemaRestrictions, currentSchemaField: SchemaField): ReactNode => {
 	const uniqueKeys = restrictions?.uniqueKey;
 	const foreignKeys = restrictions?.foreignKey;
-
 	const found = foreignKeys?.flatMap((foreignKey) =>
 		foreignKey.mappings
 			.filter((mapping) => mapping.local === currentSchemaField.name)
@@ -296,18 +295,19 @@ const handleKeys = (restrictions: SchemaRestrictions, currentSchemaField: Schema
 			}
 		:	undefined;
 
+	const associatedSchemas = multipleSchemaReferences?.associatedSchemas;
+	const associatedField = multipleSchemaReferences?.field;
+
 	const computeRestrictions = [
 		{
 			condition: multipleSchemaReferences !== undefined,
 			content: (
 				<span>
-					Must reference an existing <FieldBlock>{multipleSchemaReferences?.field}</FieldBlock> within the{' '}
+					Must reference an existing <FieldBlock>{associatedField}</FieldBlock> within the{' '}
 					<b>
-						{multipleSchemaReferences?.associatedSchemas && multipleSchemaReferences.associatedSchemas.length > 1 ?
-							multipleSchemaReferences.associatedSchemas.slice(0, -1).join(', ') +
-							' and ' +
-							multipleSchemaReferences.associatedSchemas.slice(-1)
-						:	multipleSchemaReferences?.associatedSchemas?.[0]}
+						{associatedSchemas && associatedSchemas.length > 1 ?
+							associatedSchemas.slice(0, -1).join(', ') + ' and ' + associatedSchemas.slice(-1)
+						:	associatedSchemas?.[0]}
 					</b>{' '}
 					schemas.
 				</span>
