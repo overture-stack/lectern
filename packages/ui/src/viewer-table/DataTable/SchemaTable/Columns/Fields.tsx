@@ -35,8 +35,6 @@ const fieldContainerStyle = (theme: Theme) => css`
 	gap: 3px;
 `;
 
-const fieldNameStyle = (theme: Theme) => css``;
-
 export type FieldExamplesProps = {
 	examples: DictionaryMeta[keyof DictionaryMeta];
 	theme: Theme;
@@ -113,7 +111,7 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 
 	return (
 		<ReadMoreText wrapperStyle={() => fieldContainerStyle(theme)}>
-			<b css={fieldNameStyle(theme)}>{fieldName}</b>
+			<b>{fieldName}</b>
 			{fieldDescription && <p>{fieldDescription}</p>}
 			{fieldExamples && (
 				<div>
