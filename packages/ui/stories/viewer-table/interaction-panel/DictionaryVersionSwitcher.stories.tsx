@@ -4,8 +4,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 import VersionSwitcher, {
 	DictionaryServerUnion,
 } from '../../../src/viewer-table/InteractionPanel/DictionaryVersionSwitcher';
-import DictionarySample from '../../fixtures/TorontoMapleLeafs.json';
+import DictionarySample from '../../fixtures/pcgl.json';
 import themeDecorator from '../../themeDecorator';
+import { DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
 
 const meta = {
 	component: VersionSwitcher,
@@ -19,9 +20,9 @@ type Story = StoryObj<typeof meta>;
 
 const SingleDictionaryData: DictionaryServerUnion[] = [DictionarySample as DictionaryServerUnion];
 const MultipleDictionaryData: DictionaryServerUnion[] = [
-	{ ...DictionarySample, version: '1.0', _id: '1', createdAt: '2025-20-20' } as DictionaryServerUnion,
-	{ ...DictionarySample, version: '2.0', _id: '2', createdAt: '2025-20-20' } as DictionaryServerUnion,
-	{ ...DictionarySample, version: '3.0', _id: '3', createdAt: '2025-20-20' } as DictionaryServerUnion,
+	{ ...DictionarySample, _id: '1', version: '1.0', createdAt: '2025-01-01' } as DictionaryServerRecord,
+	{ ...DictionarySample, _id: '2', version: '2.0', createdAt: '2025-01-01' } as DictionaryServerRecord,
+	{ ...DictionarySample, _id: '3', version: '3.0', createdAt: '2025-01-01' } as DictionaryServerRecord,
 ];
 
 const mockProps = {
@@ -34,7 +35,7 @@ export const MultipleVersions: Story = {
 	args: {
 		...mockProps,
 		dictionaryData: MultipleDictionaryData,
-		title: 'Version Switcher',
+		title: 'Multiple Versions',
 	},
 };
 
@@ -42,7 +43,7 @@ export const SingleVersion: Story = {
 	args: {
 		...mockProps,
 		dictionaryData: SingleDictionaryData,
-		title: 'Version Switcher',
+		title: 'Single Version',
 	},
 };
 
@@ -50,7 +51,7 @@ export const EmptyArray: Story = {
 	args: {
 		...mockProps,
 		dictionaryData: [],
-		title: 'Version Switcher',
+		title: 'Empty Array',
 	},
 };
 
@@ -59,6 +60,6 @@ export const DisabledWithMultipleVersions: Story = {
 		...mockProps,
 		dictionaryData: MultipleDictionaryData,
 		disabled: true,
-		title: 'Version Switcher',
+		title: 'Disabled with Multiple Versions',
 	},
 };

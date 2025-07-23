@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import type { FilterOptions } from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
-import AdvancedDictionary from '../../fixtures/TorontoMapleLeafs.json';
+import AdvancedDictionary from '../../fixtures/pcgl.json';
 import themeDecorator from '../../themeDecorator';
 
 import { type DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
@@ -30,9 +30,9 @@ type Story = StoryObj<typeof meta>;
 const SingleDictionaryData: Array<DictionaryServerUnion> = [AdvancedDictionary as DictionaryServerUnion];
 
 const MultipleDictionaryData: DictionaryServerUnion[] = [
-	{ ...AdvancedDictionary, version: '1.0', _id: '1', createdAt: '2025-20-20' } as DictionaryServerRecord,
-	{ ...AdvancedDictionary, version: '2.0', _id: '2', createdAt: '2025-20-20' } as DictionaryServerRecord,
-	{ ...AdvancedDictionary, version: '3.0', _id: '3', createdAt: '2025-20-20' } as DictionaryServerRecord,
+	{ ...AdvancedDictionary, _id: '1', version: '1.0', createdAt: '2025-20-20' } as DictionaryServerRecord,
+	{ ...AdvancedDictionary, _id: '2', version: '2.0', createdAt: '2025-20-20' } as DictionaryServerRecord,
+	{ ...AdvancedDictionary, _id: '3', version: '3.0', createdAt: '2025-20-20' } as DictionaryServerRecord,
 ];
 
 const mockProps = {
