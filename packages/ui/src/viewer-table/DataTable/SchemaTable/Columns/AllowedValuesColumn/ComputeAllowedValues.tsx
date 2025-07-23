@@ -21,6 +21,8 @@
 
 import { css } from '@emotion/react';
 import {
+	MatchRuleCodeList,
+	MatchRuleRegex,
 	RestrictionCondition,
 	RestrictionRange,
 	Schema,
@@ -45,18 +47,10 @@ const contentStyle = css`
 	gap: 4px;
 `;
 
-const inlineTextStyle = css`
-	display: inline;
-	margin: 0;
-	padding: 0;
-`;
-
 export type RestrictionItem = {
 	prefix: string[];
 	content: string[];
 };
-
-export type RestrictionField = RestrictionItem | ReactNode | undefined;
 
 export type AllowedValuesBaseDisplayItem = {
 	dependsOn?: ReactNode;
@@ -72,6 +66,17 @@ export type AllowedValuesColumnProps = {
 	restrictions: CellContext<SchemaField, SchemaRestrictions>;
 };
 
+/**
+ * Processes range restriction values and formats them for display.
+ *
+ * @param range {RestrictionRange} - The range restriction object containing min, max, exclusiveMin, exclusiveMax values
+ *
+ * @returns {ReactNode} A fragment with formatted range restrictions
+ *
+ * @example
+ * // For range { min: 0, max: 100 }
+ * // Returns: <Fragment>Minimum: 0 and Maximum: 100</Fragment>
+ */
 const handleRange = (range: RestrictionRange): ReactNode => {
 	const computeRestrictions = [
 		{
@@ -114,8 +119,22 @@ const handleRange = (range: RestrictionRange): ReactNode => {
 	);
 };
 
+/**
+ * Handles code list restrictions with count-based limitations for array fields.
+ * Determines the appropriate prefix text based on count restrictions and field array properties.
+ *
+ * @param codeList {MatchRuleCodeList | string} - A list of allowed values
+ * @param count {RestrictionRange} - The count restriction object or number specifying selection limits
+ * @param currentSchemaField {SchemaField} - The schema field being processed, used for array/delimiter info
+ * @returns {RestrictionItem | undefined} A RestrictionItem with appropriate prefix and content, or undefined if no valid restrictions
+ *
+ * Flow:
+ * 1. Determines delimiter text based on field's isArray property
+ * 2. Evaluates count restrictions in priority order (exact count, range, min/max, exclusive bounds)
+ * 3. Returns formatted restriction with contextual prefix text
+ */
 const handleCodeListsWithCountRestrictions = (
-	codeList: string | string[] | number[],
+	codeList: MatchRuleCodeList | string,
 	count: RestrictionRange,
 	currentSchemaField: SchemaField,
 ): RestrictionItem | undefined => {
@@ -161,6 +180,13 @@ const handleCodeListsWithCountRestrictions = (
 			};
 };
 
+/**
+ * Processes conditional field dependencies and renders them as field blocks.
+ *
+ * @param conditions {RestrictionCondition[]} - Array of restriction conditions containing field dependencies
+ * @returns {ReactNode} A React component showing dependent fields
+ */
+
 const handleDependsOn = (conditions: RestrictionCondition[]): ReactNode => {
 	const allFields = Array.from(new Set(conditions.flatMap((condition: RestrictionCondition) => condition.fields)));
 
@@ -180,7 +206,21 @@ const handleDependsOn = (conditions: RestrictionCondition[]): ReactNode => {
 	);
 };
 
-const handleRegularExpression = (regularExpression: string[] | string): RestrictionItem => {
+/**
+ * Formats regular expression pattern restrictions for display.
+ * Handles both single patterns and arrays of patterns.
+ *
+ * @param regularExpression {MatchRuleRegex} - Single regex pattern string or array of patterns
+ * @returns {RestrictionItem} A RestrictionItem with appropriate singular/plural prefix and pattern content
+ *
+ * @example
+ * // For single pattern: "^[A-Z]+$"
+ * // Returns: { prefix: ["Must match pattern:"], content: ["^[A-Z]+$"] }
+ *
+ * // For multiple patterns: ["^[A-Z]+$", "^[0-9]+$"]
+ * // Returns: { prefix: ["Must match patterns:"], content: ["^[A-Z]+$", "^[0-9]+$"] }
+ */
+const handleRegularExpression = (regularExpression: MatchRuleRegex): RestrictionItem => {
 	const patterns = Array.isArray(regularExpression) ? regularExpression : [regularExpression];
 
 	return {
@@ -189,14 +229,43 @@ const handleRegularExpression = (regularExpression: string[] | string): Restrict
 	};
 };
 
-const handleCodeList = (codeList: string | string[] | number[]): RestrictionItem => {
+/**
+ * Formats simple code list restrictions without count limitations.
+ *
+ * @param codeList {MatchRuleCodeList | string} - The allowed value(s)
+ * @returns {RestrictionItem} A RestrictionItem with "One of:" prefix and formatted content values
+ *
+ * @example
+ * // For codeList: ["red", "green", "blue"]
+ * // Returns: { prefix: ["One of:"], content: ["red", "green", "blue"] }
+ */
+const handleCodeList = (codeList: MatchRuleCodeList | string): RestrictionItem => {
 	return {
 		prefix: ['One of:'],
 		content: Array.isArray(codeList) ? codeList.map((item) => `${item}`) : [`${codeList}`],
 	};
 };
 
-const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: SchemaField): ReactNode => {
+/**
+ * Processes unique key and foreign key relationships for entity relationship constraints.
+ * Handles complex scenarios including compound keys, multiple schema references, and unique constraints.
+ *
+ * @param restrictions {Schema['restrictions']} - Schema-level restrictions containing uniqueKey and foreignKey definitions
+ * @param currentSchemaField {SchemaField} - The field being processed for relationship constraints
+ * @returns {ReactNode} React content describing the relationship constraint, or undefined if no constraints apply
+ *
+ * Process:
+ * 1. Extracts unique keys and foreign keys from schema restrictions
+ * 2. Finds foreign key mappings that reference the current field
+ * 3. Determines constraint type in priority order:
+ *    - Multiple schema references (field references multiple schemas)
+ *    - Compound foreign keys (multi-field relationship)
+ *    - Basic unique foreign key (single field, unique reference)
+ *    - Non-unique foreign key (single field, multiple references allowed)
+ *    - Compound unique key (field must be unique in combination with others)
+ * 4. Returns appropriate descriptive text with schema and field references
+ */
+const handleKeys = (restrictions: SchemaRestrictions, currentSchemaField: SchemaField): ReactNode => {
 	const uniqueKeys = restrictions?.uniqueKey;
 	const foreignKeys = restrictions?.foreignKey;
 
@@ -291,16 +360,37 @@ const handleKeys = (restrictions: Schema['restrictions'], currentSchemaField: Sc
 					Must be unique in combination with:{' '}
 					{uniqueKeys
 						?.filter((key) => key !== currentSchemaField.name)
-						?.map((key) => <FieldBlock key={key}>{key}</FieldBlock>)}
+						.map((key) => <FieldBlock key={key}>{key}</FieldBlock>)}
 				</span>
 			),
 		},
 	];
 
 	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
-	return computedRestrictionItem?.content || undefined;
+	return computedRestrictionItem?.content;
 };
 
+/**
+ * Main orchestrator function that determines which restrictions apply to a field and formats them for display.
+ * Processes restrictions in priority order: entity relationships, unique constraints, then field-level restrictions.
+ *
+ * @param fieldLevelRestrictions {SchemaFieldRestrictions} - Field-specific restrictions
+ * @param schemaLevelRestrictions {SchemaRestrictions} - Schema-wide restrictions (uniqueKey, foreignKey)
+ * @param currentSchemaField {SchemaField} - The current schema field that is being processed
+ * @returns {AllowedValuesBaseDisplayItem} An AllowedValuesBaseDisplayItem containing formatted restriction components
+ *
+ * Processing Priority:
+ * 1. Entity relationships (foreign/unique keys) - if present, returns immediately as user can refer to specified field
+ * 2. Field-level unique constraints
+ * 3. Field-level restrictions
+ *
+ * @example
+ * // For a field with regex restriction:
+ * // Returns: { regularExpression: {...} }
+ *
+ * // For a field with foreign key relationship:
+ * // Returns: { entityRelationships: <ReactNode> } (other restrictions ignored, since the user can refer to the specified field)
+ */
 export const computeAllowedValuesColumn = (
 	fieldLevelRestrictions: SchemaFieldRestrictions,
 	schemaLevelRestrictions: SchemaRestrictions,
