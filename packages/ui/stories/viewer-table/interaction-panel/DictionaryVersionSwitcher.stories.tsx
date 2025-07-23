@@ -1,8 +1,9 @@
 /** @jsxImportSource @emotion/react */
 
-import { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
-import VersionSwitcher from '../../../src/viewer-table/InteractionPanel/DictionaryVersionSwitcher';
+import VersionSwitcher, {
+	DictionaryServerUnion,
+} from '../../../src/viewer-table/InteractionPanel/DictionaryVersionSwitcher';
 import DictionarySample from '../../fixtures/TorontoMapleLeafs.json';
 import themeDecorator from '../../themeDecorator';
 
@@ -16,11 +17,11 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const SingleDictionaryData: Dictionary[] = [DictionarySample as Dictionary];
-const MultipleDictionaryData: Dictionary[] = [
-	{ ...DictionarySample, version: '1.0' } as Dictionary,
-	{ ...DictionarySample, version: '2.0' } as Dictionary,
-	{ ...DictionarySample, version: '3.0' } as Dictionary,
+const SingleDictionaryData: DictionaryServerUnion[] = [DictionarySample as DictionaryServerUnion];
+const MultipleDictionaryData: DictionaryServerUnion[] = [
+	{ ...DictionarySample, version: '1.0', _id: '1', createdAt: '2025-20-20' } as DictionaryServerUnion,
+	{ ...DictionarySample, version: '2.0', _id: '2', createdAt: '2025-20-20' } as DictionaryServerUnion,
+	{ ...DictionarySample, version: '3.0', _id: '3', createdAt: '2025-20-20' } as DictionaryServerUnion,
 ];
 
 const mockProps = {
@@ -33,6 +34,7 @@ export const MultipleVersions: Story = {
 	args: {
 		...mockProps,
 		dictionaryData: MultipleDictionaryData,
+		title: 'Version Switcher',
 	},
 };
 
@@ -40,6 +42,7 @@ export const SingleVersion: Story = {
 	args: {
 		...mockProps,
 		dictionaryData: SingleDictionaryData,
+		title: 'Version Switcher',
 	},
 };
 
@@ -47,6 +50,7 @@ export const EmptyArray: Story = {
 	args: {
 		...mockProps,
 		dictionaryData: [],
+		title: 'Version Switcher',
 	},
 };
 
@@ -55,5 +59,6 @@ export const DisabledWithMultipleVersions: Story = {
 		...mockProps,
 		dictionaryData: MultipleDictionaryData,
 		disabled: true,
+		title: 'Version Switcher',
 	},
 };
