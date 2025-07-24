@@ -52,3 +52,6 @@ export const userDataResponseSchema = z.object({
 		}),
 	),
 });
+
+export type UserDataResponseSchemaType = z.infer<typeof userDataResponseSchema>;
+export type Groups = Pick<UserDataResponseSchemaType, 'groups'>;

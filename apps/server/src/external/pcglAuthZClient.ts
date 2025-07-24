@@ -21,12 +21,21 @@ import { Request } from 'express';
 
 import { InternalServerError, ForbiddenError } from '@overture-stack/lectern-dictionary';
 
-import { Group, UserDataResponse, UserDataResponseErrorType } from '../common/types/auth';
-import { userDataResponseSchema } from '../common/validation/auth-validation';
+import { UserDataResponseErrorType } from '../common/types/auth';
+import { Groups, userDataResponseSchema, UserDataResponseSchemaType } from '../common/validation/auth-validation';
 import { authConfig } from '../config/authConfig';
 import logger from '../config/logger';
 
-const authZClient = async (resource: string, token: string, options?: RequestInit) => {
+/**
+ *  Function to perform fetch requests to AUTHZ service
+ * @param resource
+ * @param token
+ * @param options
+ *
+ * NOTE: fetch will not work if `/` is prepended to the resource, if added `new URL(...)` will replace any existing path
+ */
+
+const fetchAuthZResource = async (resource: string, token: string, options?: RequestInit) => {
 	const { AUTHZ_ENDPOINT } = authConfig;
 
 	const url = new URL(resource, AUTHZ_ENDPOINT);
@@ -48,8 +57,7 @@ const authZClient = async (resource: string, token: string, options?: RequestIni
  * @returns validated object of UserDataResponse
  */
 export const fetchUserData = async (token: string) => {
-	// NOTE: path will not work if `/` is prepended, if added `new URL(...)` will replace any existing path
-	const response = await authZClient(`/user/me`, token);
+	const response = await fetchAuthZResource(`user/me`, token);
 
 	if (!response.ok) {
 		const errorResponse: UserDataResponseErrorType = await response.json();
@@ -63,7 +71,7 @@ export const fetchUserData = async (token: string) => {
 		}
 	}
 
-	const result: UserDataResponse = await response.json();
+	const result: UserDataResponseSchemaType = await response.json();
 
 	const responseValidation = userDataResponseSchema.safeParse(result);
 
@@ -76,9 +84,9 @@ export const fetchUserData = async (token: string) => {
 	const userTokenInfo = {
 		user: {
 			username: `${responseValidation.data.userinfo.pcgl_id}`,
-			isAdmin: isAdmin(responseValidation.data.groups),
+			isAdmin: isAdmin({ groups: responseValidation.data.groups }),
 			allowedWriteOrganizations: responseValidation.data.study_authorizations.editable_studies,
-			groups: extractUserGroups(responseValidation.data.groups),
+			groups: extractUserGroups({ groups: responseValidation.data.groups }),
 		},
 	};
 
@@ -101,7 +109,7 @@ export const extractAccessTokenFromHeader = (req: Request): string | undefined =
  * @param groups List of groups users belongs to
  * @returns boolean if user has admin group
  */
-const isAdmin = (groups: Group[]): boolean => {
+const isAdmin = ({ groups }: Groups): boolean => {
 	const { AUTHZ_GROUP_ADMIN } = authConfig;
 
 	return groups.some((val) => val.name === AUTHZ_GROUP_ADMIN);
@@ -111,11 +119,6 @@ const isAdmin = (groups: Group[]): boolean => {
  * @param groups List of groups user belongs to
  * @returns array of strings with names of the groups
  */
-const extractUserGroups = (groups: Group[]): string[] => {
-	const parsedGroups: string[] = groups.reduce((acu: string[], currentGroup) => {
-		acu.push(currentGroup.name);
-		return acu;
-	}, []);
-
-	return parsedGroups;
+const extractUserGroups = ({ groups }: Groups): string[] => {
+	return groups.map((currentGroup) => currentGroup.name);
 };
