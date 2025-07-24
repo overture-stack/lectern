@@ -29,9 +29,10 @@ import urlJoin from 'url-join';
 
 /**
  *  Function to perform fetch requests to AUTHZ service
- * @param resource path to query from auths
+ *
+ * @param resource endpoint to query from authz
  * @param token authorization token
- * @param options additional request configurations for the fetch call
+ * @param options optional additional request configurations for the fetch call
  *
  */
 const fetchAuthZResource = async (resource: string, token: string, options?: RequestInit) => {
@@ -93,7 +94,11 @@ export const fetchUserData = async (token: string) => {
 };
 
 /**
- * Simple helper function to extract access token from header
+ *	Function that takes in request object, checks if theres an authorization header and returns its token
+ *  Only works with Bearer type authorization values
+ *
+ * @param req Request object
+ * @returns Access token or undefined depending if authorization header exists or authorization type is NOT Bearer
  */
 export const extractAccessTokenFromHeader = (req: Request): string | undefined => {
 	const authHeader = req.headers['authorization'];
@@ -101,7 +106,7 @@ export const extractAccessTokenFromHeader = (req: Request): string | undefined =
 		return;
 	}
 
-	return authHeader.split(' ')[1];
+	return authHeader.replace('Bearer ', '').trim();
 };
 
 /**
