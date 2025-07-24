@@ -7,6 +7,9 @@
         "name": {
           "$ref": "#/definitions/Name"
         },
+        "displayName": {
+          "type": "string"
+        },
         "description": {
           "type": "string"
         },
@@ -123,6 +126,9 @@
         "name": {
           "$ref": "#/definitions/Name"
         },
+        "displayName": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/displayName"
+        },
         "description": {
           "$ref": "#/definitions/SchemaBooleanField/properties/description"
         },
@@ -238,6 +244,9 @@
         "name": {
           "$ref": "#/definitions/Name"
         },
+        "displayName": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/displayName"
+        },
         "description": {
           "$ref": "#/definitions/SchemaBooleanField/properties/description"
         },
@@ -352,6 +361,9 @@
       "properties": {
         "name": {
           "$ref": "#/definitions/Name"
+        },
+        "displayName": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/displayName"
         },
         "description": {
           "$ref": "#/definitions/SchemaBooleanField/properties/description"
@@ -811,6 +823,9 @@
       "properties": {
         "name": {
           "$ref": "#/definitions/Name"
+        },
+        "displayName": {
+          "type": "string"
         },
         "description": {
           "type": "string"
