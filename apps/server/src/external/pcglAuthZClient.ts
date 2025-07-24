@@ -28,11 +28,10 @@ import logger from '../config/logger';
 
 /**
  *  Function to perform fetch requests to AUTHZ service
- * @param resource
- * @param token
- * @param options
+ * @param resource path to query from auths
+ * @param token authorization token
+ * @param options additional request configurations for the fetch call
  *
- * NOTE: fetch will not work if `/` is prepended to the resource, if added `new URL(...)` will replace any existing path
  */
 
 const fetchAuthZResource = async (resource: string, token: string, options?: RequestInit) => {
@@ -57,7 +56,7 @@ const fetchAuthZResource = async (resource: string, token: string, options?: Req
  * @returns validated object of UserDataResponse
  */
 export const fetchUserData = async (token: string) => {
-	const response = await fetchAuthZResource(`user/me`, token);
+	const response = await fetchAuthZResource(`/user/me`, token);
 
 	if (!response.ok) {
 		const errorResponse: UserDataResponseErrorType = await response.json();
