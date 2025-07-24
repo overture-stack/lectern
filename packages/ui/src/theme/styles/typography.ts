@@ -23,6 +23,84 @@ const baseFont = css`
 	font-family: 'Lato', sans-serif;
 `;
 
+const baseFontSecondary = css`
+	font-family: 'Open Sans', sans-serif;
+`;
+
+const baseFontMono = css`
+	font-family: 'B612 Mono', monospace;
+`;
+
+const hero = css`
+	${baseFont}
+	font-size: 40px;
+	font-weight: 400;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
+const title = css`
+	${baseFont}
+	font-size: 26px;
+	font-weight: 400;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
+const subtitle = css`
+	${baseFont}
+	font-size: 30px;
+	font-weight: 400;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
+const subtitleBold = css`
+	${baseFont}
+	font-size: 30px;
+	font-weight: 700;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
+const subtitleSecondary = css`
+	${baseFont}
+	font-size: 20px;
+	font-weight: 700;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
+const introText = css`
+	${baseFontSecondary}
+	font-size: 18px;
+	font-weight: 400;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
+const introTextBold = css`
+	${baseFontSecondary}
+	font-size: 18px;
+	font-weight: 700;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
 const regular = css`
 	${baseFont}
 	font-size: inherit;
@@ -33,83 +111,164 @@ const regular = css`
 	letter-spacing: inherit;
 `;
 
-const button = css`
-	${baseFont}
-	font-size: 20px;
+const paragraph = css`
+	${baseFontSecondary}
+	font-size: 26px;
+	font-weight: 400;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
+const paragraphBold = css`
+	${baseFontSecondary}
+	font-size: 26px;
 	font-weight: 700;
 	font-style: normal;
 	font-stretch: normal;
 	line-height: 100%;
-	letter-spacing: normal;
+	letter-spacing: 0%;
 `;
 
-const heading = css`
-	${baseFont}
-	font-size: 18px;
-	font-weight: bold;
-	font-style: normal;
-	font-stretch: normal;
-	line-height: 30px;
-	letter-spacing: normal;
-`;
-
-const subheading = css`
-	${baseFont}
+const paragraphSmall = css`
+	${baseFontSecondary}
 	font-size: 16px;
-	font-weight: bold;
+	font-weight: 400;
 	font-style: normal;
 	font-stretch: normal;
-	line-height: 24px;
-	letter-spacing: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
 `;
 
-const subheading2 = css`
-	${baseFont}
-	font-size: 14px;
-	font-weight: bold;
+const paragraphSmallBold = css`
+	${baseFontSecondary}
+	font-size: 16px;
+	font-weight: 700;
 	font-style: normal;
 	font-stretch: normal;
-	line-height: 16px;
-	letter-spacing: normal;
-`;
-
-const label = css`
-	${baseFont}
-	font-size: 12px;
-	font-weight: bold;
-	font-style: normal;
-	font-stretch: normal;
-	line-height: 16px;
-	letter-spacing: normal;
-`;
-
-const label2 = css`
-	${baseFont}
-	font-size: 10px;
-	font-weight: normal;
-	font-style: normal;
-	font-stretch: normal;
-	line-height: 14px;
-	letter-spacing: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
 `;
 
 const data = css`
-	${baseFont}
+	${baseFontSecondary}
 	font-size: 13px;
-	font-weight: normal;
+	font-weight: 400;
 	font-style: normal;
 	font-stretch: normal;
-	line-height: 16px;
-	letter-spacing: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
+const dataBold = css`
+	${baseFontSecondary}
+	font-size: 13px;
+	font-weight: 700;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
+const caption = css`
+	${baseFontSecondary}
+	font-size: 11px;
+	font-weight: 400;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
+const captionBold = css`
+	${baseFontSecondary}
+	font-size: 11px;
+	font-weight: 700;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
+const headingSmall = css`
+	${baseFont}
+	font-size: 24px;
+	font-weight: 700;
+	font-style: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+`;
+
+const buttonText = css`
+	${baseFont}
+	font-size: 20px;
+	font-weight: 700;
+	font-style: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+	vertical-align: middle;
+`;
+
+const body = css`
+	${baseFont}
+	font-size: 18px;
+	font-weight: 400;
+	font-style: normal;
+	letter-spacing: 0%;
+`;
+
+const bodyBold = css`
+	${baseFont}
+	font-size: 18px;
+	font-weight: 700;
+	font-style: normal;
+	letter-spacing: 0%;
+`;
+
+const fieldBlock = css`
+	${baseFontMono}
+	font-size: 12px;
+	font-weight: 400;
+	font-style: normal;
+	line-height: 100%;
+	letter-spacing: 0%;
+	text-align: center;
+	vertical-align: middle;
+`;
+
+const tableHeader = css`
+	${baseFont}
+	font-size: 20px;
+	font-weight: 600;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 20px;
+	letter-spacing: 0%;
+	vertical-align: middle;
 `;
 
 export default {
+	hero,
+	title,
+	subtitle,
+	subtitleBold,
+	subtitleSecondary,
+	introText,
+	introTextBold,
 	regular,
-	heading,
-	subheading,
-	subheading2,
-	label,
-	label2,
+	paragraph,
+	paragraphBold,
+	paragraphSmall,
+	paragraphSmallBold,
 	data,
-	button,
+	dataBold,
+	caption,
+	captionBold,
+	headingSmall,
+	buttonText,
+	body,
+	bodyBold,
+	fieldBlock,
+	tableHeader,
 };

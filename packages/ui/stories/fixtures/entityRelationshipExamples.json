@@ -1,0 +1,980 @@
+{
+	"name": "Entity Relationship Examples",
+	"version": "1.0.0",
+	"meta": {
+		"description": "Comprehensive examples demonstrating entity relationships, foreign keys, and unique constraints",
+		"author": "Lectern Team"
+	},
+	"schemas": [
+		{
+			"name": "participant",
+			"description": "Basic unique key example",
+			"fields": [
+				{
+					"name": "participant_id",
+					"description": "A basic unique key",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^P\\w{4}$"
+					},
+					"unique": true
+				},
+				{
+					"name": "string_id",
+					"description": "Common identifier field for multiple foreign key example",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^STR_\\w{4}$"
+					}
+				},
+				{
+					"name": "hospital_id",
+					"description": "Hospital identifier for multiple foreign key example",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^HOS_\\w{4}$"
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["participant_id"]
+			}
+		},
+		{
+			"name": "unique_keys",
+			"description": "Combination key (compound primary key) example",
+			"fields": [
+				{
+					"name": "firstName",
+					"description": "An example of a combination key",
+					"valueType": "string",
+					"restrictions": {
+						"required": true
+					}
+				},
+				{
+					"name": "lastName",
+					"description": "An example of a combination key",
+					"valueType": "string",
+					"restrictions": {
+						"required": true
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["firstName", "lastName"]
+			}
+		},
+		{
+			"name": "sequencing_many_to_one",
+			"description": "Foreign key (many to one relationship) example",
+			"fields": [
+				{
+					"name": "sequence_id",
+					"description": "Unique identifier for sequence",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^SEQ_\\w{6}$"
+					}
+				},
+				{
+					"name": "participant_id",
+					"description": "An example of a many to one foreign key",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^P\\w{4}$"
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["sequence_id"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [
+							{
+								"local": "participant_id",
+								"foreign": "participant_id"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"name": "sequencing_one_to_one",
+			"description": "Foreign key (one to one relationship) example",
+			"fields": [
+				{
+					"name": "participant_id",
+					"description": "An example of a one to one foreign key",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^P\\w{4}$"
+					}
+				},
+				{
+					"name": "sequencing_platform",
+					"description": "Platform used for sequencing",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"codeList": ["Illumina", "PacBio", "Oxford Nanopore"]
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["participant_id"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [
+							{
+								"local": "participant_id",
+								"foreign": "participant_id"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"name": "sample_collection",
+			"description": "Supporting schema for compound foreign key example",
+			"fields": [
+				{
+					"name": "participant_id",
+					"description": "Reference to participant",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^P\\w{4}$"
+					}
+				},
+				{
+					"name": "timepoint",
+					"description": "Collection timepoint",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"codeList": ["Baseline", "Month 3", "Month 6", "Month 12"]
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["participant_id", "timepoint"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [
+							{
+								"local": "participant_id",
+								"foreign": "participant_id"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"name": "lab_result",
+			"description": "Compound foreign key example",
+			"fields": [
+				{
+					"name": "result_id",
+					"description": "Unique identifier for result",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^LAB_\\w{8}$"
+					}
+				},
+				{
+					"name": "participant_id",
+					"description": "Reference to participant via sample collection",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^P\\w{4}$"
+					}
+				},
+				{
+					"name": "timepoint",
+					"description": "Reference to timepoint via sample collection",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"codeList": ["Baseline", "Month 3", "Month 6", "Month 12"]
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["result_id"],
+				"foreignKey": [
+					{
+						"schema": "sample_collection",
+						"mappings": [
+							{
+								"local": "participant_id",
+								"foreign": "participant_id"
+							},
+							{
+								"local": "timepoint",
+								"foreign": "timepoint"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"name": "sample",
+			"description": "Supporting schema for multiple foreign key example",
+			"fields": [
+				{
+					"name": "sample_id",
+					"description": "Unique identifier for sample",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^SAM_\\w{6}$"
+					}
+				},
+				{
+					"name": "sample_type",
+					"description": "Type of sample",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"codeList": ["Blood", "Tissue", "Saliva"]
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["sample_id"]
+			}
+		},
+		{
+			"name": "analysis_result",
+			"description": "Multiple foreign key mappings example",
+			"fields": [
+				{
+					"name": "analysis_id",
+					"description": "Unique identifier for analysis",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^ANA_\\w{8}$"
+					}
+				},
+				{
+					"name": "string_id",
+					"description": "Common identifier field",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^STR_\\w{4}$"
+					}
+				},
+				{
+					"name": "hospital_id",
+					"description": "Hospital identifier",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^HOS_\\w{4}$"
+					}
+				},
+				{
+					"name": "sample_id",
+					"description": "Sample identifier",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^SAM_\\w{6}$"
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["analysis_id"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [
+							{
+								"local": "string_id",
+								"foreign": "string_id"
+							},
+							{
+								"local": "hospital_id",
+								"foreign": "hospital_id"
+							}
+						]
+					},
+					{
+						"schema": "sample",
+						"mappings": [
+							{
+								"local": "sample_id",
+								"foreign": "sample_id"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"name": "complex_analysis",
+			"description": "Advanced example with multiple foreign keys and same local field used multiple times",
+			"fields": [
+				{
+					"name": "complex_id",
+					"description": "Unique identifier for complex analysis",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^CMP_\\w{8}$"
+					}
+				},
+				{
+					"name": "participant_id",
+					"description": "Participant reference used in multiple relationships",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^P\\w{4}$"
+					}
+				},
+				{
+					"name": "timepoint",
+					"description": "Timepoint reference",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"codeList": ["Baseline", "Month 3", "Month 6", "Month 12"]
+					}
+				},
+				{
+					"name": "sequence_id",
+					"description": "Sequence reference",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^SEQ_\\w{6}$"
+					}
+				},
+				{
+					"name": "performance_score",
+					"description": "Calculated performance score",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "min": 0, "max": 100 }
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["complex_id"],
+				"foreignKey": [
+					{
+						"schema": "sample_collection",
+						"mappings": [
+							{
+								"local": "participant_id",
+								"foreign": "participant_id"
+							},
+							{
+								"local": "timepoint",
+								"foreign": "timepoint"
+							}
+						]
+					},
+					{
+						"schema": "sequencing_many_to_one",
+						"mappings": [
+							{
+								"local": "participant_id",
+								"foreign": "participant_id"
+							},
+							{
+								"local": "sequence_id",
+								"foreign": "sequence_id"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"name": "range_restrictions",
+			"description": "Examples of range restrictions for numbers and integers",
+			"fields": [
+				{
+					"name": "record_id",
+					"description": "Unique identifier",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^RANGE_\\w{4}$"
+					}
+				},
+				{
+					"name": "age",
+					"description": "Age must be between 18 and 65 (inclusive)",
+					"valueType": "integer",
+					"restrictions": {
+						"required": true,
+						"range": { "min": 18, "max": 65 }
+					}
+				},
+				{
+					"name": "score",
+					"description": "Score must be greater than 0",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "exclusiveMin": 0 }
+					}
+				},
+				{
+					"name": "percentage",
+					"description": "Percentage value that must be less than 100",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "exclusiveMax": 100 }
+					}
+				},
+				{
+					"name": "weight",
+					"description": "Weight with minimum value only",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "min": 0 }
+					}
+				},
+				{
+					"name": "temperature",
+					"description": "Temperature with maximum value only",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "max": 100 }
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["record_id"]
+			}
+		},
+		{
+			"name": "array_count_restrictions",
+			"description": "Examples of array fields with count restrictions",
+			"fields": [
+				{
+					"name": "record_id",
+					"description": "Unique identifier",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^ARRAY_\\w{4}$"
+					}
+				},
+				{
+					"name": "exactly_two_colors",
+					"description": "Must select exactly 2 colors",
+					"valueType": "string",
+					"isArray": true,
+					"delimiter": ",",
+					"restrictions": {
+						"required": true,
+						"codeList": ["Red", "Blue", "Green", "Yellow", "Purple", "Orange"],
+						"count": 2
+					}
+				},
+				{
+					"name": "at_least_two_skills",
+					"description": "Select at least 2 skills",
+					"valueType": "string",
+					"isArray": true,
+					"delimiter": "|",
+					"restrictions": {
+						"codeList": ["JavaScript", "Python", "Java", "C++", "Go", "Rust"],
+						"count": { "min": 2 }
+					}
+				},
+				{
+					"name": "up_to_three_hobbies",
+					"description": "Select up to 3 hobbies",
+					"valueType": "string",
+					"isArray": true,
+					"delimiter": ";",
+					"restrictions": {
+						"codeList": ["Reading", "Sports", "Music", "Cooking", "Gaming", "Travel"],
+						"count": { "max": 3 }
+					}
+				},
+				{
+					"name": "select_two_to_four_features",
+					"description": "Select 2 to 4 features",
+					"valueType": "string",
+					"isArray": true,
+					"delimiter": ",",
+					"restrictions": {
+						"codeList": ["Feature A", "Feature B", "Feature C", "Feature D", "Feature E"],
+						"count": { "min": 2, "max": 4 }
+					}
+				},
+				{
+					"name": "fewer_than_three_options",
+					"description": "Select fewer than 3 options",
+					"valueType": "string",
+					"isArray": true,
+					"delimiter": ",",
+					"restrictions": {
+						"codeList": ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"],
+						"count": { "exclusiveMax": 3 }
+					}
+				},
+				{
+					"name": "more_than_one_category",
+					"description": "Must select more than 1 category",
+					"valueType": "string",
+					"isArray": true,
+					"delimiter": ",",
+					"restrictions": {
+						"codeList": ["Alpha", "Beta", "Gamma", "Delta", "Epsilon"],
+						"count": { "exclusiveMin": 1 }
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["record_id"]
+			}
+		},
+		{
+			"name": "conditional_logic",
+			"description": "Examples of conditional logic with Required When",
+			"fields": [
+				{
+					"name": "record_id",
+					"description": "Unique identifier",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^COND_\\w{4}$"
+					}
+				},
+				{
+					"name": "player_status",
+					"description": "Current status of the player",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"codeList": ["Active", "Injured", "Suspended", "Retired"]
+					}
+				},
+				{
+					"name": "injury_details",
+					"description": "If the player status is 'Injured', specify the injury details",
+					"valueType": "string",
+					"restrictions": {
+						"if": {
+							"conditions": [
+								{
+									"fields": ["player_status"],
+									"match": {
+										"value": "Injured"
+									}
+								}
+							]
+						},
+						"then": {
+							"required": true,
+							"codeList": ["Concussion", "Broken bone", "Muscle strain", "Ligament tear"]
+						},
+						"else": {
+							"empty": true
+						}
+					}
+				},
+				{
+					"name": "suspension_games",
+					"description": "Number of games remaining if suspended",
+					"valueType": "integer",
+					"restrictions": {
+						"if": {
+							"conditions": [
+								{
+									"fields": ["player_status"],
+									"match": {
+										"value": "Suspended"
+									}
+								}
+							]
+						},
+						"then": {
+							"required": true,
+							"range": { "min": 1, "max": 82 }
+						},
+						"else": {
+							"empty": true
+						}
+					}
+				},
+				{
+					"name": "retirement_date",
+					"description": "Date of retirement if player is retired",
+					"valueType": "string",
+					"restrictions": {
+						"if": {
+							"conditions": [
+								{
+									"fields": ["player_status"],
+									"match": {
+										"value": "Retired"
+									}
+								}
+							]
+						},
+						"then": {
+							"required": true,
+							"regex": "^\\d{4}-\\d{2}-\\d{2}$"
+						},
+						"else": {
+							"empty": true
+						}
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["record_id"]
+			}
+		},
+		{
+			"name": "data_types_showcase",
+			"description": "Examples of different data types and unique values",
+			"fields": [
+				{
+					"name": "record_id",
+					"description": "Unique string identifier",
+					"valueType": "string",
+					"unique": true,
+					"restrictions": {
+						"required": true,
+						"regex": "^DT_\\w{6}$"
+					}
+				},
+				{
+					"name": "name",
+					"description": "Simple string field",
+					"valueType": "string",
+					"restrictions": {
+						"required": true
+					}
+				},
+				{
+					"name": "age",
+					"description": "Integer field",
+					"valueType": "integer",
+					"restrictions": {
+						"required": true,
+						"range": { "min": 0, "max": 120 }
+					}
+				},
+				{
+					"name": "height",
+					"description": "Number field with decimals",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "min": 0.0, "max": 300.0 }
+					}
+				},
+				{
+					"name": "is_active",
+					"description": "Boolean field",
+					"valueType": "boolean",
+					"restrictions": {
+						"required": true
+					}
+				},
+				{
+					"name": "tags",
+					"description": "Array field with comma delimiter",
+					"valueType": "string",
+					"isArray": true,
+					"delimiter": ",",
+					"restrictions": {
+						"codeList": ["Tag1", "Tag2", "Tag3", "Tag4"]
+					}
+				},
+				{
+					"name": "categories",
+					"description": "Array field with pipe delimiter",
+					"valueType": "string",
+					"isArray": true,
+					"delimiter": "|",
+					"restrictions": {
+						"codeList": ["Cat A", "Cat B", "Cat C"]
+					}
+				},
+				{
+					"name": "unique_email",
+					"description": "Must be unique email address",
+					"valueType": "string",
+					"unique": true,
+					"restrictions": {
+						"regex": "^[^@]+@[^@]+\\.[^@]+$"
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["record_id"]
+			}
+		},
+		{
+			"name": "regex_patterns",
+			"description": "Examples of regex pattern restrictions",
+			"fields": [
+				{
+					"name": "record_id",
+					"description": "Unique identifier",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^REG_\\w{4}$"
+					}
+				},
+				{
+					"name": "postal_code",
+					"description": "Canadian postal code pattern",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^[A-Z]\\d[A-Z] ?\\d[A-Z]\\d$"
+					}
+				},
+				{
+					"name": "phone_number",
+					"description": "North American phone number",
+					"valueType": "string",
+					"restrictions": {
+						"regex": "^\\(\\d{3}\\) \\d{3}-\\d{4}$"
+					}
+				},
+				{
+					"name": "product_code",
+					"description": "Product code with specific format",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^PROD-[A-Z]{2}\\d{4}$"
+					}
+				},
+				{
+					"name": "date_format",
+					"description": "ISO date format",
+					"valueType": "string",
+					"restrictions": {
+						"regex": "^\\d{4}-\\d{2}-\\d{2}$"
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["record_id"]
+			}
+		},
+		{
+			"name": "basic_codelists",
+			"description": "Examples of basic codelist restrictions",
+			"fields": [
+				{
+					"name": "record_id",
+					"description": "Unique identifier",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^CODE_\\w{4}$"
+					}
+				},
+				{
+					"name": "gender",
+					"description": "Simple codelist selection",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"codeList": ["Male", "Female", "Other", "Prefer not to answer"]
+					}
+				},
+				{
+					"name": "priority_level",
+					"description": "Priority level selection",
+					"valueType": "string",
+					"restrictions": {
+						"codeList": ["Low", "Medium", "High", "Critical"]
+					}
+				},
+				{
+					"name": "department",
+					"description": "Department selection",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"codeList": ["Engineering", "Marketing", "Sales", "HR", "Finance"]
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["record_id"]
+			}
+		},
+		{
+			"name": "range_combinations_comprehensive",
+			"description": "Comprehensive examples of all min/max range restriction combinations",
+			"fields": [
+				{
+					"name": "record_id",
+					"description": "Unique identifier",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^RNGCOMP_\\w{4}$"
+					}
+				},
+				{
+					"name": "both_inclusive_int",
+					"description": "Integer with inclusive min (10) and max (20) boundaries",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "min": 10, "max": 20 }
+					}
+				},
+				{
+					"name": "both_exclusive_int",
+					"description": "Integer with exclusive min (5) and max (15) boundaries",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "exclusiveMin": 5, "exclusiveMax": 15 }
+					}
+				},
+				{
+					"name": "mixed_min_inclusive_max_exclusive_int",
+					"description": "Integer with inclusive min (0) and exclusive max (10)",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "min": 0, "exclusiveMax": 10 }
+					}
+				},
+				{
+					"name": "mixed_min_exclusive_max_inclusive_int",
+					"description": "Integer with exclusive min (0) and inclusive max (100)",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "exclusiveMin": 0, "max": 100 }
+					}
+				},
+				{
+					"name": "only_inclusive_min_int",
+					"description": "Integer with only inclusive minimum (18)",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "min": 18 }
+					}
+				},
+				{
+					"name": "only_inclusive_max_int",
+					"description": "Integer with only inclusive maximum (65)",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "max": 65 }
+					}
+				},
+				{
+					"name": "only_exclusive_min_int",
+					"description": "Integer with only exclusive minimum (0)",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "exclusiveMin": 0 }
+					}
+				},
+				{
+					"name": "only_exclusive_max_int",
+					"description": "Integer with only exclusive maximum (1000)",
+					"valueType": "integer",
+					"restrictions": {
+						"range": { "exclusiveMax": 1000 }
+					}
+				},
+				{
+					"name": "both_inclusive_number",
+					"description": "Number with inclusive min (0.5) and max (99.9) boundaries",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "min": 0.5, "max": 99.9 }
+					}
+				},
+				{
+					"name": "both_exclusive_number",
+					"description": "Number with exclusive min (0.0) and max (100.0) boundaries",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "exclusiveMin": 0.0, "exclusiveMax": 100.0 }
+					}
+				},
+				{
+					"name": "mixed_min_inclusive_max_exclusive_number",
+					"description": "Number with inclusive min (1.0) and exclusive max (10.0)",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "min": 1.0, "exclusiveMax": 10.0 }
+					}
+				},
+				{
+					"name": "mixed_min_exclusive_max_inclusive_number",
+					"description": "Number with exclusive min (-1.0) and inclusive max (1.0)",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "exclusiveMin": -1.0, "max": 1.0 }
+					}
+				},
+				{
+					"name": "only_inclusive_min_number",
+					"description": "Number with only inclusive minimum (0.0)",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "min": 0.0 }
+					}
+				},
+				{
+					"name": "only_inclusive_max_number",
+					"description": "Number with only inclusive maximum (100.0)",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "max": 100.0 }
+					}
+				},
+				{
+					"name": "only_exclusive_min_number",
+					"description": "Number with only exclusive minimum (0.0)",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "exclusiveMin": 0.0 }
+					}
+				},
+				{
+					"name": "only_exclusive_max_number",
+					"description": "Number with only exclusive maximum (1.0)",
+					"valueType": "number",
+					"restrictions": {
+						"range": { "exclusiveMax": 1.0 }
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["record_id"]
+			}
+		}
+	]
+}

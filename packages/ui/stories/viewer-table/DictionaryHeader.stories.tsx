@@ -1,6 +1,5 @@
 /** @jsxImportSource @emotion/react */
 
-// import { DictionaryHeader } from '#/viewer-table/DictionaryHeader';
 import type { Meta, StoryObj } from '@storybook/react';
 import { pick } from 'lodash';
 import DictionaryHeader from '../../src/viewer-table/DictionaryHeader';
@@ -18,12 +17,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const AllHeaderProperties: Story = {
-	// args: { name: sampleDictionary.name, version: sampleDictionary.name, description: sampleDictionary.description },
 	args: { ...pick(biosampleDictionary, 'name', 'version', 'description') },
 };
 
 export const NoVersion: Story = {
-	// args: { name: sampleDictionary.name, version: sampleDictionary.name, description: sampleDictionary.description },
 	args: { ...pick(biosampleDictionary, 'name', 'description') },
 };
 export const NoDescription: Story = {

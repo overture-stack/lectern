@@ -22,28 +22,32 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
+
 import { Row, flexRender } from '@tanstack/react-table';
 
-import ReadMoreText from '../../common/ReadMoreText';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-const rowStyle = (index: number) => css`
-	background-color: ${index % 2 === 0 ? '' : '#F5F7F8'};
+const rowStyle = (index: number, theme: Theme) => css`
+	background-color: ${index % 2 === 0 ? theme.colors.white : theme.colors.background_alternate};
 `;
 
 const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
-	${theme.typography.data}
+	${theme.typography.paragraphSmall}
 	padding: 12px;
 	max-width: 30vw;
-	vertical-align: top;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+	word-break: break-word;
+	text-align: ${cellIndex === 1 || cellIndex === 2 ? 'center' : 'left'};
+	vertical-align: middle;
 	${cellIndex === 0 &&
 	`
 		position: sticky;
 		left: 0;
-		background-color: ${rowIndex % 2 === 0 ? 'white' : '#F5F7F8'};
+		background-color: ${rowIndex % 2 === 0 ? theme.colors.white : theme.colors.background_alternate};
 	`}
-	border: 1px solid #DCDDE1;
+	border: 1px solid ${theme.colors.border_light};
 `;
 
 export type TableRowProps<T> = {
@@ -54,21 +58,11 @@ export type TableRowProps<T> = {
 const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
 	const theme = useThemeContext();
 	return (
-		<tr key={row.id} css={rowStyle(index)}>
+		<tr key={row.id} css={rowStyle(index, theme)}>
 			{row.getVisibleCells().map((cell, cellIndex) => {
 				return (
 					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>
-						<ReadMoreText
-							expandedText="Show Less"
-							collapsedText="Show All"
-							wrapperStyle={() => css`
-								${theme.typography.data}
-								white-space: pre-wrap;
-							`}
-							maxLines={4}
-						>
-							{flexRender(cell.column.columnDef.cell, cell.getContext())}
-						</ReadMoreText>
+						{flexRender(cell.column.columnDef.cell, cell.getContext())}
 					</td>
 				);
 			})}

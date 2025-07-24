@@ -27,7 +27,17 @@ const rightShadow = `
   box-shadow: 3px 0 5px -2px rgba(0, 0, 0, 0.1), 3px 0 5px -2px rgba(0, 0, 0, 0.08);
 `;
 
+// Shadow colors for gradients and effects
+const subtle = 'rgba(70,63,63,0.05)';
+const medium = 'rgba(0, 0, 0, 0.05)';
+const standard = 'rgba(0, 0, 0, 0.1)';
+const accordion = 'rgba(0,0,0,0.1)';
+
 export default {
 	default: defaultShadow,
 	right: rightShadow,
+	subtle,
+	medium,
+	standard,
+	accordion,
 };

@@ -22,19 +22,19 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import AccordionItem from './AccordionItem';
 
 export type AccordionData = {
 	title: string;
-	openOnInit: boolean;
 	description?: string;
 	content: ReactNode;
 	schemaName: string;
 };
 export type AccordionProps = {
 	accordionItems: Array<AccordionData>;
+	collapseAll: boolean;
 };
 
 export type AccordionOpenState = {
@@ -93,10 +93,42 @@ const accordionStyle = css`
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
+	cursor: pointer;
 `;
 
-const Accordion = ({ accordionItems }: AccordionProps) => {
-	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map((item) => item.openOnInit));
+/**
+ *
+ * @param accordionItems - Array of accordion items to render
+ * @param collapseAll - Controls initial state and dynamic collapse/expand of all items. true = collapsed, false = expanded
+ *
+ * @example
+ * ```tsx
+ * const schemaItems = [
+ *   {
+ *     title: "Patient Demographics",
+ *     description: "Core patient information fields",
+ *     content: <SchemaTable schema={demographicsSchema} />,
+ *     schemaName: "patient_demographics"
+ *   },
+ *   {
+ *     title: "Medical History",
+ *     description: "Historical medical data and conditions",
+ *     content: <SchemaTable schema={historySchema} />,
+ *     schemaName: "medical_history"
+ *   }
+ * ];
+ *
+ * <Accordion accordionItems={schemaItems} collapseAll={true} />
+ * ```
+ */
+
+const Accordion = ({ accordionItems, collapseAll }: AccordionProps) => {
+	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map(() => !collapseAll));
+
+	useEffect(() => {
+		setOpenStates(accordionItems.map(() => !collapseAll));
+	}, [collapseAll]);
+
 	const handleToggle = (index: number) => {
 		setOpenStates((prev) => prev.map((isOpen, i) => (i === index ? !isOpen : isOpen)));
 	};

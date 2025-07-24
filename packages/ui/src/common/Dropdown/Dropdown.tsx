@@ -43,9 +43,9 @@ const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?:
 	width: ${width || 'auto'};
 	min-width: fit-content;
 	padding: 8px 16px;
-	background-color: #f7f7f7;
+	background-color: ${theme.colors.background_light};
 	color: ${theme.colors.accent_dark};
-	border: 1px solid #beb2b294;
+	border: 2px solid ${theme.colors.border_button};
 	border-radius: 9px;
 	height: 42px;
 	box-sizing: border-box;
@@ -68,20 +68,24 @@ const chevronStyle = (open: boolean) => css`
 `;
 
 const dropDownTitleStyle = (theme: Theme) => css`
-	${theme.typography?.button};
+	${theme.typography?.buttonText};
 	color: ${theme.colors.accent_dark};
 `;
 
 const dropdownMenuStyle = (theme: Theme) => css`
-	${theme.typography?.button};
+	all: unset;
+	${theme.typography?.subtitleSecondary};
 	position: absolute;
 	top: calc(100% + 5px);
 	width: 100%;
-	background-color: #f7f7f7;
-	border: 1px solid #beb2b294;
+	background-color: ${theme.colors.background_light};
+	border: 2px solid ${theme.colors.border_button};
 	padding-top: 5px;
 	border-radius: 9px;
 	padding-bottom: 5px;
+	z-index: 100;
+	max-height: 150px;
+	overflow-y: auto;
 `;
 
 type MenuItem = {
@@ -128,7 +132,7 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDow
 
 	const renderMenuItems = () => {
 		return menuItems.map(({ label, action }) => (
-			<DropDownItem key={label} action={action}>
+			<DropDownItem key={label} action={action} onItemClick={() => setOpen(false)}>
 				{label}
 			</DropDownItem>
 		));
@@ -136,15 +140,22 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDow
 
 	return (
 		<div ref={dropdownRef} css={parentStyle}>
-			<div>
-				<div css={dropdownButtonStyle({ theme, disabled })} onClick={handleToggle}>
-					{leftIcon}
-					<span css={dropDownTitleStyle(theme)}>{title}</span>
-					<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} style={chevronStyle(open)} />
-				</div>
-
-				{open && !disabled && <div css={dropdownMenuStyle(theme)}>{renderMenuItems()}</div>}
-			</div>
+			<button
+				css={dropdownButtonStyle({ theme, disabled })}
+				onClick={handleToggle}
+				aria-haspopup="menu"
+				aria-expanded={open}
+				disabled={disabled}
+			>
+				{leftIcon}
+				<span css={dropDownTitleStyle(theme)}>{title}</span>
+				<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} style={chevronStyle(open)} />
+			</button>
+			{open && !disabled && (
+				<menu role="menu" css={dropdownMenuStyle(theme)}>
+					{renderMenuItems()}
+				</menu>
+			)}
 		</div>
 	);
 };

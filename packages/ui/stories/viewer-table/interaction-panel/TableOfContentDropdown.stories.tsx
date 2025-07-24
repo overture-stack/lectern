@@ -4,7 +4,7 @@ import { Schema } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import TableOfContentsDropdown from '../../../src/viewer-table/InteractionPanel/TableOfContentsDropdown';
-import Dictionary from '../../fixtures/TorontoMapleLeafs.json';
+import Dictionary from '../../fixtures/pcgl.json';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
@@ -17,10 +17,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Using the primitiveJson as a mock schema for demonstration purposes
 const schemas: Schema[] = Dictionary.schemas as Schema[];
-
-// Mock functions for the story just to demonstrate interaction
 
 const onSelect = (schemaIndex: number) => {
 	alert(`Accordion has been toggled for the following schema: ${schemas[schemaIndex].name}`);

@@ -28,18 +28,16 @@ import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 const thStyle = (theme: Theme, index: number) => css`
-	${theme.typography.heading};
-	background: #e5edf3;
-	text-align: left;
+	${theme.typography.tableHeader};
+	text-align: ${index === 0 || index === 3 ? 'left' : 'center'};
 	padding: 12px;
-	border-bottom: 1px solid #dcdcdc;
+	border-bottom: 1px solid ${theme.colors.border_medium};
 	${index === 0 &&
 	`
 		position: sticky;
 		left: 0;
-		background-color: #e5edf3;
 	`}
-	border: 1px solid #DCDDE1;
+	border: 1px solid ${theme.colors.border_light};
 `;
 
 export type TableHeaderProps<T> = {

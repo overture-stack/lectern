@@ -27,22 +27,22 @@ const customStyles = (theme: Theme): Styles => ({
 		padding: 0,
 		overflow: 'hidden',
 		borderRadius: '8px',
-		boxShadow: `0 2px 6px rgba(70,63,63,0.05), 0 0 0 0.3px ${theme.colors.black}`,
+		boxShadow: `0 2px 6px ${theme.shadow.subtle}, 0 0 0 0.3px ${theme.colors.black}`,
 		transition: 'all 0.3s ease',
 	},
 	overlay: {
-		backgroundColor: 'rgba(0,28,61,0.8)',
+		backgroundColor: theme.colors.background_overlay,
 		zIndex: 1000,
 	},
 });
 
 const headerStyle = (theme: Theme) => css`
-	${theme.typography.heading}
+	${theme.typography.title}
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	padding: 16px;
-	border-bottom: 1px solid #d3d3d3;
+	border-bottom: 1px solid ${theme.colors.border_subtle};
 	background: ${theme.colors.white};
 `;
 

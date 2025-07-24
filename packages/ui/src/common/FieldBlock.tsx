@@ -31,20 +31,19 @@ export interface InlineCodeProps {
 }
 
 const fieldBlockStyles = (theme: Theme) => css`
-	${theme.typography.data}
+	${theme.typography.fieldBlock}
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 4px;
 	padding: 2px 5px;
 	border-radius: 3px;
-	background-color: #ececec;
-	border: 0.5px solid black;
+	background-color: ${theme.colors.background_muted};
+	border: 0.5px solid ${theme.colors.black};
 	transition: all 0.2s ease-in-out;
 	width: fit-content;
 	text-align: center;
 	color: ${theme.colors.accent_dark};
-	font-family: 'DM Mono', monospace;
 `;
 
 const FieldBlock = ({ children, style }: InlineCodeProps) => {

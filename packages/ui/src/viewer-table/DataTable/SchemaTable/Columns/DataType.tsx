@@ -19,14 +19,21 @@
 
 /** @jsxImportSource @emotion/react */
 
+import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
-
-import Pill from '../../../../common/Pill';
+import { useThemeContext } from '../../../../theme/ThemeContext';
 
 export const renderDataTypeColumn = (schemaField: SchemaField) => {
+	const theme = useThemeContext();
 	return (
-		<Pill>
-			{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
-		</Pill>
+		<div
+			css={css`
+				${theme.typography.body}
+			`}
+		>
+			<b>
+				{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
+			</b>
+		</div>
 	);
 };
