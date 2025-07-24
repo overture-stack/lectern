@@ -7,7 +7,7 @@ import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: ConditionalLogicModal,
-	title: 'ConditionalLogic/ConditionalLogicModal',
+	title: 'Viewer Table/Conditional Modal/ConditionalLogicModal',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
 } satisfies Meta<typeof ConditionalLogicModal>;

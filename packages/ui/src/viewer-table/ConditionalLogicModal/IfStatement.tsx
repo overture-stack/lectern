@@ -17,9 +17,41 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** @jsxImportSource @emotion/react */
+import { ConditionalRestrictionTest } from '@overture-stack/lectern-dictionary';
 import React from 'react';
 
-export type ConditionBlockProps = {};
-export const ConditionBlock = ({}: ConditionBlockProps) => {
-	return <div>Hello World</div>;
+import { css } from '@emotion/react';
+import { useThemeContext } from '../../theme/ThemeContext';
+import { ConditionalRestrictionDetails } from './ConditionalRestrictionDetails';
+import { Theme } from '../../theme';
+
+export type IfStatementProps = {
+	ifStatement: ConditionalRestrictionTest;
+};
+
+const containerStyle = (theme: Theme) => css`
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+	align-items: center;
+	color: ${theme.colors.black};
+	${theme.typography.paragraphSmall}
+`;
+
+export const IfStatement = ({ ifStatement }: IfStatementProps) => {
+	const theme: Theme = useThemeContext();
+	if (ifStatement.case === undefined) {
+		return <div></div>;
+	}
+
+	const ConditionalRestrictionDetailsComponent = ConditionalRestrictionDetails(
+		ifStatement.conditions,
+		ifStatement.case,
+	);
+	return (
+		<div css={containerStyle(theme)}>
+			<b>IF</b> the field(s){ConditionalRestrictionDetailsComponent}
+		</div>
+	);
 };

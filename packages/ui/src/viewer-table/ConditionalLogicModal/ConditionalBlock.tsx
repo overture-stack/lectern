@@ -28,6 +28,7 @@ export type ConditionStatement = {
 	indentLevel: number;
 	Condition: ReactNode;
 };
+
 export type ConditionalBlockProps = {
 	conditionStatements: Array<ConditionStatement>;
 };
@@ -40,12 +41,22 @@ const containerStyle = (theme: Theme) => css`
 	background-color: ${theme.colors.accent_1};
 	min-height: 120px;
 `;
+
+const conditionItemStyle = (indentLevel: number) => css`
+	margin-left: ${indentLevel * 20}px;
+`;
+
 export const ConditionalBlock = ({ conditionStatements }: ConditionalBlockProps) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	return (
 		<div css={containerStyle(theme)}>
-			<div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</div>
-			<div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</div>
+			{conditionStatements.map((item, index) => {
+				return (
+					<div key={index} css={conditionItemStyle(item.indentLevel)}>
+						{item.Condition}
+					</div>
+				);
+			})}
 		</div>
 	);
 };

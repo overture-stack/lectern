@@ -26,4 +26,6 @@ import React from 'react';
 
 export type ElseConditionProps = {};
 
-export const ElseCondition = () => {};
+export const ElseCondition = () => {
+	return <div>ElseCondition</div>;
+};

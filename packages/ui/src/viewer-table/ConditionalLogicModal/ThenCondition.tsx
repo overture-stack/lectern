@@ -21,6 +21,6 @@ import React from 'react';
 
 export type ThenConditionProps = {};
 
-export const ThenCondition = ({}: ThenConditionProps) => {
-	return <div>Hello World</div>;
+export const ThenCondition = () => {
+	return <div>ThenCondition</div>;
 };

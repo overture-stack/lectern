@@ -42,8 +42,9 @@ const fieldBlockStyles = (theme: Theme) => css`
 	border: 0.5px solid ${theme.colors.black};
 	transition: all 0.2s ease-in-out;
 	width: fit-content;
-	text-align: center;
+	align-self: center;
 	color: ${theme.colors.accent_dark};
+	vertical-align: center;
 `;
 
 const FieldBlock = ({ children, style }: InlineCodeProps) => {
