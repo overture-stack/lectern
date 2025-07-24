@@ -28,7 +28,7 @@ export const renderDataTypeColumn = (schemaField: SchemaField) => {
 	return (
 		<div
 			css={css`
-				${theme.typography.subheading}
+				${theme.typography.paragraphSmallBold}
 			`}
 		>
 			{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
