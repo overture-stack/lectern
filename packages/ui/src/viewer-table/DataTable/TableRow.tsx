@@ -62,14 +62,7 @@ const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
 			{row.getVisibleCells().map((cell, cellIndex) => {
 				return (
 					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>
-						<div
-							css={css`
-								${theme.typography.data}
-								white-space: pre-wrap;
-							`}
-						>
-							{flexRender(cell.column.columnDef.cell, cell.getContext())}
-						</div>
+						{flexRender(cell.column.columnDef.cell, cell.getContext())}
 					</td>
 				);
 			})}

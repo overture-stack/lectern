@@ -20,13 +20,10 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
-import { useThemeContext } from '../../../../theme/ThemeContext';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
 export const renderDataTypeColumn = (schemaField: SchemaField) => {
-	const theme = useThemeContext();
 	const theme = useThemeContext();
 	return (
 		<div
