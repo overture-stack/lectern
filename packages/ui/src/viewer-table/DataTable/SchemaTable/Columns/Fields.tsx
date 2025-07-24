@@ -21,28 +21,19 @@
 
 import { css } from '@emotion/react';
 import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary';
-import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary';
 import { Row } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
-import ReadMoreText from '../../../../common/ReadMoreText';
 import ReadMoreText from '../../../../common/ReadMoreText';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
 const fieldContainerStyle = (theme: Theme) => css`
+	${theme.typography.data}
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 	text-align: left;
-`;
-
-const fieldNameStyle = (theme: Theme) => css`
-	${theme.typography.body}
-`;
-
-const fieldDescriptionStyle = (theme: Theme) => css`
-	${theme.typography.paragraphSmall}
 `;
 
 export type FieldExamplesProps = {
@@ -121,18 +112,14 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 
 	return (
 		<ReadMoreText wrapperStyle={() => fieldContainerStyle(theme)}>
-			<div css={fieldNameStyle(theme)}>
-				<b>{fieldName}</b>
-			</div>
-			{fieldDescription && <p css={fieldDescriptionStyle(theme)}>{fieldDescription}</p>}
+			<b>{fieldName}</b>
+			{fieldDescription && <p>{fieldDescription}</p>}
 			{fieldExamples && (
-				<div css={fieldDescriptionStyle(theme)}>
+				<div>
 					<b>Example(s): </b>
 					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
 				</div>
-				</div>
 			)}
-		</ReadMoreText>
 		</ReadMoreText>
 	);
 };
