@@ -24,7 +24,9 @@ import { extractAccessTokenFromHeader, fetchUserData } from '../external/pcglAut
 import { authConfig } from '../config/authConfig';
 
 /**
- * Middleware to handle authentication
+ * Admin authorization middleware
+ * Fetches user data from authz and will check if user has admin groups associated with the user
+ * If auth is disabled, it will skip the fetch from authz. Only works with Bearer type authorization
  * @returns
  */
 export const authAdminMiddleware = () => {
