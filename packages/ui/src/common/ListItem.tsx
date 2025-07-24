@@ -18,40 +18,40 @@
  */
 
 /** @jsxImportSource @emotion/react */
-import { ConditionalRestrictionTest, ConditionalRestriction } from '@overture-stack/lectern-dictionary';
-import React from 'react';
 
-import { css } from '@emotion/react';
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
-import { ConditionalRestrictionDetails } from './ConditionalRestrictionDetails';
+import { CSSProperties, ReactNode } from 'react';
 
-export type IfStatementProps = {
-	ifStatement: ConditionalRestrictionTest;
-};
+import { Theme } from '../theme';
+import { useThemeContext } from '../theme/ThemeContext';
+import Pill from './Pill';
 
-const containerStyle = (theme: Theme) => css`
-	display: flex;
-	flex-direction: row;
-	gap: 4px;
-	align-items: center;
-	color: ${theme.colors.black};
-	${theme.typography.paragraphSmall}
-`;
+export interface ListItemProps {
+	children: ReactNode;
+}
 
-export const IfStatement = ({ ifStatement }: IfStatementProps) => {
+const getListItemStyles = (theme: Theme): CSSProperties => ({
+	fontSize: '13px',
+	fontWeight: 'normal',
+	lineHeight: '1',
+	fontFamily: "'DM Mono', monospace",
+	borderRadius: '8px',
+	width: 'fit-content',
+	maxWidth: 'none',
+	backgroundColor: '#ECECEC',
+	border: '0.5px solid black',
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'center',
+});
+
+const ListItem = ({ children }: ListItemProps) => {
 	const theme: Theme = useThemeContext();
-	if (ifStatement.case === undefined) {
-		return <div></div>;
-	}
 
-	const ConditionalRestrictionDetailsComponent = ConditionalRestrictionDetails(
-		ifStatement.conditions,
-		ifStatement.case,
-	);
 	return (
-		<div css={containerStyle(theme)}>
-			<b>IF</b> the field(s){ConditionalRestrictionDetailsComponent}
-		</div>
+		<Pill size="small" style={getListItemStyles(theme)}>
+			{children}
+		</Pill>
 	);
 };
+
+export default ListItem;
