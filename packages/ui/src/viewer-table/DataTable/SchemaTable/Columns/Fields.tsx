@@ -21,9 +21,11 @@
 
 import { css } from '@emotion/react';
 import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary';
+import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary';
 import { Row } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
+import ReadMoreText from '../../../../common/ReadMoreText';
 import ReadMoreText from '../../../../common/ReadMoreText';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
@@ -128,7 +130,9 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 					<b>Example(s): </b>
 					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
 				</div>
+				</div>
 			)}
+		</ReadMoreText>
 		</ReadMoreText>
 	);
 };

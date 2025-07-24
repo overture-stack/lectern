@@ -21,7 +21,9 @@
 
 import { css } from '@emotion/react';
 import { SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
+import { useThemeContext } from '../../../../theme/ThemeContext';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 import OpenModalButton from '../../../OpenModalButton';
 
@@ -35,6 +37,8 @@ const containerStyle = css`
 	gap: 10px;
 `;
 
+export const renderAttributesColumn = (schemaFieldRestrictions: SchemaFieldRestrictions) => {
+	const theme = useThemeContext();
 export const renderAttributesColumn = (schemaFieldRestrictions: SchemaFieldRestrictions) => {
 	const theme = useThemeContext();
 	return (

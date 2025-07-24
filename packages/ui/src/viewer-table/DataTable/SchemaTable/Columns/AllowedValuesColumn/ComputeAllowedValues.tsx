@@ -356,7 +356,7 @@ const handleKeys = (restrictions: SchemaRestrictions, currentSchemaField: Schema
 			condition: isCompoundUniqueKey,
 			content: (
 				<span>
-					<b>Must be unique in combination with:</b>{' '}
+					Must be unique in combination with:{' '}
 					{uniqueKeys
 						?.filter((key) => key !== currentSchemaField.name)
 						.map((key) => <FieldBlock key={key}>{key}</FieldBlock>)}
