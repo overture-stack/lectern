@@ -20,23 +20,18 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
-import { useThemeContext } from '../../../../theme/ThemeContext';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
 export const renderDataTypeColumn = (schemaField: SchemaField) => {
 	const theme = useThemeContext();
-	const theme = useThemeContext();
 	return (
 		<div
 			css={css`
-				${theme.typography.body}
+				${theme.typography.subheading}
 			`}
 		>
-			<b>
-				{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
-			</b>
+			{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
 		</div>
 	);
 };

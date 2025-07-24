@@ -43,10 +43,10 @@ export const renderAttributesColumn = (schemaFieldRestrictions: SchemaFieldRestr
 				<OpenModalButton onClick={() => alert('Hello World')}>Required When</OpenModalButton>
 			:	<div
 					css={css`
-						${theme.typography.body}
+						${theme.typography.subheading}
 					`}
 				>
-					<b>{schemaFieldRestrictions && 'required' in schemaFieldRestrictions ? 'Required' : 'Optional'}</b>
+					{schemaFieldRestrictions && 'required' in schemaFieldRestrictions ? 'Required' : 'Optional'}
 				</div>
 			}
 		</div>
