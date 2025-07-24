@@ -1,16 +1,71 @@
+/*
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ *  This program and the accompanying materials are made available under the terms of
+ *  the GNU Affero General Public License v3.0. You should have received a copy of the
+ *  GNU Affero General Public License along with this program.
+ *   If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ *  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ *  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/** @jsxImportSource @emotion/react */
+
+import { css } from '@emotion/react';
+import React from 'react';
 import Modal from '../../common/Modal';
+import { ConditionalBlock } from './ConditionalBlock';
 
 export type ConditionalLogicModalProps = {
 	setIsOpen: (isOpen: boolean) => void;
 	isOpen: boolean;
 };
 
-const ConditionalLogicModal = ({ setIsOpen, isOpen }: ConditionalLogicModalProps) => {
+/**
+ * Modal for displaying conditional logic details.
+ * @param {Object} props - Modal properties.
+ * @param {(isOpen: boolean) => void} props.setIsOpen - Function to set the modal open state.
+ * @param {boolean} props.isOpen - Whether the modal is open.
+ * @returns {JSX.Element} A Modal component containing conditional logic content.
+ */
+
+export const ConditionalLogicModal = ({ setIsOpen, isOpen }: ConditionalLogicModalProps) => {
 	return (
-		<Modal title="ConditionalLogic" setIsOpen={setIsOpen} isOpen={isOpen}>
-			<p>Hello World</p>
+		<Modal title="Conditional Logic" setIsOpen={setIsOpen} isOpen={isOpen}>
+			<div
+				css={css`
+					display: flex;
+					flex-direction: column;
+					gap: 15px;
+				`}
+			>
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+				<ConditionalBlock conditionStatements={[]} />
+			</div>
 		</Modal>
 	);
 };
-
-export default ConditionalLogicModal;
