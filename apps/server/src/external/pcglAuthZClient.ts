@@ -25,6 +25,7 @@ import { UserDataResponseErrorType } from '../common/types/auth';
 import { Groups, userDataResponseSchema, UserDataResponseSchemaType } from '../common/validation/auth-validation';
 import { authConfig } from '../config/authConfig';
 import logger from '../config/logger';
+import urlJoin from 'url-join';
 
 /**
  *  Function to perform fetch requests to AUTHZ service
@@ -33,18 +34,17 @@ import logger from '../config/logger';
  * @param options additional request configurations for the fetch call
  *
  */
-
 const fetchAuthZResource = async (resource: string, token: string, options?: RequestInit) => {
 	const { AUTHZ_ENDPOINT } = authConfig;
 
-	const url = new URL(resource, AUTHZ_ENDPOINT);
+	const url = urlJoin(AUTHZ_ENDPOINT, resource);
 	const headers = new Headers({
 		Authorization: `Bearer ${token}`,
 		'Content-Type': 'application/json',
 	});
 
 	try {
-		return await fetch(url.href.toString(), { headers, ...options });
+		return await fetch(url, { headers, ...options });
 	} catch (error) {
 		logger.error(`Bad request: Error occurred during fetch`, error);
 		throw new InternalServerError(`Bad request: Something went wrong fetching from authz service`);
