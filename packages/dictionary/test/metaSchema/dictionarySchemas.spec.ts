@@ -206,7 +206,7 @@ describe('Dictionary Schemas', () => {
 					};
 					expect(SchemaField.safeParse(field).success).true;
 				});
-			it (' Field displayName is optional', () => {
+			it ('Field displayName is optional', () => {
 					const field: SchemaField = {
 						name: 'some-name',
 						valueType: 'string',
