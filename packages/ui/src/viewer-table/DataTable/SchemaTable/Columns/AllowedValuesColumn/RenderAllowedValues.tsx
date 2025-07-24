@@ -50,9 +50,7 @@ const renderRestrictionItem = (value: RestrictionItem, key: string): ReactNode =
 	return (
 		<div key={key} css={restrictionItemStyle}>
 			<b>{prefix}</b>
-			{content.length > 0 && (
-				<ReadMoreText wrapperStyle={() => codeListContentStyle}>{content.join('\n')}</ReadMoreText>
-			)}
+			{content.length > 0 && <ReadMoreText wrapperStyle={codeListContentStyle}>{content.join('\n')}</ReadMoreText>}
 		</div>
 	);
 };
@@ -68,7 +66,7 @@ export const renderAllowedValuesColumn = (
 	}
 
 	return (
-		<ReadMoreText maxLines={3} wrapperStyle={() => allowedValuesContainerStyle}>
+		<ReadMoreText maxLines={3} wrapperStyle={allowedValuesContainerStyle}>
 			{Object.entries(items).map(([key, value]) => {
 				return (
 					value ?

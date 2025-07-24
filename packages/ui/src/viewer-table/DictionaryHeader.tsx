@@ -20,7 +20,9 @@
  */
 
 /** @jsxImportSource @emotion/react */
+
 import { css } from '@emotion/react';
+
 import ReadMoreText from '../common/ReadMoreText';
 import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
@@ -77,7 +79,7 @@ const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps)
 			{description && (
 				<ReadMoreText
 					maxLines={2}
-					wrapperStyle={descriptionWrapperStyle}
+					wrapperStyle={descriptionWrapperStyle(theme)}
 					expandedText="Read less"
 					collapsedText="Show more"
 				>

@@ -21,7 +21,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
+import { css, SerializedStyles } from '@emotion/react';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import type { Theme } from '../theme';
@@ -30,18 +30,18 @@ import { useThemeContext } from '../theme/ThemeContext';
 export type ReadMoreTextProps = {
 	children: ReactNode;
 	maxLines?: number;
-	wrapperStyle?: (theme: Theme) => any;
+	wrapperStyle?: SerializedStyles;
 	onToggleClick?: (e: React.MouseEvent) => void;
 	expandedText?: string;
 	collapsedText?: string;
 };
 
-const defaultWrapperStyle = (theme: Theme) => css`
+const containerStyle = (theme: Theme, wrapperStyle?: SerializedStyles) => css`
 	${theme.typography.paragraphSmall};
 	color: ${theme.colors.black};
-	padding: 4px 8px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
+	${wrapperStyle}
 `;
 
 const linkStyle = (theme: Theme) => css`
@@ -113,14 +113,11 @@ const ReadMoreText = ({
 		}
 	};
 
-	const appliedWrapperStyle = wrapperStyle || defaultWrapperStyle;
-
 	return (
-		<div css={appliedWrapperStyle(theme)}>
+		<div css={containerStyle(theme, wrapperStyle)}>
 			<div ref={contentRef} css={clampingLogic(isExpanded, maxLines)}>
 				{children}
 			</div>
-
 			{isTruncated && (
 				<button onClick={handleToggle} css={linkStyle(theme)}>
 					{isExpanded ? expandedText : collapsedText}

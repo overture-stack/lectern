@@ -110,7 +110,7 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const theme: Theme = useThemeContext();
 
 	return (
-		<ReadMoreText wrapperStyle={() => fieldContainerStyle(theme)}>
+		<ReadMoreText wrapperStyle={fieldContainerStyle(theme)}>
 			<b>{fieldName}</b>
 			{fieldDescription && <p>{fieldDescription}</p>}
 			{fieldExamples && (
