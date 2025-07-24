@@ -20,33 +20,23 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { DictionaryMeta, SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary';
 import { Row } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
-import Pill from '../../../../common/Pill';
+import ReadMoreText from '../../../../common/ReadMoreText';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
-const fieldContainerStyle = css`
+const fieldContainerStyle = (theme: Theme) => css`
+	${theme.typography.data}
 	display: flex;
 	flex-direction: column;
 	gap: 3px;
 `;
 
-const fieldNameStyle = (theme: Theme) => css`
-	${theme.typography.label}
-	display: flex;
-	align-items: center;
-	gap: 2px;
-`;
-
 export type FieldExamplesProps = {
 	examples: DictionaryMeta[keyof DictionaryMeta];
-	// Another implementation of this would be
-	// examples: DictionaryMetaValue | DictionaryMeta;
-	// Another approach would be
-	// examples: DictionaryMeta[string];
 	theme: Theme;
 };
 
@@ -115,34 +105,20 @@ const useClipboard = () => {
 
 export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const fieldName = fieldRow.original.name;
-	const fieldIndex = fieldRow.index;
 	const fieldDescription = fieldRow.original.description;
 	const fieldExamples = fieldRow.original.meta?.examples;
-
-	const fieldRestrictions: SchemaFieldRestrictions = fieldRow.original.restrictions;
-
-	// TODO: not sure why they are unknown types
-	const uniqueKey = fieldRestrictions && 'uniqueKey' in fieldRestrictions ? fieldRestrictions.uniqueKey : undefined;
-	const foreignKey =
-		fieldRestrictions && 'foreignKey' in fieldRestrictions && fieldRestrictions.foreignKey ?
-			fieldRestrictions.foreignKey
-		:	undefined;
 	const theme: Theme = useThemeContext();
 
 	return (
-		<div id={fieldIndex.toString()} css={fieldContainerStyle}>
-			<span css={fieldNameStyle(theme)}>
-				{fieldName} {Array.isArray(uniqueKey) && uniqueKey.length === 1 && <Pill size="extra-small">Primary Key</Pill>}
-				{Array.isArray(uniqueKey) && <Pill size="small">Compound Key</Pill>}
-				{foreignKey && <Pill size="extra-small">Foreign Key</Pill>}
-			</span>
-			{fieldDescription && <span>{fieldDescription}</span>}
+		<ReadMoreText wrapperStyle={() => fieldContainerStyle(theme)}>
+			<b>{fieldName}</b>
+			{fieldDescription && <p>{fieldDescription}</p>}
 			{fieldExamples && (
-				<span>
-					<strong>Example(s): </strong>
+				<div>
+					<b>Example(s): </b>
 					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
-				</span>
+				</div>
 			)}
-		</div>
+		</ReadMoreText>
 	);
 };
