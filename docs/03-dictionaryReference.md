@@ -78,6 +78,7 @@ At the schema-level descriptions and metadata can also be optionally added.
 | Property      | Type     | Required | Description                                                        |
 | ------------- | -------- | -------- | ------------------------------------------------------------------ |
 | `name`        | `string` | ✓        | The schema identifier (no spaces or dots)                          |
+| `displayName` | `string` | ✗        | A human-readable name for UI display. Can contain periods.         |
 | `fields`      | `Array`  | ✓        | List of field definitions, see [Field Structure](#field-structure) |
 | `description` | `string` | ✗        | A human-readable description                                       |
 | `meta`        | `object` | ✗        | Any custom defined metadata fields                                 |
@@ -142,6 +143,7 @@ At the field-level the following properties can also be included:
 | Property       | Type           | Required | Default | Description                                                                                              |
 | -------------- | -------------- | -------- | ------- | -------------------------------------------------------------------------------------------------------- |
 | `name`         | `string`       | ✓        | -       | Field identifier (used as a column header)                                                               |
+| `displayName`  | `string`        | ✗        | -       | A human-readable name for UI display. Can contain periods.  |
 | `description`  | `string`       | ✗        | `""`    | Human-readable description                                                                               |
 | `valueType`    | `string`       | ✓        | -       | Data type: `string`, `integer`, `number`, `boolean`                                                      |
 | `isArray`      | `boolean`      | ✗        | `false` | Whether field accepts multiple values                                                                    |
@@ -149,6 +151,33 @@ At the field-level the following properties can also be included:
 | `unique`       | `boolean`      | ✗        | `false` | Whether values must be unique across records                                                             |
 | `restrictions` | `object/array` | ✗        | `{}`    | Where the validation rules/logic for the field is defined, see [Field Restrictions](#field-restrictions) |
 | `meta`         | `object`       | ✗        | `{}`    | Any custom defined metadata fields                                                                       |
+
+### Display Name Example
+
+The `displayName` property allows for more user-friendly names in UIs while maintaining technical compatibility with the restricted `name` property:
+
+```json
+{
+  "name": "patient_schema",
+  "displayName": "Patient Information",
+  "fields": [
+    {
+      "name": "patient_id",
+      "displayName": "Patient ID Number",
+      "valueType": "string"
+    },
+    {
+      "name": "dob",
+      "displayName": "Date of Birth",
+      "valueType": "string"
+    },
+    {
+      "name": "disease_stage",
+      "displayName": "Disease Stage (I-IV)",
+      "valueType": "string"
+    }
+  ]
+}
 
 ## Field Restrictions
 
