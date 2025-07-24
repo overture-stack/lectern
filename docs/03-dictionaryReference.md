@@ -143,7 +143,7 @@ At the field-level the following properties can also be included:
 | Property       | Type           | Required | Default | Description                                                                                              |
 | -------------- | -------------- | -------- | ------- | -------------------------------------------------------------------------------------------------------- |
 | `name`         | `string`       | ✓        | -       | Field identifier (used as a column header)                                                               |
-| `displayName`  | `string`        | ✗        | -       | A human-readable name for UI display. Can contain periods.  |
+| `displayName`  | `string`       | ✗        | -       | A human-readable name for UI display. Can contain periods.                                               |
 | `description`  | `string`       | ✗        | `""`    | Human-readable description                                                                               |
 | `valueType`    | `string`       | ✓        | -       | Data type: `string`, `integer`, `number`, `boolean`                                                      |
 | `isArray`      | `boolean`      | ✗        | `false` | Whether field accepts multiple values                                                                    |
@@ -156,7 +156,7 @@ At the field-level the following properties can also be included:
 
 The `displayName` property allows for more user-friendly names in UIs while maintaining technical compatibility with the restricted `name` property:
 
-```json
+````json
 {
   "name": "patient_schema",
   "displayName": "Patient Information",
@@ -195,7 +195,7 @@ Field restrictions define the rules that field values must satisfy to be conside
     }
   }
 }
-```
+````
 
 :::note What this means:
 Age must be provided and must be between 0-150 years old.
@@ -212,9 +212,9 @@ Ensures a field has a value.
 
 ```json showLineNumbers
 {
-  "name": "patient_id",
-  "valueType": "string",
-  "restrictions": { "required": true }
+	"name": "patient_id",
+	"valueType": "string",
+	"restrictions": { "required": true }
 }
 ```
 
@@ -224,16 +224,11 @@ Restricts values to a predefined list of acceptable options.
 
 ```json showLineNumbers
 {
-  "name": "treatment_response",
-  "valueType": "string",
-  "restrictions": {
-    "codeList": [
-      "Complete Response",
-      "Partial Response",
-      "Stable Disease",
-      "Progressive Disease"
-    ]
-  }
+	"name": "treatment_response",
+	"valueType": "string",
+	"restrictions": {
+		"codeList": ["Complete Response", "Partial Response", "Stable Disease", "Progressive Disease"]
+	}
 }
 ```
 
@@ -247,11 +242,11 @@ Sets numeric boundaries for `integer` and `number` fields.
 
 ```json showLineNumbers
 {
-  "name": "age",
-  "valueType": "integer",
-  "restrictions": {
-    "range": { "min": 0, "max": 120 }
-  }
+	"name": "age",
+	"valueType": "integer",
+	"restrictions": {
+		"range": { "min": 0, "max": 120 }
+	}
 }
 ```
 
@@ -262,11 +257,11 @@ Sets numeric boundaries for `integer` and `number` fields.
 
 ```json showLineNumbers
 {
-  "name": "adult_age",
-  "valueType": "integer",
-  "restrictions": {
-    "range": { "min": 18, "exclusiveMax": 65 }
-  }
+	"name": "adult_age",
+	"valueType": "integer",
+	"restrictions": {
+		"range": { "min": 18, "exclusiveMax": 65 }
+	}
 }
 ```
 
@@ -280,11 +275,11 @@ Applies pattern matching validation to string fields.
 
 ```json showLineNumbers
 {
-  "name": "email",
-  "valueType": "string",
-  "restrictions": {
-    "regex": "^[\\w\\.-]+@[\\w\\.-]+\\.[a-zA-Z]{2,}$"
-  }
+	"name": "email",
+	"valueType": "string",
+	"restrictions": {
+		"regex": "^[\\w\\.-]+@[\\w\\.-]+\\.[a-zA-Z]{2,}$"
+	}
 }
 ```
 
@@ -292,20 +287,16 @@ For human readability we recommend using the `description` property and creating
 
 ```json showLineNumbers
 {
-  "name": "email",
-  "valueType": "string",
-  "description": "Contact email address for patient communication and records. Valid email format: username@domain.extension (minimum 2-letter extension). Accepts letters, numbers, dots, hyphens, and underscores in username and domain.",
-  "restrictions": {
-    "required": true,
-    "regex": "^[\\w\\.-]+@[\\w\\.-]+\\.[a-zA-Z]{2,}$"
-  },
-  "meta": {
-    "examples": [
-      "patient@example.com",
-      "john.doe@hospital.org",
-      "contact123@healthcare.gov"
-    ]
-  }
+	"name": "email",
+	"valueType": "string",
+	"description": "Contact email address for patient communication and records. Valid email format: username@domain.extension (minimum 2-letter extension). Accepts letters, numbers, dots, hyphens, and underscores in username and domain.",
+	"restrictions": {
+		"required": true,
+		"regex": "^[\\w\\.-]+@[\\w\\.-]+\\.[a-zA-Z]{2,}$"
+	},
+	"meta": {
+		"examples": ["patient@example.com", "john.doe@hospital.org", "contact123@healthcare.gov"]
+	}
 }
 ```
 
@@ -319,12 +310,12 @@ Count is an **array specific** condition that controls the number of elements al
 
 ```json showLineNumbers {4,6}
 {
-  "name": "medications",
-  "valueType": "string",
-  "isArray": true,
-  "restrictions": {
-    "count": { "min": 1, "max": 10 }
-  }
+	"name": "medications",
+	"valueType": "string",
+	"isArray": true,
+	"restrictions": {
+		"count": { "min": 1, "max": 10 }
+	}
 }
 ```
 
@@ -340,9 +331,9 @@ Requires a field to have no value.
 
 ```json showLineNumbers
 {
-  "name": "date_of_death",
-  "valueType": "string",
-  "restrictions": { "empty": true }
+	"name": "date_of_death",
+	"valueType": "string",
+	"restrictions": { "empty": true }
 }
 ```
 
@@ -357,17 +348,15 @@ The `empty` restriction becomes particularly useful when combined with [conditio
 
 ```json showLineNumbers
 {
-  "name": "date_of_death",
-  "valueType": "string",
-  "restrictions": {
-    "if": {
-      "conditions": [
-        { "fields": ["patient_status"], "match": { "value": "alive" } }
-      ]
-    },
-    "then": { "empty": true },
-    "else": { "required": true }
-  }
+	"name": "date_of_death",
+	"valueType": "string",
+	"restrictions": {
+		"if": {
+			"conditions": [{ "fields": ["patient_status"], "match": { "value": "alive" } }]
+		},
+		"then": { "empty": true },
+		"else": { "required": true }
+	}
 }
 ```
 
@@ -431,17 +420,15 @@ The `match` object defines what you're looking for:
 
 ```json showLineNumbers
 {
-  "name": "date_of_death",
-  "valueType": "string",
-  "restrictions": {
-    "if": {
-      "conditions": [
-        { "fields": ["patient_status"], "match": { "value": "deceased" } }
-      ]
-    },
-    "then": { "required": true },
-    "else": { "empty": true }
-  }
+	"name": "date_of_death",
+	"valueType": "string",
+	"restrictions": {
+		"if": {
+			"conditions": [{ "fields": ["patient_status"], "match": { "value": "deceased" } }]
+		},
+		"then": { "required": true },
+		"else": { "empty": true }
+	}
 }
 ```
 
@@ -455,18 +442,18 @@ When you need to check multiple conditions, use the `case` property to specify h
 
 ```json showLineNumbers
 {
-  "name": "treatment_details",
-  "valueType": "string",
-  "restrictions": {
-    "if": {
-      "conditions": [
-        { "fields": ["patient_status"], "match": { "value": "active" } },
-        { "fields": ["enrollment_date"], "match": { "exists": true } }
-      ],
-      "case": "all"
-    },
-    "then": { "required": true }
-  }
+	"name": "treatment_details",
+	"valueType": "string",
+	"restrictions": {
+		"if": {
+			"conditions": [
+				{ "fields": ["patient_status"], "match": { "value": "active" } },
+				{ "fields": ["enrollment_date"], "match": { "exists": true } }
+			],
+			"case": "all"
+		},
+		"then": { "required": true }
+	}
 }
 ```
 
@@ -488,22 +475,22 @@ When checking array fields, use `arrayFieldCase` to specify how many array eleme
 
 ```json showLineNumbers {10}
 {
-  "name": "follow_up_required",
-  "valueType": "boolean",
-  "restrictions": {
-    "if": {
-      "conditions": [
-        {
-          "fields": ["current_medications"],
-          "match": {
-            "codeList": ["chemotherapy", "immunotherapy", "targeted_therapy"]
-          },
-          "arrayFieldCase": "any"
-        }
-      ]
-    },
-    "then": { "required": true }
-  }
+	"name": "follow_up_required",
+	"valueType": "boolean",
+	"restrictions": {
+		"if": {
+			"conditions": [
+				{
+					"fields": ["current_medications"],
+					"match": {
+						"codeList": ["chemotherapy", "immunotherapy", "targeted_therapy"]
+					},
+					"arrayFieldCase": "any"
+				}
+			]
+		},
+		"then": { "required": true }
+	}
 }
 ```
 
@@ -543,24 +530,24 @@ You can combine multiple conditions with different logic:
 
 ```json showLineNumbers
 {
-  "name": "follow_up_required",
-  "valueType": "boolean",
-  "restrictions": {
-    "if": {
-      "conditions": [
-        {
-          "fields": ["treatment_response"],
-          "match": { "codeList": ["partial_response", "stable_disease"] }
-        },
-        {
-          "fields": ["adverse_events"],
-          "match": { "count": { "min": 1 } }
-        }
-      ],
-      "case": "any" // either condition can trigger the requirement
-    },
-    "then": { "required": true }
-  }
+	"name": "follow_up_required",
+	"valueType": "boolean",
+	"restrictions": {
+		"if": {
+			"conditions": [
+				{
+					"fields": ["treatment_response"],
+					"match": { "codeList": ["partial_response", "stable_disease"] }
+				},
+				{
+					"fields": ["adverse_events"],
+					"match": { "count": { "min": 1 } }
+				}
+			],
+			"case": "any" // either condition can trigger the requirement
+		},
+		"then": { "required": true }
+	}
 }
 ```
 
@@ -580,27 +567,27 @@ Primary keys identify unique records within a schema using the `uniqueKey` restr
 
 ```json showLineNumbers {18-20}
 {
-  "schemas": [
-    {
-      "name": "participant",
-      "description": "The collection of all data related to a specific individual",
-      "fields": [
-        {
-          "name": "submitter_participant_id",
-          "description": "Unique identifier of the participant within the study, assigned by the data provider",
-          "valueType": "string",
-          "restrictions": {
-            "required": true,
-            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
-          },
-          "unique": true
-        }
-      ],
-      "restrictions": {
-        "uniqueKey": ["submitter_participant_id"]
-      }
-    }
-  ]
+	"schemas": [
+		{
+			"name": "participant",
+			"description": "The collection of all data related to a specific individual",
+			"fields": [
+				{
+					"name": "submitter_participant_id",
+					"description": "Unique identifier of the participant within the study, assigned by the data provider",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+					},
+					"unique": true
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["submitter_participant_id"]
+			}
+		}
+	]
 }
 ```
 
@@ -614,33 +601,33 @@ For cases where uniqueness requires multiple field combinations:
 
 ```json showLineNumbers {24-26}
 {
-  "schemas": [
-    {
-      "name": "patient_visit",
-      "description": "Patient visits identified by participant and visit number",
-      "fields": [
-        {
-          "name": "submitter_participant_id",
-          "valueType": "string",
-          "restrictions": {
-            "required": true,
-            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
-          }
-        },
-        {
-          "name": "visit_number",
-          "valueType": "integer",
-          "restrictions": {
-            "required": true,
-            "range": { "min": 1 }
-          }
-        }
-      ],
-      "restrictions": {
-        "uniqueKey": ["submitter_participant_id", "visit_number"]
-      }
-    }
-  ]
+	"schemas": [
+		{
+			"name": "patient_visit",
+			"description": "Patient visits identified by participant and visit number",
+			"fields": [
+				{
+					"name": "submitter_participant_id",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+					}
+				},
+				{
+					"name": "visit_number",
+					"valueType": "integer",
+					"restrictions": {
+						"required": true,
+						"range": { "min": 1 }
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["submitter_participant_id", "visit_number"]
+			}
+		}
+	]
 }
 ```
 
@@ -656,55 +643,55 @@ Foreign keys establish relationships between schemas by referencing primary keys
 
 ```json showLineNumbers {37-47}
 {
-  "schemas": [
-    {
-      "name": "participant",
-      "description": "Study participants",
-      "fields": [
-        {
-          "name": "submitter_participant_id",
-          "description": "Unique identifier of the participant within the study",
-          "valueType": "string",
-          "restrictions": {
-            "required": true,
-            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
-          },
-          "unique": true
-        }
-      ],
-      "restrictions": {
-        "uniqueKey": ["submitter_participant_id"]
-      }
-    },
-    {
-      "name": "sociodemographic",
-      "description": "Captures sociodemographic characteristics",
-      "fields": [
-        {
-          "name": "submitter_participant_id",
-          "description": "Unique identifier of the participant within the study, assigned by the data provider",
-          "valueType": "string",
-          "restrictions": {
-            "required": true,
-            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
-          }
-        }
-      ],
-      "restrictions": {
-        "foreignKey": [
-          {
-            "schema": "participant",
-            "mappings": [
-              {
-                "local": "submitter_participant_id",
-                "foreign": "submitter_participant_id"
-              }
-            ]
-          }
-        ]
-      }
-    }
-  ]
+	"schemas": [
+		{
+			"name": "participant",
+			"description": "Study participants",
+			"fields": [
+				{
+					"name": "submitter_participant_id",
+					"description": "Unique identifier of the participant within the study",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+					},
+					"unique": true
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["submitter_participant_id"]
+			}
+		},
+		{
+			"name": "sociodemographic",
+			"description": "Captures sociodemographic characteristics",
+			"fields": [
+				{
+					"name": "submitter_participant_id",
+					"description": "Unique identifier of the participant within the study, assigned by the data provider",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+					}
+				}
+			],
+			"restrictions": {
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [
+							{
+								"local": "submitter_participant_id",
+								"foreign": "submitter_participant_id"
+							}
+						]
+					}
+				]
+			}
+		}
+	]
 }
 ```
 
@@ -873,68 +860,68 @@ Here's how primary and foreign keys work together to create a complete data mode
 
 ```json showLineNumbers
 {
-  "name": "clinical_dictionary",
-  "version": "1.0.0",
-  "schemas": [
-    {
-      "name": "participant",
-      "description": "Study participants",
-      "fields": [
-        {
-          "name": "submitter_participant_id",
-          "description": "Unique identifier of the participant within the study",
-          "valueType": "string",
-          "restrictions": {
-            "required": true,
-            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
-          },
-          "unique": true
-        }
-      ],
-      "restrictions": {
-        "uniqueKey": ["submitter_participant_id"]
-      }
-    },
-    {
-      "name": "diagnosis",
-      "description": "Medical diagnoses for participants",
-      "fields": [
-        {
-          "name": "submitter_diagnosis_id",
-          "description": "Unique identifier of the primary diagnosis event",
-          "valueType": "string",
-          "restrictions": {
-            "required": true,
-            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
-          },
-          "unique": true
-        },
-        {
-          "name": "submitter_participant_id",
-          "description": "Unique identifier of the participant within the study",
-          "valueType": "string",
-          "restrictions": {
-            "required": true,
-            "regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
-          }
-        }
-      ],
-      "restrictions": {
-        "uniqueKey": ["submitter_diagnosis_id"],
-        "foreignKey": [
-          {
-            "schema": "participant",
-            "mappings": [
-              {
-                "local": "submitter_participant_id",
-                "foreign": "submitter_participant_id"
-              }
-            ]
-          }
-        ]
-      }
-    }
-  ]
+	"name": "clinical_dictionary",
+	"version": "1.0.0",
+	"schemas": [
+		{
+			"name": "participant",
+			"description": "Study participants",
+			"fields": [
+				{
+					"name": "submitter_participant_id",
+					"description": "Unique identifier of the participant within the study",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+					},
+					"unique": true
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["submitter_participant_id"]
+			}
+		},
+		{
+			"name": "diagnosis",
+			"description": "Medical diagnoses for participants",
+			"fields": [
+				{
+					"name": "submitter_diagnosis_id",
+					"description": "Unique identifier of the primary diagnosis event",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+					},
+					"unique": true
+				},
+				{
+					"name": "submitter_participant_id",
+					"description": "Unique identifier of the participant within the study",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "^[A-Za-z0-9\\-\\._]{1,64}$"
+					}
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["submitter_diagnosis_id"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [
+							{
+								"local": "submitter_participant_id",
+								"foreign": "submitter_participant_id"
+							}
+						]
+					}
+				]
+			}
+		}
+	]
 }
 ```
 
@@ -952,52 +939,52 @@ The `references` section is a **dictionary-level** property that allows you to d
 
 ```json showLineNumbers {39-47}
 {
-  "name": "clinical_data_dictionary",
-  "version": "1.2.0",
-  "description": "Clinical trial data collection schemas",
-  "meta": {
-    "author": "Clinical Data Team",
-    "created": "2024-01-15"
-  },
-  "schemas": [
-    {
-      "name": "patient",
-      "fields": [
-        {
-          "name": "bioproject_accession",
-          "valueType": "string",
-          "restrictions": {
-            "regex": "#/regex/BioProject_accession"
-          }
-        },
-        {
-          "name": "diagnosis_date",
-          "valueType": "string",
-          "restrictions": {
-            "required": true,
-            "regex": "#/regex/date"
-          }
-        },
-        {
-          "name": "country",
-          "valueType": "string",
-          "restrictions": {
-            "required": true,
-            "codeList": "#/list/geo_loc_name_country"
-          }
-        }
-      ]
-    }
-  ],
-  "references": {
-    "regex": {
-      "BioProject_accession": "^PRJN[A-Z0-9]+$",
-      "date": "^\\d{4}-\\d{2}-\\d{2}$"
-    },
-    "list": {
-      "geo_loc_name_country": ["Canada", "United States", "Mexico", "..."]
-    }
-  }
+	"name": "clinical_data_dictionary",
+	"version": "1.2.0",
+	"description": "Clinical trial data collection schemas",
+	"meta": {
+		"author": "Clinical Data Team",
+		"created": "2024-01-15"
+	},
+	"schemas": [
+		{
+			"name": "patient",
+			"fields": [
+				{
+					"name": "bioproject_accession",
+					"valueType": "string",
+					"restrictions": {
+						"regex": "#/regex/BioProject_accession"
+					}
+				},
+				{
+					"name": "diagnosis_date",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"regex": "#/regex/date"
+					}
+				},
+				{
+					"name": "country",
+					"valueType": "string",
+					"restrictions": {
+						"required": true,
+						"codeList": "#/list/geo_loc_name_country"
+					}
+				}
+			]
+		}
+	],
+	"references": {
+		"regex": {
+			"BioProject_accession": "^PRJN[A-Z0-9]+$",
+			"date": "^\\d{4}-\\d{2}-\\d{2}$"
+		},
+		"list": {
+			"geo_loc_name_country": ["Canada", "United States", "Mexico", "..."]
+		}
+	}
 }
 ```
 
