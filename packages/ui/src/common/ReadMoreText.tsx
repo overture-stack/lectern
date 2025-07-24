@@ -101,7 +101,7 @@ const ReadMoreText = ({
 			const div = contentRef.current;
 			// This check determines if we are truncating based on CSS clamp
 			// by comparing the full content height (scrollHeight) to the visible height (clientHeight)
-			setIsTruncated(div.scrollHeight > div.clientHeight + 1);
+			setIsTruncated(div.scrollHeight > div.clientHeight * 1.1);
 		}
 	}, []);
 
