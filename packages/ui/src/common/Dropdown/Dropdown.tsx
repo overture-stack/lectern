@@ -100,6 +100,13 @@ type DropDownProps = {
 	disabled?: boolean;
 };
 
+/**
+ * Dropdown component with toggle button and collapsible menu.
+ *
+ * @param {DropDownProps} props - Dropdown configuration
+ * @returns {JSX.Element} Dropdown component
+ */
+
 const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDownProps) => {
 	const [open, setOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);

@@ -37,6 +37,11 @@ const containerStyle = (theme: Theme) => css`
 	${theme.typography.paragraphSmallBold}
 `;
 
+/**
+ * Renders the attribute column cell showing field requirement status.
+ * @param {SchemaFieldRestrictions} schemaFieldRestrictions - Field-level restrictions containing requirement information
+ * @returns {JSX.Element} Attribute display showing Required, Optional, or Required When with modal button
+ */
 export const renderAttributesColumn = (schemaFieldRestrictions: SchemaFieldRestrictions) => {
 	const theme = useThemeContext();
 	return (

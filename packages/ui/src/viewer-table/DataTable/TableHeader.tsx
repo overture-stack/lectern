@@ -45,6 +45,12 @@ export type TableHeaderProps<T> = {
 	headerGroup: HeaderGroup<T>;
 };
 
+/**
+ * Generic table header component
+ * @template T - Row data type
+ * @param {HeaderGroup<T>} headerGroup - TanStack table header group containing column definitions and rendering context
+ * @returns {JSX.Element} Table header row element
+ */
 const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
 	const theme = useThemeContext();
 	return (

@@ -23,6 +23,11 @@ import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
+/**
+ * Renders the data type column cell for schema fields.
+ * @param {SchemaField} schemaField - Schema field containing data type information
+ * @returns {JSX.Element} Formatted data type display (Array or capitalized value type)
+ */
 export const renderDataTypeColumn = (schemaField: SchemaField) => {
 	const theme = useThemeContext();
 	return (

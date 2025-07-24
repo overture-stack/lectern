@@ -55,6 +55,13 @@ const renderRestrictionItem = (value: RestrictionItem, key: string): ReactNode =
 	);
 };
 
+/**
+ * Renders the allowed values column cell showing field restrictions and constraints.
+ * @param {SchemaFieldRestrictions} fieldLevelRestrictions - Field-level restrictions
+ * @param {SchemaRestrictions} schemaLevelRestrictions - Schema-level restrictions
+ * @param {SchemaField} currentSchemaField - Current schema field being processed
+ * @returns {JSX.Element} Allowed values display with restrictions or "No restrictions" message
+ */
 export const renderAllowedValuesColumn = (
 	fieldLevelRestrictions: SchemaFieldRestrictions,
 	schemaLevelRestrictions: SchemaRestrictions,

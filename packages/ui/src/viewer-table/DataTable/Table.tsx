@@ -88,6 +88,10 @@ const tableBorderStyle = (theme: Theme) => css`
 	border: 1px solid ${theme.colors.border_light};
 `;
 
+/**
+ * Hook for managing scroll shadows on horizontally scrollable tables.
+ * @returns {ScrollShadowsResult} Scroll shadow state and refs
+ */
 export const useScrollShadows = (): ScrollShadowsResult => {
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const [showLeftShadow, setShowLeftShadow] = useState(false);
@@ -137,6 +141,13 @@ export const useScrollShadows = (): ScrollShadowsResult => {
 	};
 };
 
+/**
+ * Generic table component with horizontal scroll and shadow effects.
+ * @template R - Row data type (can be any object type)
+ * @param {R[]} data - Array of row data
+ * @param {ColumnDef<R, any>[]} columns - TanStack table column definitions
+ * @returns {JSX.Element} Generic Table component
+ */
 const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 	const theme = useThemeContext();
 	const table = useReactTable({

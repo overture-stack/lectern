@@ -103,6 +103,11 @@ const useClipboard = () => {
 	};
 };
 
+/**
+ * Renders the fields column cell showing field name, description, and examples.
+ * @param {Row<SchemaField>} fieldRow - TanStack table row containing schema field data
+ * @returns {JSX.Element} Field display with name, description, and examples in expandable text
+ */
 export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const fieldName = fieldRow.original.name;
 	const fieldDescription = fieldRow.original.description;
