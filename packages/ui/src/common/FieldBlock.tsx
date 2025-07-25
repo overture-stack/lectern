@@ -32,7 +32,6 @@ export interface InlineCodeProps {
 
 const fieldBlockStyles = (theme: Theme) => css`
 	${theme.typography.fieldBlock}
-	${theme.typography.fieldBlock}
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -41,13 +40,10 @@ const fieldBlockStyles = (theme: Theme) => css`
 	border-radius: 3px;
 	background-color: ${theme.colors.background_muted};
 	border: 0.5px solid ${theme.colors.black};
-	background-color: ${theme.colors.background_muted};
-	border: 0.5px solid ${theme.colors.black};
 	transition: all 0.2s ease-in-out;
 	width: fit-content;
 	align-self: center;
 	color: ${theme.colors.accent_dark};
-	vertical-align: center;
 `;
 
 const FieldBlock = ({ children, style }: InlineCodeProps) => {

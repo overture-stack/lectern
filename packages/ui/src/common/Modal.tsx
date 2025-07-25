@@ -49,13 +49,11 @@ const customStyles = (theme: Theme): Styles => ({
 		overflow: 'hidden',
 		borderRadius: '8px',
 		boxShadow: `0 2px 6px ${theme.shadow.subtle}, 0 0 0 0.3px ${theme.colors.black}`,
-		boxShadow: `0 2px 6px ${theme.shadow.subtle}, 0 0 0 0.3px ${theme.colors.black}`,
 		transition: 'all 0.3s ease',
 		display: 'flex',
 		flexDirection: 'column',
 	},
 	overlay: {
-		backgroundColor: theme.colors.background_overlay,
 		backgroundColor: theme.colors.background_overlay,
 		zIndex: 1000,
 	},

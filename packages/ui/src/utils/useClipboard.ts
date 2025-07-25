@@ -18,6 +18,7 @@
  */
 
 import { useMemo, useState } from 'react';
+
 export const useClipboard = () => {
 	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
 	const [isCopying, setIsCopying] = useState(false);

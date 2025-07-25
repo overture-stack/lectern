@@ -29,7 +29,6 @@ import VersionSwitcher, {
 
 import DictionarySample from '../../fixtures/pcgl.json';
 import themeDecorator from '../../themeDecorator';
-import { DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
 
 const meta = {
 	component: VersionSwitcher,

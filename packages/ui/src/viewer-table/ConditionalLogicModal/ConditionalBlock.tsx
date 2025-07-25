@@ -19,7 +19,7 @@
 
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
