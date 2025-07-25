@@ -23,7 +23,7 @@
 
 import { css } from '@emotion/react';
 import { ColumnDef, getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
@@ -36,7 +36,7 @@ export type GenericTableProps<R> = {
 };
 
 type ScrollShadowsResult = {
-	scrollRef: React.RefObject<HTMLDivElement | null>;
+	scrollRef: RefObject<HTMLDivElement | null>;
 	showLeftShadow: boolean;
 	showRightShadow: boolean;
 	firstColumnWidth: number;
@@ -51,7 +51,7 @@ const scrollWrapperStyle = css`
 
 const shadowStyle = css`
 	position: absolute;
-	top: 0.7%;
+	top: 2%;
 	width: 20px;
 	height: 100%;
 	pointer-events: none;
@@ -61,15 +61,17 @@ const shadowStyle = css`
 const leftShadowStyle = (width: number, opacity: number, theme: Theme) => css`
 	${shadowStyle}
 	left: ${width}px;
-	background: linear-gradient(90deg, ${theme.shadow.medium}, transparent);
+	background: linear-gradient(90deg, ${theme.shadow.subtle}, transparent);
 	opacity: ${opacity};
+	z-index: 1;
 `;
 
 const rightShadowStyle = (opacity: number, theme: Theme) => css`
 	${shadowStyle}
 	right: 0;
-	background: linear-gradient(270deg, ${theme.shadow.standard}, transparent);
+	background: linear-gradient(270deg, ${theme.shadow.subtle}, transparent);
 	opacity: ${opacity};
+	z-index: 1;
 `;
 
 const tableContainerStyle = css`

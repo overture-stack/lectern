@@ -18,10 +18,12 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
 import React from 'react';
+
 import Button from '../../common/Button';
-import { useThemeContext } from '../../theme/ThemeContext';
 import { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
 
 export interface CollapseAllButtonProps {
 	onClick: () => void;
