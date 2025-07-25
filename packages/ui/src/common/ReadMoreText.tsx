@@ -21,7 +21,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
+import { css, SerializedStyles } from '@emotion/react';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import type { Theme } from '../theme';
@@ -30,23 +30,23 @@ import { useThemeContext } from '../theme/ThemeContext';
 export type ReadMoreTextProps = {
 	children: ReactNode;
 	maxLines?: number;
-	wrapperStyle?: (theme: Theme) => any;
+	wrapperStyle?: SerializedStyles;
 	onToggleClick?: (e: React.MouseEvent) => void;
 	expandedText?: string;
 	collapsedText?: string;
 };
 
-const defaultWrapperStyle = (theme: Theme) => css`
-	${theme.typography?.label2};
-	color: ${theme.colors.grey_5};
-	padding: 4px 8px;
+const containerStyle = (theme: Theme, wrapperStyle?: SerializedStyles) => css`
+	${theme.typography.paragraphSmall};
+	color: ${theme.colors.black};
 	word-wrap: break-word;
 	overflow-wrap: break-word;
+	${wrapperStyle}
 `;
 
 const linkStyle = (theme: Theme) => css`
-	${theme.typography?.label2};
-	color: ${theme.colors.accent_dark};
+	${theme.typography.captionBold};
+	color: ${theme.colors.black};
 	cursor: pointer;
 	display: inline-flex;
 	align-items: center;
@@ -91,7 +91,7 @@ const ReadMoreText = ({
 	// Tracks if the content is being truncated by CSS line-clamp
 	const [isTruncated, setIsTruncated] = useState(false);
 
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	const { ChevronDown } = theme.icons;
 
 	// Check if content needs truncation by comparing scroll height vs client height
@@ -101,7 +101,7 @@ const ReadMoreText = ({
 			const div = contentRef.current;
 			// This check determines if we are truncating based on CSS clamp
 			// by comparing the full content height (scrollHeight) to the visible height (clientHeight)
-			setIsTruncated(div.scrollHeight > div.clientHeight + 1);
+			setIsTruncated(div.scrollHeight > div.clientHeight * 1.2);
 		}
 	}, []);
 
@@ -113,14 +113,11 @@ const ReadMoreText = ({
 		}
 	};
 
-	const appliedWrapperStyle = wrapperStyle || defaultWrapperStyle;
-
 	return (
-		<div css={appliedWrapperStyle(theme)}>
+		<div css={containerStyle(theme, wrapperStyle)}>
 			<div ref={contentRef} css={clampingLogic(isExpanded, maxLines)}>
 				{children}
 			</div>
-
 			{isTruncated && (
 				<button onClick={handleToggle} css={linkStyle(theme)}>
 					{isExpanded ? expandedText : collapsedText}

@@ -21,14 +21,20 @@
 
 import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
+import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
+/**
+ * Renders the data type column cell for schema fields.
+ * @param {SchemaField} schemaField - Schema field containing data type information
+ * @returns {JSX.Element} Formatted data type display (Array or capitalized value type)
+ */
 export const renderDataTypeColumn = (schemaField: SchemaField) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	return (
 		<div
 			css={css`
-				${theme.typography.subheading}
+				${theme.typography.paragraphSmallBold}
 			`}
 		>
 			{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}

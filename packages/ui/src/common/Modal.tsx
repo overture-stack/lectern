@@ -1,6 +1,29 @@
+/*
+ *
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ *  This program and the accompanying materials are made available under the terms of
+ *  the GNU Affero General Public License v3.0. You should have received a copy of the
+ *  GNU Affero General Public License along with this program.
+ *   If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ *  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ *  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 /** @jsxImportSource @emotion/react */
+
 import { css } from '@emotion/react';
 import Modal, { Styles } from 'react-modal';
+
 import { Theme } from '../theme';
 import Cancel from '../theme/icons/Cancel';
 import { useThemeContext } from '../theme/ThemeContext';
@@ -27,22 +50,22 @@ const customStyles = (theme: Theme): Styles => ({
 		padding: 0,
 		overflow: 'hidden',
 		borderRadius: '8px',
-		boxShadow: `0 2px 6px rgba(70,63,63,0.05), 0 0 0 0.3px ${theme.colors.black}`,
+		boxShadow: `0 2px 6px ${theme.shadow.subtle}, 0 0 0 0.3px ${theme.colors.black}`,
 		transition: 'all 0.3s ease',
 	},
 	overlay: {
-		backgroundColor: 'rgba(0,28,61,0.8)',
+		backgroundColor: theme.colors.background_overlay,
 		zIndex: 1000,
 	},
 });
 
 const headerStyle = (theme: Theme) => css`
-	${theme.typography.heading}
+	${theme.typography.title}
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	padding: 16px;
-	border-bottom: 1px solid #d3d3d3;
+	border-bottom: 1px solid ${theme.colors.border_subtle};
 	background: ${theme.colors.white};
 `;
 
@@ -54,7 +77,7 @@ const bodyStyle = css`
 
 Modal.setAppElement('body');
 const ModalComponent = ({ children, setIsOpen, isOpen, onAfterOpen, title }: ModalProps) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	return (
 		<Modal
 			isOpen={isOpen}

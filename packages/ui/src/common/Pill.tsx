@@ -38,10 +38,10 @@ export interface PillProps {
 const getVariantStyles = (variant: PillVariant, theme: Theme) => {
 	const VARIANT_STYLES = {
 		default: {
-			background: '#E5E7EA',
+			background: theme.colors.background_pill,
 			color: theme.colors.black,
 			border: 'none',
-			hoverBackground: '#D8DADD',
+			hoverBackground: theme.colors.background_pill_hover,
 		},
 	};
 	return VARIANT_STYLES[variant];
@@ -128,7 +128,7 @@ const pillStyles = (sizeStyles, variantStyles, icon) => css`
 `;
 
 const Pill = ({ children, variant = 'default', size = 'medium', icon, style }: PillProps) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	const variantStyles = getVariantStyles(variant, theme);
 	const sizeStyles = getSizeStyles(size);
 

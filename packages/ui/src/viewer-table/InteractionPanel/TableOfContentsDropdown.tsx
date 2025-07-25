@@ -21,7 +21,9 @@
 
 import type { Schema } from '@overture-stack/lectern-dictionary';
 import React from 'react';
+
 import Dropdown from '../../common/Dropdown/Dropdown';
+import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export type TableOfContentsDropdownProps = {
@@ -31,7 +33,7 @@ export type TableOfContentsDropdownProps = {
 };
 
 const TableOfContentsDropdown = ({ schemas, onSelect, disabled }: TableOfContentsDropdownProps) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	const { List } = theme.icons;
 	const handleAction = (index: number) => {
 		const anchorId = `#${index}`;

@@ -185,7 +185,6 @@ const handleCodeListsWithCountRestrictions = (
  * @param conditions {RestrictionCondition[]} - Array of restriction conditions containing field dependencies
  * @returns {ReactNode} A React component showing dependent fields
  */
-
 const handleDependsOn = (conditions: RestrictionCondition[]): ReactNode => {
 	const allFields = Array.from(new Set(conditions.flatMap((condition: RestrictionCondition) => condition.fields)));
 
