@@ -17,27 +17,47 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @jsxImportSource @emotion/react */
+import { useMemo, useState } from 'react';
+export const useClipboard = () => {
+	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
+	const [isCopying, setIsCopying] = useState(false);
+	const [copySuccess, setCopySuccess] = useState(false);
 
-import { css } from '@emotion/react';
-import { SchemaField } from '@overture-stack/lectern-dictionary';
-import { Theme } from '../../../../theme';
-import { useThemeContext } from '../../../../theme/ThemeContext';
+	const handleCopy = (text: string) => {
+		if (isCopying) {
+			return;
+		}
+		setIsCopying(true);
+		navigator.clipboard
+			.writeText(text)
+			.then(() => {
+				setCopySuccess(true);
+				setTimeout(() => {
+					setIsCopying(false);
+				}, 2000);
+			})
+			.catch((err) => {
+				console.error('Failed to copy text: ', err);
+				setCopySuccess(false);
+				setIsCopying(false);
+			});
+		if (copySuccess) {
+			const currentURL = window.location.href;
+			setClipboardContents(currentURL);
+		}
+		setCopySuccess(false);
+	};
+	useMemo(() => {
+		if (clipboardContents) {
+			handleCopy(clipboardContents);
+		}
+	}, [clipboardContents]);
 
-/**
- * Renders the data type column cell for schema fields.
- * @param {SchemaField} schemaField - Schema field containing data type information
- * @returns {JSX.Element} Formatted data type display (Array or capitalized value type)
- */
-export const renderDataTypeColumn = (schemaField: SchemaField) => {
-	const theme: Theme = useThemeContext();
-	return (
-		<div
-			css={css`
-				${theme.typography.paragraphSmallBold}
-			`}
-		>
-			{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
-		</div>
-	);
+	return {
+		clipboardContents,
+		setClipboardContents,
+		isCopying,
+		copySuccess,
+		handleCopy,
+	};
 };

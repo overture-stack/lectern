@@ -27,8 +27,9 @@ import { MouseEvent, useEffect, useRef } from 'react';
 
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
+import { useClipboard } from '../../utils/useClipboard';
 import ReadMoreText from '../ReadMoreText';
-import { AccordionData, AccordionOpenState, useClipboard } from './Accordion';
+import { AccordionData, AccordionOpenState } from './Accordion';
 
 const MAX_LINES_BEFORE_EXPAND = 2;
 
@@ -168,9 +169,10 @@ const hashOnClick = (
 
 const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) => {
 	const accordionRef = useRef<HTMLLIElement>(null);
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	const { setClipboardContents } = useClipboard();
-	const { description, title, content, schemaName } = accordionData;
+
+	const { description, title, content } = accordionData;
 	const { ChevronDown, Hash } = theme.icons;
 
 	const indexString = index.toString();
@@ -201,7 +203,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 							<Hash width={20} height={20} fill={theme.colors.secondary} />
 						</button>
 					</div>
-					<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle}>
+					<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle(theme)}>
 						{description}
 					</ReadMoreText>
 				</div>

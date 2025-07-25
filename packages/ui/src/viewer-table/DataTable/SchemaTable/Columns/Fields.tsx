@@ -22,25 +22,17 @@
 import { css } from '@emotion/react';
 import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary';
 import { Row } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
 
 import ReadMoreText from '../../../../common/ReadMoreText';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
 const fieldContainerStyle = (theme: Theme) => css`
+	${theme.typography.data}
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 	text-align: left;
-`;
-
-const fieldNameStyle = (theme: Theme) => css`
-	${theme.typography.body}
-`;
-
-const fieldDescriptionStyle = (theme: Theme) => css`
-	${theme.typography.paragraphSmall}
 `;
 
 export type FieldExamplesProps = {
@@ -65,66 +57,25 @@ export type FieldDescriptionProps = {
 	theme: Theme;
 };
 
-//TODO: Not currently used but will be used when implementing the hash-navigation
-const useClipboard = () => {
-	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
-	const [isCopying, setIsCopying] = useState(false);
-	const [copySuccess, setCopySuccess] = useState(false);
-
-	const handleCopy = (text: string) => {
-		if (isCopying) {
-			return;
-		}
-		setIsCopying(true);
-		navigator.clipboard
-			.writeText(text)
-			.then(() => {
-				setCopySuccess(true);
-				setTimeout(() => {
-					setIsCopying(false);
-				}, 2000);
-			})
-			.catch((err) => {
-				console.error('Failed to copy text: ', err);
-				setCopySuccess(false);
-				setIsCopying(false);
-			});
-		if (copySuccess) {
-			const currentURL = window.location.href;
-			setClipboardContents(currentURL);
-		}
-		setCopySuccess(false);
-	};
-
-	useMemo(() => {
-		if (clipboardContents) {
-			handleCopy(clipboardContents);
-		}
-	}, [clipboardContents]);
-
-	return {
-		clipboardContents,
-		setClipboardContents,
-		isCopying,
-		copySuccess,
-		handleCopy,
-	};
-};
+/**
+ * Renders the fields column cell showing field name, description, and examples.
+ * @param {Row<SchemaField>} fieldRow - TanStack table row containing schema field data
+ * @returns {JSX.Element} Field display with name, description, and examples in expandable text
+ */
 
 export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
+	const theme: Theme = useThemeContext();
+
 	const fieldName = fieldRow.original.name;
 	const fieldDescription = fieldRow.original.description;
 	const fieldExamples = fieldRow.original.meta?.examples;
-	const theme: Theme = useThemeContext();
 
 	return (
-		<ReadMoreText wrapperStyle={() => fieldContainerStyle(theme)}>
-			<div css={fieldNameStyle(theme)}>
-				<b>{fieldName}</b>
-			</div>
-			{fieldDescription && <p css={fieldDescriptionStyle(theme)}>{fieldDescription}</p>}
+		<ReadMoreText wrapperStyle={fieldContainerStyle(theme)}>
+			<b>{fieldName}</b>
+			{fieldDescription && <p>{fieldDescription}</p>}
 			{fieldExamples && (
-				<div css={fieldDescriptionStyle(theme)}>
+				<div>
 					<b>Example(s): </b>
 					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
 				</div>

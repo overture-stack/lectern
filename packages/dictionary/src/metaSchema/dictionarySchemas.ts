@@ -180,6 +180,7 @@ export type AnyFieldRestrictions = zod.infer<typeof AnyFieldRestrictions>;
 export const SchemaFieldBase = zod
 	.object({
 		name: NameValue,
+		displayName: zod.string().optional(),
 		description: zod.string().optional(),
 		delimiter: zod.string().min(1).optional(),
 		isArray: zod.boolean().optional(),
@@ -248,6 +249,7 @@ export type ForeignKeyRestriction = zod.infer<typeof ForeignKeyRestriction>;
 export const Schema = zod
 	.object({
 		name: NameValue,
+		displayName: zod.string().optional(),
 		description: zod.string().optional(),
 		fields: zod.array(SchemaField).min(1),
 		meta: DictionaryMeta.optional(),

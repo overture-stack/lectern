@@ -185,7 +185,6 @@ const handleCodeListsWithCountRestrictions = (
  * @param conditions {RestrictionCondition[]} - Array of restriction conditions containing field dependencies
  * @returns {ReactNode} A React component showing dependent fields
  */
-
 const handleDependsOn = (conditions: RestrictionCondition[]): ReactNode => {
 	const allFields = Array.from(new Set(conditions.flatMap((condition: RestrictionCondition) => condition.fields)));
 
@@ -356,7 +355,7 @@ const handleKeys = (restrictions: SchemaRestrictions, currentSchemaField: Schema
 			condition: isCompoundUniqueKey,
 			content: (
 				<span>
-					<b>Must be unique in combination with:</b>{' '}
+					Must be unique in combination with:{' '}
 					{uniqueKeys
 						?.filter((key) => key !== currentSchemaField.name)
 						.map((key) => <FieldBlock key={key}>{key}</FieldBlock>)}

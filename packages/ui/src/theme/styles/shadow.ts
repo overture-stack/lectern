@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2022 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -20,14 +20,13 @@
  */
 
 const defaultShadow = `
-  box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1), 0 1px 5px 0 rgba(0, 0, 0, 0.08);
+	box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1), 0 1px 5px 0 rgba(0, 0, 0, 0.08);
 `;
 
 const rightShadow = `
-  box-shadow: 3px 0 5px -2px rgba(0, 0, 0, 0.1), 3px 0 5px -2px rgba(0, 0, 0, 0.08);
+	box-shadow: 3px 0 5px -2px rgba(0, 0, 0, 0.1), 3px 0 5px -2px rgba(0, 0, 0, 0.08);
 `;
 
-// Shadow colors for gradients and effects
 const subtle = 'rgba(70,63,63,0.05)';
 const medium = 'rgba(0, 0, 0, 0.05)';
 const standard = 'rgba(0, 0, 0, 0.1)';

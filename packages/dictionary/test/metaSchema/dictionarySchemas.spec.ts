@@ -189,6 +189,32 @@ describe('Dictionary Schemas', () => {
 				expect(SchemaField.safeParse(field).success).true;
 			});
 		});
+	describe ('displayName', () => {
+			it('Field can have displayName', () => {
+				const field: SchemaField = {
+					name: 'some-name',
+					displayName: 'Some Name',
+					valueType: 'string',
+				};
+				expect(SchemaField.safeParse(field).success).true;
+			});
+			it('Field displayName can contain periods unlike name', () => {
+					const field: SchemaField = {
+						name: 'some-name',
+						displayName: 'Some.Name',
+						valueType: 'string',
+					};
+					expect(SchemaField.safeParse(field).success).true;
+				});
+			it ('Field displayName is optional', () => {
+					const field: SchemaField = {
+						name: 'some-name',
+						valueType: 'string',
+					};
+					expect(SchemaField.safeParse(field).success).true;
+				});
+			});
+			
 	});
 	describe('Schema', () => {
 		it("Can't have repeated field names", () => {
@@ -223,6 +249,48 @@ describe('Dictionary Schemas', () => {
 			};
 			expect(Schema.safeParse(schemaFail).success).false;
 			expect(Schema.safeParse(schemaPass).success).true;
+		});
+
+
+		describe('Schema displayName', () => {
+			it('Schema can have displayName', () => {
+				const schema: Schema = {
+					name: 'schema-name',
+					displayName: 'Schema Display Name',
+					fields: [
+						{
+							name: 'field-name',
+							valueType: 'string',
+						},
+					],
+				};
+				expect(Schema.safeParse(schema).success).true;
+			});
+			it('Schema displayName can contain periods unlike name', () => {
+				const schema: Schema = {
+					name: 'schema-name',
+					displayName: 'Schema Display Name. With periods.',
+					fields: [
+						{
+							name: 'field-name',
+							valueType: 'string',
+						},
+					],
+				};
+				expect(Schema.safeParse(schema).success).true;
+			});
+			it('Schema displayName is optional', () => {
+				const schema: Schema = {
+					name: 'schema-name',
+					fields: [
+						{
+							name: 'field-name',
+							valueType: 'string',
+						},
+					],
+				};
+				expect(Schema.safeParse(schema).success).true;
+			});
 		});
 		describe('Schema Restrictions', () => {
 			it('uniqueKey - Can have restriction', () => {

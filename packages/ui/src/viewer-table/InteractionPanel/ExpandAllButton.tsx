@@ -20,7 +20,9 @@
  */
 
 import React from 'react';
+
 import Button from '../../common/Button';
+import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export interface ExpandAllButtonProps {
@@ -29,7 +31,7 @@ export interface ExpandAllButtonProps {
 }
 
 const ExpandAllButton = ({ onClick, disabled }: ExpandAllButtonProps) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	const { Eye } = theme.icons;
 
 	return (

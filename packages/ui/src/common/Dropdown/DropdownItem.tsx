@@ -37,6 +37,7 @@ type DropDownItemProps = {
 	};
 };
 
+// TODO: Get figma designs for dropdown list item and implement that, since current styling is off
 const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
 	display: flex;
 	min-height: 100%;
@@ -54,7 +55,7 @@ const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
 `;
 
 const DropDownItem = ({ children, action, onItemClick, customStyles }: DropDownItemProps) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 
 	const handleClick = () => {
 		if (typeof action === 'function') {

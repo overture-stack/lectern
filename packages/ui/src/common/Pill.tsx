@@ -128,7 +128,7 @@ const pillStyles = (sizeStyles, variantStyles, icon) => css`
 `;
 
 const Pill = ({ children, variant = 'default', size = 'medium', icon, style }: PillProps) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	const variantStyles = getVariantStyles(variant, theme);
 	const sizeStyles = getSizeStyles(size);
 

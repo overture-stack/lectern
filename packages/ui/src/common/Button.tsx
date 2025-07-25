@@ -112,7 +112,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 		ref,
 	) => {
 		const [internalLoading, setInternalLoading] = React.useState(false);
-		const theme = useThemeContext();
+		const theme: Theme = useThemeContext();
 		const { Spinner } = theme.icons;
 
 		const shouldShowLoading = !!controlledLoading || (internalLoading && isAsync);

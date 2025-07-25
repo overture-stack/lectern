@@ -18,8 +18,11 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
 import React from 'react';
+
 import Button from '../../common/Button';
+import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export interface CollapseAllButtonProps {
@@ -28,7 +31,7 @@ export interface CollapseAllButtonProps {
 }
 
 const CollapseAllButton = ({ onClick, disabled }: CollapseAllButtonProps) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	const { Collapse } = theme.icons;
 
 	return (

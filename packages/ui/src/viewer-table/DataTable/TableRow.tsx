@@ -36,9 +36,6 @@ const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 	${theme.typography.paragraphSmall}
 	padding: 12px;
 	max-width: 30vw;
-	white-space: pre-wrap;
-	overflow-wrap: break-word;
-	word-break: break-word;
 	text-align: ${cellIndex === 1 || cellIndex === 2 ? 'center' : 'left'};
 	vertical-align: middle;
 	${cellIndex === 0 &&
@@ -55,14 +52,29 @@ export type TableRowProps<T> = {
 	index: number;
 };
 
+/**
+ * Generic table row component with alternating background colors.
+ * @template T - Row data type
+ * @param {Row<T>} row - TanStack table row object
+ * @param {number} index - Row index for styling
+ * @returns {JSX.Element} Table row element
+ */
 const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
+
 	return (
 		<tr key={row.id} css={rowStyle(index, theme)}>
 			{row.getVisibleCells().map((cell, cellIndex) => {
 				return (
 					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>
-						{flexRender(cell.column.columnDef.cell, cell.getContext())}
+						<div
+							css={css`
+								${theme.typography.data}
+								white-space: pre-wrap;
+							`}
+						>
+							{flexRender(cell.column.columnDef.cell, cell.getContext())}
+						</div>
 					</td>
 				);
 			})}
