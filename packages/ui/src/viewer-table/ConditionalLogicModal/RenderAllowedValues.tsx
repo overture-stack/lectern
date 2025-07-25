@@ -20,7 +20,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
 import { css } from '@emotion/react';
 import FieldBlock from '../../common/FieldBlock';
