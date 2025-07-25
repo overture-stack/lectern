@@ -17,15 +17,34 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React from 'react';
+/** @jsxImportSource @emotion/react */
+import { ConditionalRestrictionTest, SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
-/**
- * Else condition component
- * @returns {JSX.Element} A JSX element representing the else condition.
- */
+import { css } from '@emotion/react';
+import { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
+import RenderAllowedValues from './RenderAllowedValues';
 
-export type ElseConditionProps = {};
+export type ElseStatementProps = {
+	restrictions: SchemaFieldRestrictions;
+	currentSchemaField: SchemaField;
+};
 
-export const ElseCondition = () => {
-	return <div>ElseCondition</div>;
+const containerStyle = (theme: Theme) => css`
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+	align-items: center;
+	color: ${theme.colors.black};
+	${theme.typography.paragraphSmall}
+`;
+
+export const ElseStatement = ({ restrictions, currentSchemaField }: ElseStatementProps) => {
+	const theme: Theme = useThemeContext();
+	return (
+		<div css={containerStyle(theme)}>
+			{/* <b>ELSE</b> {RenderAllowedValues({ restrictions, currentSchemaField })} */}
+			<b>ELSE</b>
+		</div>
+	);
 };

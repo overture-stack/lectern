@@ -18,10 +18,10 @@
  */
 
 /** @jsxImportSource @emotion/react */
-import { ConditionalRestrictionTest, ConditionalRestriction } from '@overture-stack/lectern-dictionary';
-import React from 'react';
 
+import { ConditionalRestrictionTest } from '@overture-stack/lectern-dictionary';
 import { css } from '@emotion/react';
+
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import { ConditionalRestrictionDetails } from './ConditionalRestrictionDetails';

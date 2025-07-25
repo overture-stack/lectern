@@ -17,10 +17,35 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React from 'react';
+/** @jsxImportSource @emotion/react */
 
-export type ThenConditionProps = {};
+import { css } from '@emotion/react';
+import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
-export const ThenCondition = () => {
-	return <div>ThenCondition</div>;
+import { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
+import RenderAllowedValues from './RenderAllowedValues';
+
+export type ThenStatementProps = {
+	restrictions: SchemaFieldRestrictions;
+	currentSchemaField: SchemaField;
+};
+
+const containerStyle = (theme: Theme) => css`
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+	align-items: center;
+	color: ${theme.colors.black};
+	${theme.typography.paragraphSmall}
+`;
+
+export const ThenStatement = ({ restrictions, currentSchemaField }: ThenStatementProps) => {
+	const theme: Theme = useThemeContext();
+	return (
+		<div css={containerStyle(theme)}>
+			<b>THEN</b>
+			{RenderAllowedValues({ restrictions, currentSchemaField })}
+		</div>
+	);
 };
