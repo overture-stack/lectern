@@ -20,51 +20,39 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
+import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import React from 'react';
+
 import Modal from '../../common/Modal';
-import { ConditionalBlock } from './ConditionalBlock';
+import { RecursiveElseThenConditionRender } from './ElseThenConditionRender';
+
+const containerStyle = css`
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+`;
 
 export type ConditionalLogicModalProps = {
 	setIsOpen: (isOpen: boolean) => void;
 	isOpen: boolean;
+	restrictions: SchemaFieldRestrictions;
+	currentSchemaField: SchemaField;
 };
 
-/**
- * Modal for displaying conditional logic details.
- * @param {Object} props - Modal properties.
- * @param {(isOpen: boolean) => void} props.setIsOpen - Function to set the modal open state.
- * @param {boolean} props.isOpen - Whether the modal is open.
- * @returns {JSX.Element} A Modal component containing conditional logic content.
- */
+export const ConditionalLogicModal = ({
+	setIsOpen,
+	isOpen,
+	restrictions,
+	currentSchemaField,
+}: ConditionalLogicModalProps) => {
+	const renderResult = RecursiveElseThenConditionRender(restrictions, currentSchemaField, 0);
 
-export const ConditionalLogicModal = ({ setIsOpen, isOpen }: ConditionalLogicModalProps) => {
 	return (
 		<Modal title="Conditional Logic" setIsOpen={setIsOpen} isOpen={isOpen}>
-			<div
-				css={css`
-					display: flex;
-					flex-direction: column;
-					gap: 15px;
-				`}
-			>
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
-				<ConditionalBlock conditionStatements={[]} />
+			<div css={containerStyle}>
+				{renderResult && Array.isArray(renderResult.blocks) && renderResult.blocks.length > 0 ?
+					renderResult.blocks
+				:	<div>No conditional restrictions found.</div>}
 			</div>
 		</Modal>
 	);

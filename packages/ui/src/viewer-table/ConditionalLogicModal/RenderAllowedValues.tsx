@@ -106,7 +106,7 @@ const RenderAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowed
 	}
 	const computeRestrictions = [
 		{
-			condition: isFieldRequired(currentSchemaField),
+			condition: 'required' in restrictions && restrictions.required !== undefined && restrictions.required === true,
 			content: <Fragment>be provided</Fragment>,
 		},
 		{

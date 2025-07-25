@@ -18,33 +18,56 @@
  */
 
 /** @jsxImportSource @emotion/react */
-import { ConditionalRestrictionTest, SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
-import { css } from '@emotion/react';
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { RecursiveElseThenConditionRender } from './ElseThenConditionRender';
 import RenderAllowedValues from './RenderAllowedValues';
+import { ConditionalStatementWrapper } from './ConditionalStatementWrapper';
 
 export type ElseStatementProps = {
 	restrictions: SchemaFieldRestrictions;
 	currentSchemaField: SchemaField;
 };
 
-const containerStyle = (theme: Theme) => css`
-	display: flex;
-	flex-direction: row;
-	gap: 4px;
-	align-items: center;
-	color: ${theme.colors.black};
-	${theme.typography.paragraphSmall}
-`;
+const isConditionalRestrictions = (restrictions: SchemaFieldRestrictions) => {
+	return restrictions !== undefined && typeof restrictions === 'object' && 'if' in restrictions;
+};
+
+const isSimpleRestrictions = (restrictions: SchemaFieldRestrictions) => {
+	return restrictions !== undefined && typeof restrictions === 'object' && !('if' in restrictions);
+};
 
 export const ElseStatement = ({ restrictions, currentSchemaField }: ElseStatementProps) => {
-	const theme: Theme = useThemeContext();
-	return (
-		<div css={containerStyle(theme)}>
-			{/* <b>ELSE</b> {RenderAllowedValues({ restrictions, currentSchemaField })} */}
-			<b>ELSE</b>
-		</div>
-	);
+	if (Array.isArray(restrictions)) {
+		const allBlocks = restrictions.flatMap((restriction) => {
+			const result = RecursiveElseThenConditionRender(restriction, currentSchemaField, 1);
+			return result?.blocks || [];
+		});
+		if (allBlocks.length === 0) {
+			return undefined;
+		}
+		return (
+			<ConditionalStatementWrapper headerText="ELSE:" useContainer={true}>
+				{allBlocks}
+			</ConditionalStatementWrapper>
+		);
+	} else if (isConditionalRestrictions(restrictions)) {
+		const renderResult = RecursiveElseThenConditionRender(restrictions, currentSchemaField, 1);
+		if (!renderResult || !renderResult.blocks || renderResult.blocks.length === 0) {
+			return undefined;
+		}
+		return (
+			<ConditionalStatementWrapper headerText="ELSE:" useContainer={true}>
+				{renderResult.blocks}
+			</ConditionalStatementWrapper>
+		);
+	} else if (isSimpleRestrictions(restrictions)) {
+		return (
+			<ConditionalStatementWrapper headerText="ELSE" useContainer={false}>
+				{RenderAllowedValues({ restrictions, currentSchemaField })}
+			</ConditionalStatementWrapper>
+		);
+	}
+
+	return undefined;
 };

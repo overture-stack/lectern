@@ -19,8 +19,8 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { ConditionalRestrictionTest } from '@overture-stack/lectern-dictionary';
 import { css } from '@emotion/react';
+import { ConditionalRestrictionTest } from '@overture-stack/lectern-dictionary';
 
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
@@ -41,13 +41,10 @@ const containerStyle = (theme: Theme) => css`
 
 export const IfStatement = ({ ifStatement }: IfStatementProps) => {
 	const theme: Theme = useThemeContext();
-	if (ifStatement.case === undefined) {
-		return <div></div>;
-	}
 
 	const ConditionalRestrictionDetailsComponent = ConditionalRestrictionDetails(
 		ifStatement.conditions,
-		ifStatement.case,
+		ifStatement.case || 'all',
 	);
 	return (
 		<div css={containerStyle(theme)}>

@@ -18,45 +18,48 @@
  */
 
 /** @jsxImportSource @emotion/react */
-
 import { css } from '@emotion/react';
-import { ReactNode } from 'react';
-
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-export type ConditionStatement = {
-	indentLevel: number;
-	Condition: ReactNode;
+type ConditionalStatementWrapperProps = {
+	headerText: string;
+	useContainer?: boolean;
+	children: React.ReactNode;
 };
 
-export type ConditionalBlockProps = {
-	conditionStatements: Array<ConditionStatement>;
-};
 const containerStyle = (theme: Theme) => css`
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
-	border-left: 3px solid ${theme.colors.black};
-	padding: 16px;
-	background-color: ${theme.colors.accent_1};
-	min-height: 60px;
+	gap: 4px;
+	align-items: flex-start;
+	color: ${theme.colors.black};
+	${theme.typography.paragraphSmall}
 `;
 
-const conditionItemStyle = (indentLevel: number) => css`
-	margin-left: ${indentLevel * 16}px;
+const headerStyle = (theme: Theme) => css`
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+	align-items: center;
+	${theme.typography.paragraphSmall}
 `;
-export const ConditionalBlock = ({ conditionStatements }: ConditionalBlockProps) => {
-	const theme: Theme = useThemeContext();
-	return (
-		<div css={containerStyle(theme)}>
-			{conditionStatements.map((item, index) => {
-				return (
-					<div key={index} css={conditionItemStyle(item.indentLevel)}>
-						{item.Condition}
-					</div>
-				);
-			})}
-		</div>
-	);
+
+export const ConditionalStatementWrapper = ({
+	headerText,
+	useContainer = true,
+	children,
+}: ConditionalStatementWrapperProps) => {
+	const theme = useThemeContext();
+	return useContainer ?
+			<div css={containerStyle(theme)}>
+				<div css={headerStyle(theme)}>
+					<b>{headerText}</b>
+				</div>
+				{children}
+			</div>
+		:	<div css={headerStyle(theme)}>
+				<b>{headerText}</b>
+				{children}
+			</div>;
 };

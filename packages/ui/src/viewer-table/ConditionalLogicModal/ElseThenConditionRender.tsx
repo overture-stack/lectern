@@ -17,18 +17,13 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @jsxImportSource @emotion/react */
-
 import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import React, { ReactNode } from 'react';
 
-import { ConditionalStatementWrapper } from './ConditionalStatementWrapper';
-import { RecursiveElseThenConditionRender } from './ElseThenConditionRender';
-import RenderAllowedValues from './RenderAllowedValues';
-
-export type ThenStatementProps = {
-	restrictions: SchemaFieldRestrictions;
-	currentSchemaField: SchemaField;
-};
+import { ConditionStatement, ConditionalBlock } from './ConditionalBlock';
+import { ElseStatement } from './ElseStatement';
+import { IfStatement } from './IfStatement';
+import { ThenStatement } from './ThenStatement';
 
 const isConditionalRestrictions = (restrictions: SchemaFieldRestrictions) => {
 	return restrictions !== undefined && typeof restrictions === 'object' && 'if' in restrictions;
@@ -38,33 +33,35 @@ const isSimpleRestrictions = (restrictions: SchemaFieldRestrictions) => {
 	return restrictions !== undefined && typeof restrictions === 'object' && !('if' in restrictions);
 };
 
-export const ThenStatement = ({ restrictions, currentSchemaField }: ThenStatementProps) => {
-	// Handle both array and conditional restrictions with the same logic
-	if (Array.isArray(restrictions) || isConditionalRestrictions(restrictions)) {
-		const restrictionsArray = Array.isArray(restrictions) ? restrictions : [restrictions];
-		const allBlocks = restrictionsArray.flatMap((restriction) => {
-			const result = RecursiveElseThenConditionRender(restriction, currentSchemaField, 1);
-			return result?.blocks || [];
-		});
+export type ConditionalRenderResult = {
+	blocks: ReactNode[];
+};
 
-		if (allBlocks.length === 0) {
-			return undefined;
+export const RecursiveElseThenConditionRender = (
+	restrictions: SchemaFieldRestrictions,
+	currentSchemaField: SchemaField,
+	indentLevel: number = 0,
+): ConditionalRenderResult | undefined => {
+	const restrictionsArray = Array.isArray(restrictions) ? restrictions : [restrictions];
+	const allBlocks = restrictionsArray.flatMap((restriction) => {
+		if (isConditionalRestrictions(restriction)) {
+			const ifStatement: ConditionStatement = {
+				indentLevel,
+				Condition: <IfStatement ifStatement={restriction.if} />,
+			};
+			const thenStatement = {
+				indentLevel: indentLevel + 1,
+				Condition: <ThenStatement restrictions={restriction.then} currentSchemaField={currentSchemaField} />,
+			};
+			const elseStatement = {
+				indentLevel,
+				Condition: <ElseStatement restrictions={restriction.else} currentSchemaField={currentSchemaField} />,
+			};
+			const conditionStatements = [ifStatement, thenStatement, elseStatement];
+			return [<ConditionalBlock conditionStatements={conditionStatements} />];
 		}
+		return [];
+	});
 
-		return (
-			<ConditionalStatementWrapper headerText="THEN:" useContainer={true}>
-				{allBlocks}
-			</ConditionalStatementWrapper>
-		);
-	}
-
-	if (isSimpleRestrictions(restrictions)) {
-		return (
-			<ConditionalStatementWrapper headerText="THEN" useContainer={false}>
-				{RenderAllowedValues({ restrictions, currentSchemaField })}
-			</ConditionalStatementWrapper>
-		);
-	}
-
-	return undefined;
+	return allBlocks.length > 0 ? { blocks: allBlocks } : undefined;
 };
