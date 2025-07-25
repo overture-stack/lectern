@@ -20,7 +20,6 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
@@ -39,7 +38,6 @@ export const renderDataTypeColumn = (schemaField: SchemaField) => {
 			`}
 		>
 			{schemaField.isArray ? 'Array' : schemaField.valueType.charAt(0).toUpperCase() + schemaField.valueType.slice(1)}
-		</div>
 		</div>
 	);
 };
