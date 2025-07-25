@@ -150,12 +150,14 @@ export const useScrollShadows = (): ScrollShadowsResult => {
  */
 const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 	const theme: Theme = useThemeContext();
+	const { scrollRef, showLeftShadow, showRightShadow, firstColumnWidth } = useScrollShadows();
+
 	const table = useReactTable({
 		data: data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 	});
-	const { scrollRef, showLeftShadow, showRightShadow, firstColumnWidth } = useScrollShadows();
+
 	return (
 		<div css={scrollWrapperStyle}>
 			<div css={tableContainerStyle} ref={scrollRef}>

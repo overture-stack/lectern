@@ -51,8 +51,10 @@ export type TableHeaderProps<T> = {
  * @param {HeaderGroup<T>} headerGroup - TanStack table header group containing column definitions and rendering context
  * @returns {JSX.Element} Table header row element
  */
+
 const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
 	const theme: Theme = useThemeContext();
+
 	return (
 		<tr key={headerGroup.id}>
 			{headerGroup.headers.map((header, index) => (

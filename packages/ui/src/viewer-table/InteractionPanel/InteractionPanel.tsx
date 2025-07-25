@@ -22,9 +22,9 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
+import { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 
-import { type DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import AttributeFilterDropdown, { FilterOptions } from './AttributeFilterDropdown';

@@ -22,7 +22,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 import AccordionItem from './AccordionItem';
 
@@ -42,50 +42,6 @@ export type AccordionOpenState = {
 	toggle: () => void;
 };
 
-export const useClipboard = () => {
-	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
-	const [isCopying, setIsCopying] = useState(false);
-	const [copySuccess, setCopySuccess] = useState(false);
-
-	const handleCopy = (text: string) => {
-		if (isCopying) {
-			return;
-		}
-		setIsCopying(true);
-		navigator.clipboard
-			.writeText(text)
-			.then(() => {
-				setCopySuccess(true);
-				setTimeout(() => {
-					setIsCopying(false);
-				}, 2000);
-			})
-			.catch((err) => {
-				console.error('Failed to copy text: ', err);
-				setCopySuccess(false);
-				setIsCopying(false);
-			});
-		if (copySuccess) {
-			const currentURL = window.location.href;
-			setClipboardContents(currentURL);
-		}
-		setCopySuccess(false);
-	};
-
-	useMemo(() => {
-		if (clipboardContents) {
-			handleCopy(clipboardContents);
-		}
-	}, [clipboardContents]);
-
-	return {
-		clipboardContents,
-		setClipboardContents,
-		isCopying,
-		copySuccess,
-		handleCopy,
-	};
-};
 const accordionStyle = css`
 	list-style: none;
 	padding: 0;

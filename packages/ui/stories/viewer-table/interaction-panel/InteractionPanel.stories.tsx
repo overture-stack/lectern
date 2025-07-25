@@ -21,7 +21,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
+import { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -29,8 +29,6 @@ import type { FilterOptions } from '../../../src/viewer-table/InteractionPanel/A
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
 import AdvancedDictionary from '../../fixtures/pcgl.json';
 import themeDecorator from '../../themeDecorator';
-
-import { type DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
 
 const meta = {
 	component: InteractionPanel,

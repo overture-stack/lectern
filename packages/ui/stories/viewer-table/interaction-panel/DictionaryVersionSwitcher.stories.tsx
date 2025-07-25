@@ -20,13 +20,15 @@
  */
 /** @jsxImportSource @emotion/react */
 
+import { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
 import type { Meta, StoryObj } from '@storybook/react';
+
 import VersionSwitcher, {
 	DictionaryServerUnion,
 } from '../../../src/viewer-table/InteractionPanel/DictionaryVersionSwitcher';
+
 import DictionarySample from '../../fixtures/pcgl.json';
 import themeDecorator from '../../themeDecorator';
-import { DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
 
 const meta = {
 	component: VersionSwitcher,

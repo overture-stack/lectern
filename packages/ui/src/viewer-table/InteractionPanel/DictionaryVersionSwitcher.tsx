@@ -21,11 +21,12 @@
 
 /** @jsxImportSource @emotion/react */
 
+import { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
 import { Dictionary } from '@overture-stack/lectern-dictionary';
-import { DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
+
 import Dropdown from '../../common/Dropdown/Dropdown';
-import { useThemeContext } from '../../theme/ThemeContext';
 import { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
 
 export type DictionaryServerUnion = Dictionary | DictionaryServerRecord;
 

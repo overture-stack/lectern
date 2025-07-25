@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -16,41 +15,50 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
-import type { Schema } from '@overture-stack/lectern-dictionary';
-import React from 'react';
+import { useMemo, useState } from 'react';
 
-import Dropdown from '../../common/Dropdown/Dropdown';
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+export const useClipboard = () => {
+	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
+	const [isCopying, setIsCopying] = useState(false);
+	const [copySuccess, setCopySuccess] = useState(false);
 
-export type TableOfContentsDropdownProps = {
-	schemas: Schema[];
-	onSelect: (schemaIndex: number) => void;
-	disabled?: boolean;
-};
-
-const TableOfContentsDropdown = ({ schemas, onSelect, disabled }: TableOfContentsDropdownProps) => {
-	const theme: Theme = useThemeContext();
-	const { List } = theme.icons;
-	const handleAction = (index: number) => {
-		const anchorId = `#${index}`;
-		onSelect(index);
-		window.location.hash = anchorId;
+	const handleCopy = (text: string) => {
+		if (isCopying) {
+			return;
+		}
+		setIsCopying(true);
+		navigator.clipboard
+			.writeText(text)
+			.then(() => {
+				setCopySuccess(true);
+				setTimeout(() => {
+					setIsCopying(false);
+				}, 2000);
+			})
+			.catch((err) => {
+				console.error('Failed to copy text: ', err);
+				setCopySuccess(false);
+				setIsCopying(false);
+			});
+		if (copySuccess) {
+			const currentURL = window.location.href;
+			setClipboardContents(currentURL);
+		}
+		setCopySuccess(false);
 	};
+	useMemo(() => {
+		if (clipboardContents) {
+			handleCopy(clipboardContents);
+		}
+	}, [clipboardContents]);
 
-	const menuItemsFromSchemas = schemas.map((schema, index) => ({
-		label: schema.name,
-		action: () => {
-			handleAction(index);
-		},
-	}));
-
-	return schemas.length > 0 ?
-			<Dropdown leftIcon={<List />} title="Table of Contents" menuItems={menuItemsFromSchemas} disabled={disabled} />
-		:	null;
+	return {
+		clipboardContents,
+		setClipboardContents,
+		isCopying,
+		copySuccess,
+		handleCopy,
+	};
 };
-
-export default TableOfContentsDropdown;

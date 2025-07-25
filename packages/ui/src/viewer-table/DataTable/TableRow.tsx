@@ -22,7 +22,6 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-
 import { Row, flexRender } from '@tanstack/react-table';
 
 import { Theme } from '../../theme';
@@ -61,6 +60,7 @@ export type TableRowProps<T> = {
  */
 const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
 	const theme: Theme = useThemeContext();
+
 	return (
 		<tr key={row.id} css={rowStyle(index, theme)}>
 			{row.getVisibleCells().map((cell, cellIndex) => {
