@@ -40,7 +40,7 @@ const AttributeFilterDropdown = ({ filters, setFilters, disabled }: AttributeFil
 	};
 	const menuItems = [
 		{
-			label: 'Required Only',
+			label: 'Required',
 			action: () => handleFilterSelect('Required'),
 		},
 		{
