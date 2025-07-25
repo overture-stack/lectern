@@ -21,12 +21,16 @@
 
 import { css } from '@emotion/react';
 import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary';
+import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary';
 import { Row } from '@tanstack/react-table';
 
+import ReadMoreText from '../../../../common/ReadMoreText';
 import ReadMoreText from '../../../../common/ReadMoreText';
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
+const fieldContainerStyle = (theme: Theme) => css`
+	${theme.typography.data}
 const fieldContainerStyle = (theme: Theme) => css`
 	${theme.typography.data}
 	display: flex;
@@ -76,9 +80,13 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 			{fieldExamples && (
 				<div>
 					<b>Example(s): </b>
+				<div>
+					<b>Example(s): </b>
 					{Array.isArray(fieldExamples) ? fieldExamples.join(', ') : fieldExamples.toString()}
 				</div>
+				</div>
 			)}
+		</ReadMoreText>
 		</ReadMoreText>
 	);
 };

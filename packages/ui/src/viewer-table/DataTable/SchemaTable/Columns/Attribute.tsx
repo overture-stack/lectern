@@ -21,6 +21,7 @@
 
 import { css } from '@emotion/react';
 import { SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';

@@ -29,6 +29,7 @@ import VersionSwitcher, {
 
 import DictionarySample from '../../fixtures/pcgl.json';
 import themeDecorator from '../../themeDecorator';
+import { DictionaryServerRecord } from '../../../../client/src/rest/getDictionary';
 
 const meta = {
 	component: VersionSwitcher,
@@ -40,6 +41,11 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const SingleDictionaryData: DictionaryServerUnion[] = [DictionarySample as DictionaryServerUnion];
+const MultipleDictionaryData: DictionaryServerUnion[] = [
+	{ ...DictionarySample, _id: '1', version: '1.0', createdAt: '2025-01-01' } as DictionaryServerRecord,
+	{ ...DictionarySample, _id: '2', version: '2.0', createdAt: '2025-01-01' } as DictionaryServerRecord,
+	{ ...DictionarySample, _id: '3', version: '3.0', createdAt: '2025-01-01' } as DictionaryServerRecord,
 const SingleDictionaryData: DictionaryServerUnion[] = [DictionarySample as DictionaryServerUnion];
 const MultipleDictionaryData: DictionaryServerUnion[] = [
 	{ ...DictionarySample, _id: '1', version: '1.0', createdAt: '2025-01-01' } as DictionaryServerRecord,
@@ -58,6 +64,7 @@ export const MultipleVersions: Story = {
 		...mockProps,
 		dictionaryData: MultipleDictionaryData,
 		title: 'Multiple Versions',
+		title: 'Multiple Versions',
 	},
 };
 
@@ -65,6 +72,7 @@ export const SingleVersion: Story = {
 	args: {
 		...mockProps,
 		dictionaryData: SingleDictionaryData,
+		title: 'Single Version',
 		title: 'Single Version',
 	},
 };
@@ -74,6 +82,7 @@ export const EmptyArray: Story = {
 		...mockProps,
 		dictionaryData: [],
 		title: 'Empty Array',
+		title: 'Empty Array',
 	},
 };
 
@@ -82,6 +91,7 @@ export const DisabledWithMultipleVersions: Story = {
 		...mockProps,
 		dictionaryData: MultipleDictionaryData,
 		disabled: true,
+		title: 'Disabled with Multiple Versions',
 		title: 'Disabled with Multiple Versions',
 	},
 };

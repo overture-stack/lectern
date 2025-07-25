@@ -25,6 +25,12 @@ import { ReactNode } from 'react';
 
 import ReadMoreText from '../../../../../common/ReadMoreText';
 import { computeAllowedValuesColumn, type RestrictionItem } from './ComputeAllowedValues';
+import { css } from '@emotion/react';
+import { SchemaField, SchemaFieldRestrictions, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
+import { ReactNode } from 'react';
+
+import ReadMoreText from '../../../../../common/ReadMoreText';
+import { computeAllowedValuesColumn, type RestrictionItem } from './ComputeAllowedValues';
 
 const allowedValuesContainerStyle = css`
 	display: flex;
@@ -81,8 +87,14 @@ export const renderAllowedValuesColumn = (
 							renderRestrictionItem(value, key)
 						:	<div key={key}>{value}</div>
 					:	null
+					value ?
+						typeof value === 'object' && 'prefix' in value && 'content' in value ?
+							renderRestrictionItem(value, key)
+						:	<div key={key}>{value}</div>
+					:	null
 				);
 			})}
+		</ReadMoreText>
 		</ReadMoreText>
 	);
 };
