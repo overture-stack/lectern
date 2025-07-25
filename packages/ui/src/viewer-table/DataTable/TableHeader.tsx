@@ -52,7 +52,7 @@ export type TableHeaderProps<T> = {
  * @returns {JSX.Element} Table header row element
  */
 const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	return (
 		<tr key={headerGroup.id}>
 			{headerGroup.headers.map((header, index) => (

@@ -149,7 +149,7 @@ export const useScrollShadows = (): ScrollShadowsResult => {
  * @returns {JSX.Element} Generic Table component
  */
 const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	const table = useReactTable({
 		data: data,
 		columns,

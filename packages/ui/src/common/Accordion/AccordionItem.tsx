@@ -168,7 +168,7 @@ const hashOnClick = (
 
 const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) => {
 	const accordionRef = useRef<HTMLLIElement>(null);
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	const { setClipboardContents } = useClipboard();
 	const { description, title, content, schemaName } = accordionData;
 	const { ChevronDown, Hash } = theme.icons;

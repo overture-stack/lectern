@@ -21,6 +21,7 @@
 
 import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
+import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
 /**
@@ -29,7 +30,7 @@ import { useThemeContext } from '../../../../theme/ThemeContext';
  * @returns {JSX.Element} Formatted data type display (Array or capitalized value type)
  */
 export const renderDataTypeColumn = (schemaField: SchemaField) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	return (
 		<div
 			css={css`

@@ -110,7 +110,7 @@ type DropDownProps = {
 const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDownProps) => {
 	const [open, setOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 
 	const { ChevronDown } = theme.icons;
 

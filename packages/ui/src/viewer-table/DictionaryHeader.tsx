@@ -71,7 +71,7 @@ const versionStyle = (theme: Theme) => css`
 `;
 
 const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 
 	return (
 		<div css={containerStyle}>

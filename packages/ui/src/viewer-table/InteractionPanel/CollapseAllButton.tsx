@@ -21,6 +21,7 @@
 import React from 'react';
 import Button from '../../common/Button';
 import { useThemeContext } from '../../theme/ThemeContext';
+import { Theme } from '../../theme';
 
 export interface CollapseAllButtonProps {
 	onClick: () => void;
@@ -28,7 +29,7 @@ export interface CollapseAllButtonProps {
 }
 
 const CollapseAllButton = ({ onClick, disabled }: CollapseAllButtonProps) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	const { Collapse } = theme.icons;
 
 	return (

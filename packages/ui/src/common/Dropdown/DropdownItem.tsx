@@ -54,7 +54,7 @@ const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
 `;
 
 const DropDownItem = ({ children, action, onItemClick, customStyles }: DropDownItemProps) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 
 	const handleClick = () => {
 		if (typeof action === 'function') {

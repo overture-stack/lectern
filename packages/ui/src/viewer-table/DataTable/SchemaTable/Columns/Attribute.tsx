@@ -43,7 +43,7 @@ const containerStyle = (theme: Theme) => css`
  * @returns {JSX.Element} Attribute display showing Required, Optional, or Required When with modal button
  */
 export const renderAttributesColumn = (schemaFieldRestrictions: SchemaFieldRestrictions) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	return (
 		<div css={containerStyle(theme)}>
 			{schemaFieldRestrictions && 'if' in schemaFieldRestrictions ?

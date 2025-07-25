@@ -91,7 +91,7 @@ const ReadMoreText = ({
 	// Tracks if the content is being truncated by CSS line-clamp
 	const [isTruncated, setIsTruncated] = useState(false);
 
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	const { ChevronDown } = theme.icons;
 
 	// Check if content needs truncation by comparing scroll height vs client height

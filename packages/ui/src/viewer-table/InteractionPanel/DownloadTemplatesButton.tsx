@@ -25,6 +25,7 @@ import { css } from '@emotion/react';
 import { useState } from 'react';
 import Button from '../../common/Button';
 import { useThemeContext } from '../../theme/ThemeContext';
+import { Theme } from '../../theme';
 
 export type DictionaryDownloadButtonProps = {
 	version: string;
@@ -67,7 +68,7 @@ const DictionaryDownloadButton = ({
 	iconOnly = false,
 }: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	const { FileDownload } = theme.icons;
 
 	const fetchUrl = `${lecternUrl}/dictionaries/template/download?${new URLSearchParams({

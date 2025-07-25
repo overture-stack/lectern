@@ -60,7 +60,7 @@ export type TableRowProps<T> = {
  * @returns {JSX.Element} Table row element
  */
 const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	return (
 		<tr key={row.id} css={rowStyle(index, theme)}>
 			{row.getVisibleCells().map((cell, cellIndex) => {
