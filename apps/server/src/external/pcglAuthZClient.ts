@@ -19,7 +19,7 @@
 
 import { Request } from 'express';
 
-import { InternalServerError, ForbiddenError } from '@overture-stack/lectern-dictionary';
+import { InternalServerError, ForbiddenError, NotFoundError } from '@overture-stack/lectern-dictionary';
 
 import { UserDataResponseErrorType } from '../common/types/auth';
 import { Groups, userDataResponseSchema, UserDataResponseSchemaType } from '../common/validation/auth-validation';
@@ -47,7 +47,7 @@ const fetchAuthZResource = async (resource: string, token: string, options?: Req
 	try {
 		return await fetch(url, { headers, ...options });
 	} catch (error) {
-		logger.error(`Bad request: Error occurred during fetch`, error);
+		logger.error(`[AUTHZ]: Something went wrong fetching authz service. ${error}`);
 		throw new InternalServerError(`Bad request: Something went wrong fetching from authz service`);
 	}
 };
@@ -62,12 +62,20 @@ export const fetchUserData = async (token: string) => {
 	if (!response.ok) {
 		const errorResponse: UserDataResponseErrorType = await response.json();
 
-		logger.error(`Error retrieving user data.`, errorResponse);
+		logger.error(`[AUTHZ]: Unable to verify user response from AUTHZ. ${errorResponse}`);
+
+		const responseMessage =
+			'Something went wrong while verifying PCGL user account information, please try again later.';
+
 		switch (response.status) {
 			case 403:
-				throw new ForbiddenError(`${errorResponse.detail}`);
+				throw new ForbiddenError(responseMessage);
+			case 404:
+				throw new NotFoundError(
+					"This account is currently not associated within the PCGL project. This may be due to the fact that you haven't completed the onboarding process for new accounts, or have logged in with an account not previously used to access the service.",
+				);
 			default:
-				throw new InternalServerError(`Error with authz: ${errorResponse.detail}`);
+				throw new InternalServerError(responseMessage);
 		}
 	}
 
@@ -76,7 +84,7 @@ export const fetchUserData = async (token: string) => {
 	const responseValidation = userDataResponseSchema.safeParse(result);
 
 	if (!responseValidation.success) {
-		logger.error(`Error retrieving user data.`, responseValidation.error);
+		logger.error(`[AUTHZ]: Malformed response object from AUTHZ. ${responseValidation.error}`);
 
 		throw new InternalServerError('User object response has unexpected format');
 	}
