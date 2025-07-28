@@ -39,16 +39,18 @@ type DropDownItemProps = {
 
 // TODO: Get figma designs for dropdown list item and implement that, since current styling is off
 const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
+	${theme.typography?.paragraphSmall};
 	display: flex;
-	min-height: 100%;
-	padding: 10px;
 	align-items: center;
-	border-radius: 9px;
-	justify-content: center;
-	color: ${theme.colors.accent_dark};
+	padding: 8px 16px;
+	height: 42px;
+	box-sizing: border-box;
+	color: ${theme.colors.black};
 	cursor: pointer;
+	border-bottom: 1px solid ${theme.colors.border_light};
+
 	&:hover {
-		background-color: ${theme.colors.grey_1};
+		background-color: ${theme.colors.accent_1};
 	}
 
 	${customStyles?.base}
