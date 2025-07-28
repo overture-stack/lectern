@@ -73,7 +73,6 @@ const dropDownTitleStyle = (theme: Theme) => css`
 `;
 
 const dropdownMenuStyle = (theme: Theme) => css`
-	all: unset;
 	${theme.typography?.subtitleSecondary};
 	position: absolute;
 	top: calc(100% + 10px);
@@ -84,6 +83,9 @@ const dropdownMenuStyle = (theme: Theme) => css`
 	z-index: 100;
 	max-height: 150px;
 	overflow-y: auto;
+	list-style: none;
+	margin: 0;
+	padding: 0;
 `;
 
 type MenuItem = {
