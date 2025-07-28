@@ -21,8 +21,8 @@
 
 import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import React, { Fragment } from 'react';
-
 import { css } from '@emotion/react';
+
 import FieldBlock from '../../common/FieldBlock';
 import ListItem from '../../common/ListItem';
 import { isFieldRequired } from '../../utils/isFieldRequired';

@@ -29,10 +29,10 @@ export interface ListItemProps {
 	children: ReactNode;
 }
 
+// TODO: Use theme to style the ListItem component
 const getListItemStyles = (theme: Theme): CSSProperties => ({
 	fontSize: '13px',
 	fontWeight: 'normal',
-	lineHeight: '1',
 	fontFamily: "'DM Mono', monospace",
 	borderRadius: '8px',
 	width: 'fit-content',
