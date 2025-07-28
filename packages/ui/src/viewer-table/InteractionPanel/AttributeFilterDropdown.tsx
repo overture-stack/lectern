@@ -17,9 +17,8 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React from 'react';
-
 import Dropdown from '../../common/Dropdown/Dropdown';
+import { useThemeContext } from '../../theme/ThemeContext';
 
 export type AttributeFilterDropdownProps = {
 	filters: FilterOptions[];
@@ -30,6 +29,10 @@ export type AttributeFilterDropdownProps = {
 export type FilterOptions = 'Required' | 'All Fields';
 
 const AttributeFilterDropdown = ({ filters, setFilters, disabled }: AttributeFilterDropdownProps) => {
+	const theme = useThemeContext();
+
+	const { ListFilter } = theme.icons;
+
 	const handleFilterSelect = (selectedFilterName: FilterOptions) => {
 		// Toggles selected filter on click
 		if (filters?.includes(selectedFilterName)) {
@@ -49,7 +52,7 @@ const AttributeFilterDropdown = ({ filters, setFilters, disabled }: AttributeFil
 		},
 	];
 
-	return <Dropdown title="Filter By" menuItems={menuItems} disabled={disabled} />;
+	return <Dropdown leftIcon={<ListFilter />} title="Filter By" menuItems={menuItems} disabled={disabled} />;
 };
 
 export default AttributeFilterDropdown;
