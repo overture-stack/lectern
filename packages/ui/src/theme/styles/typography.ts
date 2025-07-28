@@ -35,70 +35,45 @@ const hero = css`
 	${baseFont}
 	font-size: 40px;
 	font-weight: 400;
-	font-style: normal;
-	font-stretch: normal;
 	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const title = css`
 	${baseFont}
 	font-size: 26px;
 	font-weight: 400;
-	font-style: normal;
-	font-stretch: normal;
 	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const subtitle = css`
 	${baseFont}
 	font-size: 30px;
 	font-weight: 400;
-	font-style: normal;
-	font-stretch: normal;
 	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const subtitleBold = css`
-	${baseFont}
-	font-size: 30px;
+	${subtitle}
 	font-weight: 700;
-	font-style: normal;
-	font-stretch: normal;
-	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const subtitleSecondary = css`
 	${baseFont}
 	font-size: 20px;
 	font-weight: 700;
-	font-style: normal;
-	font-stretch: normal;
 	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const introText = css`
 	${baseFontSecondary}
 	font-size: 18px;
 	font-weight: 400;
-	font-style: normal;
-	font-stretch: normal;
 	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const introTextBold = css`
-	${baseFontSecondary}
-	font-size: 18px;
+	${introText}
 	font-weight: 700;
-	font-style: normal;
-	font-stretch: normal;
-	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const regular = css`
@@ -115,98 +90,62 @@ const paragraph = css`
 	${baseFontSecondary}
 	font-size: 26px;
 	font-weight: 400;
-	font-style: normal;
-	font-stretch: normal;
 	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const paragraphBold = css`
-	${baseFontSecondary}
-	font-size: 26px;
+	${paragraph}
 	font-weight: 700;
-	font-style: normal;
-	font-stretch: normal;
-	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const paragraphSmall = css`
 	${baseFontSecondary}
 	font-size: 16px;
 	font-weight: 400;
-	font-style: normal;
-	font-stretch: normal;
 	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const paragraphSmallBold = css`
-	${baseFontSecondary}
-	font-size: 16px;
+	${paragraphSmall}
 	font-weight: 700;
-	font-style: normal;
-	font-stretch: normal;
-	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const data = css`
 	${baseFontSecondary}
 	font-size: 13px;
 	font-weight: 400;
-	font-style: normal;
-	font-stretch: normal;
 	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const dataBold = css`
-	${baseFontSecondary}
-	font-size: 13px;
+	${data}
 	font-weight: 700;
-	font-style: normal;
-	font-stretch: normal;
-	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const caption = css`
 	${baseFontSecondary}
 	font-size: 11px;
 	font-weight: 400;
-	font-style: normal;
-	font-stretch: normal;
 	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const captionBold = css`
-	${baseFontSecondary}
-	font-size: 11px;
+	${caption}
 	font-weight: 700;
-	font-style: normal;
-	font-stretch: normal;
-	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const headingSmall = css`
 	${baseFont}
 	font-size: 24px;
 	font-weight: 700;
-	font-style: normal;
 	line-height: 100%;
-	letter-spacing: 0%;
 `;
 
 const buttonText = css`
 	${baseFont}
 	font-size: 20px;
 	font-weight: 700;
-	font-style: normal;
 	line-height: 100%;
-	letter-spacing: 0%;
 	vertical-align: middle;
 `;
 
@@ -214,25 +153,18 @@ const body = css`
 	${baseFont}
 	font-size: 18px;
 	font-weight: 400;
-	font-style: normal;
-	letter-spacing: 0%;
 `;
 
 const bodyBold = css`
-	${baseFont}
-	font-size: 18px;
+	${body}
 	font-weight: 700;
-	font-style: normal;
-	letter-spacing: 0%;
 `;
 
 const fieldBlock = css`
 	${baseFontMono}
 	font-size: 12px;
 	font-weight: 400;
-	font-style: normal;
 	line-height: 100%;
-	letter-spacing: 0%;
 	text-align: center;
 	vertical-align: middle;
 `;
@@ -241,10 +173,7 @@ const tableHeader = css`
 	${baseFont}
 	font-size: 20px;
 	font-weight: 600;
-	font-style: normal;
-	font-stretch: normal;
 	line-height: 20px;
-	letter-spacing: 0%;
 	vertical-align: middle;
 `;
 

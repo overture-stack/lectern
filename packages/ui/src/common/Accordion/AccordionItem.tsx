@@ -25,9 +25,9 @@ import { css } from '@emotion/react';
 import type { RefObject } from 'react';
 import { MouseEvent, useEffect, useRef } from 'react';
 
+import { useClipboard } from '../../hooks/useClipboard';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
-import { useClipboard } from '../../utils/useClipboard';
 import ReadMoreText from '../ReadMoreText';
 import { AccordionData, AccordionOpenState } from './Accordion';
 
@@ -81,7 +81,6 @@ const accordionItemButtonStyle = (theme: Theme) => css`
 const contentColumnStyle = css`
 	display: flex;
 	flex-direction: column;
-	min-width: 0;
 	gap: 8px;
 `;
 
@@ -90,7 +89,6 @@ const titleStyle = (theme: Theme) => css`
 	text-align: left;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
-	min-width: 0;
 `;
 
 const chevronStyle = (isOpen: boolean) => css`
