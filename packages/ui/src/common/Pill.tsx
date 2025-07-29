@@ -35,7 +35,7 @@ export interface PillProps {
 	customStyles?: SerializedStyles;
 }
 
-const getBaseStyles = () => css`
+const baseStyles = css`
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -118,7 +118,7 @@ const Pill = ({ children, variant = 'default', size = 'medium', icon, customStyl
 	const theme: Theme = useThemeContext();
 
 	return (
-		<div css={[getBaseStyles(), getSizeStyles(theme)[size], getVariantStyles(theme)[variant], customStyles]}>
+		<div css={[baseStyles, getSizeStyles(theme)[size], getVariantStyles(theme)[variant], customStyles]}>
 			{icon && <span css={getIconStyles(size)}>{icon}</span>}
 			<span>{children}</span>
 		</div>
