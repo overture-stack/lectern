@@ -1,6 +1,4 @@
 import { Preview } from '@storybook/react';
-// import {PaintBrushIcon} from '@storybook/icons';
-
 import { themes } from '@storybook/theming';
 
 const preview: Preview = {
