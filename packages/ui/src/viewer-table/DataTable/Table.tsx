@@ -23,8 +23,10 @@
 
 import { css } from '@emotion/react';
 import { ColumnDef, getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
+import { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
 
@@ -34,7 +36,7 @@ export type GenericTableProps<R> = {
 };
 
 type ScrollShadowsResult = {
-	scrollRef: React.RefObject<HTMLDivElement | null>;
+	scrollRef: RefObject<HTMLDivElement | null>;
 	showLeftShadow: boolean;
 	showRightShadow: boolean;
 	firstColumnWidth: number;
@@ -49,25 +51,27 @@ const scrollWrapperStyle = css`
 
 const shadowStyle = css`
 	position: absolute;
-	top: 0.7%;
+	top: 2%;
 	width: 20px;
 	height: 100%;
 	pointer-events: none;
 	transition: opacity 0.3s ease;
 `;
 
-const leftShadowStyle = (width: number, opacity: number) => css`
+const leftShadowStyle = (width: number, opacity: number, theme: Theme) => css`
 	${shadowStyle}
 	left: ${width}px;
-	background: linear-gradient(90deg, rgba(0, 0, 0, 0.035), transparent);
+	background: linear-gradient(90deg, ${theme.shadow.subtle}, transparent);
 	opacity: ${opacity};
+	z-index: 1;
 `;
 
-const rightShadowStyle = (opacity: number) => css`
+const rightShadowStyle = (opacity: number, theme: Theme) => css`
 	${shadowStyle}
 	right: 0;
-	background: linear-gradient(270deg, rgba(0, 0, 0, 0.06), transparent);
+	background: linear-gradient(270deg, ${theme.shadow.subtle}, transparent);
 	opacity: ${opacity};
+	z-index: 1;
 `;
 
 const tableContainerStyle = css`
@@ -75,17 +79,21 @@ const tableContainerStyle = css`
 	max-width: 100%;
 `;
 
-const tableStyle = css`
+const tableStyle = (theme: Theme) => css`
 	min-width: 1200px;
 	border-collapse: collapse;
-	border: 1px solid lightgray;
+	border: 1px solid ${theme.colors.grey_3};
 	margin-top: 8px;
 	position: relative;
 `;
-const tableBorderStyle = css`
-	border: 1px solid #dcdde1;
+const tableBorderStyle = (theme: Theme) => css`
+	border: 1px solid ${theme.colors.border_light};
 `;
 
+/**
+ * Hook for managing scroll shadows on horizontally scrollable tables.
+ * @returns {ScrollShadowsResult} Scroll shadow state and refs
+ */
 export const useScrollShadows = (): ScrollShadowsResult => {
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const [showLeftShadow, setShowLeftShadow] = useState(false);
@@ -135,25 +143,35 @@ export const useScrollShadows = (): ScrollShadowsResult => {
 	};
 };
 
+/**
+ * Generic table component with horizontal scroll and shadow effects.
+ * @template R - Row data type (can be any object type)
+ * @param {R[]} data - Array of row data
+ * @param {ColumnDef<R, any>[]} columns - TanStack table column definitions
+ * @returns {JSX.Element} Generic Table component
+ */
 const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
+	const theme: Theme = useThemeContext();
+	const { scrollRef, showLeftShadow, showRightShadow, firstColumnWidth } = useScrollShadows();
+
 	const table = useReactTable({
 		data: data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 	});
-	const { scrollRef, showLeftShadow, showRightShadow, firstColumnWidth } = useScrollShadows();
+
 	return (
 		<div css={scrollWrapperStyle}>
 			<div css={tableContainerStyle} ref={scrollRef}>
-				<div css={leftShadowStyle(firstColumnWidth, showLeftShadow ? 1 : 0)} />
-				<div css={rightShadowStyle(showRightShadow ? 1 : 0)} />
-				<table css={tableStyle}>
-					<thead css={tableBorderStyle}>
+				<div css={leftShadowStyle(firstColumnWidth, showLeftShadow ? 1 : 0, theme)} />
+				<div css={rightShadowStyle(showRightShadow ? 1 : 0, theme)} />
+				<table css={tableStyle(theme)}>
+					<thead css={tableBorderStyle(theme)}>
 						{table.getHeaderGroups().map((headerGroup: HeaderGroup<R>) => (
 							<TableHeader key={headerGroup.id} headerGroup={headerGroup} />
 						))}
 					</thead>
-					<tbody css={tableBorderStyle}>
+					<tbody css={tableBorderStyle(theme)}>
 						{table.getRowModel().rows.map((row, i: number) => (
 							<TableRow key={row.id} row={row} index={i} />
 						))}

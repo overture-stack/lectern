@@ -18,6 +18,7 @@
  */
 
 import { Schema } from '@overture-stack/lectern-dictionary';
+import React from 'react';
 
 import Table from '../Table';
 import { getSchemaBaseColumns } from './SchemaTableInit';
@@ -26,6 +27,11 @@ export type SchemaTableProps = {
 	schema: Schema;
 };
 
+/**
+ * Schema table component that displays dictionary schema fields in a table format.
+ * @param {Schema} schema - Dictionary schema containing fields and restrictions
+ * @returns {JSX.Element} Table displaying schema fields with columns for Fields, Attribute, Data Type, and Allowed Values
+ */
 const SchemaTable = ({ schema }: SchemaTableProps) => {
 	return <Table data={schema.fields} columns={getSchemaBaseColumns(schema)} />;
 };

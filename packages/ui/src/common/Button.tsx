@@ -49,9 +49,9 @@ const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: Se
 	width: ${width || 'auto'};
 	min-width: fit-content;
 	padding: 8px 16px;
-	background-color: #f7f7f7;
+	background-color: ${theme.colors.background_light};
 	color: ${theme.colors.black};
-	border: 1px solid #beb2b294;
+	border: 2px solid ${theme.colors.border_button};
 	border-radius: 9px;
 	height: 42px;
 	box-sizing: border-box;
@@ -74,7 +74,7 @@ const getContentStyles = (theme: Theme, shouldShowLoading: boolean) => css`
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	${theme.typography.button};
+	${theme.typography.subtitleSecondary};
 	color: inherit;
 	white-space: nowrap;
 	overflow: hidden;
@@ -112,7 +112,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 		ref,
 	) => {
 		const [internalLoading, setInternalLoading] = React.useState(false);
-		const theme = useThemeContext();
+		const theme: Theme = useThemeContext();
 		const { Spinner } = theme.icons;
 
 		const shouldShowLoading = !!controlledLoading || (internalLoading && isAsync);

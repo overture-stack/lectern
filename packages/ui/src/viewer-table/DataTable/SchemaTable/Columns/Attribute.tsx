@@ -22,33 +22,33 @@
 import { css } from '@emotion/react';
 import { SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
+import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 import OpenModalButton from '../../../OpenModalButton';
 
 export type Attributes = 'Required' | 'Optional' | 'Required When';
 
-const containerStyle = css`
+const containerStyle = (theme: Theme) => css`
 	display: flex;
 	align-items: center;
 	flex-direction: column;
 	justify-content: center;
 	gap: 10px;
+	${theme.typography.paragraphSmallBold}
 `;
 
+/**
+ * Renders the attribute column cell showing field requirement status.
+ * @param {SchemaFieldRestrictions} schemaFieldRestrictions - Field-level restrictions containing requirement information
+ * @returns {JSX.Element} Attribute display showing Required, Optional, or Required When with modal button
+ */
 export const renderAttributesColumn = (schemaFieldRestrictions: SchemaFieldRestrictions) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
 	return (
-		<div css={containerStyle}>
+		<div css={containerStyle(theme)}>
 			{schemaFieldRestrictions && 'if' in schemaFieldRestrictions ?
 				<OpenModalButton onClick={() => alert('Hello World')}>Required When</OpenModalButton>
-			:	<div
-					css={css`
-						${theme.typography.subheading}
-					`}
-				>
-					{schemaFieldRestrictions && 'required' in schemaFieldRestrictions ? 'Required' : 'Optional'}
-				</div>
-			}
+			:	<div>{schemaFieldRestrictions && 'required' in schemaFieldRestrictions ? 'Required' : 'Optional'}</div>}
 		</div>
 	);
 };

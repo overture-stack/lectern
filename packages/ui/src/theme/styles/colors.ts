@@ -79,6 +79,23 @@ const warning = {
 	warning_dark: '#e6c104',
 };
 
+const background = {
+	background_light: '#f7f7f7',
+	background_muted: '#ececec',
+	background_alternate: '#F5F7F8',
+	background_pill: '#E5E7EA',
+	background_pill_hover: '#D8DADD',
+	background_overlay: 'rgba(0,28,61,0.8)',
+};
+
+const border = {
+	border_light: '#DCDDE1',
+	border_medium: '#dcdcdc',
+	border_subtle: '#d3d3d3',
+	border_muted: '#d1d8df',
+	border_button: '#beb2b294',
+};
+
 export default {
 	...base,
 	...grey,
@@ -89,4 +106,6 @@ export default {
 	...secondary,
 	...error,
 	...warning,
+	...background,
+	...border,
 };

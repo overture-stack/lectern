@@ -22,42 +22,58 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { pick } from 'lodash';
-import DictionaryHeader from '../../src/viewer-table/DictionaryHeader';
-import biosampleDictionary from '../fixtures/minimalBiosampleModel';
+
+import Pill from '../../src/common/Pill';
 import themeDecorator from '../themeDecorator';
 
 const meta = {
-	component: DictionaryHeader,
-	title: 'Viewer - Table/Dictionary Header',
+	component: Pill,
+	title: 'Common/Pill',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
-} satisfies Meta<typeof DictionaryHeader>;
+	argTypes: {
+		size: {
+			control: { type: 'select' },
+			options: ['extra-small', 'small', 'medium', 'large'],
+		},
+		variant: {
+			control: { type: 'select' },
+			options: ['default'],
+		},
+	},
+} satisfies Meta<typeof Pill>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const AllHeaderProperties: Story = {
-	args: { ...pick(biosampleDictionary, 'name', 'version', 'description') },
+export const Default: Story = {
+	args: { children: 'Default Pill' },
 };
 
-export const NoVersion: Story = {
-	args: { ...pick(biosampleDictionary, 'name', 'description') },
-};
-export const NoDescription: Story = {
-	args: { ...pick(biosampleDictionary, 'name', 'version') },
+export const ExtraSmall: Story = {
+	args: { children: 'XS', size: 'extra-small' },
 };
 
-export const LongName: Story = {
-	args: {
-		...pick(biosampleDictionary, 'name', 'version', 'description'),
-		name: 'This is a really really reallt reallty long dictionary name! wow!',
-	},
+export const Small: Story = {
+	args: { children: 'Small', size: 'small' },
 };
-export const LongDescription: Story = {
-	args: {
-		...pick(biosampleDictionary, 'name', 'version', 'description'),
-		description:
-			'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-	},
+
+export const Medium: Story = {
+	args: { children: 'Medium', size: 'medium' },
+};
+
+export const Large: Story = {
+	args: { children: 'Large Pill', size: 'large' },
+};
+
+export const AllSizes: Story = {
+	args: { children: 'Placeholder' },
+	render: () => (
+		<div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+			<Pill size="extra-small">Extra Small</Pill>
+			<Pill size="small">Small</Pill>
+			<Pill size="medium">Medium</Pill>
+			<Pill size="large">Large</Pill>
+		</div>
+	),
 };

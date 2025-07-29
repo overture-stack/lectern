@@ -31,6 +31,11 @@ import { FieldsColumn } from './Columns/Fields';
 
 const columnHelper = createColumnHelper<SchemaField>();
 
+/**
+ * Creates base column definitions for schema table display.
+ * @param {Schema} schema - Dictionary schema containing field definitions and restrictions
+ * @returns {ColumnDef<SchemaField, any>[]} Array of TanStack table column definitions for Fields, Attribute, Data Type, and Allowed Values
+ */
 export const getSchemaBaseColumns = (schema: Schema) => [
 	columnHelper.accessor('name', {
 		header: 'Fields',

@@ -27,22 +27,23 @@ import { Row, flexRender } from '@tanstack/react-table';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-const rowStyle = (index: number) => css`
-	background-color: ${index % 2 === 0 ? '' : '#F5F7F8'};
+const rowStyle = (index: number, theme: Theme) => css`
+	background-color: ${index % 2 === 0 ? theme.colors.white : theme.colors.background_alternate};
 `;
 
 const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
-	${theme.typography.data}
+	${theme.typography.paragraphSmall}
 	padding: 12px;
 	max-width: 30vw;
-	vertical-align: top;
+	text-align: ${cellIndex === 1 || cellIndex === 2 ? 'center' : 'left'};
+	vertical-align: middle;
 	${cellIndex === 0 &&
 	`
 		position: sticky;
 		left: 0;
-		background-color: ${rowIndex % 2 === 0 ? 'white' : '#F5F7F8'};
+		background-color: ${rowIndex % 2 === 0 ? theme.colors.white : theme.colors.background_alternate};
 	`}
-	border: 1px solid #DCDDE1;
+	border: 1px solid ${theme.colors.border_light};
 `;
 
 export type TableRowProps<T> = {
@@ -50,10 +51,18 @@ export type TableRowProps<T> = {
 	index: number;
 };
 
+/**
+ * Generic table row component with alternating background colors.
+ * @template T - Row data type
+ * @param {Row<T>} row - TanStack table row object
+ * @param {number} index - Row index for styling
+ * @returns {JSX.Element} Table row element
+ */
 const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
+
 	return (
-		<tr key={row.id} css={rowStyle(index)}>
+		<tr key={row.id} css={rowStyle(index, theme)}>
 			{row.getVisibleCells().map((cell, cellIndex) => {
 				return (
 					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>

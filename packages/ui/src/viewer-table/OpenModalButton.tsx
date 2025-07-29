@@ -20,6 +20,7 @@
 
 import { css } from '@emotion/react';
 import { ReactNode } from 'react';
+
 import { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
 import Eye from '../theme/icons/Eye';
@@ -32,18 +33,18 @@ export type OpenModalButtonProps = {
 };
 
 const pillButtonStyle = (theme: Theme) => css`
-	${theme.typography.subheading2}
+	${theme.typography.paragraphSmallBold}
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 6px;
 	padding: 4px 12px;
 	border-radius: 5px;
-	background-color: #ffff;
+	background-color: ${theme.colors.white};
 	color: ${theme.colors.black};
 	border: 1px solid ${theme.colors.black};
 	transition: all 0.2s ease-in-out;
-	max-width: 120px;
+	max-width: 130px;
 	text-align: center;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
@@ -51,7 +52,7 @@ const pillButtonStyle = (theme: Theme) => css`
 	white-space: pre-line;
 	cursor: pointer;
 	&:hover {
-		background: #f5f5f5;
+		background: ${theme.colors.background_light};
 	}
 `;
 

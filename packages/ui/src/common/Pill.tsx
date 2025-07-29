@@ -19,8 +19,8 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
-import { CSSProperties, ReactNode } from 'react';
+import { css, SerializedStyles } from '@emotion/react';
+import { ReactNode } from 'react';
 
 import { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
@@ -32,110 +32,95 @@ export interface PillProps {
 	variant?: PillVariant;
 	size?: PillSize;
 	icon?: ReactNode;
-	style?: CSSProperties;
+	customStyles?: SerializedStyles;
 }
 
-const getVariantStyles = (variant: PillVariant, theme: Theme) => {
-	const VARIANT_STYLES = {
-		default: {
-			background: '#E5E7EA',
-			color: theme.colors.black,
-			border: 'none',
-			hoverBackground: '#D8DADD',
-		},
-	};
-	return VARIANT_STYLES[variant];
-};
-
-const getSizeStyles = (size: PillSize) => {
-	const sizeStyles = {
-		'extra-small': {
-			padding: '1px 6px',
-			fontSize: '8px',
-			fontWeight: '700',
-			lineHeight: '12px',
-			borderRadius: '3px',
-			gap: '3px',
-			width: '65px',
-			maxWidth: '75px',
-		},
-		small: {
-			padding: '2px 8px',
-			fontSize: '10px',
-			fontWeight: '700',
-			lineHeight: '14px',
-			borderRadius: '4px',
-			gap: '4px',
-			width: '80px',
-			maxWidth: '100px',
-		},
-		medium: {
-			padding: '4px 12px',
-			fontSize: '16px',
-			fontWeight: '700',
-			lineHeight: '16px',
-			borderRadius: '5px',
-			gap: '6px',
-			width: '95px',
-			maxWidth: '140px',
-		},
-		large: {
-			padding: '6px 16px',
-			fontSize: '14px',
-			fontWeight: '700',
-			lineHeight: '20px',
-			borderRadius: '6px',
-			gap: '8px',
-			width: '150px',
-			maxWidth: '180px',
-		},
-	};
-
-	return sizeStyles[size];
-};
-
-const pillStyles = (sizeStyles, variantStyles, icon) => css`
+const baseStyles = css`
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: ${sizeStyles.gap};
-	padding: ${sizeStyles.padding};
-	font-size: ${sizeStyles.fontSize};
-	line-height: ${sizeStyles.lineHeight};
-	font-weight: ${sizeStyles.fontWeight};
-	border-radius: ${sizeStyles.borderRadius};
-	background-color: ${variantStyles.background};
-	color: ${variantStyles.color};
-	border: ${variantStyles.border};
 	transition: all 0.2s ease-in-out;
 	user-select: none;
-	width: ${sizeStyles.width};
-	max-width: ${sizeStyles.maxWidth};
 	text-align: center;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	hyphens: auto;
-	${icon ?
-		css`
-			.pill-icon {
-				display: flex;
-				align-items: center;
-				font-size: ${parseInt(sizeStyles.fontSize) - 2}px;
-				flex-shrink: 0;
-			}
-		`
-	:	''};
 `;
 
-const Pill = ({ children, variant = 'default', size = 'medium', icon, style }: PillProps) => {
-	const theme = useThemeContext();
-	const variantStyles = getVariantStyles(variant, theme);
-	const sizeStyles = getSizeStyles(size);
+const getSizeStyles = (theme: Theme) => ({
+	'extra-small': css`
+		padding: 1px 6px;
+		${theme.typography.captionBold}
+		line-height: 12px;
+		border-radius: 3px;
+		gap: 3px;
+		width: 65px;
+		max-width: 75px;
+	`,
+	small: css`
+		padding: 2px 8px;
+		${theme.typography.dataBold}
+		line-height: 14px;
+		border-radius: 4px;
+		gap: 4px;
+		width: 80px;
+		max-width: 100px;
+	`,
+	medium: css`
+		padding: 4px 12px;
+		${theme.typography.bodyBold}
+		line-height: 16px;
+		border-radius: 5px;
+		gap: 6px;
+		width: 95px;
+		max-width: 140px;
+	`,
+	large: css`
+		padding: 6px 16px;
+		${theme.typography.bodyBold}
+		line-height: 20px;
+		border-radius: 6px;
+		gap: 8px;
+		width: 150px;
+		max-width: 180px;
+	`,
+});
+
+const getVariantStyles = (theme: Theme) => ({
+	default: css`
+		background-color: ${theme.colors.background_pill};
+		color: ${theme.colors.black};
+		border: none;
+
+		&:hover {
+			background-color: ${theme.colors.background_pill_hover};
+		}
+	`,
+});
+
+const getIconStyles = (size: PillSize) => {
+	const iconSizes = {
+		'extra-small': '6px',
+		small: '8px',
+		medium: '14px',
+		large: '12px',
+	};
+
+	return css`
+		display: flex;
+		align-items: center;
+		font-size: ${iconSizes[size]};
+		flex-shrink: 0;
+	`;
+};
+
+const Pill = ({ children, variant = 'default', size = 'medium', icon, customStyles }: PillProps) => {
+	const theme: Theme = useThemeContext();
 
 	return (
-		<div css={pillStyles(sizeStyles, variantStyles, icon)} style={style}>
-			{icon && <span className="pill-icon">{icon}</span>}
-			<span style={{ textAlign: 'center' }}>{children}</span>
+		<div css={[baseStyles, getSizeStyles(theme)[size], getVariantStyles(theme)[variant], customStyles]}>
+			{icon && <span css={getIconStyles(size)}>{icon}</span>}
+			<span>{children}</span>
 		</div>
 	);
 };

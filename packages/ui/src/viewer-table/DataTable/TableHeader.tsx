@@ -28,26 +28,33 @@ import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 const thStyle = (theme: Theme, index: number) => css`
-	${theme.typography.heading};
-	background: #e5edf3;
-	text-align: left;
+	${theme.typography.tableHeader};
+	background: ${theme.colors.white};
+	text-align: ${index === 0 || index === 3 ? 'left' : 'center'};
 	padding: 12px;
-	border-bottom: 1px solid #dcdcdc;
+	border-bottom: 1px solid ${theme.colors.border_medium};
+	border: 1px solid ${theme.colors.border_light};
 	${index === 0 &&
 	`
 		position: sticky;
 		left: 0;
-		background-color: #e5edf3;
 	`}
-	border: 1px solid #DCDDE1;
 `;
 
 export type TableHeaderProps<T> = {
 	headerGroup: HeaderGroup<T>;
 };
 
+/**
+ * Generic table header component
+ * @template T - Row data type
+ * @param {HeaderGroup<T>} headerGroup - TanStack table header group containing column definitions and rendering context
+ * @returns {JSX.Element} Table header row element
+ */
+
 const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
-	const theme = useThemeContext();
+	const theme: Theme = useThemeContext();
+
 	return (
 		<tr key={headerGroup.id}>
 			{headerGroup.headers.map((header, index) => (
