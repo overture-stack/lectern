@@ -17,42 +17,48 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @jsxImportSource @emotion/react */
+import { useMemo, useState } from 'react';
 
-import { css } from '@emotion/react';
-import { CSSProperties, ReactNode } from 'react';
+export const useClipboard = () => {
+	const [clipboardContents, setClipboardContents] = useState<string | null>(null);
+	const [isCopying, setIsCopying] = useState(false);
+	const [copySuccess, setCopySuccess] = useState(false);
 
-import { Theme } from '../theme';
-import { useThemeContext } from '../theme/ThemeContext';
+	const handleCopy = (text: string) => {
+		if (isCopying) {
+			return;
+		}
+		setIsCopying(true);
+		navigator.clipboard
+			.writeText(text)
+			.then(() => {
+				setCopySuccess(true);
+				setTimeout(() => {
+					setIsCopying(false);
+				}, 2000);
+			})
+			.catch((err) => {
+				console.error('Failed to copy text: ', err);
+				setCopySuccess(false);
+				setIsCopying(false);
+			});
+		if (copySuccess) {
+			const currentURL = window.location.href;
+			setClipboardContents(currentURL);
+		}
+		setCopySuccess(false);
+	};
+	useMemo(() => {
+		if (clipboardContents) {
+			handleCopy(clipboardContents);
+		}
+	}, [clipboardContents]);
 
-export interface InlineCodeProps {
-	children: ReactNode;
-	style?: CSSProperties;
-}
-
-const fieldBlockStyles = (theme: Theme) => css`
-	${theme.typography.fieldBlock}
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 4px;
-	padding: 2px 5px;
-	border-radius: 3px;
-	background-color: ${theme.colors.background_muted};
-	border: 0.5px solid ${theme.colors.black};
-	transition: all 0.2s ease-in-out;
-	width: fit-content;
-	align-self: center;
-	color: ${theme.colors.accent_dark};
-`;
-
-const FieldBlock = ({ children, style }: InlineCodeProps) => {
-	const theme: Theme = useThemeContext();
-	return (
-		<span css={fieldBlockStyles(theme)} style={style}>
-			{children}
-		</span>
-	);
+	return {
+		clipboardContents,
+		setClipboardContents,
+		isCopying,
+		copySuccess,
+		handleCopy,
+	};
 };
-
-export default FieldBlock;

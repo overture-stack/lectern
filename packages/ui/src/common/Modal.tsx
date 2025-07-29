@@ -44,14 +44,16 @@ const customStyles = (theme: Theme): Styles => ({
 		right: 'auto',
 		bottom: 'auto',
 		transform: 'translate(-50%, -50%)',
-		width: '90%',
-		maxWidth: '1000px',
-		maxHeight: '40vh',
+		width: '95%',
+		maxWidth: '1200px',
+		maxHeight: '50vh',
 		padding: 0,
 		overflow: 'hidden',
 		borderRadius: '8px',
 		boxShadow: `0 2px 6px ${theme.shadow.subtle}, 0 0 0 0.3px ${theme.colors.black}`,
 		transition: 'all 0.3s ease',
+		display: 'flex',
+		flexDirection: 'column',
 	},
 	overlay: {
 		backgroundColor: theme.colors.background_overlay,
@@ -67,14 +69,20 @@ const headerStyle = (theme: Theme) => css`
 	padding: 16px;
 	border-bottom: 1px solid ${theme.colors.border_subtle};
 	background: ${theme.colors.white};
+	box-shadow: 0px 1px 6px 0px #00000026;
 `;
 
 const bodyStyle = css`
-	padding: 16px;
+	padding: 20px 30px;
 	overflow-y: auto;
-	height: calc(40vh - 56px);
+	flex: 1;
+	min-height: 0;
 `;
 
+const titleStyle = (theme: Theme) => css`
+	${theme.typography.subtitleBold};
+	color: ${theme.colors.accent};
+`;
 Modal.setAppElement('body');
 const ModalComponent = ({ children, setIsOpen, isOpen, onAfterOpen, title }: ModalProps) => {
 	const theme: Theme = useThemeContext();
@@ -87,7 +95,7 @@ const ModalComponent = ({ children, setIsOpen, isOpen, onAfterOpen, title }: Mod
 			contentLabel={title}
 		>
 			<div css={headerStyle(theme)}>
-				<span>{title}</span>
+				<div css={titleStyle(theme)}>{title}</div>
 				<Button iconOnly onClick={() => setIsOpen(false)} icon={<Cancel />} />
 			</div>
 			<div css={bodyStyle}>{children}</div>

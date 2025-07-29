@@ -20,39 +20,38 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { CSSProperties, ReactNode } from 'react';
+import { ConditionalRestrictionTest } from '@overture-stack/lectern-dictionary';
 
-import { Theme } from '../theme';
-import { useThemeContext } from '../theme/ThemeContext';
+import { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
+import { ConditionalRestrictionDetails } from './ConditionalRestrictionDetails';
 
-export interface InlineCodeProps {
-	children: ReactNode;
-	style?: CSSProperties;
-}
-
-const fieldBlockStyles = (theme: Theme) => css`
-	${theme.typography.fieldBlock}
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 4px;
-	padding: 2px 5px;
-	border-radius: 3px;
-	background-color: ${theme.colors.background_muted};
-	border: 0.5px solid ${theme.colors.black};
-	transition: all 0.2s ease-in-out;
-	width: fit-content;
-	align-self: center;
-	color: ${theme.colors.accent_dark};
-`;
-
-const FieldBlock = ({ children, style }: InlineCodeProps) => {
-	const theme: Theme = useThemeContext();
-	return (
-		<span css={fieldBlockStyles(theme)} style={style}>
-			{children}
-		</span>
-	);
+export type IfStatementProps = {
+	conditionalRestriction: ConditionalRestrictionTest;
 };
 
-export default FieldBlock;
+const containerStyle = (theme: Theme) => css`
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+	align-items: center;
+	color: ${theme.colors.black};
+	${theme.typography.paragraphSmall}
+`;
+
+/**
+ * Renders an if statement based on conditional restrictions
+ *
+ * @param ifStatement - The conditional restriction data
+ * @returns A rendered if statement component
+ */
+
+export const IfStatement = ({ conditionalRestriction }: IfStatementProps) => {
+	const theme: Theme = useThemeContext();
+	return (
+		<div css={containerStyle(theme)}>
+			<b>IF</b> the field(s)
+			{ConditionalRestrictionDetails(conditionalRestriction.conditions, conditionalRestriction.case || 'all')}
+		</div>
+	);
+};

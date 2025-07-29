@@ -20,39 +20,45 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { CSSProperties, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
-import { Theme } from '../theme';
-import { useThemeContext } from '../theme/ThemeContext';
+import { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
 
-export interface InlineCodeProps {
-	children: ReactNode;
-	style?: CSSProperties;
-}
-
-const fieldBlockStyles = (theme: Theme) => css`
-	${theme.typography.fieldBlock}
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 4px;
-	padding: 2px 5px;
-	border-radius: 3px;
-	background-color: ${theme.colors.background_muted};
-	border: 0.5px solid ${theme.colors.black};
-	transition: all 0.2s ease-in-out;
-	width: fit-content;
-	align-self: center;
-	color: ${theme.colors.accent_dark};
-`;
-
-const FieldBlock = ({ children, style }: InlineCodeProps) => {
-	const theme: Theme = useThemeContext();
-	return (
-		<span css={fieldBlockStyles(theme)} style={style}>
-			{children}
-		</span>
-	);
+export type ConditionStatement = {
+	indentLevel: number;
+	Condition: ReactNode;
 };
 
-export default FieldBlock;
+export type ConditionalBlockProps = {
+	conditionStatements: Array<ConditionStatement>;
+};
+
+const containerStyle = (theme: Theme) => css`
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	border-left: 3px solid ${theme.colors.black};
+	padding: 16px;
+	background-color: ${theme.colors.accent_1};
+	min-height: 60px;
+`;
+
+const conditionItemStyle = (indentLevel: number) => css`
+	margin-left: ${indentLevel * 16}px;
+`;
+
+export const ConditionalBlock = ({ conditionStatements }: ConditionalBlockProps) => {
+	const theme: Theme = useThemeContext();
+	return (
+		<div css={containerStyle(theme)}>
+			{conditionStatements.map((item, index) => {
+				return (
+					<div key={index} css={conditionItemStyle(item.indentLevel)}>
+						{item.Condition}
+					</div>
+				);
+			})}
+		</div>
+	);
+};
