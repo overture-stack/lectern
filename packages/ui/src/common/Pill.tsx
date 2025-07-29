@@ -19,8 +19,8 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
-import { CSSProperties, ReactNode } from 'react';
+import { css, SerializedStyles } from '@emotion/react';
+import { ReactNode } from 'react';
 
 import { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
@@ -32,7 +32,7 @@ export interface PillProps {
 	variant?: PillVariant;
 	size?: PillSize;
 	icon?: ReactNode;
-	style?: CSSProperties;
+	customStyles?: SerializedStyles;
 }
 
 const getVariantStyles = (variant: PillVariant, theme: Theme) => {
@@ -40,7 +40,6 @@ const getVariantStyles = (variant: PillVariant, theme: Theme) => {
 		default: {
 			background: theme.colors.background_pill,
 			color: theme.colors.black,
-			border: 'none',
 			hoverBackground: theme.colors.background_pill_hover,
 		},
 	};
@@ -94,7 +93,7 @@ const getSizeStyles = (size: PillSize) => {
 	return sizeStyles[size];
 };
 
-const pillStyles = (sizeStyles, variantStyles, icon) => css`
+const pillStyles = (sizeStyles, variantStyles, icon, customStyles) => css`
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -125,15 +124,16 @@ const pillStyles = (sizeStyles, variantStyles, icon) => css`
 			}
 		`
 	:	''};
+	${customStyles};
 `;
 
-const Pill = ({ children, variant = 'default', size = 'medium', icon, style }: PillProps) => {
+const Pill = ({ children, variant = 'default', size = 'medium', icon, customStyles }: PillProps) => {
 	const theme: Theme = useThemeContext();
 	const variantStyles = getVariantStyles(variant, theme);
 	const sizeStyles = getSizeStyles(size);
 
 	return (
-		<div css={pillStyles(sizeStyles, variantStyles, icon)} style={style}>
+		<div css={pillStyles(sizeStyles, variantStyles, icon, customStyles)}>
 			{icon && <span className="pill-icon">{icon}</span>}
 			<span style={{ textAlign: 'center' }}>{children}</span>
 		</div>

@@ -19,6 +19,7 @@
 
 /** @jsxImportSource @emotion/react */
 
+import { css } from '@emotion/react';
 import { ReactNode } from 'react';
 
 import { Theme } from '../theme';
@@ -29,25 +30,24 @@ export interface ListItemProps {
 	children: ReactNode;
 }
 
-const listItemStyles = {
-	display: 'flex',
-	alignItems: 'center',
-	justifyContent: 'center',
-	borderRadius: '8px',
-	backgroundColor: '#ECECEC',
-	border: '0.5px solid black',
-	width: 'fit-content',
-	maxWidth: 'none',
-};
+const listItemStyles = (theme: Theme) => css`
+	border: 1px solid ${theme.colors.black};
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 8px;
+	background-color: #ececec;
+	width: fit-content;
+	max-width: none;
+	${theme.typography.fieldBlock}
+`;
 
 const ListItem = ({ children }: ListItemProps) => {
 	const theme: Theme = useThemeContext();
 	return (
-		<div css={theme.typography.fieldBlock}>
-			<Pill size="small" style={listItemStyles}>
-				{children}
-			</Pill>
-		</div>
+		<Pill size="small" customStyles={listItemStyles(theme)}>
+			{children}
+		</Pill>
 	);
 };
 
