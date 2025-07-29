@@ -19,7 +19,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { CSSProperties, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
@@ -29,28 +29,25 @@ export interface ListItemProps {
 	children: ReactNode;
 }
 
-// TODO: Use theme to style the ListItem component
-const getListItemStyles = (theme: Theme): CSSProperties => ({
-	fontSize: '13px',
-	fontWeight: 'normal',
-	fontFamily: "'DM Mono', monospace",
-	borderRadius: '8px',
-	width: 'fit-content',
-	maxWidth: 'none',
-	backgroundColor: '#ECECEC',
-	border: '0.5px solid black',
+const listItemStyles = {
 	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'center',
-});
+	borderRadius: '8px',
+	backgroundColor: '#ECECEC',
+	border: '0.5px solid black',
+	width: 'fit-content',
+	maxWidth: 'none',
+};
 
 const ListItem = ({ children }: ListItemProps) => {
 	const theme: Theme = useThemeContext();
-
 	return (
-		<Pill size="small" style={getListItemStyles(theme)}>
-			{children}
-		</Pill>
+		<div css={theme.typography.fieldBlock}>
+			<Pill size="small" style={listItemStyles}>
+				{children}
+			</Pill>
+		</div>
 	);
 };
 
