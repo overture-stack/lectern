@@ -22,12 +22,9 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import themeDecorator from '../themeDecorator';
+
 import Pill from '../../src/common/Pill';
-import FileDownload from '../../src/theme/icons/FileDownload';
-import Eye from '../../src/theme/icons/Eye';
-import Hash from '../../src/theme/icons/Hash';
-import List from '../../src/theme/icons/List';
+import themeDecorator from '../themeDecorator';
 
 const meta = {
 	component: Pill,
