@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import themeDecorator from '../../themeDecorator';
 import { ConditionalBlock } from '../../../src/viewer-table/ConditionalLogicModal/ConditionalBlock';
+import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: ConditionalBlock,
@@ -16,6 +16,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	args: {
+		indentLevel: 0,
 		conditionStatements: [
 			{
 				indentLevel: 0,
@@ -35,6 +36,7 @@ export const Default: Story = {
 
 export const VariousIndentLevels: Story = {
 	args: {
+		indentLevel: 0,
 		conditionStatements: [
 			{
 				indentLevel: 0,
@@ -70,6 +72,7 @@ export const VariousIndentLevels: Story = {
 
 export const DeepNesting: Story = {
 	args: {
+		indentLevel: 0,
 		conditionStatements: [
 			{
 				indentLevel: 0,
@@ -101,6 +104,7 @@ export const DeepNesting: Story = {
 
 export const Single: Story = {
 	args: {
+		indentLevel: 0,
 		conditionStatements: [
 			{
 				indentLevel: 0,

@@ -46,7 +46,7 @@ const customStyles = (theme: Theme): Styles => ({
 		transform: 'translate(-50%, -50%)',
 		width: '95%',
 		maxWidth: '1200px',
-		maxHeight: '50vh',
+		maxHeight: '80vh',
 		padding: 0,
 		overflow: 'hidden',
 		borderRadius: '8px',
