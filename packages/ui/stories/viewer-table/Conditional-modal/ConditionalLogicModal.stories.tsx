@@ -1,7 +1,9 @@
 /** @jsxImportSource @emotion/react */
+
+import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+
 import Button from '../../../src/common/Button';
 import { ConditionalLogicModal } from '../../../src/viewer-table/ConditionalLogicModal/ConditionalLogicModal';
 import themeDecorator from '../../themeDecorator';
@@ -16,44 +18,18 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const imageProcessingPipelineField: SchemaField = {
+const case1Field: SchemaField = {
 	name: 'image_processing_pipeline',
 	valueType: 'string',
-	description:
-		'Post processing pipeline dependent on image_hosted_format where:\n - image_hosted_format is PNG, choices are \n* PipelineA\n* PipelineB\n* PipelineC\n - image_hosted_format is SVG, choices are \n* PipelineA\n* PipelineD\n* PipelineE\n - image_hosted_format is PDF or JPEG, choices are \n* PipelineA\n* PipelineD\n* PipelineF',
+	description: '',
 };
 
-var mixedRestrictions: SchemaFieldRestrictions = [
-	{
-		if: {
-			conditions: [
-				{
-					fields: ['image_processing_null_reason'],
-					match: {
-						exists: false,
-					},
-					case: 'all',
-				},
-			],
-		},
-		then: {
-			required: true,
-		},
-		else: {
-			empty: true,
-		},
-	},
-	{ codeList: ['OPTION_A', 'OPTION_B', 'OPTION_C'] },
-];
-
-const imageProcessingPipelineRestriction: SchemaFieldRestrictions = {
+const case1Restriction: SchemaFieldRestrictions = {
 	if: {
 		conditions: [
 			{
 				fields: ['image_hosted_format'],
-				match: {
-					value: 'PNG',
-				},
+				match: { value: 'PNG' },
 				case: 'all',
 			},
 		],
@@ -67,9 +43,7 @@ const imageProcessingPipelineRestriction: SchemaFieldRestrictions = {
 			conditions: [
 				{
 					fields: ['image_hosted_format'],
-					match: {
-						value: 'SVG',
-					},
+					match: { value: 'SVG' },
 					case: 'all',
 				},
 			],
@@ -78,246 +52,135 @@ const imageProcessingPipelineRestriction: SchemaFieldRestrictions = {
 			required: true,
 			codeList: ['pipelineA', 'pipelineD', 'pipelineE'],
 		},
-		else: mixedRestrictions,
-	},
-};
-
-// 2. imaging.image_processing_personel - Simple conditional based on existence
-const imageProcessingPersonelField: SchemaField = {
-	name: 'image_processing_personel',
-	valueType: 'string',
-	description:
-		"String value for the person who processed the image.\nMust be provided.If not 'image_processing_null_reason' must be provided",
-};
-
-const imageProcessingPersonelRestriction: SchemaFieldRestrictions = {
-	if: {
-		conditions: [
+		else: [
+			{ codeList: ['OPTION_A', 'OPTION_B', 'OPTION_C'] },
+			{ codeList: ['OPTION_A'] },
 			{
-				fields: ['image_processing_null_reason'],
-				match: {
-					exists: false,
-				},
-				case: 'all',
-			},
-		],
-	},
-	then: {
-		required: true,
-	},
-	else: {
-		empty: true,
-	},
-};
-
-// 3. imaging.image_processing_null_reason - Simple conditional based on existence
-const imageProcessingNullReasonField: SchemaField = {
-	name: 'image_processing_null_reason',
-	valueType: 'string',
-	description:
-		'Tracks reason for why image processing personnel was not provided.\nOnly applicable if image_processing_personnel is not provided.\nPossible values:\n* Unknown\n* Revoked\n* Not Provided\nOtherwise leave empty',
-};
-
-const imageProcessingNullReasonRestriction: SchemaFieldRestrictions = {
-	if: {
-		conditions: [
-			{
-				fields: ['image_processing_personel'],
-				match: {
-					exists: false,
-				},
-				case: 'all',
-			},
-		],
-	},
-	then: {
-		required: true,
-		codeList: ['Unknown', 'Not Provided', 'Revoked'],
-	},
-	else: {
-		empty: true,
-	},
-};
-
-// Simple restrictions for comparison
-const simpleRestrictionsField: SchemaField = {
-	name: 'simple_field',
-	valueType: 'string',
-	description: 'A field with simple restrictions for comparison',
-};
-
-const simpleRestrictions: SchemaFieldRestrictions = {
-	required: true,
-	regex: '^[A-Z]+$',
-	codeList: ['OPTION_A', 'OPTION_B', 'OPTION_C'],
-};
-
-const manyRestrictions: SchemaFieldRestrictions = [
-	{
-		if: {
-			conditions: [
-				{
-					fields: ['image_processing_null_reason'],
-					match: {
-						exists: false,
-					},
-					case: 'all',
-				},
-			],
-		},
-		then: {
-			required: true,
-		},
-		else: {
-			empty: true,
-		},
-	},
-	{
-		if: {
-			conditions: [
-				{
-					fields: ['image_processing_null_reason'],
-					match: {
-						exists: false,
-					},
-					case: 'all',
-				},
-			],
-		},
-		then: {
-			if: {
-				conditions: [
-					{
-						fields: ['image_processing_null_reason'],
-						match: {
-							exists: false,
+				if: {
+					conditions: [
+						{
+							fields: ['image_processing_null_reason'],
+							match: { exists: false },
+							case: 'all',
 						},
-						case: 'all',
-					},
-				],
+					],
+				},
+				then: {
+					required: true,
+					codeList: ['pipelineA', 'pipelineB', 'pipelineC'],
+				},
+				else: { empty: true },
 			},
-			then: {
-				required: true,
-			},
-			else: {
-				empty: true,
-			},
-		},
-		else: {
-			empty: true,
-		},
+		],
 	},
-];
+};
 
-// Mixed restrictions field - has both codeList and conditional logic
-const mixedRestrictionsField: SchemaField = {
-	name: 'mixed_restrictions_field',
+const case2Field: SchemaField = {
+	name: 'pipeline_with_array_then',
 	valueType: 'string',
-	description: 'A field with both code list restrictions and conditional logic',
+	description: 'Restriction with then as array (codeList + nested if/then/else)',
 };
 
-export const ImageProcessingPipeline_NestedConditional: Story = {
+const case2Restriction: SchemaFieldRestrictions = {
+	if: {
+		conditions: [{ fields: ['image_format'], match: { value: 'PNG' }, case: 'all' }],
+	},
+	then: [
+		{ codeList: ['pipeline_A', 'pipeline_B'] },
+		{
+			if: { conditions: [{ fields: ['other_field'], match: { value: 'X' }, case: 'all' }] },
+			then: { codeList: ['pipeline_X'] },
+			else: { codeList: ['pipeline_Y'] },
+		},
+	],
+	else: { codeList: ['pipeline_C', 'pipeline_D'] },
+};
+
+// --- CASE 3: Highly nested if/then/else structure ---
+const case3Field: SchemaField = {
+	name: 'highly_nested_case',
+	valueType: 'string',
+	description: 'A highly nested if/then/else structure for UI stress test',
+};
+
+const case3Restriction: SchemaFieldRestrictions = {
+	if: { conditions: [{ fields: ['A'], match: { value: 1 }, case: 'all' }] },
+	then: {
+		if: { conditions: [{ fields: ['B'], match: { value: 2 }, case: 'all' }] },
+		then: {
+			if: { conditions: [{ fields: ['C'], match: { value: 3 }, case: 'all' }] },
+			then: {
+				if: { conditions: [{ fields: ['D'], match: { value: 4 }, case: 'all' }] },
+				then: {
+					if: { conditions: [{ fields: ['E'], match: { value: 5 }, case: 'all' }] },
+					then: {
+						if: { conditions: [{ fields: ['F'], match: { value: 6 }, case: 'all' }] },
+						then: {
+							if: { conditions: [{ fields: ['G'], match: { value: 7 }, case: 'all' }] },
+							then: { codeList: ['super_deep_value'] },
+							else: { codeList: ['not_super_deep'] },
+						},
+						else: { codeList: ['not_f'] },
+					},
+					else: { codeList: ['not_e'] },
+				},
+				else: { codeList: ['not_deep_value'] },
+			},
+			else: { codeList: ['not_c'] },
+		},
+		else: { codeList: ['not_b'] },
+	},
+	else: { codeList: ['not_a'] },
+};
+
+export const Case1_DeeplyNested: Story = {
 	args: {
 		isOpen: false,
 		setIsOpen: () => {},
-		restrictions: imageProcessingPipelineRestriction,
-		currentSchemaField: imageProcessingPipelineField,
+		restrictions: case1Restriction,
+		currentSchemaField: case1Field,
 	},
 	render: (args) => {
 		const [isOpen, setIsOpen] = useState(false);
 		return (
 			<>
-				<Button onClick={() => setIsOpen(true)}>Image Processing Pipeline (nested conditionals)</Button>
+				<Button onClick={() => setIsOpen(true)}>Case 1: Deeply Nested Restriction</Button>
 				<ConditionalLogicModal {...args} isOpen={isOpen} setIsOpen={setIsOpen} />
 			</>
 		);
 	},
 };
 
-export const ImageProcessingPersonel_ExistenceCheck: Story = {
+export const Case2_ThenArrayWithNested: Story = {
 	args: {
 		isOpen: false,
 		setIsOpen: () => {},
-		restrictions: imageProcessingPersonelRestriction,
-		currentSchemaField: imageProcessingPersonelField,
+		restrictions: case2Restriction,
+		currentSchemaField: case2Field,
 	},
 	render: (args) => {
 		const [isOpen, setIsOpen] = useState(false);
 		return (
 			<>
-				<Button onClick={() => setIsOpen(true)}>Image Processing Personnel (existence check)</Button>
+				<Button onClick={() => setIsOpen(true)}>Case 2: Then Array (codeList + nested if/then/else)</Button>
 				<ConditionalLogicModal {...args} isOpen={isOpen} setIsOpen={setIsOpen} />
 			</>
 		);
 	},
 };
 
-export const ImageProcessingNullReason_ExistenceCheck: Story = {
+export const Case3_HighlyNested: Story = {
 	args: {
 		isOpen: false,
 		setIsOpen: () => {},
-		restrictions: imageProcessingNullReasonRestriction,
-		currentSchemaField: imageProcessingNullReasonField,
+		restrictions: case3Restriction,
+		currentSchemaField: case3Field,
 	},
 	render: (args) => {
 		const [isOpen, setIsOpen] = useState(false);
 		return (
 			<>
-				<Button onClick={() => setIsOpen(true)}>Image Processing Null Reason (existence check)</Button>
-				<ConditionalLogicModal {...args} isOpen={isOpen} setIsOpen={setIsOpen} />
-			</>
-		);
-	},
-};
-
-export const SimpleRestrictions_NoConditionals: Story = {
-	args: {
-		isOpen: false,
-		setIsOpen: () => {},
-		restrictions: simpleRestrictions,
-		currentSchemaField: simpleRestrictionsField,
-	},
-	render: (args) => {
-		const [isOpen, setIsOpen] = useState(false);
-		return (
-			<>
-				<Button onClick={() => setIsOpen(true)}>Simple Restrictions (no conditionals)</Button>
-				<ConditionalLogicModal {...args} isOpen={isOpen} setIsOpen={setIsOpen} />
-			</>
-		);
-	},
-};
-
-export const Many_Restrictions: Story = {
-	args: {
-		isOpen: false,
-		setIsOpen: () => {},
-		restrictions: manyRestrictions,
-		currentSchemaField: simpleRestrictionsField,
-	},
-	render: (args) => {
-		const [isOpen, setIsOpen] = useState(false);
-		return (
-			<>
-				<Button onClick={() => setIsOpen(true)}>Many Restrictions</Button>
-				<ConditionalLogicModal {...args} isOpen={isOpen} setIsOpen={setIsOpen} />
-			</>
-		);
-	},
-};
-
-export const MixedRestrictions_CodeListAndConditionals: Story = {
-	args: {
-		isOpen: false,
-		setIsOpen: () => {},
-		restrictions: mixedRestrictions,
-		currentSchemaField: mixedRestrictionsField,
-	},
-	render: (args) => {
-		const [isOpen, setIsOpen] = useState(false);
-		return (
-			<>
-				<Button onClick={() => setIsOpen(true)}>Mixed Restrictions (code list + conditionals)</Button>
+				<Button onClick={() => setIsOpen(true)}>Case 3: Highly Nested If/Then/Else</Button>
 				<ConditionalLogicModal {...args} isOpen={isOpen} setIsOpen={setIsOpen} />
 			</>
 		);

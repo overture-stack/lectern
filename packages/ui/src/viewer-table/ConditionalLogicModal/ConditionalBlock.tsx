@@ -32,29 +32,31 @@ export type ConditionStatement = {
 
 export type ConditionalBlockProps = {
 	conditionStatements: Array<ConditionStatement>;
+	indentLevel: number;
 };
 
-const containerStyle = (theme: Theme) => css`
+const containerStyle = (theme: Theme, indentLevel: number) => css`
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
 	border-left: 3px solid ${theme.colors.black};
-	padding: 16px;
 	background-color: ${theme.colors.accent_1};
 	min-height: 60px;
+	margin-left: 44px;
+	padding: ${indentLevel === 0 ? '16px' : '8px'};
 `;
 
-const conditionItemStyle = (indentLevel: number) => css`
+const getConditionItemStyle = (indentLevel: number) => css`
 	margin-left: ${indentLevel * 16}px;
 `;
 
-export const ConditionalBlock = ({ conditionStatements }: ConditionalBlockProps) => {
+export const ConditionalBlock = ({ indentLevel, conditionStatements }: ConditionalBlockProps) => {
 	const theme: Theme = useThemeContext();
 	return (
-		<div css={containerStyle(theme)}>
+		<div css={containerStyle(theme, indentLevel)}>
 			{conditionStatements.map((item, index) => {
 				return (
-					<div key={index} css={conditionItemStyle(item.indentLevel)}>
+					<div key={index} css={getConditionItemStyle(item.indentLevel)}>
 						{item.Condition}
 					</div>
 				);

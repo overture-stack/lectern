@@ -64,7 +64,7 @@ export const RecursiveElseThenConditionRender = (
 				Condition: <ElseStatement restrictions={restriction.else} currentSchemaField={currentSchemaField} />,
 			};
 			const conditionStatements = [ifStatement, thenStatement, elseStatement];
-			return [<ConditionalBlock conditionStatements={conditionStatements} />];
+			return [<ConditionalBlock indentLevel={indentLevel} conditionStatements={conditionStatements} />];
 		}
 		return [<RenderAllowedValues restrictions={restriction} currentSchemaField={currentSchemaField} />];
 	});

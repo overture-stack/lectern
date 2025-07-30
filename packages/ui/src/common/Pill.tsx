@@ -91,10 +91,6 @@ const getVariantStyles = (theme: Theme) => ({
 		background-color: ${theme.colors.background_pill};
 		color: ${theme.colors.black};
 		border: none;
-
-		&:hover {
-			background-color: ${theme.colors.background_pill_hover};
-		}
 	`,
 });
 
