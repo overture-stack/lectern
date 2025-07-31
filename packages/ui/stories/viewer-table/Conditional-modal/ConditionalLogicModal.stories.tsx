@@ -18,10 +18,562 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const case1Field: SchemaField = {
-	name: 'image_processing_pipeline',
+const fieldWithConditionalRestrictions: SchemaField = {
+	name: 'tissue_source_other',
+	description: `If the tissue source is 'other', specify the source here.`,
 	valueType: 'string',
-	description: '',
+	restrictions: [
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source', 'tissue_source_other'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source', 'tissue_source_other', 'tissue_source_other_detail'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: [
+							'tissue_source',
+							'tissue_source_other',
+							'tissue_source_other_detail',
+							'tissue_source_other_description',
+						],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: [
+							'tissue_source',
+							'tissue_source_other',
+							'tissue_source_other_detail',
+							'tissue_source_other_description',
+						],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+		},
+	],
 };
 
 const case1Restriction: SchemaFieldRestrictions = {
@@ -137,8 +689,8 @@ export const Case1_DeeplyNested: Story = {
 	args: {
 		isOpen: false,
 		setIsOpen: () => {},
-		restrictions: case1Restriction,
-		currentSchemaField: case1Field,
+		restrictions: fieldWithConditionalRestrictions.restrictions,
+		currentSchemaField: fieldWithConditionalRestrictions,
 	},
 	render: (args) => {
 		const [isOpen, setIsOpen] = useState(false);
