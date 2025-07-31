@@ -25,6 +25,7 @@ import React from 'react';
 
 import Modal from '../../common/Modal';
 import { RecursiveElseThenConditionRender } from './ElseThenConditionRender';
+import { Description } from './Description';
 
 const containerStyle = css`
 	display: flex;
@@ -59,6 +60,7 @@ export const ConditionalLogicModal = ({
 	return (
 		<Modal title="Conditional Logic" setIsOpen={setIsOpen} isOpen={isOpen}>
 			<div css={containerStyle}>
+				<Description schemaLevelField={currentSchemaField} />
 				{renderResult && Array.isArray(renderResult.blocks) && renderResult.blocks.length > 0 ?
 					renderResult.blocks
 				:	<div>No conditional restrictions found.</div>}
