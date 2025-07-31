@@ -137,7 +137,7 @@ const RenderAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowed
 						</Fragment>
 					))}
 				</Fragment>
-			:	<Fragment>No restrictions</Fragment>}
+			:	<Fragment></Fragment>}
 		</div>
 	);
 };
