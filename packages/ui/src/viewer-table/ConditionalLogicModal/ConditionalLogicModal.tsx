@@ -21,11 +21,10 @@
 
 import { css } from '@emotion/react';
 import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
-import React from 'react';
 
 import Modal from '../../common/Modal';
-import { RecursiveElseThenConditionRender } from './ElseThenConditionRender';
 import { Description } from './Description';
+import { RecursiveConditionsRender } from './RecursiveConditionsRender';
 
 const containerStyle = css`
 	display: flex;
@@ -55,7 +54,7 @@ export const ConditionalLogicModal = ({
 	restrictions,
 	currentSchemaField,
 }: ConditionalLogicModalProps) => {
-	const renderResult = RecursiveElseThenConditionRender(restrictions, currentSchemaField, 0);
+	const renderResult = RecursiveConditionsRender(restrictions, currentSchemaField, 0);
 
 	return (
 		<Modal title="Conditional Logic" setIsOpen={setIsOpen} isOpen={isOpen}>
