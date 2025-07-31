@@ -23,15 +23,142 @@ import { css } from '@emotion/react';
 import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
 import { ConditionalStatementWrapper } from './ConditionalStatementWrapper';
-import { getRestrictionType } from './utils/getRestrictionType';
-import { handleConditionalRestrictions } from './utils/handleConditionalRestrictions';
-import { handleSimpleRestrictions } from './utils/handleSimpleRestrictions';
-import { mergeSimpleRestrictions } from './utils/mergeSimpleRestrictions';
+import { RecursiveConditionsRender } from './RecursiveConditionsRender';
+import RenderAllowedValues from './RenderAllowedValues';
 
 export type ElseThenStatementProps = {
 	restrictions: SchemaFieldRestrictions;
 	currentSchemaField: SchemaField;
 	statementType: 'then' | 'else';
+};
+
+/**
+ * Determines the type of field restrictions
+ * @param restrictions - The field restrictions to analyze
+ * @returns {'conditional' | 'simple' | undefined} The type of restrictions or undefined if invalid
+ */
+const getRestrictionType = (restrictions: SchemaFieldRestrictions) => {
+	if (restrictions !== undefined && typeof restrictions === 'object') {
+		return 'if' in restrictions ? 'conditional' : 'simple';
+	}
+	return undefined;
+};
+
+/**
+ * Processes a single restriction through recursive rendering
+ *
+ * @param restriction - The field restriction to process
+ * @param currentSchemaField - The schema field being described
+ * @returns {ReactNode[] | undefined} The conditional blocks
+ */
+const processRestriction = (restriction: SchemaFieldRestrictions, currentSchemaField: SchemaField) => {
+	const result = RecursiveConditionsRender(restriction, currentSchemaField, 1);
+	return result?.blocks;
+};
+
+/**
+ * Handles rendering of simple field restrictions (non-conditional)
+ *
+ * @param restrictions - The field restrictions to display
+ * @param currentSchemaField - The schema field being described
+ * @returns {ReactNode} The rendered simple restrictions
+ */
+const handleSimpleRestrictions = (restrictions: SchemaFieldRestrictions, currentSchemaField: SchemaField) => {
+	return RenderAllowedValues({
+		restrictions,
+		currentSchemaField,
+	});
+};
+
+/**
+ * Handles processing of conditional field restrictions
+ *
+ * @param restrictions - The field restrictions to process
+ * @param currentSchemaField - The schema field being described
+ * @returns {ReactNode[]} The processed conditional restrictions as React nodes
+ */
+const handleConditionalRestrictions = (restrictions: SchemaFieldRestrictions, currentSchemaField: SchemaField) => {
+	return Array.isArray(restrictions) ?
+			restrictions
+				.flatMap((restriction: SchemaFieldRestrictions) => processRestriction(restriction, currentSchemaField))
+				.filter((item) => item !== undefined)
+		:	processRestriction(restrictions, currentSchemaField) || [];
+};
+
+/**
+ * Extracts code list from a field restriction
+ * @param restriction - The field restriction to extract from
+ * @returns {any | undefined} The code list or undefined if not present
+ */
+const extractCodeList = (restriction: SchemaFieldRestrictions) => {
+	return restriction && 'codeList' in restriction && restriction.codeList !== undefined ?
+			restriction.codeList
+		:	undefined;
+};
+
+/**
+ * Extracts regex pattern from field restrictions
+ * @param restrictions - The field restrictions to extract from
+ * @returns {string | undefined} The regex pattern or undefined if not present
+ */
+const extractRegex = (restrictions: SchemaFieldRestrictions) => {
+	return restrictions && 'regex' in restrictions && restrictions.regex !== undefined ? restrictions.regex : undefined;
+};
+
+/**
+ * Extracts and converts code lists from multiple restrictions to sets
+ * @param restrictions - Array of field restrictions to process
+ * @returns {Set<string>[]} Array of sets containing code list values
+ */
+const getCodeListsFromRestrictions = (restrictions: SchemaFieldRestrictions[]) => {
+	return restrictions
+		.map(extractCodeList)
+		.filter((item) => item !== undefined)
+		.map((item) => new Set<string>(Array.isArray(item) ? item.map((x) => x.toString()) : [item.toString()]));
+};
+
+/**
+ * Extracts regex patterns from multiple restrictions
+ * @param restrictions - Array of field restrictions to process
+ * @returns {string[]} Array of regex patterns
+ */
+const getRegularExpressionPatternsFromRestrictions = (restrictions: SchemaFieldRestrictions[]) => {
+	return restrictions.flatMap(extractRegex).filter((item) => item !== undefined);
+};
+
+/**
+ * Finds the intersection of multiple sets
+ * TODO: Remove when codebase has newest version of TypeScript, which has the intersection method of a set
+ * @param sets - Array of sets to find intersection of
+ * @returns {Set<string>} Set containing elements present in all input sets
+ */
+const intersection = (sets: Set<string>[]) => {
+	return sets.length > 0 ?
+			sets.reduce((acc, currSet) => new Set([...acc].filter((item) => currSet.has(item))))
+		:	new Set<string>();
+};
+
+/**
+ * Merges multiple simple restrictions into a single restriction object
+ * @param simpleRestrictions - Array of simple field restrictions to merge
+ * @returns {SchemaFieldRestrictions} Merged restriction object
+ */
+const mergeSimpleRestrictions = (simpleRestrictions: SchemaFieldRestrictions[]) => {
+	const codeLists = Array.from(intersection(getCodeListsFromRestrictions(simpleRestrictions)));
+	const regularExpressionPatterns = getRegularExpressionPatternsFromRestrictions(simpleRestrictions);
+	const isRequired = simpleRestrictions.some(
+		(restriction) => restriction && 'required' in restriction && restriction.required === true,
+	);
+	const isEmpty = simpleRestrictions.some(
+		(restriction) => restriction && 'empty' in restriction && restriction.empty === true,
+	);
+
+	return {
+		codeList: codeLists.length > 0 ? codeLists : undefined,
+		regex: regularExpressionPatterns.length > 0 ? regularExpressionPatterns : undefined,
+		required: isRequired,
+		empty: isEmpty,
+	};
 };
 
 /**
