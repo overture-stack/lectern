@@ -22,7 +22,6 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-
 import { Row, flexRender } from '@tanstack/react-table';
 
 import { Theme } from '../../theme';
