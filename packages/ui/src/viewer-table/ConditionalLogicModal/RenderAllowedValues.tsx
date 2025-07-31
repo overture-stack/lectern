@@ -127,7 +127,7 @@ const RenderAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowed
 
 	return (
 		<div>
-			{computedRestrictionItems.length > 0 ?
+			{computedRestrictionItems.length > 0 && (
 				<Fragment>
 					<FieldBlock>{currentSchemaField.name}</FieldBlock> must{' '}
 					{computedRestrictionItems.map((item, index) => (
@@ -137,7 +137,7 @@ const RenderAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowed
 						</Fragment>
 					))}
 				</Fragment>
-			:	<Fragment></Fragment>}
+			)}
 		</div>
 	);
 };
