@@ -21,6 +21,7 @@
 
 import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
+import { css } from '@emotion/react';
 import { ConditionalStatementWrapper } from './ConditionalStatementWrapper';
 import { RecursiveElseThenConditionRender } from './ElseThenConditionRender';
 import RenderAllowedValues from './RenderAllowedValues';

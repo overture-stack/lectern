@@ -19,9 +19,10 @@
 
 /** @jsxImportSource @emotion/react */
 
+import { css } from '@emotion/react';
+
 import { RestrictionCondition, SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import FieldBlock from '../../common/FieldBlock';
-import { css } from '@emotion/react';
 
 export type DescriptionProps = {
 	schemaLevelField: SchemaField;
@@ -45,10 +46,10 @@ const descriptionStyle = css`
 
 /**
  * Extracts unique field names from conditional restrictions.
- *
  * @param schemaLevelField - Schema field to extract conditional fields from
  * @returns Array of unique field names used in conditional restrictions
  */
+
 const extractFields = (schemaLevelField: SchemaField): string[] => {
 	const schemaFieldRestrictions: SchemaFieldRestrictions[] =
 		Array.isArray(schemaLevelField.restrictions) ? schemaLevelField.restrictions : [schemaLevelField.restrictions];
