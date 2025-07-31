@@ -18,12 +18,11 @@
  */
 
 import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { ConditionStatement, ConditionalBlock } from './ConditionalBlock';
-import { ElseStatement } from './ElseStatement';
+import { ElseThenStatement } from './ElseThenStatement';
 import { IfStatement } from './IfStatement';
-import { ThenStatement } from './ThenStatement';
 
 const isConditionalRestrictions = (restrictions: SchemaFieldRestrictions) => {
 	return restrictions !== undefined && typeof restrictions === 'object' && 'if' in restrictions;
@@ -41,7 +40,7 @@ export type ConditionalRenderResult = {
  * @param indentLevel - The current indentation level for nested conditions
  * @returns ConditionalRenderResult with rendered blocks
  */
-export const RecursiveElseThenConditionRender = (
+export const RecursiveConditionsRender = (
 	restrictions: SchemaFieldRestrictions,
 	currentSchemaField: SchemaField,
 	indentLevel: number = 0,
@@ -56,11 +55,23 @@ export const RecursiveElseThenConditionRender = (
 			};
 			const thenStatement = {
 				indentLevel: indentLevel + 1,
-				Condition: <ThenStatement restrictions={restriction.then} currentSchemaField={currentSchemaField} />,
+				Condition: (
+					<ElseThenStatement
+						restrictions={restriction.then}
+						currentSchemaField={currentSchemaField}
+						statementType="then"
+					/>
+				),
 			};
 			const elseStatement = {
 				indentLevel: indentLevel + 1,
-				Condition: <ElseStatement restrictions={restriction.else} currentSchemaField={currentSchemaField} />,
+				Condition: (
+					<ElseThenStatement
+						restrictions={restriction.else}
+						currentSchemaField={currentSchemaField}
+						statementType="else"
+					/>
+				),
 			};
 			const conditionStatements = [ifStatement, thenStatement, elseStatement];
 			return [<ConditionalBlock indentLevel={indentLevel} conditionStatements={conditionStatements} />];

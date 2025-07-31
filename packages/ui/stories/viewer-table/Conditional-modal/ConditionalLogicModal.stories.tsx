@@ -607,6 +607,8 @@ const case1Restriction: SchemaFieldRestrictions = {
 		else: [
 			{ codeList: ['OPTION_A', 'OPTION_B', 'OPTION_C'] },
 			{ codeList: ['OPTION_A'] },
+			{ codeList: ['OPTION_B', 'OPTION_A'] },
+			{ regex: '^[a-zA-Z0-9]+$' },
 			{
 				if: {
 					conditions: [
@@ -689,7 +691,7 @@ export const Case1_DeeplyNested: Story = {
 	args: {
 		isOpen: false,
 		setIsOpen: () => {},
-		restrictions: fieldWithConditionalRestrictions.restrictions,
+		restrictions: case1Restriction,
 		currentSchemaField: fieldWithConditionalRestrictions,
 	},
 	render: (args) => {
