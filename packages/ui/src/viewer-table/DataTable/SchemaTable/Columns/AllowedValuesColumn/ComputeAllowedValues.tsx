@@ -212,13 +212,11 @@ const handleDependsOn = (conditions: RestrictionCondition[]): ReactNode => {
  * @returns {RestrictionItem} A RestrictionItem with appropriate singular/plural prefix and pattern content
  *
  * @example
- * ```Tsx
- *  For single pattern: "^[A-Z]+$"
- *  Returns: { prefix: ["Must match pattern:"], content: ["^[A-Z]+$"] }
+ * // For single pattern: "^[A-Z]+$"
+ * // Returns: { prefix: ["Must match pattern:"], content: ["^[A-Z]+$"] }
  *
- *  For multiple patterns: ["^[A-Z]+$", "^[0-9]+$"]
- *  Returns: { prefix: ["Must match patterns:"], content: ["^[A-Z]+$", "^[0-9]+$"] }
- * ```
+ * // For multiple patterns: ["^[A-Z]+$", "^[0-9]+$"]
+ * // Returns: { prefix: ["Must match patterns:"], content: ["^[A-Z]+$", "^[0-9]+$"] }
  */
 const handleRegularExpression = (regularExpression: MatchRuleRegex): RestrictionItem => {
 	const patterns = Array.isArray(regularExpression) ? regularExpression : [regularExpression];
