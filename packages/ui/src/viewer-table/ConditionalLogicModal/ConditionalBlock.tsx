@@ -42,6 +42,7 @@ const containerStyle = (theme: Theme, indentLevel: number) => css`
 	border-left: 3px solid ${theme.colors.black};
 	background-color: ${theme.colors.accent_1};
 	min-height: 60px;
+	margin-left: ${indentLevel === 0 ? '' : '44px'};
 	padding: ${indentLevel === 0 ? '16px' : '8px'};
 `;
 
