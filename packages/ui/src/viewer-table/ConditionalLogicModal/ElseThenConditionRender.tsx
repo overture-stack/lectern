@@ -23,7 +23,6 @@ import React, { ReactNode } from 'react';
 import { ConditionStatement, ConditionalBlock } from './ConditionalBlock';
 import { ElseStatement } from './ElseStatement';
 import { IfStatement } from './IfStatement';
-import RenderAllowedValues from './RenderAllowedValues';
 import { ThenStatement } from './ThenStatement';
 
 const isConditionalRestrictions = (restrictions: SchemaFieldRestrictions) => {
@@ -66,7 +65,7 @@ export const RecursiveElseThenConditionRender = (
 			const conditionStatements = [ifStatement, thenStatement, elseStatement];
 			return [<ConditionalBlock indentLevel={indentLevel} conditionStatements={conditionStatements} />];
 		}
-		return [<RenderAllowedValues restrictions={restriction} currentSchemaField={currentSchemaField} />];
+		return [];
 	});
 
 	return allBlocks.length > 0 ? { blocks: allBlocks } : undefined;
