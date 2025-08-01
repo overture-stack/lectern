@@ -95,7 +95,7 @@ const ModalComponent = ({ children, setIsOpen, isOpen, onAfterOpen, title }: Mod
 			contentLabel={title}
 		>
 			<div css={headerStyle(theme)}>
-				<div css={titleStyle(theme)}>{title}</div>
+				<span css={titleStyle(theme)}>{title}</span>
 				<Button iconOnly onClick={() => setIsOpen(false)} icon={<Cancel />} />
 			</div>
 			<div css={bodyStyle}>{children}</div>
