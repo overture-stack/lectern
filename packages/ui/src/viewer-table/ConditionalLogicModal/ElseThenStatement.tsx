@@ -20,10 +20,10 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
 
+import { ConditionalRestrictionAllowedValues } from './ConditionalRestrictionAllowedValues';
 import { ConditionalStatementWrapper } from './ConditionalStatementWrapper';
-import { RecursiveConditionsRender } from './RecursiveConditionsRender';
 import RenderAllowedValues from './RenderAllowedValues';
 
 export type ElseThenStatementProps = {
@@ -52,7 +52,7 @@ const getRestrictionType = (restrictions: SchemaFieldRestrictions) => {
  * @returns {ReactNode[] | undefined} The conditional blocks
  */
 const processRestriction = (restriction: SchemaFieldRestrictions, currentSchemaField: SchemaField) => {
-	const result = RecursiveConditionsRender(restriction, currentSchemaField, 1);
+	const result = ConditionalRestrictionAllowedValues(restriction, currentSchemaField);
 	return result?.blocks;
 };
 
@@ -169,7 +169,7 @@ const mergeSimpleRestrictions = (simpleRestrictions: SchemaFieldRestrictions[]) 
  * @returns {JSX.Element | undefined} The rendered ELSE/THEN statement component or undefined
  */
 export const ElseThenStatement = ({ restrictions, currentSchemaField, statementType }: ElseThenStatementProps) => {
-	const restrictionsArray = Array.isArray(restrictions) ? restrictions : [restrictions];
+	const restrictionsArray = TypeUtils.asArray(restrictions);
 
 	const simpleRestrictions = restrictionsArray.filter((restriction) => getRestrictionType(restriction) === 'simple');
 

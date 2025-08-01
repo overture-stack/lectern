@@ -26,37 +26,49 @@ import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export type ConditionStatement = {
-	indentLevel: number;
 	Condition: ReactNode;
 };
 
 export type ConditionalBlockProps = {
 	conditionStatements: Array<ConditionStatement>;
-	indentLevel: number;
 };
 
-const containerStyle = (theme: Theme, indentLevel: number) => css`
+const containerStyle = (theme: Theme) => css`
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
 	border-left: 3px solid ${theme.colors.black};
 	background-color: ${theme.colors.accent_1};
 	min-height: 60px;
-	margin-left: ${indentLevel === 0 ? '' : '44px'};
-	padding: ${indentLevel === 0 ? '16px' : '8px'};
+
+	&:nth-child(2) {
+		margin-left: 0;
+		padding: 16px;
+	}
+
+	&:not(:nth-child(2)) {
+		margin-left: 44px;
+		padding: 8px;
+	}
 `;
 
-const getConditionItemStyle = (indentLevel: number) => css`
-	margin-left: ${indentLevel * 16}px;
+const getConditionItemStyle = css`
+	&:nth-child(2) {
+		margin-left: 0;
+	}
+
+	&:not(:nth-child(3)) {
+		margin-left: 16px;
+	}
 `;
 
-export const ConditionalBlock = ({ indentLevel, conditionStatements }: ConditionalBlockProps) => {
+export const ConditionalBlock = ({ conditionStatements }: ConditionalBlockProps) => {
 	const theme: Theme = useThemeContext();
 	return (
-		<div css={containerStyle(theme, indentLevel)}>
+		<div css={containerStyle(theme)}>
 			{conditionStatements.map((item, index) => {
 				return (
-					<div key={index} css={getConditionItemStyle(item.indentLevel)}>
+					<div key={index} css={getConditionItemStyle}>
 						{item.Condition}
 					</div>
 				);

@@ -17,7 +17,7 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
 import { ReactNode } from 'react';
 
 import { ConditionStatement, ConditionalBlock } from './ConditionalBlock';
@@ -37,24 +37,20 @@ export type ConditionalRenderResult = {
  *
  * @param restrictions - The field restrictions to process
  * @param currentSchemaField - The schema field being described
- * @param indentLevel - The current indentation level for nested conditions
  * @returns ConditionalRenderResult with rendered blocks
  */
-export const RecursiveConditionsRender = (
+export const ConditionalRestrictionAllowedValues = (
 	restrictions: SchemaFieldRestrictions,
 	currentSchemaField: SchemaField,
-	indentLevel: number = 0,
 ): ConditionalRenderResult | undefined => {
-	const restrictionsArray = Array.isArray(restrictions) ? restrictions : [restrictions];
+	const restrictionsArray = TypeUtils.asArray(restrictions);
 
 	const allBlocks = restrictionsArray.flatMap((restriction) => {
 		if (isConditionalRestrictions(restriction)) {
 			const ifStatement: ConditionStatement = {
-				indentLevel,
 				Condition: <IfStatement conditionalRestriction={restriction.if} />,
 			};
 			const thenStatement = {
-				indentLevel: indentLevel + 1,
 				Condition: (
 					<ElseThenStatement
 						restrictions={restriction.then}
@@ -64,7 +60,6 @@ export const RecursiveConditionsRender = (
 				),
 			};
 			const elseStatement = {
-				indentLevel: indentLevel + 1,
 				Condition: (
 					<ElseThenStatement
 						restrictions={restriction.else}
@@ -74,7 +69,7 @@ export const RecursiveConditionsRender = (
 				),
 			};
 			const conditionStatements = [ifStatement, thenStatement, elseStatement];
-			return [<ConditionalBlock indentLevel={indentLevel} conditionStatements={conditionStatements} />];
+			return [<ConditionalBlock conditionStatements={conditionStatements} />];
 		}
 		return [];
 	});
