@@ -60,7 +60,7 @@ export const ConditionalLogicModal = ({
 		<Modal title="Conditional Logic" setIsOpen={setIsOpen} isOpen={isOpen}>
 			<div css={containerStyle}>
 				<Description schemaLevelField={currentSchemaField} />
-				{renderResult && Array.isArray(renderResult.blocks) && renderResult.blocks.length > 0 ?
+				{renderResult && renderResult.blocks.length > 0 ?
 					renderResult.blocks
 				:	<div>No conditional restrictions found.</div>}
 			</div>
