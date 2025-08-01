@@ -20,39 +20,55 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { CSSProperties, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
-import { Theme } from '../theme';
-import { useThemeContext } from '../theme/ThemeContext';
+import { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
 
-export interface InlineCodeProps {
+type ConditionalStatementWrapperProps = {
+	headerText: string;
+	isContainer?: boolean;
 	children: ReactNode;
-	style?: CSSProperties;
-}
-
-const fieldBlockStyles = (theme: Theme) => css`
-	${theme.typography.fieldBlock}
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 4px;
-	padding: 2px 5px;
-	border-radius: 3px;
-	background-color: ${theme.colors.background_muted};
-	border: 0.5px solid ${theme.colors.black};
-	transition: all 0.2s ease-in-out;
-	width: fit-content;
-	align-self: center;
-	color: ${theme.colors.accent_dark};
-`;
-
-const FieldBlock = ({ children, style }: InlineCodeProps) => {
-	const theme: Theme = useThemeContext();
-	return (
-		<span css={fieldBlockStyles(theme)} style={style}>
-			{children}
-		</span>
-	);
 };
 
-export default FieldBlock;
+const containerStyle = (theme: Theme) => css`
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	align-items: flex-start;
+	color: ${theme.colors.black};
+`;
+
+const headerStyle = (theme: Theme) => css`
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+	align-items: center;
+	${theme.typography.paragraphSmall}
+`;
+/**
+ * Wrapper component for conditional statements with optional container styling
+ *
+ * @param headerText - The header text to display
+ * @param isContainer - Whether to render as a container with children below
+ * @param children - The child components to render
+ * @returns Wrapper component with conditional statement styling
+ */
+export const ConditionalStatementWrapper = ({
+	headerText,
+	isContainer,
+	children,
+}: ConditionalStatementWrapperProps) => {
+	const theme = useThemeContext();
+	return isContainer ?
+			<div css={containerStyle(theme)}>
+				<div css={headerStyle(theme)}>
+					<b>{headerText}</b>
+				</div>
+				{children}
+			</div>
+		:	<div css={headerStyle(theme)}>
+				<b>{headerText}</b>
+				{children}
+			</div>;
+};

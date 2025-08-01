@@ -19,9 +19,9 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
-import React, { Fragment } from 'react';
 import { css } from '@emotion/react';
+import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { Fragment } from 'react';
 
 import FieldBlock from '../../common/FieldBlock';
 import ListItem from '../../common/ListItem';
@@ -125,20 +125,20 @@ const RenderAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowed
 
 	const computedRestrictionItems = computeRestrictions.filter((item) => item.condition && item.content);
 
+	if (computedRestrictionItems.length === 0) {
+		return null;
+	}
+
 	return (
-		<div>
-			{computedRestrictionItems.length > 0 ?
-				<Fragment>
-					<FieldBlock>{currentSchemaField.name}</FieldBlock> must{' '}
-					{computedRestrictionItems.map((item, index) => (
-						<Fragment key={index}>
-							{index > 0 && ' and '}
-							{item.content}
-						</Fragment>
-					))}
+		<Fragment>
+			<FieldBlock>{currentSchemaField.name}</FieldBlock> must{' '}
+			{computedRestrictionItems.map((item, index) => (
+				<Fragment key={index}>
+					{index > 0 && ' and '}
+					{item.content}
 				</Fragment>
-			:	<Fragment>No restrictions</Fragment>}
-		</div>
+			))}
+		</Fragment>
 	);
 };
 
