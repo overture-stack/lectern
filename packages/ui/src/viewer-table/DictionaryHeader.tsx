@@ -31,6 +31,7 @@ export type DictionaryHeaderProps = {
 	name: string;
 	description?: string;
 	version?: string;
+	disabled?: boolean;
 };
 
 const descriptionWrapperStyle = (theme: Theme) => css`
@@ -70,8 +71,12 @@ const versionStyle = (theme: Theme) => css`
 	color: ${theme.colors.accent_dark};
 `;
 
-const DictionaryHeader = ({ name, description, version }: DictionaryHeaderProps) => {
+const DictionaryHeader = ({ name, description, version, disabled }: DictionaryHeaderProps) => {
 	const theme: Theme = useThemeContext();
+
+	if (disabled) {
+		return <div css={containerStyle} />;
+	}
 
 	return (
 		<div css={containerStyle}>
