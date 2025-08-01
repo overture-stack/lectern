@@ -40,24 +40,20 @@ const containerStyle = (theme: Theme) => css`
 	border-left: 3px solid ${theme.colors.black};
 	background-color: ${theme.colors.accent_1};
 	min-height: 60px;
+	padding: 16px;
 
-	&:nth-child(2) {
-		margin-left: 0;
-		padding: 16px;
-	}
-
-	&:not(:nth-child(2)) {
+	.conditional-block > & {
 		margin-left: 44px;
-		padding: 8px;
 	}
 `;
 
+// Then and Else statements are on the same level
 const getConditionItemStyle = css`
 	&:nth-child(2) {
-		margin-left: 0;
+		margin-left: 16px;
 	}
 
-	&:not(:nth-child(3)) {
+	&:nth-child(3) {
 		margin-left: 16px;
 	}
 `;
@@ -65,7 +61,7 @@ const getConditionItemStyle = css`
 export const ConditionalBlock = ({ conditionStatements }: ConditionalBlockProps) => {
 	const theme: Theme = useThemeContext();
 	return (
-		<div css={containerStyle(theme)}>
+		<div css={containerStyle(theme)} className="conditional-block">
 			{conditionStatements.map((item, index) => {
 				return (
 					<div key={index} css={getConditionItemStyle}>
