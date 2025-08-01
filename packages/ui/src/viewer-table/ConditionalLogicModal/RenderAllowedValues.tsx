@@ -125,20 +125,20 @@ const RenderAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowed
 
 	const computedRestrictionItems = computeRestrictions.filter((item) => item.condition && item.content);
 
+	if (computedRestrictionItems.length === 0) {
+		return null;
+	}
+
 	return (
-		<div>
-			{computedRestrictionItems.length > 0 && (
-				<Fragment>
-					<FieldBlock>{currentSchemaField.name}</FieldBlock> must{' '}
-					{computedRestrictionItems.map((item, index) => (
-						<Fragment key={index}>
-							{index > 0 && ' and '}
-							{item.content}
-						</Fragment>
-					))}
+		<Fragment>
+			<FieldBlock>{currentSchemaField.name}</FieldBlock> must{' '}
+			{computedRestrictionItems.map((item, index) => (
+				<Fragment key={index}>
+					{index > 0 && ' and '}
+					{item.content}
 				</Fragment>
-			)}
-		</div>
+			))}
+		</Fragment>
 	);
 };
 
