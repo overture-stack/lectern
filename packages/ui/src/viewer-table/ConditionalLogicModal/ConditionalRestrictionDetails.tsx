@@ -27,7 +27,7 @@ import {
 	MatchRuleValue,
 	RestrictionCondition,
 } from '@overture-stack/lectern-dictionary';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
 import FieldBlock from '../../common/FieldBlock';
 
