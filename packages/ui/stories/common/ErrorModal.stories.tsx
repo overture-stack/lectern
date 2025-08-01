@@ -1,0 +1,109 @@
+/*
+ *
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ *  This program and the accompanying materials are made available under the terms of
+ *  the GNU Affero General Public License v3.0. You should have received a copy of the
+ *  GNU Affero General Public License along with this program.
+ *   If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ *  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ *  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+import type { Meta, StoryObj } from '@storybook/react';
+import React, { useState } from 'react';
+
+import Button from '../../src/common/Button';
+import { ErrorModal } from '../../src/common/ErrorModal';
+import themeDecorator from '../themeDecorator';
+
+const meta: Meta<typeof ErrorModal> = {
+	title: 'Common/ErrorModal',
+	component: ErrorModal,
+	decorators: [themeDecorator()],
+	tags: ['autodocs'],
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+const ErrorModalWithTrigger = ({ errors }: { errors: string[] }) => {
+	const [isOpen, setIsOpen] = useState(false);
+
+	return (
+		<>
+			<Button onClick={() => setIsOpen(true)}>Open Error Modal</Button>
+			<ErrorModal setIsOpen={setIsOpen} isOpen={isOpen} errors={errors} />
+		</>
+	);
+};
+
+export const SingleError: Story = {
+	render: () => <ErrorModalWithTrigger errors={['Dictionary Not Found']} />,
+};
+
+export const MultipleErrors: Story = {
+	render: () => <ErrorModalWithTrigger errors={['Dictionary Not Found', 'Cannot Find Lectern Server']} />,
+};
+
+export const ManyErrors: Story = {
+	render: () => (
+		<ErrorModalWithTrigger
+			errors={[
+				'Dictionary Not Found',
+				'Cannot Find Lectern Server',
+				'Invalid Schema Format',
+				'Connection Timeout',
+				'Authentication Failed',
+			]}
+		/>
+	),
+};
+
+export const LotsOfErrors: Story = {
+	render: () => (
+		<ErrorModalWithTrigger
+			errors={[
+				'Dictionary Not Found',
+				'Cannot Find Lectern Server',
+				'Invalid Schema Format',
+				'Connection Timeout',
+				'Authentication Failed',
+				'Database Connection Error',
+				'Invalid JSON Response',
+				'Network Timeout',
+				'Server Unavailable',
+				'Permission Denied',
+				'Resource Not Found',
+				'Validation Error',
+				'Configuration Error',
+				'Service Unavailable',
+				'Internal Server Error',
+				'Bad Request',
+				'Unauthorized Access',
+				'Forbidden Resource',
+				'Method Not Allowed',
+				'Request Entity Too Large',
+				'Too Many Requests',
+				'Gateway Timeout',
+				'HTTP Version Not Supported',
+				'Variant Also Negotiates',
+				'Insufficient Storage',
+				'Loop Detected',
+				'Not Extended',
+				'Network Authentication Required',
+				'Unknown Error',
+				'Unexpected Error',
+			]}
+		/>
+	),
+};
