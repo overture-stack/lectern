@@ -43,13 +43,6 @@ const headerStyle = (theme: Theme) => css`
 	${theme.typography.paragraphSmallBold}
 `;
 
-const contentStyle = css`
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-`;
-
 /**
  * Wrapper component for conditional statements with consistent styling
  *
@@ -69,7 +62,7 @@ export const ConditionalStatementWrapper = ({
 		<div css={containerStyle(theme)}>
 			<div css={headerStyle(theme)}>{headerText}</div>
 			{simpleRestrictions}
-			{conditionalRestrictions && <div css={contentStyle}>{conditionalRestrictions}</div>}
+			{conditionalRestrictions}
 		</div>
 	);
 };
