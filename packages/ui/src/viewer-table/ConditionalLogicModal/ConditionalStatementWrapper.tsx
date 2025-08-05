@@ -27,48 +27,49 @@ import { useThemeContext } from '../../theme/ThemeContext';
 
 type ConditionalStatementWrapperProps = {
 	headerText: string;
-	isContainer?: boolean;
-	children: ReactNode;
+	simpleRestrictions?: ReactNode;
+	conditionalRestrictions?: ReactNode;
 };
 
 const containerStyle = (theme: Theme) => css`
 	display: flex;
-	flex-direction: column;
+	flex-wrap: wrap;
 	gap: 4px;
-	align-items: flex-start;
+	align-items: center;
 	color: ${theme.colors.black};
 `;
 
 const headerStyle = (theme: Theme) => css`
-	display: flex;
-	flex-direction: row;
-	gap: 4px;
-	align-items: center;
-	${theme.typography.paragraphSmall}
+	${theme.typography.paragraphSmallBold}
 `;
+
+const contentStyle = css`
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+`;
+
 /**
- * Wrapper component for conditional statements with optional container styling
+ * Wrapper component for conditional statements with consistent styling
  *
  * @param headerText - The header text to display
- * @param isContainer - Whether to render as a container with children below
- * @param children - The child components to render
+ * @param simpleRestrictions - The simple restrictions to render
+ * @param conditionalRestrictions - The conditional restrictions to render
  * @returns Wrapper component with conditional statement styling
  */
 export const ConditionalStatementWrapper = ({
 	headerText,
-	isContainer,
-	children,
+	simpleRestrictions,
+	conditionalRestrictions,
 }: ConditionalStatementWrapperProps) => {
 	const theme = useThemeContext();
-	return isContainer ?
-			<div css={containerStyle(theme)}>
-				<div css={headerStyle(theme)}>
-					<b>{headerText}</b>
-				</div>
-				{children}
-			</div>
-		:	<div css={headerStyle(theme)}>
-				<b>{headerText}</b>
-				{children}
-			</div>;
+
+	return (
+		<div css={containerStyle(theme)}>
+			<div css={headerStyle(theme)}>{headerText}</div>
+			{simpleRestrictions}
+			{conditionalRestrictions && <div css={contentStyle}>{conditionalRestrictions}</div>}
+		</div>
+	);
 };
