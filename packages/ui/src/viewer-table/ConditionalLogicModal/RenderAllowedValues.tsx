@@ -53,15 +53,7 @@ const handleCodeList = (restrictions: SchemaFieldRestrictions) => {
 		const items = Array.isArray(restrictions.codeList) ? restrictions.codeList : [restrictions.codeList];
 		return (
 			<Fragment>
-				<span
-					css={css`
-						white-space: nowrap;
-						margin-bottom: 4px;
-					`}
-				>
-					be one of
-				</span>{' '}
-				<CodeListContainer items={items} />
+				be one of <CodeListContainer items={items} />
 			</Fragment>
 		);
 	}
@@ -77,19 +69,18 @@ const emptyRestriction = (restrictions: SchemaFieldRestrictions) => {
 
 const CodeListContainer = ({ items }: CodeListContainerProps) => {
 	return (
-		<div
+		<span
 			css={css`
-				display: inline-flex;
+				display: flex;
 				flex-wrap: wrap;
 				gap: 4px;
 				max-width: 100%;
-				vertical-align: top;
 			`}
 		>
 			{items.map((item, index) => (
 				<ListItem key={index}>{String(item)}</ListItem>
 			))}
-		</div>
+		</span>
 	);
 };
 
