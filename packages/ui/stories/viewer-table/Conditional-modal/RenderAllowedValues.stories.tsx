@@ -11,7 +11,7 @@ const pcglDictionary: Dictionary = replaceReferences(pcgl as Dictionary);
 
 const meta = {
 	component: RenderAllowedValues,
-	title: 'Viewer Table/Render Allowed Values',
+	title: 'Viewer Table/Conditional Modal/Render Allowed Values',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
 } satisfies Meta<typeof RenderAllowedValues>;
