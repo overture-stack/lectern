@@ -24,18 +24,6 @@ import { SchemaField, SchemaFieldRestrictions, TypeUtils } from '@overture-stack
 import { ConditionalRestrictionAllowedValues } from './ConditionalRestrictionAllowedValues';
 
 /**
- * Determines the type of field restrictions
- * @param restrictions - The field restrictions to analyze
- * @returns {'conditional' | 'simple' | undefined} The type of restrictions or undefined if invalid
- */
-const getRestrictionType = (restrictions: SchemaFieldRestrictions) => {
-	if (restrictions !== undefined && typeof restrictions === 'object') {
-		return 'if' in restrictions ? 'conditional' : 'simple';
-	}
-	return undefined;
-};
-
-/**
  * Processes a single restriction through recursive rendering
  *
  * @param restriction - The field restriction to process
@@ -48,7 +36,7 @@ const processRestriction = (restriction: SchemaFieldRestrictions, currentSchemaF
 };
 
 export type ConditionalRestrictionsRendererProps = {
-	restrictions: SchemaFieldRestrictions;
+	restrictions: SchemaFieldRestrictions[];
 	currentSchemaField: SchemaField;
 };
 
@@ -62,17 +50,7 @@ export const ConditionalRestrictions = ({ restrictions, currentSchemaField }: Co
 	if (restrictions === undefined) {
 		return null;
 	}
-
-	const restrictionsArray = TypeUtils.asArray(restrictions);
-	const conditionalRestrictions = restrictionsArray.filter(
-		(restriction) => getRestrictionType(restriction) === 'conditional',
-	);
-
-	if (conditionalRestrictions.length === 0) {
-		return null;
-	}
-
-	const processedRestrictions = conditionalRestrictions.flatMap(
+	const processedRestrictions = restrictions.flatMap(
 		(restriction) => processRestriction(restriction, currentSchemaField) || [],
 	);
 

@@ -71,10 +71,11 @@ const CodeListContainer = ({ items }: CodeListContainerProps) => {
 	return (
 		<span
 			css={css`
-				display: flex;
+				display: inline-flex;
 				flex-wrap: wrap;
-				gap: 4px;
+				gap: 8px;
 				max-width: 100%;
+				margin-top: 3px;
 			`}
 		>
 			{items.map((item, index) => (

@@ -112,7 +112,7 @@ const mergeSimpleRestrictions = (simpleRestrictions: SchemaFieldRestrictions[]) 
 };
 
 export type SimpleRestrictionsRendererProps = {
-	restrictions: SchemaFieldRestrictions;
+	restrictions: SchemaFieldRestrictions[];
 	currentSchemaField: SchemaField;
 };
 
@@ -127,14 +127,7 @@ export const SimpleRestrictions = ({ restrictions, currentSchemaField }: SimpleR
 		return null;
 	}
 
-	const restrictionsArray = TypeUtils.asArray(restrictions);
-	const simpleRestrictions = restrictionsArray.filter((restriction) => getRestrictionType(restriction) === 'simple');
-
-	if (simpleRestrictions.length === 0) {
-		return null;
-	}
-
-	const mergedSimpleRestrictions = mergeSimpleRestrictions(simpleRestrictions);
+	const mergedSimpleRestrictions = mergeSimpleRestrictions(restrictions);
 
 	return RenderAllowedValues({
 		restrictions: mergedSimpleRestrictions,
