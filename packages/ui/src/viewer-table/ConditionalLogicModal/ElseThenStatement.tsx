@@ -19,7 +19,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
 
 import { ConditionalRestrictions } from './ConditionalRestrictions';
 import { ConditionalStatementWrapper } from './ConditionalStatementWrapper';
@@ -32,6 +32,18 @@ export type ElseThenStatementProps = {
 };
 
 /**
+ * Determines the type of field restrictions
+ * @param restrictions - The field restrictions to analyze
+ * @returns {'conditional' | 'simple' | undefined} The type of restrictions or undefined if invalid
+ */
+const getRestrictionType = (restrictions: SchemaFieldRestrictions) => {
+	if (restrictions !== undefined && typeof restrictions === 'object') {
+		return 'if' in restrictions ? 'conditional' : 'simple';
+	}
+	return undefined;
+};
+
+/**
  * Renders the "ELSE" or "THEN" statement for conditional field restrictions
  * @param restrictions - The field restrictions to display
  * @param currentSchemaField - The schema field being described
@@ -39,16 +51,30 @@ export type ElseThenStatementProps = {
  * @returns {JSX.Element | undefined} The rendered ELSE/THEN statement component or undefined
  */
 export const ElseThenStatement = ({ restrictions, currentSchemaField, statementType }: ElseThenStatementProps) => {
-	const headerText = statementType === 'then' ? 'THEN' : 'ELSE';
-	const simpleRestrictions = <SimpleRestrictions restrictions={restrictions} currentSchemaField={currentSchemaField} />;
-	const conditionalRestrictions = (
-		<ConditionalRestrictions restrictions={restrictions} currentSchemaField={currentSchemaField} />
+	const restrictionsArray = TypeUtils.asArray(restrictions);
+
+	const simpleRestrictions = restrictionsArray.filter((restriction) => getRestrictionType(restriction) === 'simple');
+	const conditionalRestrictions = restrictionsArray.filter(
+		(restriction) => getRestrictionType(restriction) === 'conditional',
 	);
+
+	const renderedSimpleRestrictions =
+		simpleRestrictions.length > 0 ?
+			<SimpleRestrictions restrictions={simpleRestrictions} currentSchemaField={currentSchemaField} />
+		:	undefined;
+	const renderedConditionalRestrictions =
+		conditionalRestrictions.length > 0 ?
+			<ConditionalRestrictions restrictions={conditionalRestrictions} currentSchemaField={currentSchemaField} />
+		:	undefined;
+
+	const headerText = statementType === 'then' ? 'THEN' : 'ELSE';
+
 	return (
 		<ConditionalStatementWrapper
 			headerText={headerText}
-			simpleRestrictions={simpleRestrictions}
-			conditionalRestrictions={conditionalRestrictions}
+			simpleRestrictions={renderedSimpleRestrictions}
+			conditionalRestrictions={renderedConditionalRestrictions}
+			isContainer={conditionalRestrictions !== undefined && conditionalRestrictions.length > 0}
 		/>
 	);
 };

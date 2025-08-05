@@ -20,7 +20,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { ReactNode } from 'react';
+import { Fragment, ReactNode } from 'react';
 
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
@@ -29,13 +29,14 @@ type ConditionalStatementWrapperProps = {
 	headerText: string;
 	simpleRestrictions?: ReactNode;
 	conditionalRestrictions?: ReactNode;
+	isContainer?: boolean;
 };
 
 const containerStyle = (theme: Theme) => css`
 	display: flex;
-	flex-wrap: wrap;
+	flex-direction: column;
 	gap: 4px;
-	align-items: center;
+	align-items: flex-start;
 	color: ${theme.colors.black};
 `;
 
@@ -43,26 +44,49 @@ const headerStyle = (theme: Theme) => css`
 	${theme.typography.paragraphSmallBold}
 `;
 
+const simpleRestrictionsContainerStyle = css`
+	margin-left: 44px;
+`;
+
+const simpleRestrictionsInlineStyle = css`
+	margin-left: 4px;
+`;
+
+const conditionalRestrictionsStyle = css`
+	display: flex;
+	flex-direction: column;
+`;
+
 /**
- * Wrapper component for conditional statements with consistent styling
+ * Wrapper component for conditional statements with optional container styling
  *
  * @param headerText - The header text to display
  * @param simpleRestrictions - The simple restrictions to render
  * @param conditionalRestrictions - The conditional restrictions to render
+ * @param isContainer - Whether to render as a container with children below
  * @returns Wrapper component with conditional statement styling
  */
 export const ConditionalStatementWrapper = ({
 	headerText,
 	simpleRestrictions,
 	conditionalRestrictions,
+	isContainer,
 }: ConditionalStatementWrapperProps) => {
 	const theme = useThemeContext();
 
-	return (
-		<div css={containerStyle(theme)}>
-			<div css={headerStyle(theme)}>{headerText}</div>
-			{simpleRestrictions}
-			{conditionalRestrictions}
-		</div>
-	);
+	return isContainer ?
+			<div css={containerStyle(theme)}>
+				<div css={headerStyle(theme)}>
+					<b>{headerText}</b>
+				</div>
+				{simpleRestrictions && <span css={simpleRestrictionsContainerStyle}>{simpleRestrictions}</span>}
+				{conditionalRestrictions && <div css={conditionalRestrictionsStyle}>{conditionalRestrictions}</div>}
+			</div>
+		:	<div css={containerStyle(theme)}>
+				<div css={headerStyle(theme)}>
+					<b>{headerText}</b>
+					{simpleRestrictions && <span css={simpleRestrictionsInlineStyle}>{simpleRestrictions}</span>}
+				</div>
+				{conditionalRestrictions}
+			</div>;
 };
