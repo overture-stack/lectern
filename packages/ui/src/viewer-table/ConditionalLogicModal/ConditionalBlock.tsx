@@ -42,7 +42,7 @@ const containerStyle = (theme: Theme) => css`
 	min-height: 60px;
 	padding: 16px;
 
-	.conditional-block > & {
+	.conditional-block {
 		margin-left: 44px;
 	}
 `;
