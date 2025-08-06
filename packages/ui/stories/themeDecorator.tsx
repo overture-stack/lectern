@@ -20,6 +20,7 @@
  */
 
 import type { Decorator } from '@storybook/react';
+import { css } from '@emotion/react';
 import React from 'react';
 
 import type { PartialTheme } from '../src/theme';
@@ -27,10 +28,24 @@ import { ThemeProvider } from '../src/theme/ThemeContext';
 import recursiveMerge from '../src/utils/recursiveMerge';
 
 const customTheme: PartialTheme = { colors: { accent_dark: 'orange' } };
+
+const testTheme: PartialTheme = {
+	colors: {
+		black: '#ff69b4',
+		accent: '#0d9488',
+		accent_light: '#14b8a6',
+		accent_dark: '#0f766e',
+		accent_1: '#f0fdfa',
+	},
+};
+
 function getGlobalTheme(globalTheme: string): PartialTheme {
 	switch (globalTheme) {
 		case 'custom': {
 			return customTheme;
+		}
+		case 'test': {
+			return testTheme;
 		}
 		default: {
 			return {};

@@ -1,3 +1,21 @@
+/* Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * This program and the accompanying materials are made available under the terms of
+ * the GNU Affero General Public License v3.0. You should have received a copy of the
+ * GNU Affero General Public License along with this program.
+ * If not, see <http://www.gnu.org/licenses/>.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 /** @jsxImportSource @emotion/react */
 
 import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
@@ -1091,7 +1109,6 @@ const case5Restriction: SchemaFieldRestrictions = {
 	},
 };
 
-// --- CASE 6: Extreme Nesting (10 levels) ---
 const case6Field: SchemaField = {
 	name: 'extreme_nesting_test',
 	valueType: 'string',
@@ -1140,7 +1157,6 @@ const case6Restriction: SchemaFieldRestrictions = {
 	else: { codeList: ['level1_false'] },
 };
 
-// --- CASE 8: 7-Level Nesting with Conditional at Last Level ---
 const case8Field: SchemaField = {
 	name: 'seven_level_nesting_with_conditional',
 	valueType: 'string',
@@ -1181,7 +1197,6 @@ const case8Restriction: SchemaFieldRestrictions = {
 	else: { codeList: ['level1_false'] },
 };
 
-// --- CASE 9: Soccer Scores Playful Data ---
 const case9Field: SchemaField = {
 	name: 'soccer_match_result',
 	valueType: 'string',
@@ -1220,7 +1235,7 @@ const case9Restriction: SchemaFieldRestrictions = {
 		then: {
 			required: true,
 			codeList: [
-				'Manchester City 4-0 Liverpool',
+				'Manchester City 99-0 Aston Villa',
 				'Arsenal 3-1 Chelsea',
 				'Manchester United 2-2 Tottenham',
 				'Liverpool 5-0 Manchester United',
@@ -1339,7 +1354,7 @@ export const Case9_SoccerScores: Story = {
 		const [isOpen, setIsOpen] = useState(false);
 		return (
 			<>
-				<Button onClick={() => setIsOpen(true)}>Case 9: Soccer Scores (Playful Data)</Button>
+				<Button onClick={() => setIsOpen(true)}>Case 9: Soccer Scores</Button>
 				<ConditionalLogicModal {...args} isOpen={isOpen} setIsOpen={setIsOpen} />
 			</>
 		);
