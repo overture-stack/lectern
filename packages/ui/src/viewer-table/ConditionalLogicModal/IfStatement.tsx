@@ -33,6 +33,7 @@ export type IfStatementProps = {
 const containerStyle = (theme: Theme) => css`
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
 	gap: 4px;
 	align-items: center;
 	color: ${theme.colors.black};
