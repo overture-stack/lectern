@@ -74,7 +74,6 @@ export const ElseThenStatement = ({ restrictions, currentSchemaField, statementT
 			headerText={headerText}
 			simpleRestrictions={renderedSimpleRestrictions}
 			conditionalRestrictions={renderedConditionalRestrictions}
-			isContainer={conditionalRestrictions !== undefined && conditionalRestrictions.length > 0}
 		/>
 	);
 };
