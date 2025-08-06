@@ -20,7 +20,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { Fragment, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
@@ -37,11 +37,8 @@ const containerStyle = (theme: Theme) => css`
 	flex-direction: column;
 	gap: 4px;
 	align-items: flex-start;
+	${theme.typography.paragraphSmall}
 	color: ${theme.colors.black};
-`;
-
-const headerStyle = (theme: Theme) => css`
-	${theme.typography.paragraphSmallBold}
 `;
 
 const simpleRestrictionsContainerStyle = css`
@@ -76,12 +73,14 @@ export const ConditionalStatementWrapper = ({
 
 	return isContainer ?
 			<div css={containerStyle(theme)}>
-				<div css={headerStyle(theme)}>{headerText}</div>
+				<span>
+					<b>{headerText}</b>
+				</span>
 				{simpleRestrictions && <span css={simpleRestrictionsContainerStyle}>{simpleRestrictions}</span>}
 				{conditionalRestrictions && <div css={conditionalRestrictionsStyle}>{conditionalRestrictions}</div>}
 			</div>
 		:	<div css={containerStyle(theme)}>
-				<div css={headerStyle(theme)}>
+				<div>
 					<b>{headerText}</b>
 					{simpleRestrictions && <span css={simpleRestrictionsInlineStyle}>{simpleRestrictions}</span>}
 				</div>
