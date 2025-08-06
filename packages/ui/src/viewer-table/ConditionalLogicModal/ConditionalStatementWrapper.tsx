@@ -76,9 +76,7 @@ export const ConditionalStatementWrapper = ({
 
 	return isContainer ?
 			<div css={containerStyle(theme)}>
-				<div css={headerStyle(theme)}>
-					<b>{headerText}</b>
-				</div>
+				<div css={headerStyle(theme)}>{headerText}</div>
 				{simpleRestrictions && <span css={simpleRestrictionsContainerStyle}>{simpleRestrictions}</span>}
 				{conditionalRestrictions && <div css={conditionalRestrictionsStyle}>{conditionalRestrictions}</div>}
 			</div>
