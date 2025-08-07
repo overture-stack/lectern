@@ -21,18 +21,18 @@
 import { Dictionary, replaceReferences } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import RenderAllowedValues from '../../../src/viewer-table/ConditionalLogicModal/RenderAllowedValues';
+import SimpleRestrictionAllowedValues from '../../../src/viewer-table/ConditionalLogicModal/SimpleRestrictionAllowedValues';
 import pcgl from '../../fixtures/pcgl.json';
 import themeDecorator from '../../themeDecorator';
 
 const pcglDictionary: Dictionary = replaceReferences(pcgl as Dictionary);
 
 const meta = {
-	component: RenderAllowedValues,
+	component: SimpleRestrictionAllowedValues,
 	title: 'Viewer Table/Conditional Modal/Render Allowed Values',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
-} satisfies Meta<typeof RenderAllowedValues>;
+} satisfies Meta<typeof SimpleRestrictionAllowedValues>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

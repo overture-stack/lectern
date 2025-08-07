@@ -21,7 +21,7 @@
 
 import { SchemaField, SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
 
-import RenderAllowedValues from './RenderAllowedValues';
+import RenderAllowedValues from './SimpleRestrictionAllowedValues';
 
 /**
  * Determines the type of field restrictions

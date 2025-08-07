@@ -39,7 +39,7 @@ export type ConditionalRenderResult = {
  * @param currentSchemaField - The schema field being described
  * @returns ConditionalRenderResult with rendered blocks
  */
-export const ConditionalRestrictionAllowedValues = (
+export const ProcessConditionalRestrictions = (
 	restrictions: SchemaFieldRestrictions,
 	currentSchemaField: SchemaField,
 ): ConditionalRenderResult | undefined => {

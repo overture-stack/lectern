@@ -92,7 +92,7 @@ const CodeListContainer = ({ items }: CodeListContainerProps) => {
  * @param currentSchemaField - The schema field being described
  */
 
-const RenderAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowedValuesProps) => {
+const SimpleRestrictionAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowedValuesProps) => {
 	if (restrictions === undefined) {
 		return <Fragment>No restrictions</Fragment>;
 	}
@@ -134,4 +134,4 @@ const RenderAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowed
 	);
 };
 
-export default RenderAllowedValues;
+export default SimpleRestrictionAllowedValues;
