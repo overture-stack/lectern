@@ -25,15 +25,13 @@ import { css } from '@emotion/react';
 import { useState } from 'react';
 
 import Button from '../../common/Button';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export type DictionaryDownloadButtonProps = {
-	version: string;
-	name: string;
-	lecternUrl: string;
+	currentDictionaryIndex: number;
 	fileType: 'tsv' | 'csv';
-	disabled?: boolean;
 	iconOnly?: boolean;
 };
 
@@ -61,20 +59,26 @@ const downloadDictionary = async ({ fetchUrl, name, version }) => {
 };
 
 const DictionaryDownloadButton = ({
-	version,
-	name,
-	lecternUrl,
+	currentDictionaryIndex,
 	fileType = 'tsv',
-	disabled = false,
 	iconOnly = false,
 }: DictionaryDownloadButtonProps) => {
+	// need to pass this up
 	const [isLoading, setIsLoading] = useState(false);
+
 	const theme: Theme = useThemeContext();
 	const { FileDownload } = theme.icons;
+	const dictionaryContextVals = useDictionaryDataContext();
+	const disabled = dictionaryContextVals.loading || dictionaryContextVals.error;
+	const { data } = dictionaryContextVals;
+	if (!data.dictionaries) {
+		return null;
+	}
 
-	const fetchUrl = `${lecternUrl}/dictionaries/template/download?${new URLSearchParams({
-		name,
-		version,
+	const currentDictionary = data?.dictionaries[currentDictionaryIndex];
+	const fetchUrl = `${data.lecternUrl}/dictionaries/template/download?${new URLSearchParams({
+		name: currentDictionary.name,
+		version: currentDictionary.version,
 		fileType,
 	})}`;
 
@@ -93,14 +97,14 @@ const DictionaryDownloadButton = ({
 				e.stopPropagation();
 				setIsLoading(true);
 				try {
-					await downloadDictionary({ fetchUrl, name, version });
+					await downloadDictionary({ fetchUrl, name: currentDictionary.name, version: currentDictionary.version });
 				} catch (error) {
 					console.error('Error downloading dictionary:', error);
 				} finally {
 					setIsLoading(false);
 				}
 			}}
-			disabled={disabled || isLoading}
+			disabled={disabled}
 		>
 			Submission Templates
 		</Button>
