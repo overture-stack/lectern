@@ -23,7 +23,7 @@ import { css } from '@emotion/react';
 import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
 import Modal from '../../common/Modal';
-import { ConditionalRestrictionAllowedValues } from './ConditionalRestrictionAllowedValues';
+import { ProcessConditionalRestrictions } from './ProcessConditionalRestrictions';
 import { Description } from './Description';
 
 const containerStyle = css`
@@ -54,7 +54,7 @@ export const ConditionalLogicModal = ({
 	restrictions,
 	currentSchemaField,
 }: ConditionalLogicModalProps) => {
-	const renderResult = ConditionalRestrictionAllowedValues(restrictions, currentSchemaField);
+	const renderResult = ProcessConditionalRestrictions(restrictions, currentSchemaField);
 
 	return (
 		<Modal title="Conditional Logic" setIsOpen={setIsOpen} isOpen={isOpen}>

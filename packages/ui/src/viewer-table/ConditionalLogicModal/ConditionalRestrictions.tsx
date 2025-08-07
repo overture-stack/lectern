@@ -21,7 +21,7 @@
 
 import { SchemaField, SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
 
-import { ConditionalRestrictionAllowedValues } from './ConditionalRestrictionAllowedValues';
+import { ProcessConditionalRestrictions } from './ProcessConditionalRestrictions';
 
 /**
  * Processes a single restriction through recursive rendering
@@ -31,7 +31,7 @@ import { ConditionalRestrictionAllowedValues } from './ConditionalRestrictionAll
  * @returns {ReactNode[] | undefined} The conditional blocks
  */
 const processRestriction = (restriction: SchemaFieldRestrictions, currentSchemaField: SchemaField) => {
-	const result = ConditionalRestrictionAllowedValues(restriction, currentSchemaField);
+	const result = ProcessConditionalRestrictions(restriction, currentSchemaField);
 	return result?.blocks;
 };
 
