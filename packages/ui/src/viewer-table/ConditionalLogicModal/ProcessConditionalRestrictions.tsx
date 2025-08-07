@@ -17,7 +17,7 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { TypeUtils, type SchemaField, type SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
 import { ReactNode } from 'react';
 
 import { ConditionStatement, ConditionalBlock } from './ConditionalBlock';
@@ -43,6 +43,7 @@ export const ProcessConditionalRestrictions = (
 	restrictions: SchemaFieldRestrictions,
 	currentSchemaField: SchemaField,
 ): ConditionalRenderResult | undefined => {
+	const restrictionsArray = TypeUtils.asArray(restrictions);
 	const restrictionsArray = TypeUtils.asArray(restrictions);
 
 	const allBlocks = restrictionsArray.flatMap((restriction) => {

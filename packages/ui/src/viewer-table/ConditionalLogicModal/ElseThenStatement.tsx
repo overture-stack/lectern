@@ -19,7 +19,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { type SchemaField, type SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
 
 import { ConditionalRestrictions } from './ConditionalRestrictions';
 import { ConditionalStatementWrapper } from './ConditionalStatementWrapper';
@@ -50,6 +50,7 @@ const getRestrictionType = (restrictions: SchemaFieldRestrictions) => {
  * @param statementType - The type of statement, either 'then' or 'else'
  */
 export const ElseThenStatement = ({ restrictions, currentSchemaField, statementType }: ElseThenStatementProps) => {
+	const restrictionsArray = TypeUtils.asArray(restrictions);
 	const restrictionsArray = TypeUtils.asArray(restrictions);
 
 	const simpleRestrictions = restrictionsArray.filter((restriction) => getRestrictionType(restriction) === 'simple');
