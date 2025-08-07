@@ -48,7 +48,6 @@ const getRestrictionType = (restrictions: SchemaFieldRestrictions) => {
  * @param restrictions - The field restrictions to display
  * @param currentSchemaField - The schema field being described
  * @param statementType - The type of statement, either 'then' or 'else'
- * @returns {JSX.Element | undefined} The rendered ELSE/THEN statement component or undefined
  */
 export const ElseThenStatement = ({ restrictions, currentSchemaField, statementType }: ElseThenStatementProps) => {
 	const restrictionsArray = TypeUtils.asArray(restrictions);

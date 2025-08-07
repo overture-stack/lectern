@@ -23,8 +23,8 @@ import { css } from '@emotion/react';
 import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
 import Modal from '../../common/Modal';
-import { ProcessConditionalRestrictions } from './ProcessConditionalRestrictions';
 import { Description } from './Description';
+import { ProcessConditionalRestrictions } from './ProcessConditionalRestrictions';
 
 const containerStyle = css`
 	display: flex;

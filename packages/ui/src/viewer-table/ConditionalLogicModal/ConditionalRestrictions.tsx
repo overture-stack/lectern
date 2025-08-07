@@ -19,8 +19,9 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField, SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
+import { ReactNode } from 'react';
 import { ProcessConditionalRestrictions } from './ProcessConditionalRestrictions';
 
 /**
@@ -28,9 +29,11 @@ import { ProcessConditionalRestrictions } from './ProcessConditionalRestrictions
  *
  * @param restriction - The field restriction to process
  * @param currentSchemaField - The schema field being described
- * @returns {ReactNode[] | undefined} The conditional blocks
  */
-const processRestriction = (restriction: SchemaFieldRestrictions, currentSchemaField: SchemaField) => {
+const processRestriction = (
+	restriction: SchemaFieldRestrictions,
+	currentSchemaField: SchemaField,
+): ReactNode[] | undefined => {
 	const result = ProcessConditionalRestrictions(restriction, currentSchemaField);
 	return result?.blocks;
 };
@@ -46,7 +49,10 @@ export type ConditionalRestrictionsRendererProps = {
  * @param currentSchemaField - The schema field being described
  * @returns The processed conditional restrictions as React nodes or null
  */
-export const ConditionalRestrictions = ({ restrictions, currentSchemaField }: ConditionalRestrictionsRendererProps) => {
+export const ConditionalRestrictions = ({
+	restrictions,
+	currentSchemaField,
+}: ConditionalRestrictionsRendererProps): ReactNode[] | null => {
 	if (restrictions === undefined) {
 		return null;
 	}
