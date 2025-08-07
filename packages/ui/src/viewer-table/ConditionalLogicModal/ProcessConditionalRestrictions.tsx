@@ -17,7 +17,7 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { type SchemaField, type SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
+import { TypeUtils, type SchemaField, type SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import { ReactNode } from 'react';
 
 import { ConditionStatement, ConditionalBlock } from './ConditionalBlock';
