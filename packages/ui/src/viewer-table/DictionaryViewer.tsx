@@ -16,6 +16,12 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { useDictionaryDataContext } from '../dictionary-controller/DictionaryDataContext';
+import {Dic}
 export const DictionaryTableViewer = () => {
-	return <div>Hello world </div>;
+	const data = useDictionaryDataContext();
+
+	return(
+		<
+	)
 };

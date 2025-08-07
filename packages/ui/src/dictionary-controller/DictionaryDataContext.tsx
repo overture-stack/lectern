@@ -16,33 +16,53 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary } from '@overture-stack/lectern-dictionary';
-import { createContext, type PropsWithChildren, useContext, useEffect, useState } from 'react';
 import * as lectern from '@overture-stack/lectern-client';
-import { DictionarySummary } from '@overture-stack/lectern-client/dist/rest';
+import { DictionaryServerRecord, DictionarySummary } from '@overture-stack/lectern-client/dist/rest';
+import { Dictionary } from '@overture-stack/lectern-dictionary';
 
-interface DictionaryContextType {
-	dictionaryData: Dictionary | null;
+import { createContext, type PropsWithChildren, useContext, useEffect, useState } from 'react';
+
+export type DictionaryServerUnion = DictionaryServerRecord | Dictionary;
+
+type DictionaryContextType = {
+	dictionaryData: DictionaryServerUnion | null;
 	loading: boolean;
 	error: boolean | null;
-}
+};
 
-interface DictionaryProviderProps {
+type DictionaryProviderProps = {
 	lecternUrl: string;
 	dictionaryName: string;
-}
+};
 
 const DictionaryDataContext = createContext<DictionaryContextType | null>(null);
 
 const fetchDictionary = async (
 	setIsLoading: (isLoading: boolean) => void,
 	setError: (hasError: boolean) => void,
+	setDictionaryData: (data: Dictionary | null) => void,
 	setDictionaryVersions: (data: DictionarySummary[] | null) => void,
+	lecternUrl: string,
+	dictionaryName: string,
 ) => {
 	try {
 		setIsLoading(true);
-		setError(false);
+		const fetchedDictionaryVersions = await lectern.rest.listDictionaries(lecternUrl, {
+			name: dictionaryName,
+		});
+		if (!fetchedDictionaryVersions.success) {
+			throw new Error('Failed to fetch dictionary versions');
+		}
+		setDictionaryVersions(fetchedDictionaryVersions.data);
+		await fetchAllDictionaryDataFromVersions(
+			fetchedDictionaryVersions.data,
+			setIsLoading,
+			setDictionaryData,
+			setError,
+			lecternUrl,
+		);
 	} catch (err) {
+		console.error('Error loading dictionary versions:', err);
 		setError(true);
 	} finally {
 		setIsLoading(false);
@@ -52,7 +72,7 @@ const fetchDictionary = async (
 const fetchAllDictionaryDataFromVersions = async (
 	versions: DictionarySummary[],
 	setIsLoading: (isLoading: boolean) => void,
-	setDictionaryData: (data: Dictionary[]) => void,
+	setDictionaryData: (data: Dictionary | null) => void,
 	setError: (hasError: boolean) => void,
 	lecternUrl: string,
 ) => {
@@ -67,9 +87,9 @@ const fetchAllDictionaryDataFromVersions = async (
 
 		const results = await Promise.all(dictionaryFetches);
 
-		const validDictionaries: Dictionary[] = results.filter((res) => res.success).map((res) => res.data as Dictionary);
+		const validDictionaries: Dictionary[] = results.filter((res) => res.success).map((res) => res.data);
 
-		setDictionaryData(validDictionaries);
+		setDictionaryData(validDictionaries.length > 0 ? validDictionaries[0] : null);
 	} catch (err) {
 		console.error('Error loading dictionary data:', err);
 		setError(true);
@@ -88,12 +108,20 @@ export function useDictionaryDataContext(): DictionaryContextType {
 
 export function DictionaryDataProvider(props: PropsWithChildren<DictionaryProviderProps>) {
 	const [dictionaryVersions, setDictionaryVersions] = useState<DictionarySummary[] | null>(null);
-	const [dictionaryData, setDictionaryData] = useState<Dictionary | null>(null);
+
+	const [dictionaryData, setDictionaryData] = useState<DictionaryServerUnion | null>(null);
 	const [loading, setIsLoading] = useState(true);
 	const [error, setError] = useState<boolean | null>(null);
 
 	useEffect(() => {
-		fetchDictionary(setIsLoading, setError, setDictionaryVersions);
+		fetchDictionary(
+			setIsLoading,
+			setError,
+			setDictionaryData,
+			setDictionaryVersions,
+			props.lecternUrl,
+			props.dictionaryName,
+		);
 		if (dictionaryVersions === null) {
 			throw new Error('Dictionary versions are not loaded');
 		}
