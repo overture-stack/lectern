@@ -16,14 +16,18 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { createContext, type PropsWithChildren, useContext } from 'react';
+import { DictionaryDataProvider } from '../dictionary-controller/DictionaryDataContext';
+import { DictionaryTableViewer } from './DictionaryViewer';
 
-const DictionaryDataContext = createContext<any>(null);
+export type DictionaryTableViewerProps = {
+	lecternUrl: string;
+	dictionaryName: string;
+};
 
-export function useDictionaryDataContext(dictionaryData: any) {
-	const context = useContext(DictionaryDataContext);
-}
-export function DictionaryDataProvider(props: PropsWithChildren<{ dictionaryData: any }>) {
-	const data = useDictionaryDataContext(props.dictionaryData);
-	return <DictionaryDataContext.Provider value={data}>{props.children}</DictionaryDataContext.Provider>;
-}
+export const DictionaryViewerPage = () => {
+	return (
+		<DictionaryDataProvider lecternUrl="" dictionaryName="">
+			<DictionaryTableViewer />
+		</DictionaryDataProvider>
+	);
+};

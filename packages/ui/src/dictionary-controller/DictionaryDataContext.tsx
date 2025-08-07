@@ -1,0 +1,110 @@
+/* Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * This program and the accompanying materials are made available under the terms of
+ * the GNU Affero General Public License v3.0. You should have received a copy of the
+ * GNU Affero General Public License along with this program.
+ * If not, see <http://www.gnu.org/licenses/>.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+import { Dictionary } from '@overture-stack/lectern-dictionary';
+import { createContext, type PropsWithChildren, useContext, useEffect, useState } from 'react';
+import * as lectern from '@overture-stack/lectern-client';
+import { DictionarySummary } from '@overture-stack/lectern-client/dist/rest';
+
+interface DictionaryContextType {
+	dictionaryData: Dictionary | null;
+	loading: boolean;
+	error: boolean | null;
+}
+
+interface DictionaryProviderProps {
+	lecternUrl: string;
+	dictionaryName: string;
+}
+
+const DictionaryDataContext = createContext<DictionaryContextType | null>(null);
+
+const fetchDictionary = async (
+	setIsLoading: (isLoading: boolean) => void,
+	setError: (hasError: boolean) => void,
+	setDictionaryVersions: (data: DictionarySummary[] | null) => void,
+) => {
+	try {
+		setIsLoading(true);
+		setError(false);
+	} catch (err) {
+		setError(true);
+	} finally {
+		setIsLoading(false);
+	}
+};
+
+const fetchAllDictionaryDataFromVersions = async (
+	versions: DictionarySummary[],
+	setIsLoading: (isLoading: boolean) => void,
+	setDictionaryData: (data: Dictionary[]) => void,
+	setError: (hasError: boolean) => void,
+	lecternUrl: string,
+) => {
+	try {
+		setIsLoading(true);
+		const dictionaryFetches = versions.map((dictionaryVersion) =>
+			lectern.rest.getDictionary(lecternUrl, {
+				name: dictionaryVersion.name,
+				version: dictionaryVersion.version,
+			}),
+		);
+
+		const results = await Promise.all(dictionaryFetches);
+
+		const validDictionaries: Dictionary[] = results.filter((res) => res.success).map((res) => res.data as Dictionary);
+
+		setDictionaryData(validDictionaries);
+	} catch (err) {
+		console.error('Error loading dictionary data:', err);
+		setError(true);
+	} finally {
+		setIsLoading(false);
+	}
+};
+
+export function useDictionaryDataContext(): DictionaryContextType {
+	const context = useContext(DictionaryDataContext);
+	if (context === null) {
+		throw new Error('useDictionaryDataContext must be used within a DictionaryDataProvider');
+	}
+	return context;
+}
+
+export function DictionaryDataProvider(props: PropsWithChildren<DictionaryProviderProps>) {
+	const [dictionaryVersions, setDictionaryVersions] = useState<DictionarySummary[] | null>(null);
+	const [dictionaryData, setDictionaryData] = useState<Dictionary | null>(null);
+	const [loading, setIsLoading] = useState(true);
+	const [error, setError] = useState<boolean | null>(null);
+
+	useEffect(() => {
+		fetchDictionary(setIsLoading, setError, setDictionaryVersions);
+		if (dictionaryVersions === null) {
+			throw new Error('Dictionary versions are not loaded');
+		}
+		fetchAllDictionaryDataFromVersions(dictionaryVersions, setIsLoading, setDictionaryData, setError, props.lecternUrl);
+	}, []);
+
+	const contextValue: DictionaryContextType = {
+		dictionaryData,
+		loading,
+		error,
+	};
+
+	return <DictionaryDataContext.Provider value={contextValue}>{props.children}</DictionaryDataContext.Provider>;
+}
