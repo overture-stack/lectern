@@ -18,14 +18,14 @@
  */
 
 import {
-	ArrayTestCase,
-	MatchRuleCodeList,
-	MatchRuleCount,
-	MatchRuleExists,
-	MatchRuleRange,
-	MatchRuleRegex,
-	MatchRuleValue,
-	RestrictionCondition,
+	type ArrayTestCase,
+	type MatchRuleCodeList,
+	type MatchRuleCount,
+	type MatchRuleExists,
+	type MatchRuleRange,
+	type MatchRuleRegex,
+	type MatchRuleValue,
+	type RestrictionCondition,
 } from '@overture-stack/lectern-dictionary';
 import { Fragment } from 'react';
 

@@ -20,7 +20,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { ARRAY_TEST_CASE_DEFAULT, ConditionalRestrictionTest } from '@overture-stack/lectern-dictionary';
+import { ARRAY_TEST_CASE_DEFAULT, type ConditionalRestrictionTest } from '@overture-stack/lectern-dictionary';
 
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';

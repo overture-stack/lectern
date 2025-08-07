@@ -19,7 +19,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField, SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
+import { type SchemaField, type SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
 
 import { ConditionalRestrictions } from './ConditionalRestrictions';
 import { ConditionalStatementWrapper } from './ConditionalStatementWrapper';

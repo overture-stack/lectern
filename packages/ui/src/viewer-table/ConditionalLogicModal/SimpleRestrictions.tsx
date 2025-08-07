@@ -19,7 +19,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { type SchemaField, type SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
 import RenderAllowedValues from './SimpleRestrictionAllowedValues';
 
