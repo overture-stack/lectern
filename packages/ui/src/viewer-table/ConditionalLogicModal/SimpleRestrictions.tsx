@@ -95,7 +95,7 @@ const intersection = (sets: Set<string>[]): Set<string> => {
  * @param simpleRestrictions - Array of simple field restrictions to merge
  * @returns {SchemaFieldRestrictions} Merged restriction object
  */
-const mergeSimpleRestrictions = (simpleRestrictions: SchemaFieldRestrictions[]) => {
+const mergeSimpleRestrictions = (simpleRestrictions: SchemaFieldRestrictions[]): SchemaFieldRestrictions => {
 	const codeLists = Array.from(intersection(getCodeListsFromRestrictions(simpleRestrictions)));
 	const regularExpressionPatterns = getRegularExpressionPatternsFromRestrictions(simpleRestrictions);
 	const isRequired = simpleRestrictions.some(
