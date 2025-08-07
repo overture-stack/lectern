@@ -19,7 +19,12 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { type SchemaField, type SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import type {
+	RestrictionCodeList,
+	RestrictionRegex,
+	SchemaField,
+	SchemaFieldRestrictions,
+} from '@overture-stack/lectern-dictionary';
 
 import RenderAllowedValues from './SimpleRestrictionAllowedValues';
 
@@ -33,7 +38,7 @@ export type SimpleRestrictionsProps = {
  * @param input - Takes a codeList as input
  * @returns {string[] | number[]} An array containing the codeList values. If input is already an array, returns it as-is.
  */
-const codeListAsArray = (input: string | string[] | number[]): string[] | number[] => {
+const codeListAsArray = (input: string | string[] | number[]): RestrictionCodeList => {
 	return Array.isArray(input) ? input : [input];
 };
 
@@ -42,7 +47,7 @@ const codeListAsArray = (input: string | string[] | number[]): string[] | number
  * @param restriction - The field restriction to extract from
  * @returns {string[] | number[] | undefined} The code list or undefined if not present
  */
-const extractCodeList = (restriction: SchemaFieldRestrictions): string[] | number[] | undefined => {
+const extractCodeList = (restriction: SchemaFieldRestrictions): RestrictionCodeList | undefined => {
 	return restriction && 'codeList' in restriction && restriction.codeList !== undefined ?
 			codeListAsArray(restriction.codeList)
 		:	undefined;
@@ -53,7 +58,7 @@ const extractCodeList = (restriction: SchemaFieldRestrictions): string[] | numbe
  * @param restrictions - The field restrictions to extract from
  * @returns {string | string[] | undefined} The regex pattern or undefined if not present
  */
-const extractRegex = (restrictions: SchemaFieldRestrictions): string | string[] | undefined => {
+const extractRegex = (restrictions: SchemaFieldRestrictions): RestrictionRegex | undefined => {
 	return restrictions && 'regex' in restrictions && restrictions.regex !== undefined ? restrictions.regex : undefined;
 };
 

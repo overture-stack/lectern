@@ -20,7 +20,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { type SchemaField, type SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import type { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
 import Modal from '../../common/Modal';
 import { Description } from './Description';
