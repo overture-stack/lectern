@@ -58,6 +58,7 @@ const fieldWithConditionalRestrictions: SchemaField = {
 			else: {
 				empty: true,
 			},
+			required: true,
 		},
 		{
 			if: {
@@ -76,6 +77,7 @@ const fieldWithConditionalRestrictions: SchemaField = {
 			else: {
 				empty: true,
 			},
+			required: true,
 		},
 		{
 			if: {
@@ -94,6 +96,7 @@ const fieldWithConditionalRestrictions: SchemaField = {
 			else: {
 				empty: true,
 			},
+			required: true,
 		},
 		{
 			if: {
@@ -117,6 +120,7 @@ const fieldWithConditionalRestrictions: SchemaField = {
 			else: {
 				empty: true,
 			},
+			required: true,
 		},
 		{
 			if: {
@@ -140,6 +144,102 @@ const fieldWithConditionalRestrictions: SchemaField = {
 			else: {
 				empty: true,
 			},
+			required: true,
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+			required: true,
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+			required: true,
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+			required: true,
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+			required: true,
+		},
+		{
+			if: {
+				conditions: [
+					{
+						fields: ['tissue_source'],
+						match: {
+							value: 'Other',
+						},
+					},
+				],
+			},
+			then: {
+				required: true,
+			},
+			else: {
+				empty: true,
+			},
+			required: true,
 		},
 		{
 			if: {
@@ -176,96 +276,7 @@ const fieldWithConditionalRestrictions: SchemaField = {
 			else: {
 				empty: true,
 			},
-		},
-		{
-			if: {
-				conditions: [
-					{
-						fields: ['tissue_source'],
-						match: {
-							value: 'Other',
-						},
-					},
-				],
-			},
-			then: {
-				required: true,
-			},
-			else: {
-				empty: true,
-			},
-		},
-		{
-			if: {
-				conditions: [
-					{
-						fields: ['tissue_source'],
-						match: {
-							value: 'Other',
-						},
-					},
-				],
-			},
-			then: {
-				required: true,
-			},
-			else: {
-				empty: true,
-			},
-		},
-		{
-			if: {
-				conditions: [
-					{
-						fields: ['tissue_source'],
-						match: {
-							value: 'Other',
-						},
-					},
-				],
-			},
-			then: {
-				required: true,
-			},
-			else: {
-				empty: true,
-			},
-		},
-		{
-			if: {
-				conditions: [
-					{
-						fields: ['tissue_source'],
-						match: {
-							value: 'Other',
-						},
-					},
-				],
-			},
-			then: {
-				required: true,
-			},
-			else: {
-				empty: true,
-			},
-		},
-		{
-			if: {
-				conditions: [
-					{
-						fields: ['tissue_source'],
-						match: {
-							value: 'Other',
-						},
-					},
-				],
-			},
-			then: {
-				required: true,
-			},
-			else: {
-				empty: true,
-			},
+			required: true,
 		},
 		{
 			if: {
@@ -695,7 +706,6 @@ const case2Restriction: SchemaFieldRestrictions = {
 	else: { codeList: ['pipeline_C', 'pipeline_D'] },
 };
 
-// --- CASE 3: Highly nested if/then/else structure ---
 const case3Field: SchemaField = {
 	name: 'highly_nested_case',
 	valueType: 'string',
@@ -786,7 +796,6 @@ export const Case3_HighlyNested: Story = {
 	},
 };
 
-// --- CASE 4: Multiple Restrictions with Many Conditions ---
 const case4Field: SchemaField = {
 	name: 'complex_validation_field',
 	valueType: 'string',
@@ -892,7 +901,6 @@ const case4Restriction: SchemaFieldRestrictions = [
 	},
 ];
 
-// --- CASE 5: Long Code Lists ---
 const case5Field: SchemaField = {
 	name: 'country_selection',
 	valueType: 'string',
