@@ -17,7 +17,7 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
 import { ReactNode } from 'react';
 
 import { ConditionStatement, ConditionalBlock } from './ConditionalBlock';
@@ -45,7 +45,7 @@ export const RecursiveConditionsRender = (
 	currentSchemaField: SchemaField,
 	indentLevel: number = 0,
 ): ConditionalRenderResult | undefined => {
-	const restrictionsArray = Array.isArray(restrictions) ? restrictions : [restrictions];
+	const restrictionsArray = TypeUtils.asArray(restrictions);
 
 	const allBlocks = restrictionsArray.flatMap((restriction) => {
 		if (isConditionalRestrictions(restriction)) {
