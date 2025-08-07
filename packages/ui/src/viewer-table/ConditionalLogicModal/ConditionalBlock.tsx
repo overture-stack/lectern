@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -16,51 +15,60 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
-import type { Decorator } from '@storybook/react';
+/** @jsxImportSource @emotion/react */
+
 import { css } from '@emotion/react';
-import React from 'react';
+import { ReactNode } from 'react';
 
-import type { PartialTheme } from '../src/theme';
-import { ThemeProvider } from '../src/theme/ThemeContext';
-import recursiveMerge from '../src/utils/recursiveMerge';
+import { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
 
-const customTheme: PartialTheme = { colors: { accent_dark: 'orange' } };
-
-const testTheme: PartialTheme = {
-	colors: {
-		black: '#ff69b4',
-		accent: '#0d9488',
-		accent_light: '#14b8a6',
-		accent_dark: '#0f766e',
-		accent_1: '#f0fdfa',
-	},
+export type ConditionStatement = {
+	Condition: ReactNode;
 };
 
-function getGlobalTheme(globalTheme: string): PartialTheme {
-	switch (globalTheme) {
-		case 'custom': {
-			return customTheme;
-		}
-		case 'test': {
-			return testTheme;
-		}
-		default: {
-			return {};
-		}
+export type ConditionalBlockProps = {
+	conditionStatements: Array<ConditionStatement>;
+};
+
+const containerStyle = (theme: Theme) => css`
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	border-left: 3px solid ${theme.colors.black};
+	background-color: ${theme.colors.accent_1};
+	min-height: 60px;
+	padding: 16px;
+
+	.conditional-block {
+		margin-left: 44px;
 	}
-}
+`;
 
-const themeDecorator =
-	(customTheme: PartialTheme = {}): Decorator =>
-	(Story, { globals: { theme } }) => {
-		return (
-			<ThemeProvider theme={recursiveMerge(getGlobalTheme(theme), customTheme)}>
-				<Story />
-			</ThemeProvider>
-		);
-	};
+// Then and Else statements are on the same level
+const getConditionItemStyle = css`
+	&:nth-child(2) {
+		margin-left: 16px;
+	}
 
-export default themeDecorator;
+	&:nth-child(3) {
+		margin-left: 16px;
+	}
+`;
+
+export const ConditionalBlock = ({ conditionStatements }: ConditionalBlockProps) => {
+	const theme: Theme = useThemeContext();
+	return (
+		<div css={containerStyle(theme)} className="conditional-block">
+			{conditionStatements.map((item, index) => {
+				return (
+					<div key={index} css={getConditionItemStyle}>
+						{item.Condition}
+					</div>
+				);
+			})}
+		</div>
+	);
+};

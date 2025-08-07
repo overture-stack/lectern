@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -16,51 +15,46 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
-import type { Decorator } from '@storybook/react';
+/** @jsxImportSource @emotion/react */
+
 import { css } from '@emotion/react';
-import React from 'react';
+import { ARRAY_TEST_CASE_DEFAULT, type ConditionalRestrictionTest } from '@overture-stack/lectern-dictionary';
 
-import type { PartialTheme } from '../src/theme';
-import { ThemeProvider } from '../src/theme/ThemeContext';
-import recursiveMerge from '../src/utils/recursiveMerge';
+import { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
+import { ConditionalRestrictionDetails } from './ConditionalRestrictionDetails';
 
-const customTheme: PartialTheme = { colors: { accent_dark: 'orange' } };
-
-const testTheme: PartialTheme = {
-	colors: {
-		black: '#ff69b4',
-		accent: '#0d9488',
-		accent_light: '#14b8a6',
-		accent_dark: '#0f766e',
-		accent_1: '#f0fdfa',
-	},
+export type IfStatementProps = {
+	conditionalRestriction: ConditionalRestrictionTest;
 };
 
-function getGlobalTheme(globalTheme: string): PartialTheme {
-	switch (globalTheme) {
-		case 'custom': {
-			return customTheme;
-		}
-		case 'test': {
-			return testTheme;
-		}
-		default: {
-			return {};
-		}
-	}
-}
+const containerStyle = (theme: Theme) => css`
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 4px;
+	align-items: center;
+	color: ${theme.colors.black};
+	${theme.typography.paragraphSmall}
+`;
 
-const themeDecorator =
-	(customTheme: PartialTheme = {}): Decorator =>
-	(Story, { globals: { theme } }) => {
-		return (
-			<ThemeProvider theme={recursiveMerge(getGlobalTheme(theme), customTheme)}>
-				<Story />
-			</ThemeProvider>
-		);
-	};
+/**
+ * Renders an if statement based on conditional restrictions
+ * @param ifStatement - The conditional restriction data
+ * @returns A rendered if statement component
+ */
 
-export default themeDecorator;
+export const IfStatement = ({ conditionalRestriction }: IfStatementProps) => {
+	const theme: Theme = useThemeContext();
+	return (
+		<div css={containerStyle(theme)}>
+			<b>IF</b> the field(s)
+			{ConditionalRestrictionDetails(
+				conditionalRestriction.conditions,
+				conditionalRestriction.case || ARRAY_TEST_CASE_DEFAULT,
+			)}
+		</div>
+	);
+};
