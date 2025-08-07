@@ -19,39 +19,41 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField, SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
+import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
 import RenderAllowedValues from './SimpleRestrictionAllowedValues';
 
+export type SimpleRestrictionsProps = {
+	restrictions: SchemaFieldRestrictions[];
+	currentSchemaField: SchemaField;
+};
+
 /**
- * Determines the type of field restrictions
- * @param restrictions - The field restrictions to analyze
- * @returns {'conditional' | 'simple' | undefined} The type of restrictions or undefined if invalid
+ * Converts a code list input to an array format.
+ * @param input - Takes a codeList as input
+ * @returns {string[] | number[]} An array containing the codeList values. If input is already an array, returns it as-is.
  */
-const getRestrictionType = (restrictions: SchemaFieldRestrictions) => {
-	if (restrictions !== undefined && typeof restrictions === 'object') {
-		return 'if' in restrictions ? 'conditional' : 'simple';
-	}
-	return undefined;
+const codeListAsArray = (input: string | string[] | number[]): string[] | number[] => {
+	return Array.isArray(input) ? input : [input];
 };
 
 /**
  * Extracts code list from a field restriction
  * @param restriction - The field restriction to extract from
- * @returns {any | undefined} The code list or undefined if not present
+ * @returns {string[] | number[] | undefined} The code list or undefined if not present
  */
-const extractCodeList = (restriction: SchemaFieldRestrictions) => {
+const extractCodeList = (restriction: SchemaFieldRestrictions): string[] | number[] | undefined => {
 	return restriction && 'codeList' in restriction && restriction.codeList !== undefined ?
-			restriction.codeList
+			codeListAsArray(restriction.codeList)
 		:	undefined;
 };
 
 /**
  * Extracts regex pattern from field restrictions
  * @param restrictions - The field restrictions to extract from
- * @returns {string | undefined} The regex pattern or undefined if not present
+ * @returns {string | string[] | undefined} The regex pattern or undefined if not present
  */
-const extractRegex = (restrictions: SchemaFieldRestrictions) => {
+const extractRegex = (restrictions: SchemaFieldRestrictions): string | string[] | undefined => {
 	return restrictions && 'regex' in restrictions && restrictions.regex !== undefined ? restrictions.regex : undefined;
 };
 
@@ -60,11 +62,11 @@ const extractRegex = (restrictions: SchemaFieldRestrictions) => {
  * @param restrictions - Array of field restrictions to process
  * @returns {Set<string>[]} Array of sets containing code list values
  */
-const getCodeListsFromRestrictions = (restrictions: SchemaFieldRestrictions[]) => {
+const getCodeListsFromRestrictions = (restrictions: SchemaFieldRestrictions[]): Set<string>[] => {
 	return restrictions
 		.map(extractCodeList)
 		.filter((item) => item !== undefined)
-		.map((item) => new Set<string>(Array.isArray(item) ? item.map((x) => x.toString()) : [item.toString()]));
+		.map((item) => new Set<string>(item.map((x: string | number) => x.toString())));
 };
 
 /**
@@ -72,7 +74,7 @@ const getCodeListsFromRestrictions = (restrictions: SchemaFieldRestrictions[]) =
  * @param restrictions - Array of field restrictions to process
  * @returns {string[]} Array of regex patterns
  */
-const getRegularExpressionPatternsFromRestrictions = (restrictions: SchemaFieldRestrictions[]) => {
+const getRegularExpressionPatternsFromRestrictions = (restrictions: SchemaFieldRestrictions[]): string[] => {
 	return restrictions.flatMap(extractRegex).filter((item) => item !== undefined);
 };
 
@@ -82,7 +84,7 @@ const getRegularExpressionPatternsFromRestrictions = (restrictions: SchemaFieldR
  * @param sets - Array of sets to find intersection of
  * @returns {Set<string>} Set containing elements present in all input sets
  */
-const intersection = (sets: Set<string>[]) => {
+const intersection = (sets: Set<string>[]): Set<string> => {
 	return sets.length > 0 ?
 			sets.reduce((acc, currSet) => new Set([...acc].filter((item) => currSet.has(item))))
 		:	new Set<string>();
@@ -111,18 +113,13 @@ const mergeSimpleRestrictions = (simpleRestrictions: SchemaFieldRestrictions[]) 
 	};
 };
 
-export type SimpleRestrictionsRendererProps = {
-	restrictions: SchemaFieldRestrictions[];
-	currentSchemaField: SchemaField;
-};
-
 /**
  * Renders simple field restrictions (non-conditional)
  * @param restrictions - The field restrictions to display
  * @param currentSchemaField - The schema field being described
  * @returns The rendered simple restrictions or null
  */
-export const SimpleRestrictions = ({ restrictions, currentSchemaField }: SimpleRestrictionsRendererProps) => {
+export const SimpleRestrictions = ({ restrictions, currentSchemaField }: SimpleRestrictionsProps) => {
 	if (restrictions === undefined) {
 		return null;
 	}

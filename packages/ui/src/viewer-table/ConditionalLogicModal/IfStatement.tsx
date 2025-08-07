@@ -20,7 +20,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { ConditionalRestrictionTest } from '@overture-stack/lectern-dictionary';
+import { ARRAY_TEST_CASE_DEFAULT, ConditionalRestrictionTest } from '@overture-stack/lectern-dictionary';
 
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
@@ -42,7 +42,6 @@ const containerStyle = (theme: Theme) => css`
 
 /**
  * Renders an if statement based on conditional restrictions
- *
  * @param ifStatement - The conditional restriction data
  * @returns A rendered if statement component
  */
@@ -52,7 +51,10 @@ export const IfStatement = ({ conditionalRestriction }: IfStatementProps) => {
 	return (
 		<div css={containerStyle(theme)}>
 			<b>IF</b> the field(s)
-			{ConditionalRestrictionDetails(conditionalRestriction.conditions, conditionalRestriction.case || 'all')}
+			{ConditionalRestrictionDetails(
+				conditionalRestriction.conditions,
+				conditionalRestriction.case || ARRAY_TEST_CASE_DEFAULT,
+			)}
 		</div>
 	);
 };

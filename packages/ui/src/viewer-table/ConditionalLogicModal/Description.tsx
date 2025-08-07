@@ -22,6 +22,7 @@
 import { css } from '@emotion/react';
 
 import { RestrictionCondition, SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { Fragment } from 'react';
 import FieldBlock from '../../common/FieldBlock';
 
 export type DescriptionProps = {
@@ -63,7 +64,6 @@ const extractFields = (schemaLevelField: SchemaField): string[] => {
 
 /**
  * Displays conditional logic dependencies for a schema field.
- *
  * @param props.schemaLevelField - The schema field to analyze for conditional dependencies
  * @returns JSX element with dependency description, or empty div if none exist
  */
@@ -74,16 +74,16 @@ export const Description = ({ schemaLevelField }: DescriptionProps) => {
 	return (
 		<div css={descriptionStyle}>
 			{extractedFields.length > 0 && (
-				<>
+				<Fragment>
 					<FieldBlock> {currentFieldName} </FieldBlock>depends on the value(s) of:
 					{extractedFields.map((field, index) => (
-						<>
-							<FieldBlock key={field}>{field}</FieldBlock>
+						<Fragment key={field}>
+							<FieldBlock>{field}</FieldBlock>
 							{index < extractedFields.length - 2 && ','}
 							{index === extractedFields.length - 2 && ' and '}
-						</>
+						</Fragment>
 					))}
-				</>
+				</Fragment>
 			)}
 		</div>
 	);
