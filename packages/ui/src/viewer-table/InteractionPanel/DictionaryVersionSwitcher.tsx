@@ -25,33 +25,35 @@ import { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 
 import Dropdown from '../../common/Dropdown/Dropdown';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export type DictionaryServerUnion = Dictionary | DictionaryServerRecord;
 
 export type DictionaryVersionSwitcherProps = {
-	dictionaryData: DictionaryServerUnion[];
-	dictionaryIndex: number;
 	onVersionChange: (index: number) => void;
-	disabled?: boolean;
-	title: string;
+	dictionaryIndex: number;
 };
 
-const DictionaryVersionSwitcher = ({
-	dictionaryData,
-	dictionaryIndex,
-	onVersionChange,
-	disabled = false,
-	title,
-}: DictionaryVersionSwitcherProps) => {
+const DictionaryVersionSwitcher = ({ onVersionChange, dictionaryIndex }: DictionaryVersionSwitcherProps) => {
 	const theme: Theme = useThemeContext();
+	const data = useDictionaryDataContext();
 
 	const { History } = theme.icons;
 
-	const versionSwitcherObjectArray = dictionaryData?.map((dictionary: DictionaryServerUnion, index: number) => {
-		const displayVersionDate =
-			'createdAt' in dictionaryData?.[dictionaryIndex] ? `(${dictionaryData?.[dictionaryIndex].createdAt})` : '';
+	const createdAt =
+		data.dictionaryData?.[dictionaryIndex] && 'createdAt' in data.dictionaryData?.[dictionaryIndex] ?
+			data.dictionaryData[dictionaryIndex].createdAt
+		:	'';
+
+	const title =
+		data.dictionaryData?.[dictionaryIndex]?.version ?
+			`Version ${data.dictionaryData[dictionaryIndex].version} (${createdAt})`
+		:	'Select Version';
+
+	const versionSwitcherObjectArray = data?.dictionaryData?.map((dictionary: DictionaryServerUnion, index: number) => {
+		const displayVersionDate = 'createdAt' in dictionary ? `(${dictionary.createdAt})` : '';
 		return {
 			label: `Version ${dictionary?.version} ${displayVersionDate}`,
 			action: () => {
@@ -64,9 +66,7 @@ const DictionaryVersionSwitcher = ({
 	const displayVersionSwitcher = versionSwitcherObjectArray && versionSwitcherObjectArray.length > 1;
 
 	return (
-		displayVersionSwitcher && (
-			<Dropdown leftIcon={<History />} menuItems={versionSwitcherObjectArray} title={title} disabled={disabled} />
-		)
+		displayVersionSwitcher && <Dropdown leftIcon={<History />} menuItems={versionSwitcherObjectArray} title={title} />
 	);
 };
 

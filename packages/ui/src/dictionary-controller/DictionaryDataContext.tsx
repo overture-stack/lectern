@@ -25,9 +25,13 @@ import { createContext, type PropsWithChildren, useContext, useEffect, useState 
 export type DictionaryServerUnion = DictionaryServerRecord | Dictionary;
 
 type DictionaryContextType = {
-	dictionaryData: DictionaryServerUnion | null;
+	data: {
+		dictionaries: DictionaryServerUnion[] | undefined;
+		lecternUrl: string;
+		name: string;
+	};
 	loading: boolean;
-	error: boolean | null;
+	error: boolean | undefined;
 };
 
 type DictionaryProviderProps = {
@@ -35,13 +39,13 @@ type DictionaryProviderProps = {
 	dictionaryName: string;
 };
 
-const DictionaryDataContext = createContext<DictionaryContextType | null>(null);
+const DictionaryDataContext = createContext<DictionaryContextType | undefined>(undefined);
 
 const fetchDictionary = async (
 	setIsLoading: (isLoading: boolean) => void,
 	setError: (hasError: boolean) => void,
-	setDictionaryData: (data: Dictionary | null) => void,
-	setDictionaryVersions: (data: DictionarySummary[] | null) => void,
+	setDictionaryData: (data: Dictionary[] | undefined) => void,
+	setDictionaryVersions: (data: DictionarySummary[] | undefined) => void,
 	lecternUrl: string,
 	dictionaryName: string,
 ) => {
@@ -72,7 +76,7 @@ const fetchDictionary = async (
 const fetchAllDictionaryDataFromVersions = async (
 	versions: DictionarySummary[],
 	setIsLoading: (isLoading: boolean) => void,
-	setDictionaryData: (data: Dictionary | null) => void,
+	setDictionaryData: (data: Dictionary[] | undefined) => void,
 	setError: (hasError: boolean) => void,
 	lecternUrl: string,
 ) => {
@@ -89,7 +93,7 @@ const fetchAllDictionaryDataFromVersions = async (
 
 		const validDictionaries: Dictionary[] = results.filter((res) => res.success).map((res) => res.data);
 
-		setDictionaryData(validDictionaries.length > 0 ? validDictionaries[0] : null);
+		setDictionaryData(validDictionaries.length > 0 ? validDictionaries : undefined);
 	} catch (err) {
 		console.error('Error loading dictionary data:', err);
 		setError(true);
@@ -100,18 +104,18 @@ const fetchAllDictionaryDataFromVersions = async (
 
 export function useDictionaryDataContext(): DictionaryContextType {
 	const context = useContext(DictionaryDataContext);
-	if (context === null) {
+	if (context === undefined) {
 		throw new Error('useDictionaryDataContext must be used within a DictionaryDataProvider');
 	}
 	return context;
 }
 
 export function DictionaryDataProvider(props: PropsWithChildren<DictionaryProviderProps>) {
-	const [dictionaryVersions, setDictionaryVersions] = useState<DictionarySummary[] | null>(null);
+	const [dictionaryVersions, setDictionaryVersions] = useState<DictionarySummary[] | undefined>(undefined);
 
-	const [dictionaryData, setDictionaryData] = useState<DictionaryServerUnion | null>(null);
+	const [dictionaryData, setDictionaryData] = useState<DictionaryServerUnion[] | undefined>(undefined);
 	const [loading, setIsLoading] = useState(true);
-	const [error, setError] = useState<boolean | null>(null);
+	const [error, setError] = useState<boolean | undefined>(undefined);
 
 	useEffect(() => {
 		fetchDictionary(
@@ -122,14 +126,18 @@ export function DictionaryDataProvider(props: PropsWithChildren<DictionaryProvid
 			props.lecternUrl,
 			props.dictionaryName,
 		);
-		if (dictionaryVersions === null) {
+		if (dictionaryVersions === undefined) {
 			throw new Error('Dictionary versions are not loaded');
 		}
 		fetchAllDictionaryDataFromVersions(dictionaryVersions, setIsLoading, setDictionaryData, setError, props.lecternUrl);
 	}, []);
 
 	const contextValue: DictionaryContextType = {
-		dictionaryData,
+		data: {
+			dictionaries: dictionaryData,
+			lecternUrl: props.lecternUrl,
+			name: props.dictionaryName,
+		},
 		loading,
 		error,
 	};

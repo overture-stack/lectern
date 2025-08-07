@@ -16,12 +16,31 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { useState } from 'react';
 import { useDictionaryDataContext } from '../dictionary-controller/DictionaryDataContext';
-import {Dic}
+import DictionaryHeader from './DictionaryHeader';
+import InteractionPanel from './InteractionPanel/InteractionPanel';
 export const DictionaryTableViewer = () => {
+	const [isCollapsed, setIsCollapsed] = useState(false);
+	const [currentDictionaryIndex, setCurrentDictionaryIndex] = useState(0);
 	const data = useDictionaryDataContext();
 
-	return(
-		<
-	)
+	return (
+		<>
+			<DictionaryHeader
+				name={data.data?.[currentDictionaryIndex]?.name ?? ''}
+				description={data.data?.[currentDictionaryIndex]?.description}
+				version={data.data?.[currentDictionaryIndex]?.version}
+				disabled={data.loading || data.error}
+			/>
+			<InteractionPanel
+				filters={[]}
+				setFilters={() => {}}
+				setIsCollapsed={setIsCollapsed}
+				onSelect={() => {}}
+				onVersionChange={() => {}}
+				dictionaryIndex={currentDictionaryIndex}
+			></InteractionPanel>
+		</>
+	);
 };

@@ -18,6 +18,7 @@
  */
 
 import Dropdown from '../../common/Dropdown/Dropdown';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export type AttributeFilterDropdownProps = {
@@ -28,8 +29,9 @@ export type AttributeFilterDropdownProps = {
 
 export type FilterOptions = 'Required' | 'All Fields';
 
-const AttributeFilterDropdown = ({ filters, setFilters, disabled }: AttributeFilterDropdownProps) => {
+const AttributeFilterDropdown = ({ filters, setFilters }: AttributeFilterDropdownProps) => {
 	const theme = useThemeContext();
+	const data = useDictionaryDataContext();
 
 	const { ListFilter } = theme.icons;
 
@@ -52,7 +54,14 @@ const AttributeFilterDropdown = ({ filters, setFilters, disabled }: AttributeFil
 		},
 	];
 
-	return <Dropdown leftIcon={<ListFilter />} title="Filter By" menuItems={menuItems} disabled={disabled} />;
+	return (
+		<Dropdown
+			leftIcon={<ListFilter />}
+			title="Filter By"
+			menuItems={menuItems}
+			disabled={data.error || data.}
+		/>
+	);
 };
 
 export default AttributeFilterDropdown;
