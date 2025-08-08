@@ -19,7 +19,7 @@
  *
  */
 
-/** @jsxImportSource @emotion/react */
+import React from 'react';
 
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { DictionaryServerUnion, useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
