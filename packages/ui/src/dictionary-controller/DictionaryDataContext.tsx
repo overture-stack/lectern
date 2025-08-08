@@ -16,12 +16,12 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import * as lectern from '@overture-stack/lectern-client';
-import { DictionaryServerRecord, DictionarySummary } from '@overture-stack/lectern-client/dist/rest';
-import { Dictionary } from '@overture-stack/lectern-dictionary';
-import { ReactNode } from 'react';
+import type { DictionaryServerRecord, DictionarySummary } from '@overture-stack/lectern-client/dist/rest';
+import type { Dictionary } from '@overture-stack/lectern-dictionary';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { fetchAndValidateHostedDictionaries } from './sources/hosted';
+import { fetchRemoteDictionary } from './sources/lectern';
 
 export type DictionaryServerUnion = Partial<DictionaryServerRecord> | Dictionary;
 
@@ -38,44 +38,30 @@ export type DictionaryContextType = {
 	filters: FilterOptions[];
 	setCurrentDictionaryIndex: (index: number) => void;
 	setFilters: (filters: FilterOptions[]) => void;
-	selectedDictionary: DictionaryServerUnion | undefined;
 };
 
-type StaticDictionaryProviderProps = {
+export type StaticDictionaryProviderProps = {
 	children: ReactNode;
 	staticDictionaries: DictionaryServerUnion[];
 };
 
-type RemoteDictionaryProviderProps = {
+export type RemoteDictionaryProviderProps = {
 	children: ReactNode;
 	lecternUrl: string;
 	dictionaryName: string;
 };
 
-export type DictionaryProviderProps = StaticDictionaryProviderProps | RemoteDictionaryProviderProps;
+export type HostedDictionaryProviderProps = {
+	children: ReactNode;
+	hostedUrl: string;
+};
+
+export type DictionaryProviderProps =
+	| StaticDictionaryProviderProps
+	| RemoteDictionaryProviderProps
+	| HostedDictionaryProviderProps;
 
 const DictionaryDataContext = createContext<DictionaryContextType | undefined>(undefined);
-
-const fetchRemoteDictionary = async (lecternUrl: string, dictionaryName: string) => {
-	try {
-		const fetchedDictionaryVersions = await lectern.rest.listDictionaries(lecternUrl, { name: dictionaryName });
-		if (!fetchedDictionaryVersions.success) {
-			throw new Error('Failed to fetch dictionary versions');
-		}
-
-		const results = await Promise.all(
-			fetchedDictionaryVersions.data.map((version) =>
-				lectern.rest.getDictionary(lecternUrl, { name: version.name, version: version.version }),
-			),
-		);
-		const dictionaries: DictionaryServerRecord[] = results.filter((res) => res.success).map((res) => res.data);
-
-		return { versions: fetchedDictionaryVersions.data, dictionaries };
-	} catch (err) {
-		console.error('Error loading dictionary data:', err);
-		return undefined;
-	}
-};
 
 export function useDictionaryDataContext(): DictionaryContextType {
 	const context = useContext(DictionaryDataContext);
@@ -99,31 +85,48 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 		if ('staticDictionaries' in props) {
 			setDictionaries(props.staticDictionaries);
 			setLoading(false);
-		} else {
-			// const fetchData = async () => {
-			//   try {
-			//     const result = await fetchRemoteDictionary(props.lecternUrl, props.dictionaryName);
-			//     if (result) {
-			//       setVersions(result.versions);
-			//       setDictionaries(result.dictionaries);
-			//       setError(false);
-			//     } else {
-			//       setError(true);
-			//     }
-			//   } catch (err) {
-			//     console.error(err);
-			//     setError(true);
-			//   } finally {
-			//     setLoading(false);
-			//   }
-			// };
-			// fetchData();
-			setError(true);
-			setLoading(false);
+			setError(false);
+			return;
+		}
+
+		if ('hostedUrl' in props) {
+			const fetchHostedDictionaries = async () => {
+				try {
+					const dictionariesData = await fetchAndValidateHostedDictionaries(props.hostedUrl);
+					setDictionaries(dictionariesData);
+					setError(false);
+				} catch (err) {
+					console.error('Error loading hosted dictionary data:', err);
+					setError(true);
+				} finally {
+					setLoading(false);
+				}
+			};
+			fetchHostedDictionaries();
+			return;
+		}
+
+		if ('lecternUrl' in props) {
+			const fetchRemoteDictionaries = async () => {
+				try {
+					const { versions: fetchedVersions, dictionaries: fetchedDictionaries } = await fetchRemoteDictionary(
+						props.lecternUrl,
+						props.dictionaryName,
+					);
+					setVersions(fetchedVersions);
+					setDictionaries(fetchedDictionaries);
+					setError(false);
+				} catch (err) {
+					console.error('Error loading remote dictionary data:', err);
+					setError(true);
+				} finally {
+					setLoading(false);
+				}
+			};
+			fetchRemoteDictionaries();
+			return;
 		}
 	}, [props]);
-
-	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
 
 	const value: DictionaryContextType = {
 		dictionaries,
@@ -136,7 +139,6 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 		filters,
 		setCurrentDictionaryIndex,
 		setFilters,
-		selectedDictionary,
 	};
 
 	return <DictionaryDataContext.Provider value={value}>{props.children}</DictionaryDataContext.Provider>;

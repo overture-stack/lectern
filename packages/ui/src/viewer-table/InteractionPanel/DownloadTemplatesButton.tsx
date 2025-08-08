@@ -57,12 +57,12 @@ const downloadDictionary = async ({ fetchUrl, name, version }) => {
 	URL.revokeObjectURL(url);
 };
 
-const DictionaryDownloadButton = ({ fileType = 'tsv', iconOnly = false }: DictionaryDownloadButtonProps) => {
+const DictionaryDownloadButton = ({ fileType }: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const theme: Theme = useThemeContext();
 	const { FileDownload } = theme.icons;
-	const { loading, error, selectedDictionary, lecternUrl } = useDictionaryDataContext();
-	const disabled = loading || error;
+	const { loading, error, dictionaries, currentDictionaryIndex, lecternUrl } = useDictionaryDataContext();
+	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
 
 	if (!selectedDictionary || !lecternUrl || !selectedDictionary.name || !selectedDictionary.version) {
 		return null;
@@ -78,14 +78,7 @@ const DictionaryDownloadButton = ({ fileType = 'tsv', iconOnly = false }: Dictio
 
 	return (
 		<Button
-			iconOnly={iconOnly}
-			styleOverride={
-				iconOnly ?
-					css`
-						padding: 8px;
-					`
-				:	undefined
-			}
+			iconOnly={false}
 			icon={<FileDownload />}
 			onClick={async (e) => {
 				e.stopPropagation();
@@ -98,7 +91,7 @@ const DictionaryDownloadButton = ({ fileType = 'tsv', iconOnly = false }: Dictio
 					setIsLoading(false);
 				}
 			}}
-			disabled={disabled}
+			disabled={loading || error || isLoading}
 		>
 			Submission Templates
 		</Button>

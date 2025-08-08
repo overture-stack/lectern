@@ -19,26 +19,30 @@
  *
  */
 
-import React from 'react';
-
 import Dropdown from '../../common/Dropdown/Dropdown';
-import { DictionaryServerUnion, useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 const DictionaryVersionSwitcher = () => {
 	const theme: Theme = useThemeContext();
-	const { loading, error, selectedDictionary, dictionaries, setCurrentDictionaryIndex } = useDictionaryDataContext();
 	const { History } = theme.icons;
+	const { loading, error, dictionaries, versions, currentDictionaryIndex, setCurrentDictionaryIndex } =
+		useDictionaryDataContext();
+	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
 
-	const createdAt = selectedDictionary && 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : '';
+	// Use versions data if available (for lectern server mode), otherwise fall back to dictionaries
+	const versionData = versions || dictionaries;
+	const selectedVersion = versions?.[currentDictionaryIndex] || selectedDictionary;
 
-	const title = selectedDictionary?.version ? `Version ${selectedDictionary.version} (${createdAt})` : 'Select Version';
+	const createdAt = selectedVersion && 'createdAt' in selectedVersion ? selectedVersion.createdAt : '';
 
-	const versionSwitcherObjectArray = dictionaries?.map((dictionary: DictionaryServerUnion, index: number) => {
-		const displayVersionDate = 'createdAt' in dictionary ? `(${dictionary.createdAt})` : '';
+	const title = selectedVersion?.version ? `Version ${selectedVersion.version} (${createdAt})` : 'Select Version';
+
+	const versionSwitcherObjectArray = versionData?.map((item: any, index: number) => {
+		const displayVersionDate = 'createdAt' in item ? `(${item.createdAt})` : '';
 		return {
-			label: `Version ${dictionary?.version} ${displayVersionDate}`,
+			label: `Version ${item?.version} ${displayVersionDate}`,
 			action: () => {
 				setCurrentDictionaryIndex(index);
 			},

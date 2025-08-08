@@ -51,7 +51,7 @@ const descriptionWrapperStyle = (theme: Theme) => css`
 	}
 `;
 
-const containerStyle = () => css`
+const containerStyle = css`
 	background-color: white;
 	padding: 2.5rem;
 	margin-bottom: 1rem;

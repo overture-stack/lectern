@@ -24,16 +24,20 @@ import React, { useEffect, useState } from 'react';
 import Accordion from '../common/Accordion/Accordion';
 import { ErrorModal } from '../common/ErrorModal';
 import { useDictionaryDataContext } from '../dictionary-controller/DictionaryDataContext';
+import { Theme } from '../theme/Theme';
+import { useThemeContext } from '../theme/ThemeContext';
 import SchemaTable from './DataTable/SchemaTable/SchemaTable';
 import DictionaryHeader from './DictionaryHeader';
 import InteractionPanel from './InteractionPanel/InteractionPanel';
 
 export const DictionaryTableViewer = () => {
+	const theme: Theme = useThemeContext();
+	const { loading, error, dictionaries, currentDictionaryIndex, filters } = useDictionaryDataContext();
+	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
+
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [selectedSchemaIndex, setSelectedSchemaIndex] = useState<number | null>(null);
 	const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-
-	const { loading, error, selectedDictionary, filters } = useDictionaryDataContext();
 
 	useEffect(() => {
 		if (error) {
@@ -89,7 +93,7 @@ export const DictionaryTableViewer = () => {
 				name={loading ? '' : (selectedDictionary?.name ?? '')}
 				description={loading ? undefined : selectedDictionary?.description}
 				version={loading ? undefined : selectedDictionary?.version}
-				disabled={loading || !!error}
+				disabled={loading || error}
 			/>
 			<InteractionPanel onSelect={handleSchemaSelect} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
 			{!loading && !error && selectedDictionary && (
