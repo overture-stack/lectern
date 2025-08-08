@@ -16,17 +16,17 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import React from 'react';
 import { DictionaryDataProvider } from '../dictionary-controller/DictionaryDataContext';
 import { DictionaryTableViewer } from './DictionaryViewer';
-
 export type DictionaryTableViewerProps = {
 	lecternUrl: string;
 	dictionaryName: string;
 };
 
-export const DictionaryViewerPage = () => {
+export const DictionaryViewerPage = ({ lecternUrl, dictionaryName }: DictionaryTableViewerProps) => {
 	return (
-		<DictionaryDataProvider lecternUrl="" dictionaryName="">
+		<DictionaryDataProvider lecternUrl={lecternUrl} dictionaryName={dictionaryName}>
 			<DictionaryTableViewer />
 		</DictionaryDataProvider>
 	);

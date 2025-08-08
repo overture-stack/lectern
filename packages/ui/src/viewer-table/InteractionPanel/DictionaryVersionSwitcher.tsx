@@ -31,42 +31,43 @@ import { useThemeContext } from '../../theme/ThemeContext';
 
 export type DictionaryServerUnion = Dictionary | DictionaryServerRecord;
 
-export type DictionaryVersionSwitcherProps = {
-	onVersionChange: (index: number) => void;
-	dictionaryIndex: number;
-};
-
-const DictionaryVersionSwitcher = ({ onVersionChange, dictionaryIndex }: DictionaryVersionSwitcherProps) => {
+const DictionaryVersionSwitcher = () => {
 	const theme: Theme = useThemeContext();
-	const data = useDictionaryDataContext();
+	const dictionaryContext = useDictionaryDataContext();
 
+	if (!dictionaryContext) {
+		return null;
+	}
+
+	const { loading, error, selectedDictionary, dictionaries, setCurrentDictionaryIndex } = dictionaryContext;
 	const { History } = theme.icons;
 
 	const createdAt =
-		data.dictionaryData?.[dictionaryIndex] && 'createdAt' in data.dictionaryData?.[dictionaryIndex] ?
-			data.dictionaryData[dictionaryIndex].createdAt
-		:	'';
+		selectedDictionary && 'createdAt' in (selectedDictionary as any) ? (selectedDictionary as any).createdAt : '';
 
-	const title =
-		data.dictionaryData?.[dictionaryIndex]?.version ?
-			`Version ${data.dictionaryData[dictionaryIndex].version} (${createdAt})`
-		:	'Select Version';
+	const title = selectedDictionary?.version ? `Version ${selectedDictionary.version} (${createdAt})` : 'Select Version';
 
-	const versionSwitcherObjectArray = data?.dictionaryData?.map((dictionary: DictionaryServerUnion, index: number) => {
+	const versionSwitcherObjectArray = dictionaries?.map((dictionary: DictionaryServerUnion, index: number) => {
 		const displayVersionDate = 'createdAt' in dictionary ? `(${dictionary.createdAt})` : '';
 		return {
 			label: `Version ${dictionary?.version} ${displayVersionDate}`,
 			action: () => {
-				onVersionChange(index);
+				setCurrentDictionaryIndex(index);
 			},
 		};
 	});
 
-	// If there is only one version, we don't need to show the dropdown as per specifications
 	const displayVersionSwitcher = versionSwitcherObjectArray && versionSwitcherObjectArray.length > 1;
 
 	return (
-		displayVersionSwitcher && <Dropdown leftIcon={<History />} menuItems={versionSwitcherObjectArray} title={title} />
+		displayVersionSwitcher && (
+			<Dropdown
+				leftIcon={<History />}
+				menuItems={versionSwitcherObjectArray}
+				title={title}
+				disabled={loading || error}
+			/>
+		)
 	);
 };
 

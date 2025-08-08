@@ -30,7 +30,6 @@ import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export type DictionaryDownloadButtonProps = {
-	currentDictionaryIndex: number;
 	fileType: 'tsv' | 'csv';
 	iconOnly?: boolean;
 };
@@ -58,27 +57,26 @@ const downloadDictionary = async ({ fetchUrl, name, version }) => {
 	URL.revokeObjectURL(url);
 };
 
-const DictionaryDownloadButton = ({
-	currentDictionaryIndex,
-	fileType = 'tsv',
-	iconOnly = false,
-}: DictionaryDownloadButtonProps) => {
-	// need to pass this up
+const DictionaryDownloadButton = ({ fileType = 'tsv', iconOnly = false }: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
-
 	const theme: Theme = useThemeContext();
 	const { FileDownload } = theme.icons;
-	const dictionaryContextVals = useDictionaryDataContext();
-	const disabled = dictionaryContextVals.loading || dictionaryContextVals.error;
-	const { data } = dictionaryContextVals;
-	if (!data.dictionaries) {
+	const dictionaryContext = useDictionaryDataContext();
+
+	if (!dictionaryContext) {
 		return null;
 	}
 
-	const currentDictionary = data?.dictionaries[currentDictionaryIndex];
-	const fetchUrl = `${data.lecternUrl}/dictionaries/template/download?${new URLSearchParams({
-		name: currentDictionary.name,
-		version: currentDictionary.version,
+	const { loading, error, selectedDictionary, lecternUrl } = dictionaryContext;
+	const disabled = loading || error;
+
+	if (!selectedDictionary || !lecternUrl) {
+		return null;
+	}
+
+	const fetchUrl = `${lecternUrl}/dictionaries/template/download?${new URLSearchParams({
+		name: selectedDictionary.name,
+		version: selectedDictionary.version,
 		fileType,
 	})}`;
 
@@ -97,7 +95,7 @@ const DictionaryDownloadButton = ({
 				e.stopPropagation();
 				setIsLoading(true);
 				try {
-					await downloadDictionary({ fetchUrl, name: currentDictionary.name, version: currentDictionary.version });
+					await downloadDictionary({ fetchUrl, name: selectedDictionary.name, version: selectedDictionary.version });
 				} catch (error) {
 					console.error('Error downloading dictionary:', error);
 				} finally {

@@ -22,28 +22,21 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
-import type { Dictionary } from '@overture-stack/lectern-dictionary';
 
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
-import AttributeFilterDropdown, { type FilterOptions } from './AttributeFilterDropdown';
+import AttributeFilterDropdown from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
 import DictionaryVersionSwitcher from './DictionaryVersionSwitcher';
 import DownloadTemplatesButton from './DownloadTemplatesButton';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
 
-export type DictionaryServerUnion = Dictionary | DictionaryServerRecord;
-
 export type InteractionPanelProps = {
-	setIsCollapsed: (isCollapsed: boolean) => void;
 	onSelect: (schemaNameIndex: number) => void;
-	onVersionChange: (index: number) => void;
-	filters: FilterOptions[];
-	setFilters: (filters: FilterOptions[]) => void;
-	dictionaryIndex: number;
+	isCollapsed: boolean;
+	setIsCollapsed: (collapsed: boolean) => void;
 };
 
 const panelStyles = (theme: Theme) => css`
@@ -66,33 +59,32 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const InteractionPanel = ({
-	setIsCollapsed,
-	onSelect,
-	dictionaryIndex,
-	filters,
-	setFilters,
-	onVersionChange,
-}: InteractionPanelProps) => {
+const InteractionPanel = ({ onSelect, isCollapsed, setIsCollapsed }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
-	const data = useDictionaryDataContext();
-	const selectedDictionary: DictionaryServerUnion | undefined = data.data?.[dictionaryIndex];
+	const dictionaryContext = useDictionaryDataContext();
 
-	if (selectedDictionary === undefined) {
+	if (!dictionaryContext) {
 		return null;
 	}
+
+	const { selectedDictionary } = dictionaryContext;
+
+	if (!selectedDictionary?.schemas) {
+		return null;
+	}
+
 	return (
 		<div css={panelStyles(theme)}>
 			<div css={sectionStyles}>
 				<TableOfContentsDropdown schemas={selectedDictionary.schemas} onSelect={onSelect} />
-				<AttributeFilterDropdown filters={filters} setFilters={setFilters} />
+				<AttributeFilterDropdown />
 				<ExpandAllButton onClick={() => setIsCollapsed(false)} />
 				<CollapseAllButton onClick={() => setIsCollapsed(true)} />
 			</div>
 
 			<div css={sectionStyles}>
-				<DictionaryVersionSwitcher dictionaryIndex={dictionaryIndex} onVersionChange={onVersionChange} />
-				<DownloadTemplatesButton fileType="tsv" currentDictionaryIndex={dictionaryIndex} />
+				<DictionaryVersionSwitcher />
+				<DownloadTemplatesButton fileType="tsv" />
 			</div>
 		</div>
 	);

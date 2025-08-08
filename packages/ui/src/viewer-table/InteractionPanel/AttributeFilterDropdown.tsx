@@ -17,32 +17,33 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** @jsxImportSource @emotion/react */
+
+import React from 'react';
+
 import Dropdown from '../../common/Dropdown/Dropdown';
-import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import { FilterOptions, useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-export type AttributeFilterDropdownProps = {
-	filters: FilterOptions[];
-	setFilters: (filters: FilterOptions[]) => void;
-	disabled?: boolean;
-};
-
-export type FilterOptions = 'Required' | 'All Fields';
-
-const AttributeFilterDropdown = ({ filters, setFilters }: AttributeFilterDropdownProps) => {
+const AttributeFilterDropdown = () => {
 	const theme = useThemeContext();
-	const data = useDictionaryDataContext();
+	const dictionaryContext = useDictionaryDataContext();
 
+	if (!dictionaryContext) {
+		return null;
+	}
+
+	const { loading, error, filters, setFilters } = dictionaryContext;
 	const { ListFilter } = theme.icons;
 
 	const handleFilterSelect = (selectedFilterName: FilterOptions) => {
-		// Toggles selected filter on click
 		if (filters?.includes(selectedFilterName)) {
 			setFilters([]);
 			return;
 		}
 		setFilters([selectedFilterName]);
 	};
+
 	const menuItems = [
 		{
 			label: 'Required',
@@ -54,14 +55,7 @@ const AttributeFilterDropdown = ({ filters, setFilters }: AttributeFilterDropdow
 		},
 	];
 
-	return (
-		<Dropdown
-			leftIcon={<ListFilter />}
-			title="Filter By"
-			menuItems={menuItems}
-			disabled={data.error || data.}
-		/>
-	);
+	return <Dropdown leftIcon={<ListFilter />} title="Filter By" menuItems={menuItems} disabled={error || loading} />;
 };
 
 export default AttributeFilterDropdown;

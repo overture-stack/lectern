@@ -16,31 +16,101 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { useState } from 'react';
+/** @jsxImportSource @emotion/react */
+
+import { css } from '@emotion/react';
+import { Schema } from '@overture-stack/lectern-dictionary';
+import React, { useEffect, useState } from 'react';
+import Accordion from '../common/Accordion/Accordion';
+import { ErrorModal } from '../common/ErrorModal';
 import { useDictionaryDataContext } from '../dictionary-controller/DictionaryDataContext';
+import SchemaTable from './DataTable/SchemaTable/SchemaTable';
 import DictionaryHeader from './DictionaryHeader';
 import InteractionPanel from './InteractionPanel/InteractionPanel';
+
 export const DictionaryTableViewer = () => {
 	const [isCollapsed, setIsCollapsed] = useState(false);
-	const [currentDictionaryIndex, setCurrentDictionaryIndex] = useState(0);
-	const data = useDictionaryDataContext();
+	const [selectedSchemaIndex, setSelectedSchemaIndex] = useState<number | null>(null);
+	const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+
+	const dictionaryContext = useDictionaryDataContext();
+	if (dictionaryContext === undefined) {
+		return;
+	}
+
+	const { loading, error, selectedDictionary, filters } = dictionaryContext;
+
+	useEffect(() => {
+		if (error) {
+			setIsErrorModalOpen(true);
+		}
+	}, [error]);
+
+	const getFilteredSchema = (schema: Schema) => {
+		if (filters.includes('Required')) {
+			return {
+				...schema,
+				fields: schema.fields.filter((field) => {
+					if (field.restrictions && typeof field.restrictions === 'object' && 'required' in field.restrictions) {
+						return field.restrictions.required === true;
+					}
+					return false;
+				}),
+			};
+		}
+		return schema;
+	};
+
+	const accordionItems =
+		selectedDictionary?.schemas?.map((schema: Schema, index: number) => ({
+			title: schema.name,
+			description: schema.description,
+			content: <SchemaTable schema={getFilteredSchema(schema)} />,
+			schemaName: schema.name,
+		})) || [];
+
+	const handleSchemaSelect = (schemaIndex: number) => {
+		setSelectedSchemaIndex(schemaIndex);
+		const element = document.getElementById(schemaIndex.toString());
+		if (element) {
+			element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		}
+	};
+
+	const containerStyle = css`
+		max-width: 80%;
+		margin: 0 auto;
+		padding: 0 1rem;
+	`;
+
+	const emptyStateStyle = css`
+		padding: 10px;
+		text-align: center;
+	`;
 
 	return (
-		<>
+		<div css={containerStyle}>
 			<DictionaryHeader
-				name={data.data?.[currentDictionaryIndex]?.name ?? ''}
-				description={data.data?.[currentDictionaryIndex]?.description}
-				version={data.data?.[currentDictionaryIndex]?.version}
-				disabled={data.loading || data.error}
+				name={loading ? '' : (selectedDictionary?.name ?? '')}
+				description={loading ? undefined : selectedDictionary?.description}
+				version={loading ? undefined : selectedDictionary?.version}
+				disabled={loading || !!error}
 			/>
-			<InteractionPanel
-				filters={[]}
-				setFilters={() => {}}
-				setIsCollapsed={setIsCollapsed}
-				onSelect={() => {}}
-				onVersionChange={() => {}}
-				dictionaryIndex={currentDictionaryIndex}
-			></InteractionPanel>
-		</>
+			<InteractionPanel onSelect={handleSchemaSelect} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+			{!loading && !error && selectedDictionary && (
+				<Accordion accordionItems={accordionItems} collapseAll={isCollapsed} />
+			)}
+			{!loading && !error && !selectedDictionary && (
+				<div css={emptyStateStyle}>
+					<div>No dictionary data available.</div>
+				</div>
+			)}
+
+			<ErrorModal
+				isOpen={isErrorModalOpen}
+				setIsOpen={setIsErrorModalOpen}
+				errors={['Failed to load dictionary. Please check your connection and try again.']}
+			/>
+		</div>
 	);
 };
