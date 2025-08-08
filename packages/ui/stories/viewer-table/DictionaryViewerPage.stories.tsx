@@ -85,6 +85,13 @@ export const LoadingState: Story = {
 	),
 };
 
+export const LecternServer: Story = {
+	render: () => (
+		<DictionaryDataProvider lecternUrl="http://localhost:3031" dictionaryName="example-dictionary">
+			<DictionaryTableViewer />
+		</DictionaryDataProvider>
+	),
+};
 export const EmptyState: Story = {
 	render: () => (
 		<DictionaryDataProvider staticDictionaries={[]}>
