@@ -28,13 +28,7 @@ import { useThemeContext } from '../../theme/ThemeContext';
 
 const DictionaryVersionSwitcher = () => {
 	const theme: Theme = useThemeContext();
-	const dictionaryContext = useDictionaryDataContext();
-
-	if (!dictionaryContext) {
-		return null;
-	}
-
-	const { loading, error, selectedDictionary, dictionaries, setCurrentDictionaryIndex } = dictionaryContext;
+	const { loading, error, selectedDictionary, dictionaries, setCurrentDictionaryIndex } = useDictionaryDataContext();
 	const { History } = theme.icons;
 
 	const createdAt = selectedDictionary && 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : '';

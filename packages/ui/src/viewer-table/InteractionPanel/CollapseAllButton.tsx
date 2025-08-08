@@ -34,13 +34,7 @@ export interface CollapseAllButtonProps {
 
 const CollapseAllButton = ({ onClick }: CollapseAllButtonProps) => {
 	const theme: Theme = useThemeContext();
-	const dictionaryContext = useDictionaryDataContext();
-
-	if (!dictionaryContext) {
-		return null;
-	}
-
-	const { loading, error } = dictionaryContext;
+	const { loading, error } = useDictionaryDataContext();
 	const { Collapse } = theme.icons;
 
 	return (

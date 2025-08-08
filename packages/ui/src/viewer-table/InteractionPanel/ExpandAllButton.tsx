@@ -34,13 +34,7 @@ export interface ExpandAllButtonProps {
 
 const ExpandAllButton = ({ onClick }: ExpandAllButtonProps) => {
 	const theme: Theme = useThemeContext();
-	const dictionaryContext = useDictionaryDataContext();
-
-	if (!dictionaryContext) {
-		return null;
-	}
-
-	const { loading, error } = dictionaryContext;
+	const { loading, error } = useDictionaryDataContext();
 	const { Eye } = theme.icons;
 
 	return (

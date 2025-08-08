@@ -34,13 +34,7 @@ export type TableOfContentsDropdownProps = {
 
 const TableOfContentsDropdown = ({ schemas, onSelect }: TableOfContentsDropdownProps) => {
 	const theme: Theme = useThemeContext();
-	const dictionaryContext = useDictionaryDataContext();
-
-	if (!dictionaryContext) {
-		return null;
-	}
-
-	const { loading, error } = dictionaryContext;
+	const { loading, error } = useDictionaryDataContext();
 	const { List } = theme.icons;
 
 	const handleAction = (index: number) => {

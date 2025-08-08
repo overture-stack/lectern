@@ -27,13 +27,7 @@ import { useThemeContext } from '../../theme/ThemeContext';
 
 const AttributeFilterDropdown = () => {
 	const theme = useThemeContext();
-	const dictionaryContext = useDictionaryDataContext();
-
-	if (!dictionaryContext) {
-		return null;
-	}
-
-	const { loading, error, filters, setFilters } = dictionaryContext;
+	const { loading, error, filters, setFilters } = useDictionaryDataContext();
 	const { ListFilter } = theme.icons;
 
 	const handleFilterSelect = (selectedFilterName: FilterOptions) => {
