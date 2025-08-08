@@ -19,23 +19,32 @@
  *
  */
 
+/** @jsxImportSource @emotion/react */
+
 import React from 'react';
 
 import Button from '../../common/Button';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export interface CollapseAllButtonProps {
 	onClick: () => void;
-	disabled?: boolean;
 }
 
-const CollapseAllButton = ({ onClick, disabled }: CollapseAllButtonProps) => {
+const CollapseAllButton = ({ onClick }: CollapseAllButtonProps) => {
 	const theme: Theme = useThemeContext();
+	const dictionaryContext = useDictionaryDataContext();
+
+	if (!dictionaryContext) {
+		return null;
+	}
+
+	const { loading, error } = dictionaryContext;
 	const { Collapse } = theme.icons;
 
 	return (
-		<Button icon={<Collapse />} onClick={onClick} disabled={disabled}>
+		<Button icon={<Collapse />} onClick={onClick} disabled={loading || error}>
 			Collapse All
 		</Button>
 	);
