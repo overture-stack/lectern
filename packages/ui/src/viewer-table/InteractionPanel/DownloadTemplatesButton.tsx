@@ -64,13 +64,15 @@ const DictionaryDownloadButton = ({ fileType = 'tsv', iconOnly = false }: Dictio
 	const { loading, error, selectedDictionary, lecternUrl } = useDictionaryDataContext();
 	const disabled = loading || error;
 
-	if (!selectedDictionary || !lecternUrl) {
+	if (!selectedDictionary || !lecternUrl || !selectedDictionary.name || !selectedDictionary.version) {
 		return null;
 	}
 
+	const { name, version } = selectedDictionary;
+
 	const fetchUrl = `${lecternUrl}/dictionaries/template/download?${new URLSearchParams({
-		name: selectedDictionary.name,
-		version: selectedDictionary.version,
+		name,
+		version,
 		fileType,
 	})}`;
 
@@ -89,7 +91,7 @@ const DictionaryDownloadButton = ({ fileType = 'tsv', iconOnly = false }: Dictio
 				e.stopPropagation();
 				setIsLoading(true);
 				try {
-					await downloadDictionary({ fetchUrl, name: selectedDictionary.name, version: selectedDictionary.version });
+					await downloadDictionary({ fetchUrl, name, version });
 				} catch (error) {
 					console.error('Error downloading dictionary:', error);
 				} finally {
