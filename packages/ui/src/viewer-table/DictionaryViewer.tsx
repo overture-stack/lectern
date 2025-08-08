@@ -33,12 +33,7 @@ export const DictionaryTableViewer = () => {
 	const [selectedSchemaIndex, setSelectedSchemaIndex] = useState<number | null>(null);
 	const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
-	const dictionaryContext = useDictionaryDataContext();
-	if (dictionaryContext === undefined) {
-		return;
-	}
-
-	const { loading, error, selectedDictionary, filters } = dictionaryContext;
+	const { loading, error, selectedDictionary, filters } = useDictionaryDataContext();
 
 	useEffect(() => {
 		if (error) {

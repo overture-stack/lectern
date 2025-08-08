@@ -61,13 +61,7 @@ const DictionaryDownloadButton = ({ fileType = 'tsv', iconOnly = false }: Dictio
 	const [isLoading, setIsLoading] = useState(false);
 	const theme: Theme = useThemeContext();
 	const { FileDownload } = theme.icons;
-	const dictionaryContext = useDictionaryDataContext();
-
-	if (!dictionaryContext) {
-		return null;
-	}
-
-	const { loading, error, selectedDictionary, lecternUrl } = dictionaryContext;
+	const { loading, error, selectedDictionary, lecternUrl } = useDictionaryDataContext();
 	const disabled = loading || error;
 
 	if (!selectedDictionary || !lecternUrl) {

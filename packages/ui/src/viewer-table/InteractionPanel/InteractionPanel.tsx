@@ -61,13 +61,7 @@ const sectionStyles = css`
 
 const InteractionPanel = ({ onSelect, isCollapsed, setIsCollapsed }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
-	const dictionaryContext = useDictionaryDataContext();
-
-	if (!dictionaryContext) {
-		return null;
-	}
-
-	const { selectedDictionary } = dictionaryContext;
+	const { selectedDictionary } = useDictionaryDataContext();
 
 	if (!selectedDictionary?.schemas) {
 		return null;
