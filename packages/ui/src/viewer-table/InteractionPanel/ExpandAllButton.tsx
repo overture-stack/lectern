@@ -19,23 +19,32 @@
  *
  */
 
+/** @jsxImportSource @emotion/react */
+
 import React from 'react';
 
 import Button from '../../common/Button';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export interface ExpandAllButtonProps {
 	onClick: () => void;
-	disabled?: boolean;
 }
 
-const ExpandAllButton = ({ onClick, disabled }: ExpandAllButtonProps) => {
+const ExpandAllButton = ({ onClick }: ExpandAllButtonProps) => {
 	const theme: Theme = useThemeContext();
+	const dictionaryContext = useDictionaryDataContext();
+
+	if (!dictionaryContext) {
+		return null;
+	}
+
+	const { loading, error } = dictionaryContext;
 	const { Eye } = theme.icons;
 
 	return (
-		<Button icon={<Eye />} onClick={onClick} disabled={disabled}>
+		<Button icon={<Eye />} onClick={onClick} disabled={loading || error}>
 			Expand All
 		</Button>
 	);
