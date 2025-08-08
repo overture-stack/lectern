@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -15,44 +16,32 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
-
-/** @jsxImportSource @emotion/react */
-
 import { css } from '@emotion/react';
-import { CSSProperties, ReactNode } from 'react';
 
-import { Theme } from '../theme';
-import { useThemeContext } from '../theme/ThemeContext';
+import IconProps from './IconProps';
 
-export interface InlineCodeProps {
-	children: ReactNode;
-	style?: CSSProperties;
-}
-
-const fieldBlockStyles = (theme: Theme) => css`
-	${theme.typography.fieldBlock}
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 4px;
-	padding: 2px 5px;
-	border-radius: 3px;
-	background-color: ${theme.colors.background_muted};
-	border: 0.5px solid ${theme.colors.black};
-	transition: all 0.2s ease-in-out;
-	width: fit-content;
-	align-self: center;
-	color: ${theme.colors.accent_dark};
-`;
-
-const FieldBlock = ({ children, style }: InlineCodeProps) => {
-	const theme: Theme = useThemeContext();
+const MessageSquareWarning = ({ fill, width, height, style }: IconProps) => {
 	return (
-		<span css={fieldBlockStyles(theme)} style={style}>
-			{children}
-		</span>
+		<svg
+			css={css`
+				${style}
+			`}
+			width={width || '24'}
+			height={height || '24'}
+			fill={fill || 'none'}
+			viewBox="0 0 24 24"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		>
+			<path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+			<path d="M12 15h.01" />
+			<path d="M12 7v4" />
+		</svg>
 	);
 };
 
-export default FieldBlock;
+export default MessageSquareWarning;

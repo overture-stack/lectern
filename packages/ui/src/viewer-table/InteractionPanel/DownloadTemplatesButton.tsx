@@ -25,15 +25,12 @@ import { css } from '@emotion/react';
 import { useState } from 'react';
 
 import Button from '../../common/Button';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export type DictionaryDownloadButtonProps = {
-	version: string;
-	name: string;
-	lecternUrl: string;
 	fileType: 'tsv' | 'csv';
-	disabled?: boolean;
 	iconOnly?: boolean;
 };
 
@@ -60,21 +57,26 @@ const downloadDictionary = async ({ fetchUrl, name, version }) => {
 	URL.revokeObjectURL(url);
 };
 
-const DictionaryDownloadButton = ({
-	version,
-	name,
-	lecternUrl,
-	fileType = 'tsv',
-	disabled = false,
-	iconOnly = false,
-}: DictionaryDownloadButtonProps) => {
+const DictionaryDownloadButton = ({ fileType = 'tsv', iconOnly = false }: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const theme: Theme = useThemeContext();
 	const { FileDownload } = theme.icons;
+	const dictionaryContext = useDictionaryDataContext();
+
+	if (!dictionaryContext) {
+		return null;
+	}
+
+	const { loading, error, selectedDictionary, lecternUrl } = dictionaryContext;
+	const disabled = loading || error;
+
+	if (!selectedDictionary || !lecternUrl) {
+		return null;
+	}
 
 	const fetchUrl = `${lecternUrl}/dictionaries/template/download?${new URLSearchParams({
-		name,
-		version,
+		name: selectedDictionary.name,
+		version: selectedDictionary.version,
 		fileType,
 	})}`;
 
@@ -93,14 +95,14 @@ const DictionaryDownloadButton = ({
 				e.stopPropagation();
 				setIsLoading(true);
 				try {
-					await downloadDictionary({ fetchUrl, name, version });
+					await downloadDictionary({ fetchUrl, name: selectedDictionary.name, version: selectedDictionary.version });
 				} catch (error) {
 					console.error('Error downloading dictionary:', error);
 				} finally {
 					setIsLoading(false);
 				}
 			}}
-			disabled={disabled || isLoading}
+			disabled={disabled}
 		>
 			Submission Templates
 		</Button>

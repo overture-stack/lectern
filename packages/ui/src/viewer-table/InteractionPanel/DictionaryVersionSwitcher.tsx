@@ -25,47 +25,48 @@ import { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 
 import Dropdown from '../../common/Dropdown/Dropdown';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export type DictionaryServerUnion = Dictionary | DictionaryServerRecord;
 
-export type DictionaryVersionSwitcherProps = {
-	dictionaryData: DictionaryServerUnion[];
-	dictionaryIndex: number;
-	onVersionChange: (index: number) => void;
-	disabled?: boolean;
-	title: string;
-};
-
-const DictionaryVersionSwitcher = ({
-	dictionaryData,
-	dictionaryIndex,
-	onVersionChange,
-	disabled = false,
-	title,
-}: DictionaryVersionSwitcherProps) => {
+const DictionaryVersionSwitcher = () => {
 	const theme: Theme = useThemeContext();
+	const dictionaryContext = useDictionaryDataContext();
 
+	if (!dictionaryContext) {
+		return null;
+	}
+
+	const { loading, error, selectedDictionary, dictionaries, setCurrentDictionaryIndex } = dictionaryContext;
 	const { History } = theme.icons;
 
-	const versionSwitcherObjectArray = dictionaryData?.map((dictionary: DictionaryServerUnion, index: number) => {
-		const displayVersionDate =
-			'createdAt' in dictionaryData?.[dictionaryIndex] ? `(${dictionaryData?.[dictionaryIndex].createdAt})` : '';
+	const createdAt =
+		selectedDictionary && 'createdAt' in (selectedDictionary as any) ? (selectedDictionary as any).createdAt : '';
+
+	const title = selectedDictionary?.version ? `Version ${selectedDictionary.version} (${createdAt})` : 'Select Version';
+
+	const versionSwitcherObjectArray = dictionaries?.map((dictionary: DictionaryServerUnion, index: number) => {
+		const displayVersionDate = 'createdAt' in dictionary ? `(${dictionary.createdAt})` : '';
 		return {
 			label: `Version ${dictionary?.version} ${displayVersionDate}`,
 			action: () => {
-				onVersionChange(index);
+				setCurrentDictionaryIndex(index);
 			},
 		};
 	});
 
-	// If there is only one version, we don't need to show the dropdown as per specifications
 	const displayVersionSwitcher = versionSwitcherObjectArray && versionSwitcherObjectArray.length > 1;
 
 	return (
 		displayVersionSwitcher && (
-			<Dropdown leftIcon={<History />} menuItems={versionSwitcherObjectArray} title={title} disabled={disabled} />
+			<Dropdown
+				leftIcon={<History />}
+				menuItems={versionSwitcherObjectArray}
+				title={title}
+				disabled={loading || error}
+			/>
 		)
 	);
 };
