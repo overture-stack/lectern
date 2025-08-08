@@ -19,8 +19,6 @@
  *
  */
 
-/** @jsxImportSource @emotion/react */
-
 import React from 'react';
 
 import Button from '../../common/Button';
