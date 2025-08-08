@@ -21,15 +21,10 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
-import { Dictionary } from '@overture-stack/lectern-dictionary';
-
 import Dropdown from '../../common/Dropdown/Dropdown';
-import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import { DictionaryServerUnion, useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
-
-export type DictionaryServerUnion = Dictionary | DictionaryServerRecord;
 
 const DictionaryVersionSwitcher = () => {
 	const theme: Theme = useThemeContext();
@@ -42,8 +37,7 @@ const DictionaryVersionSwitcher = () => {
 	const { loading, error, selectedDictionary, dictionaries, setCurrentDictionaryIndex } = dictionaryContext;
 	const { History } = theme.icons;
 
-	const createdAt =
-		selectedDictionary && 'createdAt' in (selectedDictionary as any) ? (selectedDictionary as any).createdAt : '';
+	const createdAt = selectedDictionary && 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : '';
 
 	const title = selectedDictionary?.version ? `Version ${selectedDictionary.version} (${createdAt})` : 'Select Version';
 

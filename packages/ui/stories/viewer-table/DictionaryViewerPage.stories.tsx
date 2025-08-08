@@ -21,6 +21,7 @@
 
 import { Dictionary, replaceReferences } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
+
 import { DictionaryDataProvider } from '../../src/dictionary-controller/DictionaryDataContext';
 import { DictionaryTableViewer } from '../../src/viewer-table/DictionaryViewer';
 import EntityRelationshipExamples from '../fixtures/entityRelationshipExamples.json';
@@ -36,17 +37,17 @@ const mockDictionaries = [
 	{
 		...entityRelationshipDictionary,
 		_id: '1',
-		createdAt: '2025-01-15T10:00:00Z',
+		createdAt: '2025-01-15',
 	},
 	{
 		...exampleLecternDictionary,
 		_id: '2',
-		createdAt: '2025-01-14T10:00:00Z',
+		createdAt: '2025-01-14',
 	},
 	{
 		...pcglDictionary,
 		_id: '3',
-		createdAt: '2025-01-13T10:00:00Z',
+		createdAt: '2025-01-13',
 	},
 ];
 
@@ -55,9 +56,6 @@ const meta = {
 	title: 'Viewer - Table/Dictionary Viewer Page',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
-	parameters: {
-		layout: 'fullscreen',
-	},
 } satisfies Meta<typeof DictionaryTableViewer>;
 
 export default meta;
