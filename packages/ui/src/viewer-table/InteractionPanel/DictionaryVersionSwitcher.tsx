@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -19,10 +18,9 @@
  *
  */
 
-import React from 'react';
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
-import { Theme } from '../../theme';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 const DictionaryVersionSwitcher = () => {
@@ -33,7 +31,7 @@ const DictionaryVersionSwitcher = () => {
 	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
 
 	// Use versions data if available (for lectern server mode), otherwise fall back to dictionaries
-	const versionData = versions || dictionaries;
+	const versionData = versions && versions.length > 0 ? versions : dictionaries;
 	const selectedVersion = versions?.[currentDictionaryIndex] || selectedDictionary;
 
 	const createdAt = selectedVersion && 'createdAt' in selectedVersion ? selectedVersion.createdAt : '';
@@ -44,7 +42,7 @@ const DictionaryVersionSwitcher = () => {
 
 	const versionSwitcherObjectArray = versionData?.map((item: any, index: number) => {
 		const itemCreatedAt = 'createdAt' in item ? item.createdAt : '';
-		const itemFormattedDate = itemCreatedAt ? itemCreatedAt.toISOString().split('T')[0] : '';
+		const itemFormattedDate = itemCreatedAt ? new Date(itemCreatedAt).toISOString().split('T')[0] : '';
 		const displayVersionDate = itemFormattedDate ? `(${itemFormattedDate})` : '';
 		return {
 			label: `Version ${item?.version} ${displayVersionDate}`,

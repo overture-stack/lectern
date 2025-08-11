@@ -20,8 +20,6 @@
  */
 
 import type { Decorator } from '@storybook/react';
-import { css } from '@emotion/react';
-import React from 'react';
 
 import type { PartialTheme } from '../src/theme';
 import { ThemeProvider } from '../src/theme/ThemeContext';

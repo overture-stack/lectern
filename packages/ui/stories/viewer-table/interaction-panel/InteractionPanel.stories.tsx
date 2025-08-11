@@ -21,86 +21,66 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
-import { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import type { FilterOptions } from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
-import AdvancedDictionary from '../../fixtures/pcgl.json';
+import { withErrorState, withLecternUrl, withLoadingState } from '../../decorators/dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: InteractionPanel,
 	title: 'Viewer - Table/Interaction - Panel/InteractionPanel',
 	tags: ['autodocs'],
-	decorators: [themeDecorator()],
 	parameters: {
 		layout: 'fullscreen',
 	},
 } satisfies Meta<typeof InteractionPanel>;
 
 export default meta;
-
-export type DictionaryServerUnion = Dictionary | DictionaryServerRecord;
-
 type Story = StoryObj<typeof meta>;
-
-const SingleDictionaryData: Array<DictionaryServerUnion> = [AdvancedDictionary as DictionaryServerUnion];
-
-const MultipleDictionaryData: DictionaryServerUnion[] = [
-	{ ...AdvancedDictionary, _id: '1', version: '1.0', createdAt: '2025-20-20' } as DictionaryServerRecord,
-	{ ...AdvancedDictionary, _id: '2', version: '2.0', createdAt: '2025-20-20' } as DictionaryServerRecord,
-	{ ...AdvancedDictionary, _id: '3', version: '3.0', createdAt: '2025-20-20' } as DictionaryServerRecord,
-];
 
 const mockProps = {
 	setIsCollapsed: (isCollapsed: boolean) => {
 		alert('setIsCollapsed called with:' + isCollapsed);
 	},
-	onSelect: (schemaNameIndex) => {
+	onSelect: (schemaNameIndex: number) => {
 		alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
 	},
-	dictionaryConfig: {
-		lecternUrl: '',
-		dictionaryIndex: 0,
-		onVersionChange: (index: number) => {
-			alert('onVersionChange called with index:' + index);
-		},
-		filters: [],
-		setFilters: (filters: FilterOptions[]) => {
-			alert('setFilters called with:' + filters);
-		},
-	},
+	isCollapsed: false,
 };
 
 export const Default: Story = {
+	decorators: [themeDecorator(), withLecternUrl()],
 	args: {
 		...mockProps,
-		dictionaryConfig: {
-			...mockProps.dictionaryConfig,
-			dictionaryData: MultipleDictionaryData,
-		},
 	},
 };
 
 export const WithSingleVersion: Story = {
+	decorators: [themeDecorator(), withLecternUrl()],
 	args: {
 		...mockProps,
-		dictionaryConfig: {
-			...mockProps.dictionaryConfig,
-			dictionaryData: SingleDictionaryData,
-		},
 	},
 };
 
-export const Disabled: Story = {
+export const Collapsed: Story = {
+	decorators: [themeDecorator(), withLecternUrl()],
 	args: {
 		...mockProps,
-		dictionaryConfig: {
-			...mockProps.dictionaryConfig,
-			dictionaryData: MultipleDictionaryData,
-		},
-		disabled: true,
+		isCollapsed: true,
+	},
+};
+
+export const Loading: Story = {
+	decorators: [themeDecorator(), withLoadingState()],
+	args: {
+		...mockProps,
+	},
+};
+
+export const Error: Story = {
+	decorators: [themeDecorator(), withErrorState()],
+	args: {
+		...mockProps,
 	},
 };
