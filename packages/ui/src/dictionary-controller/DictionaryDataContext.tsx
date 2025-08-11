@@ -20,16 +20,15 @@ import type { DictionaryServerRecord, DictionarySummary } from '@overture-stack/
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
-import { fetchAndValidateHostedDictionaries } from './sources/hosted';
-import { fetchRemoteDictionary } from './sources/lectern';
+import { fetchAndValidateHostedDictionaries, fetchRemoteDictionary } from './sources';
 
 export type DictionaryServerUnion = Partial<DictionaryServerRecord> | Dictionary;
 
 export type FilterOptions = 'Required' | 'All Fields';
 
 export type DictionaryContextType = {
-	dictionaries: DictionaryServerUnion[] | undefined;
-	versions: DictionarySummary[] | undefined;
+	dictionaries?: DictionaryServerUnion[];
+	versions?: DictionarySummary[];
 	lecternUrl?: string;
 	name?: string;
 	loading: boolean;
@@ -67,16 +66,16 @@ export function useDictionaryDataContext(): DictionaryContextType {
 	const context = useContext(DictionaryDataContext);
 	if (context === undefined) {
 		console.error('useDictionaryDataContext must be used within a DictionaryDataProvider');
-		throw new Error();
+		throw new Error('useDictionaryDataContext must be used within a DictionaryDataProvider');
 	}
 	return context;
 }
 
 export function DictionaryDataProvider(props: DictionaryProviderProps) {
-	const [versions, setVersions] = useState<DictionarySummary[] | undefined>(undefined);
-	const [dictionaries, setDictionaries] = useState<DictionaryServerUnion[] | undefined>(undefined);
-	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<boolean>(false);
+	const [versions, setVersions] = useState<DictionarySummary[]>([]);
+	const [dictionaries, setDictionaries] = useState<DictionaryServerUnion[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(false);
 
 	const [currentDictionaryIndex, setCurrentDictionaryIndex] = useState(0);
 	const [filters, setFilters] = useState<FilterOptions[]>([]);
