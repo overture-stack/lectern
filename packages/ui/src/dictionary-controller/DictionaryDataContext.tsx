@@ -92,7 +92,7 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 			const fetchHostedDictionaries = async () => {
 				try {
 					const dictionariesData = await fetchAndValidateHostedDictionaries(props.hostedUrl);
-					setDictionaries(dictionariesData);
+					setDictionaries([dictionariesData]);
 					setError(false);
 				} catch (err) {
 					console.error('Error loading hosted dictionary data:', err);
