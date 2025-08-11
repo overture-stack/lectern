@@ -20,7 +20,6 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-
 import React, { useState } from 'react';
 
 import Button from '../../src/common/Button';
