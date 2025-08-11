@@ -18,7 +18,7 @@
  */
 
 import { TypeUtils, type SchemaField, type SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 import { ConditionStatement, ConditionalBlock } from './ConditionalBlock';
 import { ElseThenStatement } from './ElseThenStatement';
@@ -43,7 +43,6 @@ export const ProcessConditionalRestrictions = (
 	restrictions: SchemaFieldRestrictions,
 	currentSchemaField: SchemaField,
 ): ConditionalRenderResult | undefined => {
-	const restrictionsArray = TypeUtils.asArray(restrictions);
 	const restrictionsArray = TypeUtils.asArray(restrictions);
 
 	const allBlocks = restrictionsArray.flatMap((restriction) => {
