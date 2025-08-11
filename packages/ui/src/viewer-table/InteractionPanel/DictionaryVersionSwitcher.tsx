@@ -19,7 +19,6 @@
  *
  */
 
-import React from 'react';
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { Theme } from '../../theme';
@@ -44,7 +43,7 @@ const DictionaryVersionSwitcher = () => {
 
 	const versionSwitcherObjectArray = versionData?.map((item: any, index: number) => {
 		const itemCreatedAt = 'createdAt' in item ? item.createdAt : '';
-		const itemFormattedDate = itemCreatedAt ? new Date(itemCreatedAt).toISOString().split('T')[0] : '';
+		const itemFormattedDate = itemCreatedAt ? itemCreatedAt.toISOString().split('T')[0] : '';
 		const displayVersionDate = itemFormattedDate ? `(${itemFormattedDate})` : '';
 		return {
 			label: `Version ${item?.version} ${displayVersionDate}`,
