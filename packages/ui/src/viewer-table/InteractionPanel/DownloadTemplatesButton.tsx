@@ -23,9 +23,10 @@
 
 import { useState } from 'react';
 
+import { css } from '@emotion/react';
 import Button from '../../common/Button';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
-import { Theme } from '../../theme';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export type DictionaryDownloadButtonProps = {
@@ -56,7 +57,7 @@ const downloadDictionary = async ({ fetchUrl, name, version }) => {
 	URL.revokeObjectURL(url);
 };
 
-const DictionaryDownloadButton = ({ fileType }: DictionaryDownloadButtonProps) => {
+const DictionaryDownloadButton = ({ fileType, iconOnly = false }: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const theme: Theme = useThemeContext();
 	const { FileDownload } = theme.icons;
@@ -77,7 +78,14 @@ const DictionaryDownloadButton = ({ fileType }: DictionaryDownloadButtonProps) =
 
 	return (
 		<Button
-			iconOnly={false}
+			iconOnly={iconOnly}
+			styleOverride={
+				iconOnly ?
+					css`
+						padding: 8px;
+					`
+				:	undefined
+			}
 			icon={<FileDownload />}
 			onClick={async (e) => {
 				e.stopPropagation();
