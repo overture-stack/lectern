@@ -29,9 +29,9 @@ import { useThemeContext } from '../../theme/ThemeContext';
 import AttributeFilterDropdown from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
 import DictionaryVersionSwitcher from './DictionaryVersionSwitcher';
+import DictionaryDownloadButton from './DownloadTemplatesButton';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
-import DictionaryDownloadButton from './DownloadTemplatesButton';
 
 export type InteractionPanelProps = {
 	onSelect: (schemaNameIndex: number) => void;
