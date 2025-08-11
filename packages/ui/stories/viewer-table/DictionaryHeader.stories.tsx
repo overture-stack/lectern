@@ -23,6 +23,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { pick } from 'lodash';
+
 import DictionaryHeader from '../../src/viewer-table/DictionaryHeader';
 import biosampleDictionary from '../fixtures/minimalBiosampleModel';
 import themeDecorator from '../themeDecorator';

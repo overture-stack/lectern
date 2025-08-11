@@ -20,7 +20,7 @@
  */
 /** @jsxImportSource @emotion/react */
 
-import { ArrayTestCase, RestrictionCondition } from '@overture-stack/lectern-dictionary';
+import type { ArrayTestCase, RestrictionCondition } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ConditionalRestrictionDetails } from '../../../src/viewer-table/ConditionalLogicModal/ConditionalRestrictionDetails';
 import themeDecorator from '../../themeDecorator';
