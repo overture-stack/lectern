@@ -25,32 +25,28 @@ import React from 'react';
 import { DictionaryDataProvider } from '../../src/dictionary-controller/DictionaryDataContext';
 import DictionarySample from '../fixtures/pcgl.json';
 
-export type DictionaryTestData = Array<Dictionary | Partial<DictionaryServerRecord>>;
+type DictionaryServerUnion = Partial<DictionaryServerRecord> | Dictionary;
 
-export const singleDictionaryData: DictionaryTestData = [DictionarySample as Dictionary];
+export type DictionaryTestData = Array<DictionaryServerUnion>;
+
+export const singleDictionaryData: DictionaryTestData = [DictionarySample as DictionaryServerUnion];
 
 export const multipleDictionaryData: DictionaryTestData = [
 	{
-		name: DictionarySample.name,
-		description: DictionarySample.description,
+		...DictionarySample,
 		version: '1.0',
-		schemas: DictionarySample.schemas,
 		_id: '1',
 		createdAt: '2025-01-01T00:00:00.000Z',
 	},
 	{
-		name: DictionarySample.name,
-		description: DictionarySample.description,
+		...DictionarySample,
 		version: '2.0',
-		schemas: DictionarySample.schemas,
 		_id: '2',
 		createdAt: '2025-01-02T00:00:00.000Z',
 	},
 	{
-		name: DictionarySample.name,
-		description: DictionarySample.description,
+		...DictionarySample,
 		version: '3.0',
-		schemas: DictionarySample.schemas,
 		_id: '3',
 		createdAt: '2025-01-03T00:00:00.000Z',
 	},
