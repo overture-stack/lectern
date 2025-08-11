@@ -19,10 +19,12 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField, SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
+import { type SchemaField, type SchemaFieldRestrictions, TypeUtils } from '@overture-stack/lectern-dictionary';
 
 import { ConditionalRestrictions } from './ConditionalRestrictions';
+import { ConditionalRestrictions } from './ConditionalRestrictions';
 import { ConditionalStatementWrapper } from './ConditionalStatementWrapper';
+import { SimpleRestrictions } from './SimpleRestrictions';
 import { SimpleRestrictions } from './SimpleRestrictions';
 
 export type ElseThenStatementProps = {
@@ -68,13 +70,27 @@ export const ElseThenStatement = ({ restrictions, currentSchemaField, statementT
 		:	undefined;
 
 	const headerText = statementType === 'then' ? 'THEN' : 'ELSE';
+	const renderedSimpleRestrictions =
+		simpleRestrictions.length > 0 ?
+			<SimpleRestrictions restrictions={simpleRestrictions} currentSchemaField={currentSchemaField} />
+		:	undefined;
+	const renderedConditionalRestrictions =
+		conditionalRestrictions.length > 0 ?
+			<ConditionalRestrictions restrictions={conditionalRestrictions} currentSchemaField={currentSchemaField} />
+		:	undefined;
+
+	const headerText = statementType === 'then' ? 'THEN' : 'ELSE';
 
 	return (
 		<ConditionalStatementWrapper
 			headerText={headerText}
 			simpleRestrictions={renderedSimpleRestrictions}
 			conditionalRestrictions={renderedConditionalRestrictions}
+			headerText={headerText}
+			simpleRestrictions={renderedSimpleRestrictions}
+			conditionalRestrictions={renderedConditionalRestrictions}
 			isContainer={conditionalRestrictions.length > 0}
+		/>
 		/>
 	);
 };
