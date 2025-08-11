@@ -24,6 +24,12 @@ export type LecternFetchPayload = {
 	dictionaries: DictionaryServerRecord[];
 };
 
+/**
+ * Fetches all versions and corresponding dictionary records for a given dictionary name from a Lectern server.
+ * @param lecternUrl - The base URL of the Lectern server.
+ * @param dictionaryName - The name of the dictionary to fetch.
+ * @returns {Promise<LecternFetchPayload>} An object containing the list of versions and their dictionary records.
+ */
 export async function fetchRemoteDictionary(lecternUrl: string, dictionaryName: string): Promise<LecternFetchPayload> {
 	const fetchedDictionaryVersions = await lectern.rest.listDictionaries(lecternUrl, { name: dictionaryName });
 

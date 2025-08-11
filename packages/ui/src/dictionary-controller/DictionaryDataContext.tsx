@@ -22,6 +22,7 @@ import React, { createContext, ReactNode, useContext, useEffect, useState } from
 
 import { fetchAndValidateHostedDictionaries, fetchRemoteDictionary } from './sources';
 
+// Static dictionaries may not have the properties such as createdAt or id - hence the use of Partial<T>
 export type DictionaryServerUnion = Partial<DictionaryServerRecord> | Dictionary;
 
 export type FilterOptions = 'Required' | 'All Fields';
