@@ -18,28 +18,27 @@
 
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 
-const validateHostedDictionaries = (input: unknown): Dictionary[] => {
-	const asArray = Dictionary.array().safeParse(input);
-	if (asArray.success) {
-		return asArray.data;
-	}
-
+function validateHostedDictionaries(input: unknown): Dictionary {
+	// User may provide an array or a single dictionary as input, should be able to process both
 	const asSingle = Dictionary.safeParse(input);
 	if (asSingle.success) {
-		return [asSingle.data];
+		return asSingle.data;
 	}
 
-	const arrayError = asArray.success ? undefined : asArray.error;
-	const singleError = asSingle.success ? undefined : asSingle.error;
-	const message = arrayError?.message || singleError?.message || 'Unknown validation error';
+	const message = asSingle.error?.message ?? 'Unknown validation error';
 	throw new Error(`Hosted dictionary validation failed: ${message}`);
-};
+}
 
-export const fetchAndValidateHostedDictionaries = async (hostedUrl: string): Promise<Dictionary[]> => {
+/**
+ * Fetches and validates hosted dictionaries from the given URL.
+ * @param hostedUrl - The URL to fetch the hosted dictionaries from.
+ * @returns {Promise<Dictionary>} A promise that resolves to an array of Dictionaries
+ */
+export async function fetchAndValidateHostedDictionaries(hostedUrl: string): Promise<Dictionary> {
 	const res = await fetch(hostedUrl);
 	if (!res.ok) {
 		throw new Error(`Failed to fetch hosted dictionaries: ${res.status}`);
 	}
 	const json = await res.json();
 	return validateHostedDictionaries(json);
-};
+}

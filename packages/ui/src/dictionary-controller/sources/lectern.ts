@@ -24,10 +24,7 @@ export type LecternFetchPayload = {
 	dictionaries: DictionaryServerRecord[];
 };
 
-export const fetchRemoteDictionary = async (
-	lecternUrl: string,
-	dictionaryName: string,
-): Promise<LecternFetchPayload> => {
+export async function fetchRemoteDictionary(lecternUrl: string, dictionaryName: string): Promise<LecternFetchPayload> {
 	const fetchedDictionaryVersions = await lectern.rest.listDictionaries(lecternUrl, { name: dictionaryName });
 
 	if (!fetchedDictionaryVersions.success) {
@@ -43,4 +40,4 @@ export const fetchRemoteDictionary = async (
 	const dictionaries: DictionaryServerRecord[] = results.filter((res) => res.success).map((res) => res.data);
 
 	return { versions: fetchedDictionaryVersions.data, dictionaries };
-};
+}
