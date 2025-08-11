@@ -31,7 +31,7 @@ export type DictionaryTableViewerProps = {
 export const DictionaryViewerPage = ({ lecternUrl, dictionaryName, children }: DictionaryTableViewerProps) => {
 	return (
 		<DictionaryDataProvider lecternUrl={lecternUrl} dictionaryName={dictionaryName}>
-			{/* TODO: Write a full fledged dictionary page and remove children */}
+			{/* TODO: Write a full fledged dictionary page component and remove children */}
 			{children}
 		</DictionaryDataProvider>
 	);
