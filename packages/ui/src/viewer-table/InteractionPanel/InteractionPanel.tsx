@@ -28,8 +28,8 @@ import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import AttributeFilterDropdown from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
+import DictionaryDownloadButton from './DictionaryDownloadButton';
 import DictionaryVersionSwitcher from './DictionaryVersionSwitcher';
-import DictionaryDownloadButton from './DownloadTemplatesButton';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
 

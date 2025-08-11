@@ -20,10 +20,11 @@
  */
 /** @jsxImportSource @emotion/react */
 
-import { Schema } from '@overture-stack/lectern-dictionary';
+import type { Schema } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import TableOfContentsDropdown from '../../../src/viewer-table/InteractionPanel/TableOfContentsDropdown';
+import { withErrorState, withLoadingState, withMultipleDictionaries } from '../../decorators/dictionaryDecorator';
 import Dictionary from '../../fixtures/pcgl.json';
 import themeDecorator from '../../themeDecorator';
 
@@ -31,7 +32,7 @@ const meta = {
 	component: TableOfContentsDropdown,
 	title: 'Viewer - Table/Interaction - Panel/Table of Contents Dropdown',
 	tags: ['autodocs'],
-	decorators: [themeDecorator()],
+	decorators: [themeDecorator(), withMultipleDictionaries],
 } satisfies Meta<typeof TableOfContentsDropdown>;
 
 export default meta;
@@ -52,4 +53,20 @@ export const Default: Story = {
 
 export const Empty: Story = {
 	args: { schemas: [], onSelect: () => {} },
+};
+
+export const Loading: Story = {
+	decorators: [themeDecorator(), withLoadingState()],
+	args: {
+		schemas: schemas,
+		onSelect,
+	},
+};
+
+export const Error: Story = {
+	decorators: [themeDecorator(), withErrorState()],
+	args: {
+		schemas: schemas,
+		onSelect,
+	},
 };

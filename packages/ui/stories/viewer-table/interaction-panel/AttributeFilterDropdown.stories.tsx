@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -24,31 +23,26 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
+import { withErrorState, withLoadingState, withMultipleDictionaries } from '../../decorators/dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: AttributeFilter,
 	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
 	tags: ['autodocs'],
-	decorators: [themeDecorator()],
+	decorators: [themeDecorator(), withMultipleDictionaries],
 } satisfies Meta<typeof AttributeFilter>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const mockSetFilters = (filters) => alert(`Filters updated: ${JSON.stringify(filters)}`);
+export const Default: Story = {};
 
-export const Default: Story = {
-	args: {
-		filters: [],
-		setFilters: mockSetFilters,
-	},
+export const Loading: Story = {
+	decorators: [themeDecorator(), withLoadingState()],
 };
-export const Disabled: Story = {
-	args: {
-		filters: [],
-		setFilters: mockSetFilters,
-		disabled: true,
-	},
+
+export const Error: Story = {
+	decorators: [themeDecorator(), withErrorState()],
 };
