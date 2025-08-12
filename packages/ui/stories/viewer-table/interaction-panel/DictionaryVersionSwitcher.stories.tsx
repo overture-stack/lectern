@@ -27,7 +27,7 @@ import {
 	withLoadingState,
 	withMultipleDictionaries,
 	withSingleDictionary,
-} from '../../decorators/dictionaryDecorator';
+} from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {

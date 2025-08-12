@@ -22,8 +22,8 @@ import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Decorator } from '@storybook/react';
 import React from 'react';
 
-import { DictionaryDataProvider } from '../../src/dictionary-controller/DictionaryDataContext';
-import DictionarySample from '../fixtures/pcgl.json';
+import { DictionaryDataProvider } from '../src/dictionary-controller/DictionaryDataContext';
+import DictionarySample from './fixtures/pcgl.json';
 
 type DictionaryServerUnion = Partial<DictionaryServerRecord> | Dictionary;
 
