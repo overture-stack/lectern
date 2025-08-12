@@ -18,7 +18,7 @@
  */
 
 import { NextFunction, Request, Response } from 'express';
-import { ForbiddenError } from '@overture-stack/lectern-dictionary';
+import { ForbiddenError, UnauthorizedError } from '@overture-stack/lectern-dictionary';
 import logger from '../config/logger';
 import { fetchUserData } from '../external/pcglAuthZClient';
 import { authConfig } from '../config/authConfig';
@@ -43,7 +43,7 @@ export const authAdminMiddleware = () => {
 			const token = extractAccessTokenFromHeader(req);
 
 			if (!token) {
-				throw new ForbiddenError('Unauthorized: No Access token provided');
+				throw new UnauthorizedError('Unauthorized: No Access token provided');
 			}
 
 			const result = await fetchUserData(token);
