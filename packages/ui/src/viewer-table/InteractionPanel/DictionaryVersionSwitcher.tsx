@@ -18,31 +18,32 @@
  *
  */
 
+import React from 'react';
+
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
+const formatDate = (dateString: string | undefined): string => {
+	return dateString ? new Date(dateString).toISOString().split('T')[0] : '';
+};
 const DictionaryVersionSwitcher = () => {
 	const theme: Theme = useThemeContext();
 	const { History } = theme.icons;
-	const { loading, error, dictionaries, versions, currentDictionaryIndex, setCurrentDictionaryIndex } =
+	const { loading, error, dictionaries, currentDictionaryIndex, setCurrentDictionaryIndex } =
 		useDictionaryDataContext();
 	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
 
-	// Use versions data if available (for lectern server mode), otherwise fall back to dictionaries
-	const versionData = versions && versions.length > 0 ? versions : dictionaries;
-	const selectedVersion = versions?.[currentDictionaryIndex] || selectedDictionary;
+	const createdAt = selectedDictionary && 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : '';
 
-	const createdAt = selectedVersion && 'createdAt' in selectedVersion ? selectedVersion.createdAt : '';
-
-	const formattedCreatedAt = createdAt ? new Date(createdAt).toISOString().split('T')[0] : '';
+	const formattedCreatedAt = formatDate(createdAt);
 	const title =
-		selectedVersion?.version ? `Version ${selectedVersion.version} (${formattedCreatedAt})` : 'Select Version';
+		selectedDictionary?.version ? `Version ${selectedDictionary.version} (${formattedCreatedAt})` : 'Select Version';
 
-	const versionSwitcherObjectArray = versionData?.map((item: any, index: number) => {
+	const versionSwitcherObjectArray = dictionaries?.map((item: any, index: number) => {
 		const itemCreatedAt = 'createdAt' in item ? item.createdAt : '';
-		const itemFormattedDate = itemCreatedAt ? new Date(itemCreatedAt).toISOString().split('T')[0] : '';
+		const itemFormattedDate = formatDate(itemCreatedAt);
 		const displayVersionDate = itemFormattedDate ? `(${itemFormattedDate})` : '';
 		return {
 			label: `Version ${item?.version} ${displayVersionDate}`,
