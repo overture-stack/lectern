@@ -94,8 +94,8 @@ export const fetchUserData = async (token: string) => {
 
 		return userTokenInfo;
 	} catch (error) {
-		logger.error(`[AUTHZ]: An error occurred with the response objected returned from authz: ${error}`);
-		throw new InternalServerError('Something went wrong from the authz service');
+		logger.error(`[AUTHZ]: An error occurred with the response objected returned from authz. ${error}`);
+		throw new InternalServerError('Something went wrong with the authz service');
 	}
 };
 
