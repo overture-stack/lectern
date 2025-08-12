@@ -24,7 +24,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import ExpandAllButton from '../../../src/viewer-table/InteractionPanel/ExpandAllButton';
-import { withErrorState, withLoadingState, withMultipleDictionaries } from '../../decorators/dictionaryDecorator';
+import { withErrorState, withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {

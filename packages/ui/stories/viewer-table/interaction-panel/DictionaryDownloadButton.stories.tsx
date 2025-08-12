@@ -23,7 +23,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import DictionaryDownloadButton from '../../../src/viewer-table/InteractionPanel/DictionaryDownloadButton';
-import { withErrorState, withLecternUrl, withLoadingState } from '../../decorators/dictionaryDecorator';
+import { withErrorState, withLecternUrl, withLoadingState } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {

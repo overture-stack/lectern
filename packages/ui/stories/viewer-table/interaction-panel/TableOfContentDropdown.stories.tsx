@@ -24,7 +24,7 @@ import type { Schema } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import TableOfContentsDropdown from '../../../src/viewer-table/InteractionPanel/TableOfContentsDropdown';
-import { withErrorState, withLoadingState, withMultipleDictionaries } from '../../decorators/dictionaryDecorator';
+import { withErrorState, withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
 import Dictionary from '../../fixtures/pcgl.json';
 import themeDecorator from '../../themeDecorator';
 
