@@ -101,22 +101,6 @@ export const fetchUserData = async (token: string) => {
 };
 
 /**
- *	Function that takes in request object, checks if theres an authorization header and returns its token
- *  Only works with Bearer type authorization values
- *
- * @param req Request object
- * @returns Access token or undefined depending if authorization header exists or authorization type is NOT Bearer
- */
-export const extractAccessTokenFromHeader = (req: Request): string | undefined => {
-	const authHeader = req.headers['authorization'];
-	if (!authHeader || !authHeader.startsWith('Bearer ')) {
-		return;
-	}
-
-	return authHeader.replace('Bearer ', '').trim();
-};
-
-/**
  * @param groups List of groups users belongs to
  * @returns boolean if user has admin group
  */

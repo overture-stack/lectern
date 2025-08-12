@@ -20,7 +20,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ForbiddenError } from '@overture-stack/lectern-dictionary';
 import logger from '../config/logger';
-import { extractAccessTokenFromHeader, fetchUserData } from '../external/pcglAuthZClient';
+import { fetchUserData } from '../external/pcglAuthZClient';
 import { authConfig } from '../config/authConfig';
 
 /**
@@ -58,4 +58,20 @@ export const authAdminMiddleware = () => {
 			return next(error);
 		}
 	};
+};
+
+/**
+ *	Function that takes in request object, checks if theres an authorization header and returns its token
+ *  Only works with Bearer type authorization values
+ *
+ * @param req Request object
+ * @returns Access token or undefined depending if authorization header exists or authorization type is NOT Bearer
+ */
+const extractAccessTokenFromHeader = (req: Request): string | undefined => {
+	const authHeader = req.headers['authorization'];
+	if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		return;
+	}
+
+	return authHeader.replace('Bearer ', '').trim();
 };
