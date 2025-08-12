@@ -15,6 +15,7 @@ It is published as a container on ghcr.io: [Lectern Container Registry](https://
 ## Development
 
 ### PNPM Monorepo Package Manager
+
 This project uses `pnpm` instead of `npm` to facilitate a monorepo workspace.
 
 You should install dependencies for the entire mono repo using:
@@ -22,6 +23,7 @@ You should install dependencies for the entire mono repo using:
 ```shell
 pnpm install
 ```
+
 ### Dependencies
 
 Lectern Server relies on a MongoDB database to store dictionaries. To get you started, we provide a [docker-compose configuration](./docker-compose.yaml) that will run a new instance of MongoDB in a container.
@@ -31,6 +33,7 @@ You can start the dependency dockers with (run from this directory):
 ```shell
 docker-compose up -d
 ```
+
 ### Build & Run
 
 To build the server, and all modules it depends on:
@@ -38,7 +41,9 @@ To build the server, and all modules it depends on:
 ```shell
 pnpm nx build @overture-stack/lectern-server
 ```
+
 or
+
 ```shell
 pnpm build
 ```
@@ -48,7 +53,9 @@ To run the server:
 ```shell
 pnpm nx start @overture-stack/lectern-server
 ```
+
 or
+
 ```shell
 pnpm start
 ```
@@ -68,12 +75,12 @@ From the root of the workspace you can build the container with:
 ```shell
 docker build --no-cache -t lectern -f apps/server/Dockerfile .
 ```
+
 ## Configuration
 
 Lectern Server accepts configuration parameters through environment variables.
 
 A template for environment variables is found at [`./.env.example`](./.env.example).
-
 
 ### From Source
 
@@ -104,6 +111,10 @@ All available configurations can be found in the example .env file: [`./.env.exa
 | AUTH_ENABLED         | No                             | Boolean      | `false`     | Set to `true` to enable Authorization restrictions on all endpoints that modify data. For more details see [Authorization](#authorization).             |
 | EGO_API              | When `AUTH_ENABLED` is `true`  | String (URL) | -           | URL to the EGO API root. See [Auth Configuration](#auth-configuration).                                                                                 |
 | SCOPE                | When `AUTH_ENABLED` is `true`  | String       | -           | Policy name to look for in JWT Scope. See [Auth Configuration](#auth-configuration).                                                                    |
+| AUTHZ_ENDPOINT       | When `AUTH_ENABLED` is `true`  | String (URL) | -           | Authz endpoint to query for authorization.                                                                                                              |
+| AUTH_CLIENT_ID       | When `AUTH_ENABLED` is `true`  | String       | -           | Client ID used for authentication service.                                                                                                              |
+| AUTH_CLIENT_SECRET   | When `AUTH_ENABLED` is `true`  | String       | -           | Client secret used for authentication service.                                                                                                          |
+| AUTHZ_GROUP_ADMIN    | When `AUTH_ENABLED` is `true`  | String       | -           | Group name used to determine administrative privileges.                                                                                                 |
 |                      |                                |              |             |                                                                                                                                                         |
 | MONGO_DB             | No                             | String       | `lectern`   | Name of Database to connect with in MongoDB                                                                                                             |
 | MONGO_HOST           | No                             | String       | `localhost` | Host of MongoDB                                                                                                                                         |
@@ -115,6 +126,7 @@ All available configurations can be found in the example .env file: [`./.env.exa
 | VAULT_ROLE           | When `VAULT_ENABLED` is `true` | String       | -           | Role to use for Vault connection, needs permission to read from `VAULT_SECRETS_PATH`                                                                    |
 | VAULT_SECRETS_PATH   | When `VAULT_ENABLED` is `true` | String       | -           | Path to location in Vault that holds Lectern relevant secrets                                                                                           |
 | VAULT_TOKEN          | When `VAULT_ENABLED` is `true` | String       | -           | Access Token to read from Vault using specified `VAULT_ROLE`                                                                                            |
+|                      |
 
 ### Vault for Secret Storage
 
@@ -126,14 +138,14 @@ For Lectern Server, all MonogDB Configuration properties can be provided by Vaul
 
 Lectern handles Authorization for protected endpoints through integration with [Overture's Ego](https://www.overture.bio/products/ego/) authorization service. Ego provides a standard OAuth2 style JWT access token for Authenticated users, and this JWT includes scopes with a list of permissions. Lectern's protected endpoints expect this JWT as a Bearer token.
 
-When Auth is enabled in Lectern, any endpoint that modifies schema data is protected. 
+When Auth is enabled in Lectern, any endpoint that modifies schema data is protected.
 
 To use a protected endpoint, a request must contain a valid JWT Bearer Token, validated against the Public Key of the Auth server. Lectern is expecting the content of the JWT to match Ego's User JWT structure. Importantly, there needs to be an array of permissions with the `context.scope` of the JWT. Ego permissions are structure like `<SCOPE>.<POLICY>`, and for Lectern we require the `POLICY=WRITE`. The Specific `SCOPE` would typically be `lectern` but is configurable.
 
 If a Valid JWT is received with the expected permission then the request will be accepted.
 
 > **Attention:**
-> 
+>
 > **Auth is disabled by default**. This helps reduce obstacles when starting to use Lectern and allows it to function without a supporting Auth server.
 >
 > Any instance of Lectern running in a production environment should have authorization enabled.
@@ -145,5 +157,3 @@ To enable authorization in lectern set `AUTH_ENABLED` to `true` in your environm
 The `EGO_API` environment variable should be set to the API route of the OAuth2 server. Following OAuth2 standards, Lectern will request the public encryption key from this server at the path `{{EGO_API}}//oauth/token/public_key`.
 
 The `SCOPE` environment variable can be any string. Lectern will look for a permission in the JWT scope that matches the pattern `{{SCOPE}}.WRITE` in an array at the path `context.scope`.
-
-
