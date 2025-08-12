@@ -17,8 +17,6 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React from 'react';
-
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { FilterOptions, useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { useThemeContext } from '../../theme/ThemeContext';

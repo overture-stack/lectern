@@ -20,7 +20,6 @@
  */
 
 import type { Schema } from '@overture-stack/lectern-dictionary';
-import React from 'react';
 
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';

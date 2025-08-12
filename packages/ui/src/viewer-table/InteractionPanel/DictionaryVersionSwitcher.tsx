@@ -18,8 +18,6 @@
  *
  */
 
-import React from 'react';
-
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../../theme';

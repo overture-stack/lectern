@@ -19,8 +19,6 @@
  *
  */
 
-import React from 'react';
-
 import Button from '../../common/Button';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { Theme } from '../../theme';
