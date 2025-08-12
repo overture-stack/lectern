@@ -17,7 +17,7 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {
+import type {
 	ArrayTestCase,
 	MatchRuleCodeList,
 	MatchRuleCount,
@@ -27,7 +27,7 @@ import {
 	MatchRuleValue,
 	RestrictionCondition,
 } from '@overture-stack/lectern-dictionary';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
 import FieldBlock from '../../common/FieldBlock';
 
@@ -61,7 +61,7 @@ const renderFields = (fields: string[], matchCase: ArrayTestCase) => {
 			{fields.map((field, index) => (
 				<Fragment key={field}>
 					<FieldBlock>{field}</FieldBlock>
-					{index < fields.length - 1 && ` ${getConjunctionText(matchCase)} `}
+					<b>{index < fields.length - 1 && ` ${getConjunctionText(matchCase)} `}</b>
 				</Fragment>
 			))}
 		</Fragment>
@@ -71,7 +71,7 @@ const renderFields = (fields: string[], matchCase: ArrayTestCase) => {
 const valueMatch = (valueMatch: MatchRuleValue, matchCase: ArrayTestCase, fieldCount: number) => {
 	return (
 		<Fragment>
-			{getCaseText(matchCase, fieldCount)} "{valueMatch}"
+			<b>{getCaseText(matchCase, fieldCount)}</b> "{valueMatch}"
 		</Fragment>
 	);
 };
@@ -234,7 +234,7 @@ export const ConditionalRestrictionDetails = (conditions: RestrictionCondition[]
 						{match.regex !== undefined && regularExpressionMatch(match.regex)}
 						{match.range !== undefined && rangeMatch(match.range)}
 						{match.exists !== undefined && existsMatch(match.exists)}
-						{index < conditions.length - 1 && conjunctionText}
+						<b>{index < conditions.length - 1 && conjunctionText}</b>
 					</Fragment>
 				);
 			})}

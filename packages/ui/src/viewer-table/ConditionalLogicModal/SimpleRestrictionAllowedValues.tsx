@@ -19,9 +19,9 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
-import React, { Fragment } from 'react';
 import { css } from '@emotion/react';
+import type { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { Fragment } from 'react';
 
 import FieldBlock from '../../common/FieldBlock';
 import ListItem from '../../common/ListItem';
@@ -53,15 +53,7 @@ const handleCodeList = (restrictions: SchemaFieldRestrictions) => {
 		const items = Array.isArray(restrictions.codeList) ? restrictions.codeList : [restrictions.codeList];
 		return (
 			<Fragment>
-				<span
-					css={css`
-						white-space: nowrap;
-						margin-bottom: 4px;
-					`}
-				>
-					be one of
-				</span>{' '}
-				<CodeListContainer items={items} />
+				be one of <CodeListContainer items={items} />
 			</Fragment>
 		);
 	}
@@ -77,19 +69,19 @@ const emptyRestriction = (restrictions: SchemaFieldRestrictions) => {
 
 const CodeListContainer = ({ items }: CodeListContainerProps) => {
 	return (
-		<div
+		<span
 			css={css`
 				display: inline-flex;
 				flex-wrap: wrap;
-				gap: 4px;
+				gap: 8px;
 				max-width: 100%;
-				vertical-align: top;
+				margin-top: 3px;
 			`}
 		>
 			{items.map((item, index) => (
 				<ListItem key={index}>{String(item)}</ListItem>
 			))}
-		</div>
+		</span>
 	);
 };
 
@@ -100,7 +92,7 @@ const CodeListContainer = ({ items }: CodeListContainerProps) => {
  * @param currentSchemaField - The schema field being described
  */
 
-const RenderAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowedValuesProps) => {
+const SimpleRestrictionAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowedValuesProps) => {
 	if (restrictions === undefined) {
 		return <Fragment>No restrictions</Fragment>;
 	}
@@ -125,21 +117,21 @@ const RenderAllowedValues = ({ restrictions, currentSchemaField }: RenderAllowed
 
 	const computedRestrictionItems = computeRestrictions.filter((item) => item.condition && item.content);
 
+	if (computedRestrictionItems.length === 0) {
+		return null;
+	}
+
 	return (
-		<div>
-			{computedRestrictionItems.length > 0 ?
-				<Fragment>
-					<FieldBlock>{currentSchemaField.name}</FieldBlock> must{' '}
-					{computedRestrictionItems.map((item, index) => (
-						<Fragment key={index}>
-							{index > 0 && ' and '}
-							{item.content}
-						</Fragment>
-					))}
+		<Fragment>
+			<FieldBlock>{currentSchemaField.name}</FieldBlock> must{' '}
+			{computedRestrictionItems.map((item, index) => (
+				<Fragment key={index}>
+					{index > 0 && ' and '}
+					{item.content}
 				</Fragment>
-			:	<Fragment>No restrictions</Fragment>}
-		</div>
+			))}
+		</Fragment>
 	);
 };
 
-export default RenderAllowedValues;
+export default SimpleRestrictionAllowedValues;

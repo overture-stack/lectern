@@ -10,6 +10,7 @@ const preview: Preview = {
 				items: [
 					{ value: 'default', right: '✅', title: 'Default Theme' },
 					{ value: 'custom', right: '🎨', title: 'Custom Theme' },
+					{ value: 'test', right: '🚀', title: 'Test Theme' },
 				],
 			},
 		},
