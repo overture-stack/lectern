@@ -43,7 +43,7 @@ export const authAdminMiddleware = () => {
 			const token = extractAccessTokenFromHeader(req);
 
 			if (!token) {
-				throw new UnauthorizedError('Unauthorized: No Access token provided');
+				throw new UnauthorizedError('Unauthorized: No access token provided');
 			}
 
 			const result = await fetchUserData(token);
