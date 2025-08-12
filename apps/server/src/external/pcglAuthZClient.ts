@@ -77,27 +77,28 @@ export const fetchUserData = async (token: string) => {
 				throw new InternalServerError(responseMessage);
 		}
 	}
+	try {
+		const result: UserDataResponseSchemaType = await response.json();
+		const responseValidation = userDataResponseSchema.safeParse(result);
 
-	const result: UserDataResponseSchemaType = await response.json();
+		if (!responseValidation.success) {
+			throw new InternalServerError(`Malformed response object from AUTHZ. ${responseValidation.error}`);
+		}
 
-	const responseValidation = userDataResponseSchema.safeParse(result);
+		const userTokenInfo = {
+			user: {
+				username: `${responseValidation.data.userinfo.pcgl_id}`,
+				isAdmin: isAdmin({ groups: responseValidation.data.groups }),
+				allowedWriteOrganizations: responseValidation.data.study_authorizations.editable_studies,
+				groups: extractUserGroups({ groups: responseValidation.data.groups }),
+			},
+		};
 
-	if (!responseValidation.success) {
-		logger.error(`[AUTHZ]: Malformed response object from AUTHZ. ${responseValidation.error}`);
-
-		throw new InternalServerError('User object response has unexpected format');
+		return userTokenInfo;
+	} catch (error) {
+		logger.error(`[AUTHZ]: An error occurred with the response objected returned from authz: ${error}`);
+		throw new InternalServerError('Something went wrong from the authz service');
 	}
-
-	const userTokenInfo = {
-		user: {
-			username: `${responseValidation.data.userinfo.pcgl_id}`,
-			isAdmin: isAdmin({ groups: responseValidation.data.groups }),
-			allowedWriteOrganizations: responseValidation.data.study_authorizations.editable_studies,
-			groups: extractUserGroups({ groups: responseValidation.data.groups }),
-		},
-	};
-
-	return userTokenInfo;
 };
 
 /**
