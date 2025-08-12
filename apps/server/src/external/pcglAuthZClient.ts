@@ -17,8 +17,6 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Request } from 'express';
-
 import { InternalServerError, ForbiddenError, NotFoundError } from '@overture-stack/lectern-dictionary';
 
 import { UserDataResponseErrorType } from '../common/types/auth';
