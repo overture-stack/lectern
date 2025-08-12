@@ -16,7 +16,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DictionaryServerRecord, DictionarySummary } from '@overture-stack/lectern-client/dist/rest';
+import type { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
@@ -29,7 +29,6 @@ export type FilterOptions = 'Required' | 'All Fields';
 
 export type DictionaryContextType = {
 	dictionaries?: DictionaryServerUnion[];
-	versions?: DictionarySummary[];
 	lecternUrl?: string;
 	name?: string;
 	loading: boolean;
@@ -73,7 +72,6 @@ export function useDictionaryDataContext(): DictionaryContextType {
 }
 
 export function DictionaryDataProvider(props: DictionaryProviderProps) {
-	const [versions, setVersions] = useState<DictionarySummary[]>([]);
 	const [dictionaries, setDictionaries] = useState<DictionaryServerUnion[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(false);
@@ -109,11 +107,10 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 		if ('lecternUrl' in props) {
 			const fetchRemoteDictionaries = async () => {
 				try {
-					const { versions: fetchedVersions, dictionaries: fetchedDictionaries } = await fetchRemoteDictionary(
+					const { dictionaries: fetchedDictionaries } = await fetchRemoteDictionary(
 						props.lecternUrl,
 						props.dictionaryName,
 					);
-					setVersions(fetchedVersions);
 					setDictionaries(fetchedDictionaries);
 					setError(false);
 				} catch (err) {
@@ -130,7 +127,6 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 
 	const value: DictionaryContextType = {
 		dictionaries,
-		versions,
 		lecternUrl: 'lecternUrl' in props ? props.lecternUrl : undefined,
 		name: 'dictionaryName' in props ? props.dictionaryName : undefined,
 		loading,
