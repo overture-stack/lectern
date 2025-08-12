@@ -55,33 +55,33 @@ export const multipleDictionaryData: DictionaryTestData = [
 export const emptyDictionaryData: DictionaryTestData = [];
 
 export const withDictionaryContext = (dictionaries: DictionaryTestData = multipleDictionaryData): Decorator => {
-	return (Story, context) => (
+	return (Story) => (
 		<DictionaryDataProvider staticDictionaries={dictionaries}>
-			<Story {...context} />
+			<Story />
 		</DictionaryDataProvider>
 	);
 };
 
 export const withLecternUrl = (): Decorator => {
-	return (Story, context) => (
+	return (Story) => (
 		<DictionaryDataProvider lecternUrl="http://localhost:3031" staticDictionaries={multipleDictionaryData}>
-			<Story {...context} />
+			<Story />
 		</DictionaryDataProvider>
 	);
 };
 
 export const withLoadingState = (): Decorator => {
-	return (Story, context) => (
+	return (Story) => (
 		<DictionaryDataProvider lecternUrl="http://localhost:3031" dictionaryName={DictionarySample.name}>
-			<Story {...context} />
+			<Story />
 		</DictionaryDataProvider>
 	);
 };
 
 export const withErrorState = (): Decorator => {
-	return (Story, context) => (
+	return (Story) => (
 		<DictionaryDataProvider lecternUrl="http://nonexistent-server.com" dictionaryName="nonexistent">
-			<Story {...context} />
+			<Story />
 		</DictionaryDataProvider>
 	);
 };
