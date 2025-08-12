@@ -72,9 +72,7 @@ export const fetchUserData = async (token: string) => {
 			case 403:
 				throw new ForbiddenError(responseMessage);
 			case 404:
-				throw new NotFoundError(
-					"This account is currently not associated within the PCGL project. This may be due to the fact that you haven't completed the onboarding process for new accounts, or have logged in with an account not previously used to access the service.",
-				);
+				throw new NotFoundError('This account is currently not associated within the PCGL project.');
 			default:
 				throw new InternalServerError(responseMessage);
 		}
