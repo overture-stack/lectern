@@ -19,33 +19,39 @@
  *
  */
 
-import { css } from '@emotion/react';
-import Button from '../../common/Button';
-import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+/** @jsxImportSource @emotion/react */
 
-export interface CollapseAllButtonProps {
-	onClick: () => void;
-}
+import type { Meta, StoryObj } from '@storybook/react';
 
-const CollapseAllButton = ({ onClick }: CollapseAllButtonProps) => {
-	const theme: Theme = useThemeContext();
-	const { loading, error } = useDictionaryDataContext();
-	const { Collapse } = theme.icons;
+import { DictionaryTableViewer } from '../../src/viewer-table/DictionaryTableViewer';
+import {
+	withEmptyDictionaries,
+	withErrorState,
+	withLoadingState,
+	withMultipleDictionaries,
+} from '../dictionaryDecorator';
+import themeDecorator from '../themeDecorator';
 
-	return (
-		<Button
-			icon={<Collapse />}
-			onClick={onClick}
-			disabled={loading || error}
-			styleOverride={css`
-				color: ${theme.colors.accent_dark};
-			`}
-		>
-			Collapse All
-		</Button>
-	);
+const meta = {
+	component: DictionaryTableViewer,
+	title: 'Viewer - Table/Dictionary Page',
+	tags: ['autodocs'],
+	decorators: [themeDecorator(), withMultipleDictionaries],
+} satisfies Meta<typeof DictionaryTableViewer>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
+
+export const Empty: Story = {
+	decorators: [themeDecorator(), withEmptyDictionaries],
 };
 
-export default CollapseAllButton;
+export const Loading: Story = {
+	decorators: [themeDecorator(), withLoadingState()],
+};
+
+export const ErrorState: Story = {
+	decorators: [themeDecorator(), withErrorState()],
+};

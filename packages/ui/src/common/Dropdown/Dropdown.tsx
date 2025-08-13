@@ -75,11 +75,13 @@ const dropDownTitleStyle = (theme: Theme) => css`
 const dropdownMenuStyle = (theme: Theme) => css`
 	${theme.typography?.subtitleSecondary};
 	position: absolute;
-	top: calc(100% + 10px);
-	width: 98%;
+	top: calc(100% + 6px);
+	left: 0;
+	width: 100%;
 	background-color: ${theme.colors.background_light};
 	border: 2px solid ${theme.colors.border_button};
-	border-radius: 10px;
+	border-radius: 9px;
+	box-sizing: border-box;
 	z-index: 100;
 	max-height: 150px;
 	overflow-y: auto;

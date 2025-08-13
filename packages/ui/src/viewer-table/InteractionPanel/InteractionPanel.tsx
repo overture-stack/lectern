@@ -28,20 +28,20 @@ import { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import AttributeFilterDropdown from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
-import DictionaryDownloadButton from './DictionaryDownloadButton';
+import { DictionaryDownloadButton } from './DictionaryDownloadButton';
 import DictionaryVersionSwitcher from './DictionaryVersionSwitcher';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
 
 export type InteractionPanelProps = {
 	onSelect: (schemaNameIndex: number) => void;
-	isCollapsed: boolean;
 	setIsCollapsed: (collapsed: boolean) => void;
 };
 
 const panelStyles = (theme: Theme) => css`
 	display: flex;
-	width: 100%;
+	width: 100%
+	width: -webkit-fit-content;
 	align-items: center;
 	justify-content: space-between;
 	padding: 8px 16px;
@@ -49,17 +49,20 @@ const panelStyles = (theme: Theme) => css`
 	border-bottom: 1px solid ${theme.colors.border_muted};
 	background-color: ${theme.colors.white};
 	flex-wrap: nowrap;
-	box-shadow: 0 2px 4px ${theme.shadow.standard};
 	min-height: 80px;
+	position: sticky;
+	top: ${theme.dimensions.navbar.height}px;
+	z-index: 10;
 `;
 
 const sectionStyles = css`
 	display: flex;
 	align-items: center;
-	gap: 16px;
+	gap: 8px;
+	flex-wrap: wrap;
 `;
 
-const InteractionPanel = ({ onSelect, isCollapsed, setIsCollapsed }: InteractionPanelProps) => {
+const InteractionPanel = ({ onSelect, setIsCollapsed }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
 	const { dictionaries, currentDictionaryIndex } = useDictionaryDataContext();
 	const selectedDictionary = dictionaries?.[currentDictionaryIndex];

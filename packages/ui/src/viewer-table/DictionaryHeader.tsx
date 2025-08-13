@@ -54,7 +54,8 @@ const descriptionWrapperStyle = (theme: Theme) => css`
 const containerStyle = css`
 	background-color: white;
 	padding: 2.5rem;
-	margin-bottom: 1rem;
+	margin: 0;
+	border-bottom: 1px solid #d1d8df;
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;

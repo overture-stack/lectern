@@ -162,7 +162,7 @@ const bodyBold = css`
 
 const fieldBlock = css`
 	${baseFontMono}
-	font-size: 12px;
+	font-size: 16px;
 	font-weight: 400;
 	line-height: 100%;
 	text-align: center;

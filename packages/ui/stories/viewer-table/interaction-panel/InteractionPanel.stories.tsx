@@ -46,7 +46,6 @@ const mockProps = {
 	onSelect: (schemaNameIndex: number) => {
 		alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
 	},
-	isCollapsed: false,
 };
 
 export const Default: Story = {
@@ -67,7 +66,6 @@ export const Collapsed: Story = {
 	decorators: [themeDecorator(), withLecternUrl()],
 	args: {
 		...mockProps,
-		isCollapsed: true,
 	},
 };
 

@@ -59,27 +59,21 @@ const shadowStyle = css`
 `;
 
 const leftShadowStyle = (width: number, opacity: number, theme: Theme) => css`
-	${shadowStyle}
-	left: ${width}px;
-	background: linear-gradient(90deg, ${theme.shadow.subtle}, transparent);
-	opacity: ${opacity};
-	z-index: 1;
+	display: none;
 `;
 
 const rightShadowStyle = (opacity: number, theme: Theme) => css`
-	${shadowStyle}
-	right: 0;
-	background: linear-gradient(270deg, ${theme.shadow.subtle}, transparent);
-	opacity: ${opacity};
-	z-index: 1;
+	display: none;
 `;
 
 const tableContainerStyle = css`
 	overflow-x: auto;
 	max-width: 100%;
+	width: 100%;
 `;
 
 const tableStyle = (theme: Theme) => css`
+	width: 100%;
 	min-width: 1200px;
 	border-collapse: collapse;
 	border: 1px solid ${theme.colors.grey_3};

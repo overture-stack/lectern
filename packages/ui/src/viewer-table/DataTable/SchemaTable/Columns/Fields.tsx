@@ -28,7 +28,7 @@ import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
 const fieldContainerStyle = (theme: Theme) => css`
-	${theme.typography.data}
+	${theme.typography.paragraphSmall}
 	display: flex;
 	flex-direction: column;
 	gap: 3px;
