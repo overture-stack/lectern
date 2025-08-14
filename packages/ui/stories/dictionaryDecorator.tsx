@@ -20,7 +20,6 @@
 import type { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Decorator } from '@storybook/react';
-import React from 'react';
 
 import { DictionaryDataProvider } from '../src/dictionary-controller/DictionaryDataContext';
 import DictionarySample from './fixtures/pcgl.json';
@@ -36,7 +35,6 @@ export const multipleDictionaryData: DictionaryTestData = [
 		...DictionarySample,
 		version: '1.0',
 		_id: '1',
-		createdAt: '2025-01-01T00:00:00.000Z',
 	},
 	{
 		...DictionarySample,
@@ -57,14 +55,6 @@ export const emptyDictionaryData: DictionaryTestData = [];
 export const withDictionaryContext = (dictionaries: DictionaryTestData = multipleDictionaryData): Decorator => {
 	return (Story) => (
 		<DictionaryDataProvider staticDictionaries={dictionaries}>
-			<Story />
-		</DictionaryDataProvider>
-	);
-};
-
-export const withLecternUrl = (): Decorator => {
-	return (Story) => (
-		<DictionaryDataProvider lecternUrl="http://localhost:3031" staticDictionaries={multipleDictionaryData}>
 			<Story />
 		</DictionaryDataProvider>
 	);
@@ -95,9 +85,8 @@ export const withForeverLoading = (): Decorator => {
 	);
 };
 
-// Real remote Lectern fetch (no static dictionaries). Optionally override via args.
 export const withLecternServer = (
-	url: string = 'http://localhost:3031',
+	url: string = 'http://localhost:3000',
 	name: string = 'example-dictionary',
 ): Decorator => {
 	return (Story) => (
