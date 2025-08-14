@@ -20,6 +20,7 @@
 import type { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Decorator } from '@storybook/react';
+import React from 'react';
 
 import { DictionaryDataProvider } from '../src/dictionary-controller/DictionaryDataContext';
 import DictionarySample from './fixtures/pcgl.json';
@@ -71,7 +72,7 @@ export const withLecternUrl = (): Decorator => {
 
 export const withLoadingState = (): Decorator => {
 	return (Story) => (
-		<DictionaryDataProvider lecternUrl="http://localhost:3031" dictionaryName={DictionarySample.name}>
+		<DictionaryDataProvider lecternUrl="http://10.255.255.1:12345" dictionaryName="never-resolves">
 			<Story />
 		</DictionaryDataProvider>
 	);
@@ -80,6 +81,27 @@ export const withLoadingState = (): Decorator => {
 export const withErrorState = (): Decorator => {
 	return (Story) => (
 		<DictionaryDataProvider lecternUrl="http://nonexistent-server.com" dictionaryName="nonexistent">
+			<Story />
+		</DictionaryDataProvider>
+	);
+};
+
+// Forever-loading decorator that points to a non-routable IP so requests never resolve.
+export const withForeverLoading = (): Decorator => {
+	return (Story) => (
+		<DictionaryDataProvider lecternUrl="http://10.255.255.1:12345" dictionaryName="never-resolves">
+			<Story />
+		</DictionaryDataProvider>
+	);
+};
+
+// Real remote Lectern fetch (no static dictionaries). Optionally override via args.
+export const withLecternServer = (
+	url: string = 'http://localhost:3031',
+	name: string = 'example-dictionary',
+): Decorator => {
+	return (Story) => (
+		<DictionaryDataProvider lecternUrl={url} dictionaryName={name}>
 			<Story />
 		</DictionaryDataProvider>
 	);

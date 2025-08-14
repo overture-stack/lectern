@@ -69,3 +69,17 @@ export const Disabled: Story = {
 		disabled: true,
 	},
 };
+
+export const Loading: Story = {
+	args: {
+		...pick(biosampleDictionary, 'name', 'version', 'description'),
+		isLoading: true,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: 'Header shows skeleton placeholders; use as forever-loading showcase.',
+			},
+		},
+	},
+};

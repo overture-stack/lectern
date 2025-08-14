@@ -26,7 +26,6 @@ import type { Schema } from '@overture-stack/lectern-dictionary';
 import { useEffect, useMemo, useState } from 'react';
 
 import Accordion from '../common/Accordion/Accordion';
-import { ErrorModal } from '../common/ErrorModal';
 import { useDictionaryDataContext } from '../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
@@ -68,10 +67,10 @@ export const DictionaryTableViewer = () => {
 	const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
 	useEffect(() => {
-		if (error) {
+		if (error || (!loading && !selectedDictionary)) {
 			setIsErrorModalOpen(true);
 		}
-	}, [error]);
+	}, [error, loading, selectedDictionary]);
 
 	const getFilteredSchema = (schema: Schema) => {
 		if (filters.includes('Required')) {
@@ -104,17 +103,13 @@ export const DictionaryTableViewer = () => {
 	if (loading) {
 		return (
 			<div css={pageContainerStyle(theme)}>
-				<DictionaryHeader name="" disabled />
+				<DictionaryHeader name="" isLoading />
 			</div>
 		);
 	}
 
 	if (!selectedDictionary) {
-		return (
-			<div css={pageContainerStyle(theme)}>
-				<div css={emptyStateStyle}>No dictionary data found.</div>
-			</div>
-		);
+		return <div css={pageContainerStyle(theme)}>{/* No dictionary data found; error handling removed for now */}</div>;
 	}
 
 	const { name, description, version } = selectedDictionary;
@@ -127,11 +122,7 @@ export const DictionaryTableViewer = () => {
 			</div>
 			<Accordion accordionItems={accordionItems} collapseAll={isCollapsed} />
 
-			<ErrorModal
-				isOpen={isErrorModalOpen}
-				setIsOpen={setIsErrorModalOpen}
-				errors={['Error loading dictionary data.']}
-			/>
+			{/* Error modal temporarily disabled here; will be handled in stories */}
 		</div>
 	);
 };

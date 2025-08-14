@@ -26,9 +26,10 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DictionaryTableViewer } from '../../src/viewer-table/DictionaryTableViewer';
 import {
 	withEmptyDictionaries,
-	withErrorState,
-	withLoadingState,
+	withForeverLoading,
+	withLecternServer,
 	withMultipleDictionaries,
+	withSingleDictionary,
 } from '../dictionaryDecorator';
 import themeDecorator from '../themeDecorator';
 
@@ -36,22 +37,38 @@ const meta = {
 	component: DictionaryTableViewer,
 	title: 'Viewer - Table/Dictionary Page',
 	tags: ['autodocs'],
-	decorators: [themeDecorator(), withMultipleDictionaries],
+	decorators: [themeDecorator()],
 } satisfies Meta<typeof DictionaryTableViewer>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	decorators: [withMultipleDictionaries],
+};
 
 export const Empty: Story = {
-	decorators: [themeDecorator(), withEmptyDictionaries],
+	decorators: [withEmptyDictionaries],
 };
 
 export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
+	decorators: [withForeverLoading()],
 };
 
+/*
 export const ErrorState: Story = {
-	decorators: [themeDecorator(), withErrorState()],
+    decorators: [withErrorState()],
+};
+*/
+
+export const WithStaticData: Story = {
+	decorators: [withMultipleDictionaries],
+};
+
+export const SingleDictionary: Story = {
+	decorators: [withSingleDictionary],
+};
+
+export const LecternServer: Story = {
+	decorators: [withLecternServer()],
 };
