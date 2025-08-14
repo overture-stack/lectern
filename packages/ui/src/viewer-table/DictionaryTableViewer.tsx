@@ -36,15 +36,12 @@ import DictionaryHeader from './DictionaryHeader';
 import InteractionPanel from './InteractionPanel/InteractionPanel';
 
 const pageContainerStyle = (theme: Theme) => css`
-	width: 85%;
-	max-width: 85vw;
 	margin: 0 auto;
 	min-height: calc(100vh - ${theme.dimensions.navbar.height}px - ${theme.dimensions.footer.height}px);
 	padding: 0 16px 40px;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-	background: ${theme.colors.background_alternate};
 `;
 
 const headerPanelBlockStyle = css`
