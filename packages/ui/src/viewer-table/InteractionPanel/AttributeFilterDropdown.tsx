@@ -18,29 +18,23 @@
  */
 
 import Dropdown from '../../common/Dropdown/Dropdown';
+import { FilterOptions, useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-export type AttributeFilterDropdownProps = {
-	filters: FilterOptions[];
-	setFilters: (filters: FilterOptions[]) => void;
-	disabled?: boolean;
-};
-
-export type FilterOptions = 'Required' | 'All Fields';
-
-const AttributeFilterDropdown = ({ filters, setFilters, disabled }: AttributeFilterDropdownProps) => {
-	const theme = useThemeContext();
-
+const AttributeFilterDropdown = () => {
+	const theme: Theme = useThemeContext();
+	const { loading, errors, filters, setFilters } = useDictionaryDataContext();
 	const { ListFilter } = theme.icons;
 
 	const handleFilterSelect = (selectedFilterName: FilterOptions) => {
-		// Toggles selected filter on click
 		if (filters?.includes(selectedFilterName)) {
 			setFilters([]);
 			return;
 		}
 		setFilters([selectedFilterName]);
 	};
+
 	const menuItems = [
 		{
 			label: 'Required',
@@ -52,7 +46,14 @@ const AttributeFilterDropdown = ({ filters, setFilters, disabled }: AttributeFil
 		},
 	];
 
-	return <Dropdown leftIcon={<ListFilter />} title="Filter By" menuItems={menuItems} disabled={disabled} />;
+	return (
+		<Dropdown
+			leftIcon={<ListFilter />}
+			title="Filter By"
+			menuItems={menuItems}
+			disabled={errors.length > 0 || loading}
+		/>
+	);
 };
 
 export default AttributeFilterDropdown;

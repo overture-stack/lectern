@@ -19,23 +19,22 @@
  *
  */
 
-import React from 'react';
-
 import Button from '../../common/Button';
-import { Theme } from '../../theme';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export interface ExpandAllButtonProps {
 	onClick: () => void;
-	disabled?: boolean;
 }
 
-const ExpandAllButton = ({ onClick, disabled }: ExpandAllButtonProps) => {
+const ExpandAllButton = ({ onClick }: ExpandAllButtonProps) => {
 	const theme: Theme = useThemeContext();
+	const { loading, errors } = useDictionaryDataContext();
 	const { Eye } = theme.icons;
 
 	return (
-		<Button icon={<Eye />} onClick={onClick} disabled={disabled}>
+		<Button icon={<Eye />} onClick={onClick} disabled={loading || errors.length > 0}>
 			Expand All
 		</Button>
 	);

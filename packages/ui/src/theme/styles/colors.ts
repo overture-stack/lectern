@@ -72,6 +72,7 @@ const error = {
 	error_dark: '#ad404e',
 	error_1: '#f9eff0',
 	error_2: '#e9c1c6',
+	error_modal_bg: '#F9EFF0',
 };
 
 const warning = {

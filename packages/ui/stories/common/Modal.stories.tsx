@@ -22,6 +22,7 @@
 /** @jsxImportSource @emotion/react */
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
+
 import Button from '../../src/common/Button';
 import ModalComponent from '../../src/common/Modal';
 import themeDecorator from '../themeDecorator';

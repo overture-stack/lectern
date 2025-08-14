@@ -21,8 +21,9 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { Dictionary, replaceReferences } from '@overture-stack/lectern-dictionary';
+import { type Dictionary, replaceReferences } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
+
 import SchemaTable from '../../src/viewer-table/DataTable/SchemaTable/SchemaTable';
 import EntityRelationshipExamples from '../fixtures/entityRelationshipExamples.json';
 import PCGL from '../fixtures/pcgl.json';

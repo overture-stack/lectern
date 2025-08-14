@@ -18,41 +18,30 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+import { css } from '@emotion/react';
 
-/** @jsxImportSource @emotion/react */
+import IconProps from './IconProps';
 
-import type { Meta, StoryObj } from '@storybook/react';
-import Button from '../../src/common/Button';
-import FileDownload from '../../src/theme/icons/FileDownload';
-import themeDecorator from '../themeDecorator';
+const MessageSquareWarning = ({ fill, width, height, style }: IconProps) => {
+	return (
+		<svg
+			css={css`
+				${style}
+			`}
+			width={width || '24'}
+			height={height || '24'}
+			fill={fill || 'none'}
+			viewBox="0 0 24 24"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		>
+			<path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+			<path d="M12 15h.01" />
+			<path d="M12 7v4" />
+		</svg>
+	);
+};
 
-const meta = {
-	component: Button,
-	title: 'Common/Button',
-	tags: ['autodocs'],
-	decorators: [themeDecorator()],
-} satisfies Meta<typeof Button>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-	args: { children: 'Click Me', onClick: () => alert('I have been clicked'), className: 'my-button', icon: '👍' },
-};
-export const Disabled: Story = {
-	args: { children: 'Disabled', disabled: true },
-};
-export const Loading: Story = {
-	args: { isLoading: true, children: 'Loading...' },
-};
-export const IconOnly: Story = {
-	args: {
-		icon: <FileDownload />,
-		onClick: () => alert('I have been clicked'),
-		className: 'iconButton',
-		iconOnly: true,
-	},
-};
-export const Empty: Story = {
-	args: {},
-};
+export default MessageSquareWarning;
