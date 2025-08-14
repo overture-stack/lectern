@@ -63,7 +63,7 @@ export const withDictionaryContext = (dictionaries: DictionaryTestData = multipl
 
 export const withLecternUrl = (): Decorator => {
 	return (Story) => (
-		<DictionaryDataProvider lecternUrl="http://localhost:3031" staticDictionaries={multipleDictionaryData}>
+		<DictionaryDataProvider lecternUrl="http://localhost:3031" dictionaryName="example-dictionary">
 			<Story />
 		</DictionaryDataProvider>
 	);
@@ -71,7 +71,7 @@ export const withLecternUrl = (): Decorator => {
 
 export const withLoadingState = (): Decorator => {
 	return (Story) => (
-		<DictionaryDataProvider lecternUrl="http://localhost:3031" dictionaryName={DictionarySample.name}>
+		<DictionaryDataProvider lecternUrl="http://localhost:9999" dictionaryName={DictionarySample.name}>
 			<Story />
 		</DictionaryDataProvider>
 	);
