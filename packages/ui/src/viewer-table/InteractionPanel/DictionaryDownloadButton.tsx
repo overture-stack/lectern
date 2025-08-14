@@ -21,9 +21,9 @@
 
 /** @jsxImportSource @emotion/react */
 
+import { css } from '@emotion/react';
 import { useState } from 'react';
 
-import { css } from '@emotion/react';
 import Button from '../../common/Button';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../../theme';
@@ -70,9 +70,7 @@ export const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaNam
 
 	const theme: Theme = useThemeContext();
 	const { FileDownload } = theme.icons;
-
-	const { loading, error, dictionaries, currentDictionaryIndex, lecternUrl } = useDictionaryDataContext();
-
+	const { loading, errors, dictionaries, currentDictionaryIndex, lecternUrl } = useDictionaryDataContext();
 	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
 
 	if (!selectedDictionary || !lecternUrl || !selectedDictionary.name || !selectedDictionary.version) {
@@ -115,7 +113,7 @@ export const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaNam
 					setIsLoading(false);
 				}
 			}}
-			disabled={loading || error || isLoading}
+			disabled={loading || errors.length > 0 || isLoading}
 		>
 			Submission Templates
 		</Button>

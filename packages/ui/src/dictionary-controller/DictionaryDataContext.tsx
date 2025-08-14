@@ -34,7 +34,7 @@ export type DictionaryContextType = {
 	lecternUrl?: string;
 	name?: string;
 	loading: boolean;
-	error?: boolean;
+	errors: string[];
 	currentDictionaryIndex: number;
 	filters: FilterOptions[];
 	setCurrentDictionaryIndex: (index: number) => void;
@@ -76,7 +76,7 @@ export function useDictionaryDataContext(): DictionaryContextType {
 export function DictionaryDataProvider(props: DictionaryProviderProps) {
 	const [dictionaries, setDictionaries] = useState<DictionaryServerUnion[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(false);
+	const [errors, setErrors] = useState<string[]>([]);
 
 	const [currentDictionaryIndex, setCurrentDictionaryIndex] = useState(0);
 	const [filters, setFilters] = useState<FilterOptions[]>([]);
@@ -85,7 +85,7 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 		if ('staticDictionaries' in props) {
 			setDictionaries(props.staticDictionaries);
 			setLoading(false);
-			setError(false);
+			setErrors([]);
 			return;
 		}
 
@@ -94,10 +94,21 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 				try {
 					const dictionariesData = await fetchAndValidateHostedDictionaries(props.hostedUrl);
 					setDictionaries([dictionariesData]);
-					setError(false);
+					setErrors([]);
 				} catch (err) {
 					console.error('Error loading hosted dictionary data:', err);
-					setError(true);
+					let message: string;
+					switch (true) {
+						case err instanceof Error:
+							message = err.message;
+							break;
+						case typeof err === 'string':
+							message = err;
+							break;
+						default:
+							message = 'Something went wrong';
+					}
+					setErrors([message]);
 				} finally {
 					setLoading(false);
 				}
@@ -114,10 +125,21 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 						props.dictionaryName,
 					);
 					setDictionaries(fetchedDictionaries);
-					setError(false);
+					setErrors([]);
 				} catch (err) {
-					console.error('Error loading remote dictionary data:', err);
-					setError(true);
+					console.error('Error loading hosted dictionary data:', err);
+					let message: string;
+					switch (true) {
+						case err instanceof Error:
+							message = err.message;
+							break;
+						case typeof err === 'string':
+							message = err;
+							break;
+						default:
+							message = 'Something went wrong';
+					}
+					setErrors([message]);
 				} finally {
 					setLoading(false);
 				}
@@ -132,7 +154,7 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 		lecternUrl: 'lecternUrl' in props ? props.lecternUrl : undefined,
 		name: 'dictionaryName' in props ? props.dictionaryName : undefined,
 		loading,
-		error,
+		errors,
 		currentDictionaryIndex,
 		filters,
 		setCurrentDictionaryIndex,
