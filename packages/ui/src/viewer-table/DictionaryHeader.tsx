@@ -112,7 +112,7 @@ const DictionaryHeader = ({ name, description, version, disabled, isLoading }: D
 							{description}
 						</ReadMoreText>
 					)}
-					{version && <span css={versionStyle(theme)}>{version}</span>}
+					{version && <span css={versionStyle(theme)}>Version: {version}</span>}
 				</>
 			}
 		</div>

@@ -60,7 +60,6 @@ const renderRestrictionItem = (value: RestrictionItem, key: string): ReactNode =
  * @param {SchemaFieldRestrictions} fieldLevelRestrictions - Field-level restrictions
  * @param {SchemaRestrictions} schemaLevelRestrictions - Schema-level restrictions
  * @param {SchemaField} currentSchemaField - Current schema field being processed
- * @returns {JSX.Element} Allowed values display with restrictions or "No restrictions" message
  */
 export const renderAllowedValuesColumn = (
 	fieldLevelRestrictions: SchemaFieldRestrictions,
@@ -73,7 +72,7 @@ export const renderAllowedValuesColumn = (
 	}
 
 	return (
-		<ReadMoreText maxLines={3} wrapperStyle={allowedValuesContainerStyle}>
+		<ReadMoreText maxLines={6} wrapperStyle={allowedValuesContainerStyle}>
 			{Object.entries(items).map(([key, value]) => {
 				return (
 					value ?
