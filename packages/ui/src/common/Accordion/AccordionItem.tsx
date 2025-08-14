@@ -179,6 +179,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 	const { setClipboardContents } = useClipboard();
 
 	const { description, title, content, schemaName } = accordionData;
+	console.log(schemaName)
 	const { ChevronDown, Hash } = theme.icons;
 
 	const indexString = index.toString();

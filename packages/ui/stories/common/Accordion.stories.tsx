@@ -50,6 +50,7 @@ export const Default: Story = {
 };
 
 export const WithDownloadButton: Story = {
+	decorators: [withLecternUrl()],
 	args: {
 		collapseAll: true,
 		accordionItems: [
@@ -57,7 +58,7 @@ export const WithDownloadButton: Story = {
 				title: 'Study',
 				description: 'Research studies enrolling participants',
 				content: 'Content for study schema',
-				schemaName: 'study',
+				schemaName: 'donor',
 			},
 		],
 	},
