@@ -70,5 +70,5 @@ export const SingleDictionary: Story = {
 };
 
 export const LecternServer: Story = {
-	decorators: [withLecternServer()],
+	decorators: [withLecternServer("http://localhost:3000", "example-dictionary")],
 };

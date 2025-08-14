@@ -49,11 +49,6 @@ const headerPanelBlockStyle = css`
 	gap: 0;
 `;
 
-const emptyStateStyle = css`
-	padding: 16px;
-	text-align: center;
-`;
-
 /**
  * The main table viewer page which consumes the dictionary data context
  * and renders the header, sticky interaction panel, and schema accordion.

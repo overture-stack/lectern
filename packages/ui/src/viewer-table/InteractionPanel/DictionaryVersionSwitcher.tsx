@@ -35,7 +35,7 @@ const DictionaryVersionSwitcher = () => {
 
 	const createdAt = selectedDictionary && 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : '';
 
-	const formattedCreatedAt = formatDate(createdAt);
+	const formattedCreatedAt = formatDate(createdAt?.toString());
 	const title =
 		selectedDictionary?.version ? `Version ${selectedDictionary.version} (${formattedCreatedAt})` : 'Select Version';
 
