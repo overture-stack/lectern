@@ -58,22 +58,28 @@ const shadowStyle = css`
 	transition: opacity 0.3s ease;
 `;
 
-const leftShadowStyle = css`
-	display: none;
+const leftShadowStyle = (width: number, opacity: number, theme: Theme) => css`
+	${shadowStyle}
+	left: ${width}px;
+	background: linear-gradient(90deg, ${theme.shadow.subtle}, transparent);
+	opacity: ${opacity};
+	z-index: 1;
 `;
 
-const rightShadowStyle = css`
-	display: none;
+const rightShadowStyle = (opacity: number, theme: Theme) => css`
+	${shadowStyle}
+	right: 0;
+	background: linear-gradient(270deg, ${theme.shadow.subtle}, transparent);
+	opacity: ${opacity};
+	z-index: 1;
 `;
 
 const tableContainerStyle = css`
 	overflow-x: auto;
 	max-width: 100%;
-	width: 100%;
 `;
 
 const tableStyle = (theme: Theme) => css`
-	width: 100%;
 	min-width: 1200px;
 	border-collapse: collapse;
 	border: 1px solid ${theme.colors.grey_3};
@@ -157,8 +163,8 @@ const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 	return (
 		<div css={scrollWrapperStyle}>
 			<div css={tableContainerStyle} ref={scrollRef}>
-				<div css={leftShadowStyle} />
-				<div css={rightShadowStyle} />
+				<div css={leftShadowStyle(firstColumnWidth, showLeftShadow ? 1 : 0, theme)} />
+				<div css={rightShadowStyle(showRightShadow ? 1 : 0, theme)} />
 				<table css={tableStyle(theme)}>
 					<thead css={tableBorderStyle(theme)}>
 						{table.getHeaderGroups().map((headerGroup: HeaderGroup<R>) => (
