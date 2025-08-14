@@ -50,7 +50,11 @@ const renderRestrictionItem = (value: RestrictionItem, key: string): ReactNode =
 	return (
 		<div key={key} css={restrictionItemStyle}>
 			<b>{prefix}</b>
-			{content.length > 0 && <ReadMoreText wrapperStyle={codeListContentStyle}>{content.join('\n')}</ReadMoreText>}
+			{content.length > 0 && (
+				<ReadMoreText wrapperStyle={codeListContentStyle} maxLines={6}>
+					{content.join('\n')}
+				</ReadMoreText>
+			)}
 		</div>
 	);
 };
