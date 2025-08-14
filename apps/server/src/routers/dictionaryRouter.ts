@@ -19,6 +19,7 @@
 import { Router } from 'express';
 import * as dictionaryController from '../controllers/dictionaryController';
 import { wrapAsync, wrapAsyncAuth } from './wrappers';
+import { authAdminMiddleware } from '../middleware/auth';
 
 const router = Router();
 
@@ -30,7 +31,7 @@ router.get('', wrapAsync(dictionaryController.listDictionaries));
 /**
  * Create Dictionary
  */
-router.post('', wrapAsyncAuth(dictionaryController.createDictionary));
+router.post('', authAdminMiddleware(), wrapAsyncAuth(dictionaryController.createDictionary));
 
 /**
  * Get Dictionary by ID
@@ -40,12 +41,12 @@ router.get('/:dictId', wrapAsync(dictionaryController.getDictionary));
 /**
  * Add Schema to Dictionary
  */
-router.post('/:dictId/schemas', wrapAsyncAuth(dictionaryController.addSchema));
+router.post('/:dictId/schemas', authAdminMiddleware(), wrapAsyncAuth(dictionaryController.addSchema));
 
 /**
  * Update Schema for Dictionary
  */
-router.put('/:dictId/schemas', wrapAsyncAuth(dictionaryController.updateSchema));
+router.put('/:dictId/schemas', authAdminMiddleware(), wrapAsyncAuth(dictionaryController.updateSchema));
 
 /**
  * Get Schema from Dictionary
