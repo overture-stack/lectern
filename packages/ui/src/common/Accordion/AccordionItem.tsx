@@ -28,6 +28,7 @@ import { MouseEvent, useEffect, useRef } from 'react';
 import { useClipboard } from '../../hooks/useClipboard';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
+import { DictionaryDownloadButton } from '../../viewer-table/InteractionPanel/DictionaryDownloadButton';
 import ReadMoreText from '../ReadMoreText';
 import { AccordionData, AccordionOpenState } from './Accordion';
 
@@ -139,6 +140,13 @@ const contentInnerContainerStyle = (theme: Theme) => css`
 	${theme.typography?.data};
 `;
 
+const downloadButtonContainerStyle = css`
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	margin-left: auto;
+`;
+
 const handleInitialHashCheck = (
 	windowLocationHash: string,
 	openState: AccordionOpenState,
@@ -170,7 +178,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 	const theme: Theme = useThemeContext();
 	const { setClipboardContents } = useClipboard();
 
-	const { description, title, content } = accordionData;
+	const { description, title, content, schemaName } = accordionData;
 	const { ChevronDown, Hash } = theme.icons;
 
 	const indexString = index.toString();
@@ -205,7 +213,11 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 						{description}
 					</ReadMoreText>
 				</div>
-				{/* TODO: implement download dictionary button feature for individual schemas */}
+				{schemaName && (
+					<div css={downloadButtonContainerStyle}>
+						<DictionaryDownloadButton fileType="tsv" iconOnly={true} schemaName={schemaName} />
+					</div>
+				)}
 			</div>
 			<div css={accordionCollapseStyle(openState.isOpen)}>
 				<div css={accordionItemContentStyle}>

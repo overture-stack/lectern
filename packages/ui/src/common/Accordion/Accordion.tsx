@@ -30,7 +30,7 @@ export type AccordionData = {
 	title: string;
 	description?: string;
 	content: ReactNode;
-	schemaName: string;
+	schemaName?: string;
 };
 export type AccordionProps = {
 	accordionItems: Array<AccordionData>;
