@@ -70,7 +70,7 @@ const chevronColumnStyle = css`
 	top: 20px;
 `;
 
-const accordionItemButtonStyle = (theme: Theme) => css`
+const accordionItemButtonStyle = css`
 	display: flex;
 	border: none;
 	align-items: center;
@@ -194,7 +194,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 		<li ref={accordionRef} role="button" css={accordionItemStyle(theme)} id={indexString} onClick={openState.toggle}>
 			<div css={accordionItemTitleStyle}>
 				<div css={chevronColumnStyle}>
-					<button css={accordionItemButtonStyle(theme)}>
+					<button css={accordionItemButtonStyle}>
 						<ChevronDown fill={theme.colors.black} width={16} height={16} style={chevronStyle(openState.isOpen)} />
 					</button>
 				</div>

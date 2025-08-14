@@ -26,6 +26,7 @@ import { useState } from 'react';
 
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
+import { isFieldRequired } from '../../../../utils/isFieldRequired';
 import { ConditionalLogicModal } from '../../../ConditionalLogicModal/ConditionalLogicModal';
 import OpenModalButton from '../../../OpenModalButton';
 
@@ -43,8 +44,8 @@ const containerStyle = (theme: Theme) => css`
 /**
  * Renders the attribute column cell showing field requirement status.
  * @param {SchemaFieldRestrictions} schemaFieldRestrictions - Field-level restrictions containing requirement information
- * @returns {JSX.Element} Attribute display showing Required, Optional, or Required When with modal button
  */
+
 export const renderAttributesColumn = (
 	schemaFieldRestrictions: SchemaFieldRestrictions,
 	currentSchemaField?: SchemaField,
@@ -67,7 +68,7 @@ export const renderAttributesColumn = (
 						/>
 					)}
 				</>
-			:	<div>{schemaFieldRestrictions && 'required' in schemaFieldRestrictions ? 'Required' : 'Optional'}</div>}
+			:	<div>{currentSchemaField && isFieldRequired(currentSchemaField) ? 'Required' : 'Optional'}</div>}
 		</div>
 	);
 };

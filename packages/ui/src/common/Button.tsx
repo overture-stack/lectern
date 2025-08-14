@@ -133,7 +133,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				{/* If iconOnly is true, we don't show the children */}
 				{!iconOnly && <span css={getContentStyles(theme, shouldShowLoading)}>{children}</span>}
 				<span css={getSpinnerStyles(shouldShowLoading)}>
-					<Spinner height={20} width={20} />
+					<Spinner fill={theme.colors.black} height={20} width={20} />
 				</span>
 			</button>
 		);

@@ -58,11 +58,11 @@ const shadowStyle = css`
 	transition: opacity 0.3s ease;
 `;
 
-const leftShadowStyle = (width: number, opacity: number, theme: Theme) => css`
+const leftShadowStyle = css`
 	display: none;
 `;
 
-const rightShadowStyle = (opacity: number, theme: Theme) => css`
+const rightShadowStyle = css`
 	display: none;
 `;
 
@@ -157,8 +157,8 @@ const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 	return (
 		<div css={scrollWrapperStyle}>
 			<div css={tableContainerStyle} ref={scrollRef}>
-				<div css={leftShadowStyle(firstColumnWidth, showLeftShadow ? 1 : 0, theme)} />
-				<div css={rightShadowStyle(showRightShadow ? 1 : 0, theme)} />
+				<div css={leftShadowStyle} />
+				<div css={rightShadowStyle} />
 				<table css={tableStyle(theme)}>
 					<thead css={tableBorderStyle(theme)}>
 						{table.getHeaderGroups().map((headerGroup: HeaderGroup<R>) => (
