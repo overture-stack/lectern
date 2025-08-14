@@ -23,7 +23,7 @@
 
 import { css } from '@emotion/react';
 import type { Schema } from '@overture-stack/lectern-dictionary';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Accordion from '../common/Accordion/Accordion';
 import { useDictionaryDataContext } from '../dictionary-controller/DictionaryDataContext';
@@ -77,16 +77,13 @@ export const DictionaryTableViewer = () => {
 		return schema;
 	};
 
-	const accordionItems = useMemo(
-		() =>
+	const accordionItems =
 			selectedDictionary?.schemas?.map((schema: Schema) => ({
 				title: schema.name,
 				description: schema.description,
 				content: <SchemaTable schema={getFilteredSchema(schema)} />,
 				schemaName: schema.name,
-			})) || [],
-		[selectedDictionary, filters],
-	);
+			})) || [];
 
 	const handleSchemaSelect = (schemaIndex: number) => {
 		const element = document.getElementById(schemaIndex.toString());
