@@ -70,7 +70,7 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const fieldExamples = fieldRow.original.meta?.examples;
 
 	return (
-		<ReadMoreText wrapperStyle={fieldContainerStyle(theme)}>
+		<ReadMoreText maxLines={6} wrapperStyle={fieldContainerStyle(theme)}>
 			<b>{fieldName}</b>
 			{fieldDescription && <p>{fieldDescription}</p>}
 			{fieldExamples && (
