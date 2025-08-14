@@ -179,7 +179,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 	const { setClipboardContents } = useClipboard();
 
 	const { description, title, content, schemaName } = accordionData;
-	console.log(schemaName)
+	console.log(schemaName);
 	const { ChevronDown, Hash } = theme.icons;
 
 	const indexString = index.toString();
@@ -192,8 +192,8 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 	}, []);
 
 	return (
-		<li ref={accordionRef} role="button" css={accordionItemStyle(theme)} id={indexString} onClick={openState.toggle}>
-			<div css={accordionItemTitleStyle}>
+		<li ref={accordionRef} css={accordionItemStyle(theme)} id={indexString}>
+			<div onClick={openState.toggle} role="button" css={accordionItemTitleStyle}>
 				<div css={chevronColumnStyle}>
 					<button css={accordionItemButtonStyle}>
 						<ChevronDown fill={theme.colors.black} width={16} height={16} style={chevronStyle(openState.isOpen)} />
