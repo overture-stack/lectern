@@ -22,7 +22,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import type { Schema } from '@overture-stack/lectern-dictionary';
+import type { Schema, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import { useEffect, useState } from 'react';
 
 import Accordion from '../common/Accordion/Accordion';
@@ -49,10 +49,10 @@ const headerPanelBlockStyle = css`
 	gap: 0;
 `;
 
-/**
- * The main table viewer page which consumes the dictionary data context
- * and renders the header, sticky interaction panel, and schema accordion.
- */
+const isConditionalRestriction = (schemaFieldRestriction: SchemaFieldRestrictions) => {
+	return schemaFieldRestriction && 'if' in schemaFieldRestriction && schemaFieldRestriction.if !== undefined;
+};
+
 export const DictionaryTableViewer = () => {
 	const theme: Theme = useThemeContext();
 	const { loading, error, dictionaries, currentDictionaryIndex, filters } = useDictionaryDataContext();
@@ -71,19 +71,21 @@ export const DictionaryTableViewer = () => {
 		if (filters.includes('Required')) {
 			return {
 				...schema,
-				fields: schema.fields.filter((field) => isFieldRequired(field)),
+				fields: schema.fields.filter((field) => {
+					return isFieldRequired(field) || isConditionalRestriction(field.restrictions);
+				}),
 			};
 		}
 		return schema;
 	};
 
 	const accordionItems =
-			selectedDictionary?.schemas?.map((schema: Schema) => ({
-				title: schema.name,
-				description: schema.description,
-				content: <SchemaTable schema={getFilteredSchema(schema)} />,
-				schemaName: schema.name,
-			})) || [];
+		selectedDictionary?.schemas?.map((schema: Schema) => ({
+			title: schema.name,
+			description: schema.description,
+			content: <SchemaTable schema={getFilteredSchema(schema)} />,
+			schemaName: schema.name,
+		})) || [];
 
 	const handleSchemaSelect = (schemaIndex: number) => {
 		const element = document.getElementById(schemaIndex.toString());
