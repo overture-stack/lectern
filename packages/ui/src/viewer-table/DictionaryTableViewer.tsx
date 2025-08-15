@@ -23,7 +23,7 @@
 
 import { css } from '@emotion/react';
 import type { Schema, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Accordion from '../common/Accordion/Accordion';
 import { useDictionaryDataContext } from '../dictionary-controller/DictionaryDataContext';
@@ -60,6 +60,8 @@ export const DictionaryTableViewer = () => {
 
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+	const [selectedSchemaIndex, setSelectedSchemaIndex] = useState<number | undefined>(undefined);
+	const accordionRefs = useRef<(HTMLLIElement | null)[]>([]);
 
 	useEffect(() => {
 		if (error || (!loading && !selectedDictionary)) {
@@ -88,9 +90,10 @@ export const DictionaryTableViewer = () => {
 		})) || [];
 
 	const handleSchemaSelect = (schemaIndex: number) => {
-		const element = document.getElementById(schemaIndex.toString());
+		setSelectedSchemaIndex(schemaIndex);
+		const element = accordionRefs.current[schemaIndex];
 		if (element) {
-			element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			element.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}
 	};
 
@@ -114,7 +117,12 @@ export const DictionaryTableViewer = () => {
 				<DictionaryHeader name={name ?? ''} description={description} version={version} />
 				<InteractionPanel onSelect={handleSchemaSelect} setIsCollapsed={setIsCollapsed} />
 			</div>
-			<Accordion accordionItems={accordionItems} collapseAll={isCollapsed} />
+			<Accordion
+				accordionItems={accordionItems}
+				collapseAll={isCollapsed}
+				selectedIndex={selectedSchemaIndex}
+				refs={accordionRefs}
+			/>
 
 			{/* Error modal temporarily disabled here; will be handled in stories */}
 		</div>
