@@ -62,11 +62,6 @@ const parentStyle = css`
 	display: inline-block;
 `;
 
-const chevronStyle = (open: boolean) => css`
-	transform: ${open ? 'rotate(180deg)' : 'none'};
-	transition: transform 0.2s ease;
-`;
-
 const dropDownTitleStyle = (theme: Theme) => css`
 	${theme.typography?.buttonText};
 	color: ${theme.colors.accent_dark};
@@ -158,7 +153,7 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDow
 			>
 				{leftIcon}
 				<span css={dropDownTitleStyle(theme)}>{title}</span>
-				<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} style={chevronStyle(open)} />
+				<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} />
 			</button>
 			{open && !disabled && (
 				<menu role="menu" css={dropdownMenuStyle(theme)}>
