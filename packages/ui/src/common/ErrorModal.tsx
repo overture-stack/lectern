@@ -21,7 +21,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
+import { css, Global } from '@emotion/react';
 import Modal, { Styles } from 'react-modal';
 
 import { Theme } from '../theme';
@@ -130,30 +130,40 @@ export const ErrorModal = ({ setIsOpen, isOpen, errors, onContactClick }: ErrorM
 	const theme: Theme = useThemeContext();
 
 	return (
-		<Modal
-			isOpen={isOpen}
-			onRequestClose={() => setIsOpen(false)}
-			style={customStyles(theme)}
-			contentLabel="Error Modal"
-		>
-			<div css={containerStyle(theme)}>
-				<h1 css={titleStyle(theme)}>Error</h1>
-				<p css={subtitleStyle(theme)}>view console logs for more details</p>
-				<p css={descriptionStyle(theme)}>
-					The dictionary controller has returned errors. If you are seeing this{' '}
-					<span css={contactLinkStyle(theme)} onClick={onContactClick} role="button" tabIndex={0}>
-						please contact the platform administrator.
-					</span>
-				</p>
-				<div css={errorListStyle}>
-					{errors.map((error, index) => (
-						<div key={index} css={errorItemStyle}>
-							<MessageSquareWarning style={errorIconStyle(theme)} size={20} />
-							<span css={errorTextStyle(theme)}>{error}</span>
-						</div>
-					))}
+		<>
+			<Global
+				styles={css`
+					body.modal-open {
+						overflow: hidden;
+					}
+				`}
+			/>
+			<Modal
+				isOpen={isOpen}
+				onRequestClose={() => setIsOpen(false)}
+				style={customStyles(theme)}
+				contentLabel="Error Modal"
+				bodyOpenClassName="modal-open"
+			>
+				<div css={containerStyle(theme)}>
+					<h1 css={titleStyle(theme)}>Error</h1>
+					<p css={subtitleStyle(theme)}>view console logs for more details</p>
+					<p css={descriptionStyle(theme)}>
+						The dictionary controller has returned errors. If you are seeing this{' '}
+						<span css={contactLinkStyle(theme)} onClick={onContactClick} role="button" tabIndex={0}>
+							please contact the platform administrator.
+						</span>
+					</p>
+					<div css={errorListStyle}>
+						{errors.map((error, index) => (
+							<div key={index} css={errorItemStyle}>
+								<MessageSquareWarning style={errorIconStyle(theme)} size={20} />
+								<span css={errorTextStyle(theme)}>{error}</span>
+							</div>
+						))}
+					</div>
 				</div>
-			</div>
-		</Modal>
+			</Modal>
+		</>
 	);
 };
