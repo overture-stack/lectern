@@ -76,7 +76,7 @@ const accordionItemButtonStyle = css`
 	align-items: center;
 	cursor: pointer;
 	background: transparent;
-	padding: 8px;
+	padding: 3px;
 `;
 
 const contentColumnStyle = css`
@@ -135,7 +135,7 @@ const accordionItemContentStyle = css`
 `;
 
 const contentInnerContainerStyle = (theme: Theme) => css`
-	border-left: 1px solid ${theme.colors.grey_3};
+	border-left: 2px solid ${theme.colors.grey_3};
 	padding-left: 30px;
 	${theme.typography?.data};
 `;
