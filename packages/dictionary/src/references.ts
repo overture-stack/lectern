@@ -29,9 +29,9 @@ import {
 	TypeUtils,
 	type SchemaField,
 	type StringFieldRestrictionsObject,
-} from '.';
-import { InvalidReferenceError } from './errors';
-import { isNumberArray, isStringArray } from './utils/typeUtils';
+} from './index.js';
+import { InvalidReferenceError } from './errors.js';
+import { isNumberArray, isStringArray } from './utils/typeUtils.js';
 
 // This is the union of all schema sections that could have reference values
 type OutputReferenceValues = ReferenceArray | ReferenceValue;

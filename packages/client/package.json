@@ -8,7 +8,8 @@
 	"types": "./dist/index.d.ts",
 	"description": "TypeScript client to interact with Lectern servers and perform data validation versus Lectern dictionaries.",
 	"scripts": {
-		"build": "rimraf dist && tsc -p tsconfig.build.json",
+		"build": "pnpm nuke:dist && tsc -p tsconfig.build.json",
+		"nuke:dist": "rm -rf dist",
 		"lint": "tslint -c tslint.json -e node_modules -p tsconfig.json"
 	},
 	"repository": {

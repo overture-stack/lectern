@@ -18,8 +18,8 @@
  */
 
 import { z as zod, type ZodType } from 'zod';
-import allUnique from '../utils/allUnique';
-import { ReferenceTag, References } from './referenceSchemas';
+import allUnique from '../utils/allUnique.js';
+import { ReferenceTag, References } from './referenceSchemas.js';
 import {
 	ConditionalRestriction,
 	ConditionalRestrictionTest,
@@ -29,7 +29,7 @@ import {
 	RestrictionIntegerRange,
 	RestrictionNumberRange,
 	RestrictionRegex,
-} from './restrictionsSchemas';
+} from './restrictionsSchemas.js';
 
 /**
  * String rules for all name fields used in dictionary, including Dictionary, Schema, and Fields.

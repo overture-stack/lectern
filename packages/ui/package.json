@@ -12,9 +12,11 @@
 	},
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "pnpm build:clean && tsc -p ./tsconfig.build.json",
-		"build:clean": "rimraf dist/ && mkdir dist",
-		"storybook": "storybook dev -p 6006"
+		"build": "pnpm nuke:dist && tsc -p ./tsconfig.build.json",
+		"nuke:dist": "rm -rf dist",
+		"nuke:storybookStatic": "rm -rf storybook-static",
+		"storybook": "storybook dev -p 6006",
+		"storybook:build": "pnpm nuke:storybookStatic && storybook build --disable-telemetry"
 	},
 	"keywords": [],
 	"author": "Ontario Institute for Cancer Research",

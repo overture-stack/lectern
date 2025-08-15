@@ -17,6 +17,6 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './dictionarySchemas';
-export * from './referenceSchemas';
-export * from './restrictionsSchemas';
+export * from './dictionarySchemas.js';
+export * from './referenceSchemas.js';
+export * from './restrictionsSchemas.js';

@@ -1,5 +1,5 @@
-import { TypeUtils } from '.';
-import type { Schema, SchemaField } from '../metaSchema';
+import { TypeUtils } from './index.js';
+import type { Schema, SchemaField } from '../metaSchema/index.js';
 
 /**
  * Get an array of fields from this schema that have the required restriction set to true

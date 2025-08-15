@@ -17,9 +17,9 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './dataRecord';
-export * from './defined';
-export * from './diffTypes';
-export * from './generics';
-export * from './result';
-export * from './singular';
+export * from './dataRecord.js';
+export * from './defined.js';
+export * from './diffTypes.js';
+export * from './generics.js';
+export * from './result.js';
+export * from './singular.js';

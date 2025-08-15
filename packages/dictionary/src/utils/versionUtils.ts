@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { MalformedVersionError } from '../errors';
+import { MalformedVersionError } from '../errors.js';
 
 export const isValidVersion = (version: string): boolean => {
 	return /^[0-9]+\.[0-9]+$/.test(version);

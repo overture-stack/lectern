@@ -9,6 +9,8 @@
 		"build:validation": "pnpm nx build @overture-stack/lectern-validation",
 		"build:server": "pnpm nx build @overture-stack/lectern-server",
 		"build:client": "pnpm nx build @overture-stack/lectern-client",
+		"nuke:nodeModules": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +",
+		"reset": "pnpm nuke:nodeModules && pnpm -r nuke:dist --if-present",
 		"test:all": "pnpm nx run-many --all --target=test,test:integration",
 		"test:unit:all": "pnpm nx run-many --all --target=test",
 		"test:unit:dictionary": "pnpm nx test @overture-stack/lectern-dictionary",

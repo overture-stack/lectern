@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { Singular } from '.';
+import type { Singular } from './index.js';
 
 /**
  * Represents a data record as taken from an input file. All values are the original strings and have not been validated into

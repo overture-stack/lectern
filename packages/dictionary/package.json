@@ -2,13 +2,11 @@
 	"name": "@overture-stack/lectern-dictionary",
 	"version": "0.0.0",
 	"description": "",
-	"files": [
-		"dist/"
-	],
 	"main": "dist/index.js",
 	"scripts": {
-		"build": "pnpm build:clean && tsc",
-		"build:clean": "rimraf dist/ && mkdir dist",
+		"build": "pnpm nuke:dist && tsc",
+		"build:esm": "tsc-esm-fix --src='src' --ext='.js'",
+		"nuke:dist": "rm -rf dist",
 		"test": "nyc mocha"
 	},
 	"keywords": [],
@@ -20,6 +18,8 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"@types/lodash": "^4.17.7"
-	}
+		"@types/lodash": "^4.17.7",
+		"tsc-esm-fix": "^3.1.2"
+	},
+	"type": "module"
 }

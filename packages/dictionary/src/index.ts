@@ -17,11 +17,11 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './constants';
-export * from './errors';
-export * as DiffUtils from './diff';
-export * from './metaSchema';
-export * from './references';
-export * from './types';
-export * from './utils';
-export * from './dataFileTemplates';
+export * from './constants.js';
+export * from './errors.js';
+export * as DiffUtils from './diff.js';
+export * from './metaSchema/index.js';
+export * from './references.js';
+export * from './types/index.js';
+export * from './utils/index.js';
+export * from './dataFileTemplates.js';

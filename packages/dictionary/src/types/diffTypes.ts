@@ -18,7 +18,7 @@
  */
 
 import { z as zod } from 'zod';
-import { SchemaField } from '../metaSchema';
+import { SchemaField } from '../metaSchema/index.js';
 
 export const ValueChangeTypeNames = {
 	CREATED: 'created',

@@ -17,6 +17,6 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './stringUtils';
-export * as TypeUtils from './typeUtils';
-export * as VersionUtils from './versionUtils';
+export * from './stringUtils.js';
+export * as TypeUtils from './typeUtils.js';
+export * as VersionUtils from './versionUtils.js';

@@ -18,7 +18,7 @@
  */
 
 import { z } from 'zod';
-import { Schema } from './metaSchema/index';
+import { Schema } from './metaSchema/index.js';
 
 export const separatedValueFileTypeSchema = z.enum(['tsv', 'csv']);
 export type SeparatedValueFileType = z.infer<typeof separatedValueFileTypeSchema>;

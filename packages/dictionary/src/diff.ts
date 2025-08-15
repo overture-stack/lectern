@@ -18,7 +18,7 @@
  */
 
 import * as _ from 'lodash';
-import { Dictionary, SchemaField } from '.';
+import { Dictionary, SchemaField } from './index.js';
 import {
 	ValueChangeTypeNames,
 	FieldDiff,
@@ -27,7 +27,7 @@ import {
 	FieldChanges,
 	ValueChangeTypeName,
 	ValueChange,
-} from './types/diffTypes';
+} from './types/diffTypes.js';
 
 /**
  * This is the core function for calculating a diff between two fields. This loops over all properties of the objects

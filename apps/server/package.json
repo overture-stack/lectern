@@ -6,6 +6,7 @@
 	"scripts": {
 		"build": "tsc -p tsconfig.build.json",
 		"debug": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec node --inspect -r ts-node/register ./src/server.ts",
+		"nuke:dist": "rm -rf dist",
 		"start": "NODE_ENV=production ts-node -T src/server.ts",
 		"test": "nyc mocha",
 		"test:integration": "nyc mocha --config .mocharc.integration.json"

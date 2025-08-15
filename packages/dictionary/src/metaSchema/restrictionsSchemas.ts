@@ -18,8 +18,8 @@
  */
 
 import { z as zod, type ZodSchema } from 'zod';
-import { ReferenceTag } from './referenceSchemas';
-import type { Values } from '../types';
+import { ReferenceTag } from './referenceSchemas.js';
+import type { Values } from '../types/index.js';
 
 export const Integer = zod.number().int();
 
