@@ -68,7 +68,7 @@ const introText = css`
 	${baseFontSecondary}
 	font-size: 18px;
 	font-weight: 400;
-	line-height: 100%;
+	line-height: 130%;
 `;
 
 const introTextBold = css`
@@ -90,7 +90,7 @@ const paragraph = css`
 	${baseFontSecondary}
 	font-size: 26px;
 	font-weight: 400;
-	line-height: 100%;
+	line-height: 130%;
 `;
 
 const paragraphBold = css`
@@ -102,7 +102,7 @@ const paragraphSmall = css`
 	${baseFontSecondary}
 	font-size: 16px;
 	font-weight: 400;
-	line-height: 100%;
+	line-height: 140%;
 `;
 
 const paragraphSmallBold = css`
@@ -114,7 +114,7 @@ const data = css`
 	${baseFontSecondary}
 	font-size: 13px;
 	font-weight: 400;
-	line-height: 100%;
+	line-height: 150%;
 `;
 
 const dataBold = css`
@@ -126,7 +126,7 @@ const caption = css`
 	${baseFontSecondary}
 	font-size: 11px;
 	font-weight: 400;
-	line-height: 100%;
+	line-height: 150%;
 `;
 
 const captionBold = css`
@@ -153,6 +153,7 @@ const body = css`
 	${baseFont}
 	font-size: 18px;
 	font-weight: 400;
+	line-height: 140%;
 `;
 
 const bodyBold = css`

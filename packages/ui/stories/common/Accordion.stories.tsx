@@ -23,14 +23,14 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import Accordion from '../../src/common/Accordion/Accordion';
-import { withLecternUrl } from '../dictionaryDecorator';
+import { withLecternServer } from '../dictionaryDecorator';
 import themeDecorator from '../themeDecorator';
 
 const meta = {
 	component: Accordion,
 	title: 'Common/Accordion',
 	tags: ['autodocs'],
-	decorators: [themeDecorator(), withLecternUrl()],
+	decorators: [themeDecorator()],
 } satisfies Meta<typeof Accordion>;
 
 export default meta;
@@ -50,7 +50,7 @@ export const Default: Story = {
 };
 
 export const WithDownloadButton: Story = {
-	decorators: [withLecternUrl()],
+	decorators: [withLecternServer()],
 	args: {
 		collapseAll: true,
 		accordionItems: [
@@ -77,7 +77,6 @@ export const MultipleAccordions: Story = {
 				title: 'Biosample',
 				description: 'Biological samples collected from participants',
 				content: 'Content for biosample schema',
-				schemaName: 'biosample',
 			},
 			{
 				title: 'Participant',
