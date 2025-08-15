@@ -1187,7 +1187,6 @@ const case8Restriction: SchemaFieldRestrictions = {
 							if: { conditions: [{ fields: ['level7'], match: { value: 'G' }, case: 'all' }] },
 							then: {
 								if: { conditions: [{ fields: ['final_condition'], match: { value: 'success' }, case: 'all' }] },
-								then: { codeList: ['ultimate_success_value'] },
 								else: { codeList: ['conditional_failure_value'] },
 							},
 							else: { codeList: ['level7_false'] },
