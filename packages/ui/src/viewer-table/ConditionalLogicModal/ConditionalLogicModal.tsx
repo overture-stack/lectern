@@ -29,7 +29,7 @@ import { ProcessConditionalRestrictions } from './ProcessConditionalRestrictions
 const containerStyle = css`
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 30px;
 `;
 
 export type ConditionalLogicModalProps = {
