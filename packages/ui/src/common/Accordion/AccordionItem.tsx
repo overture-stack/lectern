@@ -23,11 +23,12 @@
 
 import { css } from '@emotion/react';
 import type { RefObject } from 'react';
-import { MouseEvent, useEffect, useRef } from 'react';
+import { forwardRef, MouseEvent, useEffect, useRef } from 'react';
 
 import { useClipboard } from '../../hooks/useClipboard';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
+import { DictionaryDownloadButton } from '../../viewer-table/InteractionPanel/DictionaryDownloadButton';
 import ReadMoreText from '../ReadMoreText';
 import { AccordionData, AccordionOpenState } from './Accordion';
 
@@ -69,13 +70,13 @@ const chevronColumnStyle = css`
 	top: 20px;
 `;
 
-const accordionItemButtonStyle = (theme: Theme) => css`
+const accordionItemButtonStyle = css`
 	display: flex;
 	border: none;
 	align-items: center;
 	cursor: pointer;
 	background: transparent;
-	padding: 8px;
+	padding: 3px;
 `;
 
 const contentColumnStyle = css`
@@ -134,9 +135,16 @@ const accordionItemContentStyle = css`
 `;
 
 const contentInnerContainerStyle = (theme: Theme) => css`
-	border-left: 1px solid ${theme.colors.grey_3};
+	border-left: 2px solid ${theme.colors.grey_3};
 	padding-left: 30px;
 	${theme.typography?.data};
+`;
+
+const downloadButtonContainerStyle = css`
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	margin-left: auto;
 `;
 
 const handleInitialHashCheck = (
@@ -165,12 +173,13 @@ const hashOnClick = (
 	);
 };
 
-const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) => {
+const AccordionItem = forwardRef<HTMLLIElement, AccordionItemProps>(({ index, accordionData, openState }, ref) => {
 	const accordionRef = useRef<HTMLLIElement>(null);
 	const theme: Theme = useThemeContext();
 	const { setClipboardContents } = useClipboard();
 
-	const { description, title, content } = accordionData;
+	const { description, title, content, schemaName } = accordionData;
+	console.log(schemaName);
 	const { ChevronDown, Hash } = theme.icons;
 
 	const indexString = index.toString();
@@ -183,10 +192,10 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 	}, []);
 
 	return (
-		<li ref={accordionRef} role="button" css={accordionItemStyle(theme)} id={indexString} onClick={openState.toggle}>
-			<div css={accordionItemTitleStyle}>
+		<li ref={ref} css={accordionItemStyle(theme)} id={indexString}>
+			<div onClick={openState.toggle} role="button" css={accordionItemTitleStyle}>
 				<div css={chevronColumnStyle}>
-					<button css={accordionItemButtonStyle(theme)}>
+					<button css={accordionItemButtonStyle}>
 						<ChevronDown fill={theme.colors.black} width={16} height={16} style={chevronStyle(openState.isOpen)} />
 					</button>
 				</div>
@@ -205,7 +214,11 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 						{description}
 					</ReadMoreText>
 				</div>
-				{/* TODO: implement download dictionary button feature for individual schemas */}
+				{schemaName && (
+					<div css={downloadButtonContainerStyle}>
+						<DictionaryDownloadButton fileType="tsv" iconOnly={true} schemaName={schemaName} />
+					</div>
+				)}
 			</div>
 			<div css={accordionCollapseStyle(openState.isOpen)}>
 				<div css={accordionItemContentStyle}>
@@ -214,6 +227,8 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 			</div>
 		</li>
 	);
-};
+});
+
+AccordionItem.displayName = 'AccordionItem';
 
 export default AccordionItem;

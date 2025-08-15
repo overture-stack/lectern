@@ -6,7 +6,7 @@
  *  GNU Affero General Public License along with this program.
  *   If not, see <http://www.gnu.org/licenses/>.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
  *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
  *  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
@@ -24,6 +24,8 @@ import { css } from '@emotion/react';
 import type { RestrictionCondition, SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import { Fragment } from 'react';
 import FieldBlock from '../../common/FieldBlock';
+import type { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
 
 export type DescriptionProps = {
 	schemaLevelField: SchemaField;
@@ -37,12 +39,13 @@ const extractConditions = (item: SchemaFieldRestrictions): RestrictionCondition[
 	return item && 'if' in item && item.if.conditions ? item.if.conditions : [];
 };
 
-const descriptionStyle = css`
+const descriptionStyle = (theme: Theme) => css`
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	gap: 4px;
 	align-items: center;
+	${theme.typography.paragraphSmall}
 `;
 
 /**
@@ -70,9 +73,10 @@ const extractFields = (schemaLevelField: SchemaField): string[] => {
 export const Description = ({ schemaLevelField }: DescriptionProps) => {
 	const extractedFields = extractFields(schemaLevelField);
 	const currentFieldName = schemaLevelField.name;
+	const theme: Theme = useThemeContext();
 
 	return (
-		<div css={descriptionStyle}>
+		<div css={descriptionStyle(theme)}>
 			{extractedFields.length > 0 && (
 				<Fragment>
 					<FieldBlock> {currentFieldName} </FieldBlock>depends on the value(s) of:

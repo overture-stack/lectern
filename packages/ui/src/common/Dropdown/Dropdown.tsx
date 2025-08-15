@@ -53,6 +53,9 @@ const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?:
 	transition: all 0.2s ease;
 	z-index: 1000;
 	opacity: 1;
+	&:hover {
+		background-color: ${theme.colors.accent_1};
+	}
 
 	${disabled && disabledButtonStyle}
 `;
@@ -60,11 +63,6 @@ const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?:
 const parentStyle = css`
 	position: relative;
 	display: inline-block;
-`;
-
-const chevronStyle = (open: boolean) => css`
-	transform: ${open ? 'rotate(180deg)' : 'none'};
-	transition: transform 0.2s ease;
 `;
 
 const dropDownTitleStyle = (theme: Theme) => css`
@@ -75,11 +73,13 @@ const dropDownTitleStyle = (theme: Theme) => css`
 const dropdownMenuStyle = (theme: Theme) => css`
 	${theme.typography?.subtitleSecondary};
 	position: absolute;
-	top: calc(100% + 10px);
-	width: 98%;
+	top: calc(100% + 6px);
+	left: 0;
+	width: 100%;
 	background-color: ${theme.colors.background_light};
 	border: 2px solid ${theme.colors.border_button};
-	border-radius: 10px;
+	border-radius: 9px;
+	box-sizing: border-box;
 	z-index: 100;
 	max-height: 150px;
 	overflow-y: auto;
@@ -156,7 +156,7 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDow
 			>
 				{leftIcon}
 				<span css={dropDownTitleStyle(theme)}>{title}</span>
-				<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} style={chevronStyle(open)} />
+				<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} />
 			</button>
 			{open && !disabled && (
 				<menu role="menu" css={dropdownMenuStyle(theme)}>

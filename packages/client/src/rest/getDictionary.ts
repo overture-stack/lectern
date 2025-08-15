@@ -17,14 +17,15 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary, DictionaryBase, failure, success, type Result } from '@overture-stack/lectern-dictionary';
+import { DictionaryBase, failure, success, type Result } from '@overture-stack/lectern-dictionary';
 import axios, { AxiosError } from 'axios';
 import { z as zod } from 'zod';
 import formatAxiosError from './formatAxiosError';
 
 const dictionaryServerRecordSchema = DictionaryBase.extend({
 	_id: zod.string(),
-	createdAt: zod.string(),
+	createdAt: zod.coerce.date(),
+	updatedAt: zod.coerce.date().optional(),
 });
 export type DictionaryServerRecord = zod.infer<typeof dictionaryServerRecordSchema>;
 

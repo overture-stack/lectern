@@ -20,3 +20,5 @@
  */
 
 export * from './DictionaryHeader';
+export * from './DictionaryTableViewer';
+export * from './DictionaryViewerPage';

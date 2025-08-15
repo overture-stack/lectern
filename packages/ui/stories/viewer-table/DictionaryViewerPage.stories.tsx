@@ -22,37 +22,53 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import Button from '../../src/common/Button';
-import FileDownload from '../../src/theme/icons/FileDownload';
+
+import { DictionaryTableViewer } from '../../src/viewer-table/DictionaryTableViewer';
+import {
+	withEmptyDictionaries,
+	withForeverLoading,
+	withLecternServer,
+	withMultipleDictionaries,
+	withSingleDictionary,
+} from '../dictionaryDecorator';
 import themeDecorator from '../themeDecorator';
 
 const meta = {
-	component: Button,
-	title: 'Common/Button',
+	component: DictionaryTableViewer,
+	title: 'Viewer - Table/Dictionary Page',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
-} satisfies Meta<typeof Button>;
+} satisfies Meta<typeof DictionaryTableViewer>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-	args: { children: 'Click Me', onClick: () => alert('I have been clicked'), className: 'my-button', icon: '👍' },
+	decorators: [withMultipleDictionaries],
 };
-export const Disabled: Story = {
-	args: { children: 'Disabled', disabled: true },
-};
-export const Loading: Story = {
-	args: { isLoading: true, children: 'Loading...' },
-};
-export const IconOnly: Story = {
-	args: {
-		icon: <FileDownload />,
-		onClick: () => alert('I have been clicked'),
-		className: 'iconButton',
-		iconOnly: true,
-	},
-};
+
 export const Empty: Story = {
-	args: {},
+	decorators: [withEmptyDictionaries],
+};
+
+export const Loading: Story = {
+	decorators: [withForeverLoading()],
+};
+
+/*
+export const ErrorState: Story = {
+    decorators: [withErrorState()],
+};
+*/
+
+export const WithStaticData: Story = {
+	decorators: [withMultipleDictionaries],
+};
+
+export const SingleDictionary: Story = {
+	decorators: [withSingleDictionary],
+};
+
+export const LecternServer: Story = {
+	decorators: [withLecternServer("http://localhost:3000", "example-dictionary")],
 };

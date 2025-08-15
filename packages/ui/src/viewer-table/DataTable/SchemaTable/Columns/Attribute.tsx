@@ -20,10 +20,14 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
+import type { SchemaField } from '@overture-stack/lectern-dictionary';
 import { SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { useState } from 'react';
 
 import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
+import { isFieldRequired } from '../../../../utils/isFieldRequired';
+import { ConditionalLogicModal } from '../../../ConditionalLogicModal/ConditionalLogicModal';
 import OpenModalButton from '../../../OpenModalButton';
 
 export type Attributes = 'Required' | 'Optional' | 'Required When';
@@ -40,15 +44,31 @@ const containerStyle = (theme: Theme) => css`
 /**
  * Renders the attribute column cell showing field requirement status.
  * @param {SchemaFieldRestrictions} schemaFieldRestrictions - Field-level restrictions containing requirement information
- * @returns {JSX.Element} Attribute display showing Required, Optional, or Required When with modal button
  */
-export const renderAttributesColumn = (schemaFieldRestrictions: SchemaFieldRestrictions) => {
+
+export const renderAttributesColumn = (
+	schemaFieldRestrictions: SchemaFieldRestrictions,
+	currentSchemaField?: SchemaField,
+) => {
 	const theme: Theme = useThemeContext();
+	const [isOpen, setIsOpen] = useState(false);
+	const showConditional = !!(schemaFieldRestrictions && 'if' in schemaFieldRestrictions);
+
 	return (
 		<div css={containerStyle(theme)}>
-			{schemaFieldRestrictions && 'if' in schemaFieldRestrictions ?
-				<OpenModalButton onClick={() => alert('Hello World')}>Required When</OpenModalButton>
-			:	<div>{schemaFieldRestrictions && 'required' in schemaFieldRestrictions ? 'Required' : 'Optional'}</div>}
+			{showConditional ?
+				<>
+					<OpenModalButton onClick={() => setIsOpen(true)}>Required When</OpenModalButton>
+					{currentSchemaField && (
+						<ConditionalLogicModal
+							isOpen={isOpen}
+							setIsOpen={setIsOpen}
+							restrictions={schemaFieldRestrictions}
+							currentSchemaField={currentSchemaField}
+						/>
+					)}
+				</>
+			:	<div>{currentSchemaField && isFieldRequired(currentSchemaField) ? 'Required' : 'Optional'}</div>}
 		</div>
 	);
 };

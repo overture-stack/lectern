@@ -21,23 +21,31 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
 import { useState } from 'react';
 
+import { css } from '@emotion/react';
 import Button from '../../common/Button';
-import { Theme } from '../../theme';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export type DictionaryDownloadButtonProps = {
-	version: string;
-	name: string;
-	lecternUrl: string;
 	fileType: 'tsv' | 'csv';
-	disabled?: boolean;
 	iconOnly?: boolean;
+	schemaName?: string;
 };
 
-const downloadDictionary = async ({ fetchUrl, name, version }) => {
+const downloadDictionary = async ({
+	fetchUrl,
+	name,
+	version,
+	schemaName,
+}: {
+	fetchUrl: string;
+	name: string;
+	version: string;
+	schemaName?: string;
+}): Promise<void> => {
 	const res = await fetch(fetchUrl);
 
 	if (!res.ok) {
@@ -52,7 +60,8 @@ const downloadDictionary = async ({ fetchUrl, name, version }) => {
 
 	const a = document.createElement('a');
 	a.href = url;
-	a.download = `${name}_${version}_templates.zip`;
+	const fileName = schemaName ? `${name}_${version}_${schemaName}_template.zip` : `${name}_${version}_templates.zip`;
+	a.download = fileName;
 	document.body.appendChild(a);
 	a.click();
 	document.body.removeChild(a);
@@ -60,51 +69,62 @@ const downloadDictionary = async ({ fetchUrl, name, version }) => {
 	URL.revokeObjectURL(url);
 };
 
-const DictionaryDownloadButton = ({
-	version,
-	name,
-	lecternUrl,
-	fileType = 'tsv',
-	disabled = false,
-	iconOnly = false,
-}: DictionaryDownloadButtonProps) => {
+/**
+ * A Button that downloads submission templates.
+ * If a schemaName is provided, it treats the download as an individual schema download
+ * @param {DictionaryDownloadButtonProps} props
+ */
+
+export const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaName }: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
+
 	const theme: Theme = useThemeContext();
 	const { FileDownload } = theme.icons;
 
-	const fetchUrl = `${lecternUrl}/dictionaries/template/download?${new URLSearchParams({
+	const { loading, error, dictionaries, currentDictionaryIndex, lecternUrl } = useDictionaryDataContext();
+
+	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
+
+	if (!selectedDictionary || !lecternUrl || !selectedDictionary.name || !selectedDictionary.version) {
+		return null;
+	}
+
+	const { name, version } = selectedDictionary;
+
+	const queryParams = new URLSearchParams({
 		name,
 		version,
 		fileType,
-	})}`;
+	});
+
+	if (schemaName !== undefined && schemaName.trim()) {
+		queryParams.append('schemaName', schemaName);
+	}
+
+	const fetchUrl = `${lecternUrl}/dictionaries/template/download?${queryParams}`;
 
 	return (
 		<Button
 			iconOnly={iconOnly}
-			styleOverride={
-				iconOnly ?
-					css`
-						padding: 8px;
-					`
-				:	undefined
-			}
+			styleOverride={css`
+				white-space: nowrap;
+				${iconOnly ? 'padding: 8px;' : ''}
+			`}
 			icon={<FileDownload />}
 			onClick={async (e) => {
 				e.stopPropagation();
 				setIsLoading(true);
 				try {
-					await downloadDictionary({ fetchUrl, name, version });
+					await downloadDictionary({ fetchUrl, name, version, schemaName });
 				} catch (error) {
 					console.error('Error downloading dictionary:', error);
 				} finally {
 					setIsLoading(false);
 				}
 			}}
-			disabled={disabled || isLoading}
+			disabled={loading || error || isLoading}
 		>
 			Submission Templates
 		</Button>
 	);
 };
-
-export default DictionaryDownloadButton;

@@ -53,7 +53,7 @@ export type RestrictionItem = {
 
 export type AllowedValuesBaseDisplayItem = {
 	dependsOn?: ReactNode;
-	regularExpression?: RestrictionItem;
+	regularExpression?: ReactNode;
 	codeList?: RestrictionItem;
 	range?: RestrictionItem | ReactNode;
 	codeListWithCountRestrictions?: RestrictionItem;
@@ -183,7 +183,6 @@ const handleCodeListsWithCountRestrictions = (
  * Processes conditional field dependencies and renders them as field blocks.
  *
  * @param conditions {RestrictionCondition[]} - Array of restriction conditions containing field dependencies
- * @returns {ReactNode} A React component showing dependent fields
  */
 const handleDependsOn = (conditions: RestrictionCondition[]): ReactNode => {
 	const allFields = Array.from(new Set(conditions.flatMap((condition: RestrictionCondition) => condition.fields)));
@@ -209,22 +208,20 @@ const handleDependsOn = (conditions: RestrictionCondition[]): ReactNode => {
  * Handles both single patterns and arrays of patterns.
  *
  * @param regularExpression {MatchRuleRegex} - Single regex pattern string or array of patterns
- * @returns {RestrictionItem} A RestrictionItem with appropriate singular/plural prefix and pattern content
- *
- * @example
- * // For single pattern: "^[A-Z]+$"
- * // Returns: { prefix: ["Must match pattern:"], content: ["^[A-Z]+$"] }
- *
- * // For multiple patterns: ["^[A-Z]+$", "^[0-9]+$"]
- * // Returns: { prefix: ["Must match patterns:"], content: ["^[A-Z]+$", "^[0-9]+$"] }
  */
-const handleRegularExpression = (regularExpression: MatchRuleRegex): RestrictionItem => {
+const handleRegularExpression = (regularExpression: MatchRuleRegex) => {
 	const patterns = Array.isArray(regularExpression) ? regularExpression : [regularExpression];
 
-	return {
-		prefix: Array.isArray(regularExpression) ? ['Must match patterns:'] : ['Must match pattern:'],
-		content: patterns,
-	};
+	return (
+		<Fragment>
+			<b>{Array.isArray(regularExpression) ? 'Must match patterns:' : 'Must match pattern:'}</b>
+			<div css={contentStyle}>
+				{patterns.map((pattern) => (
+					<FieldBlock key={pattern}>{pattern}</FieldBlock>
+				))}
+			</div>
+		</Fragment>
+	);
 };
 
 /**
@@ -250,8 +247,6 @@ const handleCodeList = (codeList: MatchRuleCodeList | string): RestrictionItem =
  *
  * @param restrictions {Schema['restrictions']} - Schema-level restrictions containing uniqueKey and foreignKey definitions
  * @param currentSchemaField {SchemaField} - The field being processed for relationship constraints
- * @returns {ReactNode} React content describing the relationship constraint, or undefined if no constraints apply
- *
  * Process:
  * 1. Extracts unique keys and foreign keys from schema restrictions
  * 2. Finds foreign key mappings that reference the current field

@@ -43,7 +43,7 @@ const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 		left: 0;
 		background-color: ${rowIndex % 2 === 0 ? theme.colors.white : theme.colors.background_alternate};
 	`}
-	border: 1px solid ${theme.colors.border_light};
+	border: 2px solid ${theme.colors.border_light};
 `;
 
 export type TableRowProps<T> = {

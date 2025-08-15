@@ -28,7 +28,7 @@ import { Theme } from '../../../../theme';
 import { useThemeContext } from '../../../../theme/ThemeContext';
 
 const fieldContainerStyle = (theme: Theme) => css`
-	${theme.typography.data}
+	${theme.typography.paragraphSmall}
 	display: flex;
 	flex-direction: column;
 	gap: 3px;
@@ -70,7 +70,7 @@ export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
 	const fieldExamples = fieldRow.original.meta?.examples;
 
 	return (
-		<ReadMoreText wrapperStyle={fieldContainerStyle(theme)}>
+		<ReadMoreText maxLines={6} wrapperStyle={fieldContainerStyle(theme)}>
 			<b>{fieldName}</b>
 			{fieldDescription && <p>{fieldDescription}</p>}
 			{fieldExamples && (
