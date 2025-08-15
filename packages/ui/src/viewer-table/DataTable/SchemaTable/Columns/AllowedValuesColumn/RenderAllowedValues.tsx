@@ -24,6 +24,8 @@ import { SchemaField, SchemaFieldRestrictions, SchemaRestrictions } from '@overt
 import { ReactNode } from 'react';
 
 import ReadMoreText from '../../../../../common/ReadMoreText';
+import type { Theme } from '../../../../../theme';
+import { useThemeContext } from '../../../../../theme/ThemeContext';
 import { computeAllowedValuesColumn, type RestrictionItem } from './ComputeAllowedValues';
 
 const allowedValuesContainerStyle = css`
@@ -71,8 +73,18 @@ export const renderAllowedValuesColumn = (
 	currentSchemaField: SchemaField,
 ) => {
 	const items = computeAllowedValuesColumn(fieldLevelRestrictions, schemaLevelRestrictions, currentSchemaField);
+	const theme: Theme = useThemeContext();
+
 	if (!items || Object.keys(items).length === 0) {
-		return <b>No restrictions provided for this field</b>;
+		return (
+			<span
+				css={css`
+					${theme.typography.paragraphSmallBold}
+				`}
+			>
+				No restrictions provided for this field
+			</span>
+		);
 	}
 
 	return (
