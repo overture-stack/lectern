@@ -22,15 +22,15 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import DictionaryDownloadButton from '../../../src/viewer-table/InteractionPanel/DictionaryDownloadButton';
-import { withErrorState, withLecternUrl, withLoadingState } from '../../dictionaryDecorator';
+import { DictionaryDownloadButton } from '../../../src/viewer-table/InteractionPanel/DictionaryDownloadButton';
+import { withErrorState, withLecternServer, withLoadingState } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: DictionaryDownloadButton,
 	title: 'Viewer - Table/Interaction - Panel/DictionaryDownloadButton',
 	tags: ['autodocs'],
-	decorators: [themeDecorator(), withLecternUrl()],
+	decorators: [themeDecorator(), withLecternServer()],
 } satisfies Meta<typeof DictionaryDownloadButton>;
 
 export default meta;
