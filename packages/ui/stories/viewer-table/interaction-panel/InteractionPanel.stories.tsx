@@ -24,7 +24,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
-import { withForeverLoading, withLecternUrl } from '../../dictionaryDecorator';
+import { withForeverLoading, withLecternServer } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
@@ -49,21 +49,21 @@ const mockProps = {
 };
 
 export const Default: Story = {
-	decorators: [themeDecorator(), withLecternUrl()],
+	decorators: [themeDecorator(), withLecternServer()],
 	args: {
 		...mockProps,
 	},
 };
 
 export const WithSingleVersion: Story = {
-	decorators: [themeDecorator(), withLecternUrl()],
+	decorators: [themeDecorator(), withLecternServer()],
 	args: {
 		...mockProps,
 	},
 };
 
 export const Collapsed: Story = {
-	decorators: [themeDecorator(), withLecternUrl()],
+	decorators: [themeDecorator(), withLecternServer()],
 	args: {
 		...mockProps,
 	},

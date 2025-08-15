@@ -19,7 +19,6 @@
  *
  */
 
-import { css } from '@emotion/react';
 import Button from '../../common/Button';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { Theme } from '../../theme';
@@ -35,14 +34,7 @@ const CollapseAllButton = ({ onClick }: CollapseAllButtonProps) => {
 	const { Collapse } = theme.icons;
 
 	return (
-		<Button
-			icon={<Collapse />}
-			onClick={onClick}
-			disabled={loading || error}
-			styleOverride={css`
-				color: ${theme.colors.accent_dark};
-			`}
-		>
+		<Button icon={<Collapse />} onClick={onClick} disabled={loading || error}>
 			Collapse All
 		</Button>
 	);

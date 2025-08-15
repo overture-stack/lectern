@@ -53,6 +53,9 @@ const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?:
 	transition: all 0.2s ease;
 	z-index: 1000;
 	opacity: 1;
+	&:hover {
+		background-color: ${theme.colors.accent_1};
+	}
 
 	${disabled && disabledButtonStyle}
 `;

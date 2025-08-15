@@ -19,7 +19,6 @@
  *
  */
 
-import { css } from '@emotion/react';
 import Button from '../../common/Button';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { Theme } from '../../theme';
@@ -35,14 +34,7 @@ const ExpandAllButton = ({ onClick }: ExpandAllButtonProps) => {
 	const { Eye } = theme.icons;
 
 	return (
-		<Button
-			icon={<Eye />}
-			onClick={onClick}
-			disabled={loading || error}
-			styleOverride={css`
-				color: ${theme.colors.accent_dark};
-			`}
-		>
+		<Button icon={<Eye />} onClick={onClick} disabled={loading || error}>
 			Expand All
 		</Button>
 	);
