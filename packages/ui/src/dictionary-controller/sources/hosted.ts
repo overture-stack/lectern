@@ -21,12 +21,12 @@
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 
 function validateHostedDictionaries(input: unknown): Dictionary {
-	const asSingle = Dictionary.safeParse(input);
-	if (asSingle.success) {
-		return asSingle.data;
+	const dictionary = Dictionary.safeParse(input);
+	if (dictionary.success) {
+		return dictionary.data;
 	}
 
-	const message = asSingle.error?.message ?? 'Unknown validation error';
+	const message = dictionary.error?.message ?? 'Unknown validation error';
 	throw new Error(`Hosted dictionary validation failed: ${message}`);
 }
 
