@@ -18,13 +18,18 @@
  */
 
 import Dropdown from '../../common/Dropdown/Dropdown';
-import { FilterOptions, useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import {
+	FilterOptions,
+	useDictionaryDataContext,
+	useDictionaryStateContext,
+} from '../../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 const AttributeFilterDropdown = () => {
 	const theme: Theme = useThemeContext();
-	const { loading, errors, filters, setFilters } = useDictionaryDataContext();
+	const { loading, errors } = useDictionaryDataContext();
+	const { filters, setFilters } = useDictionaryStateContext();
 	const { ListFilter } = theme.icons;
 
 	const handleFilterSelect = (selectedFilterName: FilterOptions) => {

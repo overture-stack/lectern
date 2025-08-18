@@ -26,6 +26,7 @@ import VersionSwitcher from '../../../src/viewer-table/InteractionPanel/Dictiona
 import {
 	withEmptyDictionaries,
 	withErrorState,
+	withForeverLoading,
 	withLoadingState,
 	withMultipleDictionaries,
 	withSingleDictionary,
@@ -80,6 +81,17 @@ export const Loading: Story = {
 		docs: {
 			description: {
 				story: 'Component is disabled when loading.',
+			},
+		},
+	},
+};
+
+export const ForeverLoading: Story = {
+	decorators: [themeDecorator(), withForeverLoading()],
+	parameters: {
+		docs: {
+			description: {
+				story: 'Component is disabled during forever loading state.',
 			},
 		},
 	},

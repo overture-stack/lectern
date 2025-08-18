@@ -24,7 +24,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
-import { withForeverLoading, withLecternServer } from '../../dictionaryDecorator';
+import { withErrorState, withForeverLoading, withLecternUrl, withLoadingState } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
@@ -49,37 +49,43 @@ const mockProps = {
 };
 
 export const Default: Story = {
-	decorators: [themeDecorator(), withLecternServer()],
+	decorators: [themeDecorator(), withLecternUrl()],
 	args: {
 		...mockProps,
 	},
 };
 
 export const WithSingleVersion: Story = {
-	decorators: [themeDecorator(), withLecternServer()],
+	decorators: [themeDecorator(), withLecternUrl()],
 	args: {
 		...mockProps,
 	},
 };
 
 export const Collapsed: Story = {
-	decorators: [themeDecorator(), withLecternServer()],
+	decorators: [themeDecorator(), withLecternUrl()],
 	args: {
 		...mockProps,
 	},
 };
 
 export const Loading: Story = {
-	decorators: [themeDecorator(), withForeverLoading()],
-	render: () => <InteractionPanel {...mockProps} />,
+	decorators: [themeDecorator(), withLoadingState()],
 	args: {
 		...mockProps,
 	},
 };
 
-// export const Error: Story = {
-// 	decorators: [themeDecorator(), withErrorState()],
-// 	args: {
-// 		...mockProps,
-// 	},
-// };
+export const ForeverLoading: Story = {
+	decorators: [themeDecorator(), withForeverLoading()],
+	args: {
+		...mockProps,
+	},
+};
+
+export const Error: Story = {
+	decorators: [themeDecorator(), withErrorState()],
+	args: {
+		...mockProps,
+	},
+};

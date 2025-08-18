@@ -23,7 +23,12 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
-import { withErrorState, withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
+import {
+	withErrorState,
+	withForeverLoading,
+	withLoadingState,
+	withMultipleDictionaries,
+} from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
@@ -41,6 +46,10 @@ export const Default: Story = {};
 
 export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
+};
+
+export const ForeverLoading: Story = {
+	decorators: [themeDecorator(), withForeverLoading()],
 };
 
 export const Error: Story = {

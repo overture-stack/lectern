@@ -23,7 +23,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import Accordion from '../../src/common/Accordion/Accordion';
-import { withLecternServer } from '../dictionaryDecorator';
+import { withLecternUrl } from '../dictionaryDecorator';
 import themeDecorator from '../themeDecorator';
 
 const meta = {
@@ -50,7 +50,7 @@ export const Default: Story = {
 };
 
 export const WithDownloadButton: Story = {
-	decorators: [withLecternServer()],
+	decorators: [withLecternUrl()],
 	args: {
 		collapseAll: true,
 		accordionItems: [

@@ -26,8 +26,10 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DictionaryTableViewer } from '../../src/viewer-table/DictionaryTableViewer';
 import {
 	withEmptyDictionaries,
+	withErrorState,
 	withForeverLoading,
-	withLecternServer,
+	withLecternUrl,
+	withLoadingState,
 	withMultipleDictionaries,
 	withSingleDictionary,
 } from '../dictionaryDecorator';
@@ -52,14 +54,16 @@ export const Empty: Story = {
 };
 
 export const Loading: Story = {
+	decorators: [withLoadingState()],
+};
+
+export const ForeverLoading: Story = {
 	decorators: [withForeverLoading()],
 };
 
-/*
 export const ErrorState: Story = {
-    decorators: [withErrorState()],
+	decorators: [withErrorState()],
 };
-*/
 
 export const WithStaticData: Story = {
 	decorators: [withMultipleDictionaries],
@@ -70,5 +74,5 @@ export const SingleDictionary: Story = {
 };
 
 export const LecternServer: Story = {
-	decorators: [withLecternServer("http://localhost:3000", "example-dictionary")],
+	decorators: [withLecternUrl()],
 };

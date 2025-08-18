@@ -25,6 +25,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { pick } from 'lodash';
 
 import DictionaryHeader from '../../src/viewer-table/DictionaryHeader';
+import { withForeverLoading } from '../dictionaryDecorator';
 import biosampleDictionary from '../fixtures/minimalBiosampleModel';
 import themeDecorator from '../themeDecorator';
 
@@ -79,6 +80,20 @@ export const Loading: Story = {
 		docs: {
 			description: {
 				story: 'Header shows skeleton placeholders; use as forever-loading showcase.',
+			},
+		},
+	},
+};
+
+export const ForeverLoading: Story = {
+	decorators: [themeDecorator(), withForeverLoading()],
+	args: {
+		...pick(biosampleDictionary, 'name', 'version', 'description'),
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: 'Context-driven loading state showing skeleton placeholders.',
 			},
 		},
 	},

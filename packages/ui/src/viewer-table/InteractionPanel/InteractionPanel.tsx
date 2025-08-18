@@ -25,7 +25,7 @@ import { css } from '@emotion/react';
 
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import AttributeFilterDropdown from './AttributeFilterDropdown';
@@ -81,7 +81,8 @@ const InteractionPanelSkeleton = () => {
 };
 const InteractionPanel = ({ onSelect, setIsCollapsed }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
-	const { dictionaries, currentDictionaryIndex, loading } = useDictionaryDataContext();
+	const { dictionaries, loading } = useDictionaryDataContext();
+	const { currentDictionaryIndex } = useDictionaryStateContext();
 	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
 
 	if (!selectedDictionary?.schemas && !loading) {

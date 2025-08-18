@@ -26,7 +26,7 @@ import type { Schema, SchemaFieldRestrictions } from '@overture-stack/lectern-di
 import { useEffect, useRef, useState } from 'react';
 
 import Accordion from '../common/Accordion/Accordion';
-import { useDictionaryDataContext } from '../dictionary-controller/DictionaryDataContext';
+import { useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
 import { isFieldRequired } from '../utils/isFieldRequired';
@@ -55,7 +55,8 @@ const isConditionalRestriction = (schemaFieldRestriction: SchemaFieldRestriction
 
 export const DictionaryTableViewer = () => {
 	const theme: Theme = useThemeContext();
-	const { loading, error, dictionaries, currentDictionaryIndex, filters } = useDictionaryDataContext();
+	const { loading, errors, dictionaries } = useDictionaryDataContext();
+	const { currentDictionaryIndex, filters } = useDictionaryStateContext();
 	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
 
 	const [isCollapsed, setIsCollapsed] = useState(false);
@@ -64,10 +65,10 @@ export const DictionaryTableViewer = () => {
 	const accordionRefs = useRef<(HTMLLIElement | null)[]>([]);
 
 	useEffect(() => {
-		if (error || (!loading && !selectedDictionary)) {
+		if (errors.length > 0 || (!loading && !selectedDictionary)) {
 			setIsErrorModalOpen(true);
 		}
-	}, [error, loading, selectedDictionary]);
+	}, [errors, loading, selectedDictionary]);
 
 	const getFilteredSchema = (schema: Schema) => {
 		if (filters.includes('Required')) {

@@ -18,7 +18,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { DictionaryDataProvider } from '../dictionary-controller/DictionaryDataContext';
+import { DictionaryLecternDataProvider, DictionaryStateProvider } from '../dictionary-controller/DictionaryDataContext';
+
 import DictionaryTableViewer from './DictionaryTableViewer';
 export type DictionaryTableViewerProps = {
 	lecternUrl: string;
@@ -31,8 +32,10 @@ export type DictionaryTableViewerProps = {
  */
 export const DictionaryViewerPage = ({ lecternUrl, dictionaryName }: DictionaryTableViewerProps) => {
 	return (
-		<DictionaryDataProvider lecternUrl={lecternUrl} dictionaryName={dictionaryName}>
-			<DictionaryTableViewer />
-		</DictionaryDataProvider>
+		<DictionaryLecternDataProvider lecternUrl={lecternUrl} dictionaryName={dictionaryName}>
+			<DictionaryStateProvider>
+				<DictionaryTableViewer />
+			</DictionaryStateProvider>
+		</DictionaryLecternDataProvider>
 	);
 };

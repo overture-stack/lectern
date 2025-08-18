@@ -20,11 +20,17 @@
 import type { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Decorator } from '@storybook/react';
+import React from 'react';
 
-import { DictionaryDataProvider } from '../src/dictionary-controller/DictionaryDataContext';
+import {
+	DictionaryDataContext,
+	DictionaryLecternDataProvider,
+	DictionaryStateProvider,
+	DictionaryStaticDataProvider,
+} from '../src/dictionary-controller/DictionaryDataContext';
 import DictionarySample from './fixtures/pcgl.json';
 
-type DictionaryServerUnion = Partial<DictionaryServerRecord> | Dictionary;
+type DictionaryServerUnion = DictionaryServerRecord | Dictionary;
 
 export type DictionaryTestData = Array<DictionaryServerUnion>;
 
@@ -35,65 +41,83 @@ export const multipleDictionaryData: DictionaryTestData = [
 		...DictionarySample,
 		version: '1.0',
 		_id: '1',
-		createdAt: new Date('2025-01-01T00:00:00.000Z'),
+		createdAt: '',
 	},
 	{
 		...DictionarySample,
 		version: '2.0',
 		_id: '2',
-		createdAt: new Date('2025-01-02T00:00:00.000Z'),
+		createdAt: '2025-01-02T00:00:00.000Z',
 	},
 	{
 		...DictionarySample,
 		version: '3.0',
 		_id: '3',
-		createdAt: new Date('2025-01-03T00:00:00.000Z'),
+		createdAt: '2025-01-03T00:00:00.000Z',
 	},
-] as DictionaryServerRecord[];
+] as DictionaryServerUnion[];
 
 export const emptyDictionaryData: DictionaryTestData = [];
 
 export const withDictionaryContext = (dictionaries: DictionaryTestData = multipleDictionaryData): Decorator => {
 	return (Story) => (
-		<DictionaryDataProvider staticDictionaries={dictionaries}>
-			<Story />
-		</DictionaryDataProvider>
+		<DictionaryStaticDataProvider staticDictionaries={dictionaries}>
+			<DictionaryStateProvider>
+				<Story />
+			</DictionaryStateProvider>
+		</DictionaryStaticDataProvider>
+	);
+};
+
+export const withLecternUrl = (): Decorator => {
+	return (Story) => (
+		<DictionaryLecternDataProvider lecternUrl="http://localhost:3000" dictionaryName="example-dictionary">
+			<DictionaryStateProvider>
+				<Story />
+			</DictionaryStateProvider>
+		</DictionaryLecternDataProvider>
 	);
 };
 
 export const withLoadingState = (): Decorator => {
 	return (Story) => (
-		<DictionaryDataProvider lecternUrl="http://10.255.255.1:12345" dictionaryName="never-resolves">
-			<Story />
-		</DictionaryDataProvider>
+		<DictionaryLecternDataProvider lecternUrl="http://localhost:9999" dictionaryName={DictionarySample.name}>
+			<DictionaryStateProvider>
+				<Story />
+			</DictionaryStateProvider>
+		</DictionaryLecternDataProvider>
 	);
+};
+
+export const withForeverLoading = (): Decorator => {
+	return (Story) => {
+		const ForeverLoadingProvider = ({ children }: { children: React.ReactNode }) => {
+			const value = {
+				dictionaries: undefined,
+				loading: true,
+				errors: [],
+			};
+
+			return <DictionaryDataContext.Provider value={value}>{children}</DictionaryDataContext.Provider>;
+		};
+
+		return (
+			<ForeverLoadingProvider>
+				<DictionaryStateProvider>
+					<Story />
+				</DictionaryStateProvider>
+			</ForeverLoadingProvider>
+		);
+	};
 };
 
 export const withErrorState = (): Decorator => {
 	return (Story) => (
-		<DictionaryDataProvider lecternUrl="http://nonexistent-server.com" dictionaryName="nonexistent">
-			<Story />
-		</DictionaryDataProvider>
-	);
-};
-
-// Forever-loading decorator that points to a non-routable IP so requests never resolve.
-export const withForeverLoading = (): Decorator => {
-	return (Story) => (
-		<DictionaryDataProvider lecternUrl="http://10.255.255.1:12345" dictionaryName="never-resolves">
-			<Story />
-		</DictionaryDataProvider>
-	);
-};
-
-export const withLecternServer = (
-	url: string = 'http://localhost:3000',
-	name: string = 'example-dictionary',
-): Decorator => {
-	return (Story) => (
-		<DictionaryDataProvider lecternUrl={url} dictionaryName={name}>
-			<Story />
-		</DictionaryDataProvider>
+		<DictionaryLecternDataProvider lecternUrl="http://nonexistent-server.com" dictionaryName="nonexistent">
+			<DictionaryStateProvider>
+				<Story />
+			</DictionaryStateProvider>
+		</DictionaryLecternDataProvider>
 	);
 };
 
