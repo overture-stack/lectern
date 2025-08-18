@@ -41,6 +41,7 @@ export type DictionaryStateContextType = {
 	filters: FilterOptions[];
 	setCurrentDictionaryIndex: (index: number) => void;
 	setFilters: (filters: FilterOptions[]) => void;
+	selectedDictionary?: DictionaryServerUnion;
 };
 
 export type StaticDictionaryProviderProps = {
@@ -62,23 +63,23 @@ export type LecternDictionaryProviderProps = {
 export const DictionaryDataContext = createContext<DictionaryDataContextType | undefined>(undefined);
 export const DictionaryStateContext = createContext<DictionaryStateContextType | undefined>(undefined);
 
-export function useDictionaryDataContext(): DictionaryDataContextType {
+export const useDictionaryDataContext = (): DictionaryDataContextType => {
 	const context = useContext(DictionaryDataContext);
 	if (context === undefined) {
 		console.error('useDictionaryDataContext must be used within a DictionaryDataProvider');
 		throw new Error('useDictionaryDataContext must be used within a DictionaryDataProvider');
 	}
 	return context;
-}
+};
 
-export function useDictionaryStateContext(): DictionaryStateContextType {
+export const useDictionaryStateContext = (): DictionaryStateContextType => {
 	const context = useContext(DictionaryStateContext);
 	if (context === undefined) {
 		console.error('useDictionaryStateContext must be used within a DictionaryStateProvider');
 		throw new Error('useDictionaryStateContext must be used within a DictionaryStateProvider');
 	}
 	return context;
-}
+};
 
 const createErrorMessage = (err: unknown): string => {
 	if (err instanceof Error) {
@@ -175,11 +176,16 @@ export const DictionaryStateProvider = ({ children }: DictionaryStateProviderPro
 	const [currentDictionaryIndex, setCurrentDictionaryIndex] = useState(0);
 	const [filters, setFilters] = useState<FilterOptions[]>([]);
 
+	const dictionaryData = useDictionaryDataContext();
+	const { dictionaries } = dictionaryData;
+	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
+
 	const value: DictionaryStateContextType = {
 		currentDictionaryIndex,
 		filters,
 		setCurrentDictionaryIndex,
 		setFilters,
+		selectedDictionary,
 	};
 
 	return <DictionaryStateContext.Provider value={value}>{children}</DictionaryStateContext.Provider>;

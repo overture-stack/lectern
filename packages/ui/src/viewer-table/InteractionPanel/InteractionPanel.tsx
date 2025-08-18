@@ -77,12 +77,10 @@ const InteractionPanelSkeleton = () => {
 	);
 };
 
-const InteractionPanel = ({ onSelect, isCollapsed, setIsCollapsed }: InteractionPanelProps) => {
+const InteractionPanel = ({ onSelect, setIsCollapsed }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
-	const { dictionaries, loading } = useDictionaryDataContext();
-	const { currentDictionaryIndex } = useDictionaryStateContext();
-
-	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
+	const { loading } = useDictionaryDataContext();
+	const { selectedDictionary } = useDictionaryStateContext();
 
 	if (!selectedDictionary?.schemas && !loading) {
 		return null;

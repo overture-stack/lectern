@@ -22,7 +22,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { DictionaryDownloadButton } from '../../../src/viewer-table/InteractionPanel/DictionaryDownloadButton';
+import DictionaryDownloadButton from '../../../src/viewer-table/InteractionPanel/DictionaryDownloadButton';
 import { withDictionaryContext, withErrorState, withLoadingState } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 

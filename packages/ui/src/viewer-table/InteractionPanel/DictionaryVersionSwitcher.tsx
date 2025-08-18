@@ -31,9 +31,7 @@ const DictionaryVersionSwitcher = () => {
 	const { History } = theme.icons;
 
 	const { loading, errors, dictionaries } = useDictionaryDataContext();
-	const { currentDictionaryIndex, setCurrentDictionaryIndex } = useDictionaryStateContext();
-
-	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
+	const { selectedDictionary, setCurrentDictionaryIndex } = useDictionaryStateContext();
 
 	const createdAt = selectedDictionary && 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : '';
 
