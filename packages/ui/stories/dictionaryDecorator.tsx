@@ -20,11 +20,16 @@
 import type { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Decorator } from '@storybook/react';
+import React from 'react';
 
-import { DictionaryDataProvider } from '../src/dictionary-controller/DictionaryDataContext';
+import {
+	DictionaryLecternDataProvider,
+	DictionaryStateProvider,
+	DictionaryStaticDataProvider,
+} from '../src/dictionary-controller/DictionaryDataContext';
 import DictionarySample from './fixtures/pcgl.json';
 
-type DictionaryServerUnion = Partial<DictionaryServerRecord> | Dictionary;
+type DictionaryServerUnion = DictionaryServerRecord | Dictionary;
 
 export type DictionaryTestData = Array<DictionaryServerUnion>;
 
@@ -49,39 +54,47 @@ export const multipleDictionaryData: DictionaryTestData = [
 		_id: '3',
 		createdAt: '2025-01-03T00:00:00.000Z',
 	},
-] as DictionaryServerRecord[];
+] as DictionaryServerUnion[];
 
 export const emptyDictionaryData: DictionaryTestData = [];
 
 export const withDictionaryContext = (dictionaries: DictionaryTestData = multipleDictionaryData): Decorator => {
 	return (Story) => (
-		<DictionaryDataProvider staticDictionaries={dictionaries}>
-			<Story />
-		</DictionaryDataProvider>
+		<DictionaryStaticDataProvider staticDictionaries={dictionaries}>
+			<DictionaryStateProvider>
+				<Story />
+			</DictionaryStateProvider>
+		</DictionaryStaticDataProvider>
 	);
 };
 
 export const withLecternUrl = (): Decorator => {
 	return (Story) => (
-		<DictionaryDataProvider lecternUrl="http://localhost:3031" dictionaryName="example-dictionary">
-			<Story />
-		</DictionaryDataProvider>
+		<DictionaryLecternDataProvider lecternUrl="http://localhost:3031" dictionaryName="example-dictionary">
+			<DictionaryStateProvider>
+				<Story />
+			</DictionaryStateProvider>
+		</DictionaryLecternDataProvider>
 	);
 };
 
 export const withLoadingState = (): Decorator => {
 	return (Story) => (
-		<DictionaryDataProvider lecternUrl="http://localhost:9999" dictionaryName={DictionarySample.name}>
-			<Story />
-		</DictionaryDataProvider>
+		<DictionaryLecternDataProvider lecternUrl="http://localhost:9999" dictionaryName={DictionarySample.name}>
+			<DictionaryStateProvider>
+				<Story />
+			</DictionaryStateProvider>
+		</DictionaryLecternDataProvider>
 	);
 };
 
 export const withErrorState = (): Decorator => {
 	return (Story) => (
-		<DictionaryDataProvider lecternUrl="http://nonexistent-server.com" dictionaryName="nonexistent">
-			<Story />
-		</DictionaryDataProvider>
+		<DictionaryLecternDataProvider lecternUrl="http://nonexistent-server.com" dictionaryName="nonexistent">
+			<DictionaryStateProvider>
+				<Story />
+			</DictionaryStateProvider>
+		</DictionaryLecternDataProvider>
 	);
 };
 

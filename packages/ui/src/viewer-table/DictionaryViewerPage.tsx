@@ -18,8 +18,9 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { ReactNode } from 'react';
-import { DictionaryDataProvider } from '../dictionary-controller/DictionaryDataContext';
+import React, { ReactNode } from 'react';
+import { DictionaryLecternDataProvider, DictionaryStateProvider } from '../dictionary-controller/DictionaryDataContext';
+
 export type DictionaryTableViewerProps = {
 	lecternUrl: string;
 	dictionaryName: string;
@@ -32,9 +33,11 @@ export type DictionaryTableViewerProps = {
  */
 export const DictionaryViewerPage = ({ lecternUrl, dictionaryName, children }: DictionaryTableViewerProps) => {
 	return (
-		<DictionaryDataProvider lecternUrl={lecternUrl} dictionaryName={dictionaryName}>
-			{/* TODO: Write a full fledged dictionary page component and remove children */}
-			{children}
-		</DictionaryDataProvider>
+		<DictionaryLecternDataProvider lecternUrl={lecternUrl} dictionaryName={dictionaryName}>
+			<DictionaryStateProvider>
+				{/* TODO: Write a full fledged dictionary page component and remove children */}
+				{children}
+			</DictionaryStateProvider>
+		</DictionaryLecternDataProvider>
 	);
 };
