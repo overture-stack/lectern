@@ -24,8 +24,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 
 import { fetchAndValidateHostedDictionaries, fetchRemoteDictionary } from './sources';
 
-// Static dictionaries may not have the properties such as createdAt or id - hence the use of Partial<T>
-export type DictionaryServerUnion = Partial<DictionaryServerRecord> | Dictionary;
+export type DictionaryServerUnion = DictionaryServerRecord | Dictionary;
 
 export type FilterOptions = 'Required' | 'All Fields';
 
@@ -34,7 +33,7 @@ export type DictionaryContextType = {
 	lecternUrl?: string;
 	name?: string;
 	loading: boolean;
-	error?: boolean;
+	errors: string[];
 	currentDictionaryIndex: number;
 	filters: FilterOptions[];
 	setCurrentDictionaryIndex: (index: number) => void;
@@ -73,10 +72,10 @@ export function useDictionaryDataContext(): DictionaryContextType {
 	return context;
 }
 
-export function DictionaryDataProvider(props: DictionaryProviderProps) {
+export const DictionaryDataProvider = (props: DictionaryProviderProps) => {
 	const [dictionaries, setDictionaries] = useState<DictionaryServerUnion[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(false);
+	const [errors, setErrors] = useState<string[]>([]);
 
 	const [currentDictionaryIndex, setCurrentDictionaryIndex] = useState(0);
 	const [filters, setFilters] = useState<FilterOptions[]>([]);
@@ -85,7 +84,7 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 		if ('staticDictionaries' in props) {
 			setDictionaries(props.staticDictionaries);
 			setLoading(false);
-			setError(false);
+			setErrors([]);
 			return;
 		}
 
@@ -94,10 +93,18 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 				try {
 					const dictionariesData = await fetchAndValidateHostedDictionaries(props.hostedUrl);
 					setDictionaries([dictionariesData]);
-					setError(false);
+					setErrors([]);
 				} catch (err) {
 					console.error('Error loading hosted dictionary data:', err);
-					setError(true);
+					let message: string;
+					if (err instanceof Error) {
+						message = err.message;
+					} else if (typeof err === 'string') {
+						message = err;
+					} else {
+						message = 'Something went wrong';
+					}
+					setErrors([message]);
 				} finally {
 					setLoading(false);
 				}
@@ -114,10 +121,18 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 						props.dictionaryName,
 					);
 					setDictionaries(fetchedDictionaries);
-					setError(false);
+					setErrors([]);
 				} catch (err) {
-					console.error('Error loading remote dictionary data:', err);
-					setError(true);
+					console.error('Error loading hosted dictionary data:', err);
+					let message: string;
+					if (err instanceof Error) {
+						message = err.message;
+					} else if (typeof err === 'string') {
+						message = err;
+					} else {
+						message = 'Something went wrong';
+					}
+					setErrors([message]);
 				} finally {
 					setLoading(false);
 				}
@@ -132,7 +147,7 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 		lecternUrl: 'lecternUrl' in props ? props.lecternUrl : undefined,
 		name: 'dictionaryName' in props ? props.dictionaryName : undefined,
 		loading,
-		error,
+		errors,
 		currentDictionaryIndex,
 		filters,
 		setCurrentDictionaryIndex,
@@ -140,4 +155,4 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 	};
 
 	return <DictionaryDataContext.Provider value={value}>{props.children}</DictionaryDataContext.Provider>;
-}
+};

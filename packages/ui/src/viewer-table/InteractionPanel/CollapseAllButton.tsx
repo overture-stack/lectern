@@ -21,7 +21,7 @@
 
 import Button from '../../common/Button';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
-import { Theme } from '../../theme';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export interface CollapseAllButtonProps {
@@ -30,11 +30,11 @@ export interface CollapseAllButtonProps {
 
 const CollapseAllButton = ({ onClick }: CollapseAllButtonProps) => {
 	const theme: Theme = useThemeContext();
-	const { loading, error } = useDictionaryDataContext();
+	const { loading, errors } = useDictionaryDataContext();
 	const { Collapse } = theme.icons;
 
 	return (
-		<Button icon={<Collapse />} onClick={onClick} disabled={loading || error}>
+		<Button icon={<Collapse />} onClick={onClick} disabled={loading || errors.length > 0}>
 			Collapse All
 		</Button>
 	);

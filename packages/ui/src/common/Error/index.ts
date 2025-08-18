@@ -5,7 +5,7 @@
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
  *  GNU Affero General Public License along with this program.
- *   If not, see <http://www.gnu.org/licenses/>.
+ *  If not, see <http://www.gnu.org/licenses/>.
  *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
  *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -19,25 +19,5 @@
  *
  */
 
-import Button from '../../common/Button';
-import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
-
-export interface ExpandAllButtonProps {
-	onClick: () => void;
-}
-
-const ExpandAllButton = ({ onClick }: ExpandAllButtonProps) => {
-	const theme: Theme = useThemeContext();
-	const { loading, errors } = useDictionaryDataContext();
-	const { Eye } = theme.icons;
-
-	return (
-		<Button icon={<Eye />} onClick={onClick} disabled={loading || errors.length > 0}>
-			Expand All
-		</Button>
-	);
-};
-
-export default ExpandAllButton;
+export { ErrorMessage } from './ErrorMessage';
+export { ErrorModal } from './ErrorModal';

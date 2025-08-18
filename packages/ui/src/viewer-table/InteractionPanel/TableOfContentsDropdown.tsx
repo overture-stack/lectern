@@ -23,7 +23,7 @@ import type { Schema } from '@overture-stack/lectern-dictionary';
 
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
-import { Theme } from '../../theme';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export type TableOfContentsDropdownProps = {
@@ -33,7 +33,7 @@ export type TableOfContentsDropdownProps = {
 
 const TableOfContentsDropdown = ({ schemas, onSelect }: TableOfContentsDropdownProps) => {
 	const theme: Theme = useThemeContext();
-	const { loading, error } = useDictionaryDataContext();
+	const { loading, errors } = useDictionaryDataContext();
 	const { List } = theme.icons;
 
 	const handleAction = (index: number) => {
@@ -54,7 +54,7 @@ const TableOfContentsDropdown = ({ schemas, onSelect }: TableOfContentsDropdownP
 				leftIcon={<List />}
 				title="Table of Contents"
 				menuItems={menuItemsFromSchemas}
-				disabled={loading || error}
+				disabled={loading || errors.length > 0}
 			/>
 		:	null;
 };

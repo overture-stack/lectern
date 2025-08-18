@@ -21,12 +21,12 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css, Global } from '@emotion/react';
+import { css } from '@emotion/react';
 import Modal, { Styles } from 'react-modal';
 
-import { Theme } from '../theme';
-import MessageSquareWarning from '../theme/icons/MessageSquareWarning';
-import { useThemeContext } from '../theme/ThemeContext';
+import type { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
+import { ErrorMessage } from './ErrorMessage';
 
 Modal.setAppElement('body');
 
@@ -54,7 +54,7 @@ const customStyles = (theme: Theme): Styles => ({
 	},
 });
 
-const containerStyle = (theme: Theme) => css`
+const containerStyle = css`
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
@@ -93,23 +93,6 @@ const errorListStyle = css`
 	margin-top: 8px;
 `;
 
-const errorItemStyle = css`
-	display: flex;
-	align-items: center;
-	gap: 12px;
-`;
-
-const errorIconStyle = (theme: Theme) => css`
-	color: ${theme.colors.error_dark};
-	flex-shrink: 0;
-`;
-
-const errorTextStyle = (theme: Theme) => css`
-	${theme.typography.bodyBold}
-	color: ${theme.colors.error_dark};
-	margin: 0;
-`;
-
 export type ErrorModalProps = {
 	setIsOpen: (isOpen: boolean) => void;
 	isOpen: boolean;
@@ -130,40 +113,27 @@ export const ErrorModal = ({ setIsOpen, isOpen, errors, onContactClick }: ErrorM
 	const theme: Theme = useThemeContext();
 
 	return (
-		<>
-			<Global
-				styles={css`
-					body.modal-open {
-						overflow: hidden;
-					}
-				`}
-			/>
-			<Modal
-				isOpen={isOpen}
-				onRequestClose={() => setIsOpen(false)}
-				style={customStyles(theme)}
-				contentLabel="Error Modal"
-				bodyOpenClassName="modal-open"
-			>
-				<div css={containerStyle(theme)}>
-					<h1 css={titleStyle(theme)}>Error</h1>
-					<p css={subtitleStyle(theme)}>view console logs for more details</p>
-					<p css={descriptionStyle(theme)}>
-						The dictionary controller has returned errors. If you are seeing this{' '}
-						<span css={contactLinkStyle(theme)} onClick={onContactClick} role="button" tabIndex={0}>
-							please contact the platform administrator.
-						</span>
-					</p>
-					<div css={errorListStyle}>
-						{errors.map((error, index) => (
-							<div key={index} css={errorItemStyle}>
-								<MessageSquareWarning style={errorIconStyle(theme)} size={20} />
-								<span css={errorTextStyle(theme)}>{error}</span>
-							</div>
-						))}
-					</div>
+		<Modal
+			isOpen={isOpen}
+			onRequestClose={() => setIsOpen(false)}
+			style={customStyles(theme)}
+			contentLabel="Error Modal"
+		>
+			<div css={containerStyle}>
+				<h1 css={titleStyle(theme)}>Error</h1>
+				<p css={subtitleStyle(theme)}>view console logs for more details</p>
+				<p css={descriptionStyle(theme)}>
+					The dictionary controller has returned errors. If you are seeing this{' '}
+					<span css={contactLinkStyle(theme)} onClick={onContactClick} role="button" tabIndex={0}>
+						please contact the platform administrator.
+					</span>
+				</p>
+				<div css={errorListStyle}>
+					{errors.map((error, index) => (
+						<ErrorMessage key={index} message={error} />
+					))}
 				</div>
-			</Modal>
-		</>
+			</div>
+		</Modal>
 	);
 };

@@ -29,7 +29,7 @@ const formatDate = (dateString: string | undefined): string => {
 const DictionaryVersionSwitcher = () => {
 	const theme: Theme = useThemeContext();
 	const { History } = theme.icons;
-	const { loading, error, dictionaries, currentDictionaryIndex, setCurrentDictionaryIndex } =
+	const { loading, errors, dictionaries, currentDictionaryIndex, setCurrentDictionaryIndex } =
 		useDictionaryDataContext();
 	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
 
@@ -59,7 +59,7 @@ const DictionaryVersionSwitcher = () => {
 				leftIcon={<History />}
 				menuItems={versionSwitcherObjectArray}
 				title={title}
-				disabled={loading || error}
+				disabled={loading || errors.length > 0}
 			/>
 		)
 	);

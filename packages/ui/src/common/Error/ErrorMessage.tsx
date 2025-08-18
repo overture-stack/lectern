@@ -5,7 +5,7 @@
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
  *  GNU Affero General Public License along with this program.
- *   If not, see <http://www.gnu.org/licenses/>.
+ *  If not, see <http://www.gnu.org/licenses/>.
  *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
  *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -19,25 +19,42 @@
  *
  */
 
-import Button from '../../common/Button';
-import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+/** @jsxImportSource @emotion/react */
+
+import { css } from '@emotion/react';
+
 import type { Theme } from '../../theme';
+import MessageSquareWarning from '../../theme/icons/MessageSquareWarning';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-export interface ExpandAllButtonProps {
-	onClick: () => void;
-}
+const errorItemStyle = css`
+	display: flex;
+	align-items: center;
+	gap: 12px;
+`;
 
-const ExpandAllButton = ({ onClick }: ExpandAllButtonProps) => {
-	const theme: Theme = useThemeContext();
-	const { loading, errors } = useDictionaryDataContext();
-	const { Eye } = theme.icons;
+const errorIconStyle = (theme: Theme) => css`
+	color: ${theme.colors.error_dark};
+	flex-shrink: 0;
+`;
 
-	return (
-		<Button icon={<Eye />} onClick={onClick} disabled={loading || errors.length > 0}>
-			Expand All
-		</Button>
-	);
+const errorTextStyle = (theme: Theme) => css`
+	${theme.typography.bodyBold}
+	color: ${theme.colors.error_dark};
+	margin: 0;
+`;
+
+export type ErrorMessageProps = {
+	message: string;
 };
 
-export default ExpandAllButton;
+export const ErrorMessage = ({ message }: ErrorMessageProps) => {
+	const theme: Theme = useThemeContext();
+
+	return (
+		<div css={errorItemStyle}>
+			<MessageSquareWarning style={errorIconStyle(theme)} size={20} />
+			<span css={errorTextStyle(theme)}>{message}</span>
+		</div>
+	);
+};
