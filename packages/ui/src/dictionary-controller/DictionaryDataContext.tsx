@@ -98,15 +98,12 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 				} catch (err) {
 					console.error('Error loading hosted dictionary data:', err);
 					let message: string;
-					switch (true) {
-						case err instanceof Error:
-							message = err.message;
-							break;
-						case typeof err === 'string':
-							message = err;
-							break;
-						default:
-							message = 'Something went wrong';
+					if (err instanceof Error) {
+						message = err.message;
+					} else if (typeof err === 'string') {
+						message = err;
+					} else {
+						message = 'Something went wrong';
 					}
 					setErrors([message]);
 				} finally {
@@ -129,15 +126,12 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 				} catch (err) {
 					console.error('Error loading hosted dictionary data:', err);
 					let message: string;
-					switch (true) {
-						case err instanceof Error:
-							message = err.message;
-							break;
-						case typeof err === 'string':
-							message = err;
-							break;
-						default:
-							message = 'Something went wrong';
+					if (err instanceof Error) {
+						message = err.message;
+					} else if (typeof err === 'string') {
+						message = err;
+					} else {
+						message = 'Something went wrong';
 					}
 					setErrors([message]);
 				} finally {

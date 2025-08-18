@@ -21,7 +21,6 @@
 import { Dictionary } from '@overture-stack/lectern-dictionary';
 
 function validateHostedDictionaries(input: unknown): Dictionary {
-	// User may provide an array or a single dictionary as input, should be able to process both
 	const asSingle = Dictionary.safeParse(input);
 	if (asSingle.success) {
 		return asSingle.data;
