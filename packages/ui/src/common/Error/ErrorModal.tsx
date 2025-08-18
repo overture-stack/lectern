@@ -24,13 +24,12 @@
 import { css } from '@emotion/react';
 import Modal, { Styles } from 'react-modal';
 
-import { Theme } from '../theme';
-import MessageSquareWarning from '../theme/icons/MessageSquareWarning';
-import { useThemeContext } from '../theme/ThemeContext';
+import type { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
+import { ErrorMessage } from './ErrorMessage';
 
 Modal.setAppElement('body');
 
-// Using react-modal's built-in styling system instead of emotion css for modal configuration
 const customStyles = (theme: Theme): Styles => ({
 	content: {
 		top: '50%',
@@ -55,7 +54,7 @@ const customStyles = (theme: Theme): Styles => ({
 	},
 });
 
-const containerStyle = (theme: Theme) => css`
+const containerStyle = css`
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
@@ -94,23 +93,6 @@ const errorListStyle = css`
 	margin-top: 8px;
 `;
 
-const errorItemStyle = css`
-	display: flex;
-	align-items: center;
-	gap: 12px;
-`;
-
-const errorIconStyle = (theme: Theme) => css`
-	color: ${theme.colors.error_dark};
-	flex-shrink: 0;
-`;
-
-const errorTextStyle = (theme: Theme) => css`
-	${theme.typography.bodyBold}
-	color: ${theme.colors.error_dark};
-	margin: 0;
-`;
-
 export type ErrorModalProps = {
 	setIsOpen: (isOpen: boolean) => void;
 	isOpen: boolean;
@@ -137,7 +119,7 @@ export const ErrorModal = ({ setIsOpen, isOpen, errors, onContactClick }: ErrorM
 			style={customStyles(theme)}
 			contentLabel="Error Modal"
 		>
-			<div css={containerStyle(theme)}>
+			<div css={containerStyle}>
 				<h1 css={titleStyle(theme)}>Error</h1>
 				<p css={subtitleStyle(theme)}>view console logs for more details</p>
 				<p css={descriptionStyle(theme)}>
@@ -148,10 +130,7 @@ export const ErrorModal = ({ setIsOpen, isOpen, errors, onContactClick }: ErrorM
 				</p>
 				<div css={errorListStyle}>
 					{errors.map((error, index) => (
-						<div key={index} css={errorItemStyle}>
-							<MessageSquareWarning style={errorIconStyle(theme)} size={20} />
-							<span css={errorTextStyle(theme)}>{error}</span>
-						</div>
+						<ErrorMessage key={index} message={error} />
 					))}
 				</div>
 			</div>
