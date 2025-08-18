@@ -61,9 +61,8 @@ const DictionaryDownloadButton = ({ fileType, iconOnly = false }: DictionaryDown
 	const [isLoading, setIsLoading] = useState(false);
 	const theme: Theme = useThemeContext();
 	const { FileDownload } = theme.icons;
-	const { loading, errors, dictionaries, lecternUrl } = useDictionaryDataContext();
-	const { currentDictionaryIndex } = useDictionaryStateContext();
-	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
+	const { loading, errors, lecternUrl } = useDictionaryDataContext();
+	const { selectedDictionary } = useDictionaryStateContext();
 
 	if (!selectedDictionary || !lecternUrl || !selectedDictionary.name || !selectedDictionary.version) {
 		return null;
