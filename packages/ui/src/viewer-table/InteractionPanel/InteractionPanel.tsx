@@ -22,32 +22,23 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
-import type { Dictionary } from '@overture-stack/lectern-dictionary';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
-import { Theme } from '../../theme';
+import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
-import AttributeFilterDropdown, { FilterOptions } from './AttributeFilterDropdown';
+import AttributeFilterDropdown from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
+import DictionaryDownloadButton from './DictionaryDownloadButton';
 import DictionaryVersionSwitcher from './DictionaryVersionSwitcher';
-import DownloadTemplatesButton from './DownloadTemplatesButton';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
 
-export type DictionaryServerUnion = Dictionary | DictionaryServerRecord;
-
 export type InteractionPanelProps = {
-	disabled?: boolean;
-	setIsCollapsed: (isCollapsed: boolean) => void;
 	onSelect: (schemaNameIndex: number) => void;
-	dictionaryConfig: {
-		lecternUrl: string;
-		dictionaryIndex: number;
-		dictionaryData: DictionaryServerUnion[];
-		onVersionChange: (index: number) => void;
-		filters: FilterOptions[];
-		setFilters: (filters: FilterOptions[]) => void;
-	};
+	isCollapsed: boolean;
+	setIsCollapsed: (collapsed: boolean) => void;
 };
 
 const panelStyles = (theme: Theme) => css`
@@ -70,39 +61,43 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const InteractionPanel = ({ disabled = false, setIsCollapsed, onSelect, dictionaryConfig }: InteractionPanelProps) => {
+const InteractionPanelSkeleton = () => {
+	const theme = useThemeContext();
+	return (
+		<SkeletonTheme
+			customHighlightBackground={`linear-gradient(270deg, rgba(229, 237, 243, 0) 0%, ${theme.colors.accent_1} 100%)`}
+			baseColor="transparent"
+		>
+			<Skeleton width={160} height={42} inline />
+			<Skeleton width={120} height={42} inline />
+			<Skeleton width={120} height={42} inline />
+		</SkeletonTheme>
+	);
+};
+
+const InteractionPanel = ({ onSelect, setIsCollapsed }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
-	const selectedDictionary: DictionaryServerUnion = dictionaryConfig.dictionaryData[dictionaryConfig.dictionaryIndex];
-	const createdAt: string = 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : '';
+	const { loading } = useDictionaryDataContext();
+	const { selectedDictionary } = useDictionaryStateContext();
+
+	if (!selectedDictionary?.schemas && !loading) {
+		return null;
+	}
 
 	return (
 		<div css={panelStyles(theme)}>
+			{loading ?
+				<InteractionPanelSkeleton />
+			:	<div css={sectionStyles}>
+					<TableOfContentsDropdown schemas={selectedDictionary?.schemas ?? []} onSelect={onSelect} />
+					<AttributeFilterDropdown />
+					<ExpandAllButton onClick={() => setIsCollapsed(false)} />
+					<CollapseAllButton onClick={() => setIsCollapsed(true)} />
+				</div>
+			}
 			<div css={sectionStyles}>
-				<TableOfContentsDropdown schemas={selectedDictionary.schemas} onSelect={onSelect} disabled={disabled} />
-				<AttributeFilterDropdown
-					filters={dictionaryConfig.filters}
-					setFilters={dictionaryConfig.setFilters}
-					disabled={disabled}
-				/>
-				<ExpandAllButton onClick={() => setIsCollapsed(false)} disabled={disabled} />
-				<CollapseAllButton onClick={() => setIsCollapsed(true)} disabled={disabled} />
-			</div>
-
-			<div css={sectionStyles}>
-				<DictionaryVersionSwitcher
-					dictionaryData={dictionaryConfig.dictionaryData}
-					dictionaryIndex={dictionaryConfig.dictionaryIndex}
-					onVersionChange={dictionaryConfig.onVersionChange}
-					disabled={disabled}
-					title={`Version ${selectedDictionary.version} (${createdAt})`}
-				/>
-				<DownloadTemplatesButton
-					fileType="tsv"
-					version={selectedDictionary.version}
-					name={selectedDictionary.name}
-					lecternUrl={dictionaryConfig.lecternUrl}
-					disabled={disabled}
-				/>
+				<DictionaryVersionSwitcher />
+				<DictionaryDownloadButton fileType="tsv" />
 			</div>
 		</div>
 	);

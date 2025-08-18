@@ -18,7 +18,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import type { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 

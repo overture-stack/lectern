@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -18,34 +18,26 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @jsxImportSource @emotion/react */
+import React, { ReactNode } from 'react';
+import { DictionaryLecternDataProvider, DictionaryStateProvider } from '../dictionary-controller/DictionaryDataContext';
 
-import type { Meta, StoryObj } from '@storybook/react';
-import ListItem from '../../src/common/ListItem';
-import themeDecorator from '../themeDecorator';
-
-const meta = {
-	component: ListItem,
-	title: 'Common/ListItem',
-	tags: ['autodocs'],
-	decorators: [themeDecorator()],
-} satisfies Meta<typeof ListItem>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-	args: { children: 'BRCA1' },
+export type DictionaryTableViewerProps = {
+	lecternUrl: string;
+	dictionaryName: string;
+	children: ReactNode;
 };
 
-export const Short: Story = {
-	args: { children: 'TP53' },
-};
-
-export const Long: Story = {
-	args: { children: 'CHROMOSOME_X' },
-};
-
-export const AverageUseCase: Story = {
-	args: { children: 'Gene_ABC123' },
+/**
+ * DictionaryViewerPage component.
+ * @param {DictionaryTableViewerProps} props
+ */
+export const DictionaryViewerPage = ({ lecternUrl, dictionaryName, children }: DictionaryTableViewerProps) => {
+	return (
+		<DictionaryLecternDataProvider lecternUrl={lecternUrl} dictionaryName={dictionaryName}>
+			<DictionaryStateProvider>
+				{/* TODO: Write a full fledged dictionary page component and remove children */}
+				{children}
+			</DictionaryStateProvider>
+		</DictionaryLecternDataProvider>
+	);
 };

@@ -18,34 +18,28 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @jsxImportSource @emotion/react */
+import { Dictionary } from '@overture-stack/lectern-dictionary';
 
-import type { Meta, StoryObj } from '@storybook/react';
-import ListItem from '../../src/common/ListItem';
-import themeDecorator from '../themeDecorator';
+function validateHostedDictionaries(input: unknown): Dictionary {
+	const dictionary = Dictionary.safeParse(input);
+	if (dictionary.success) {
+		return dictionary.data;
+	}
 
-const meta = {
-	component: ListItem,
-	title: 'Common/ListItem',
-	tags: ['autodocs'],
-	decorators: [themeDecorator()],
-} satisfies Meta<typeof ListItem>;
+	const message = dictionary.error?.message ?? 'Unknown validation error';
+	throw new Error(`Hosted dictionary validation failed: ${message}`);
+}
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-	args: { children: 'BRCA1' },
-};
-
-export const Short: Story = {
-	args: { children: 'TP53' },
-};
-
-export const Long: Story = {
-	args: { children: 'CHROMOSOME_X' },
-};
-
-export const AverageUseCase: Story = {
-	args: { children: 'Gene_ABC123' },
-};
+/**
+ * Fetches and validates hosted dictionaries from the given URL.
+ * @param hostedUrl - The URL to fetch the hosted dictionaries from.
+ * @returns {Promise<Dictionary>} A promise that resolves to an array of Dictionaries
+ */
+export async function fetchAndValidateHostedDictionaries(hostedUrl: string): Promise<Dictionary> {
+	const res = await fetch(hostedUrl);
+	if (!res.ok) {
+		throw new Error(`Failed to fetch hosted dictionaries: ${res.status}`);
+	}
+	const json = await res.json();
+	return validateHostedDictionaries(json);
+}

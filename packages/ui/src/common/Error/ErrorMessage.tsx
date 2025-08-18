@@ -5,7 +5,7 @@
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
  *  GNU Affero General Public License along with this program.
- *   If not, see <http://www.gnu.org/licenses/>.
+ *  If not, see <http://www.gnu.org/licenses/>.
  *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
  *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -21,38 +21,40 @@
 
 /** @jsxImportSource @emotion/react */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import Button from '../../src/common/Button';
-import FileDownload from '../../src/theme/icons/FileDownload';
-import themeDecorator from '../themeDecorator';
+import { css } from '@emotion/react';
 
-const meta = {
-	component: Button,
-	title: 'Common/Button',
-	tags: ['autodocs'],
-	decorators: [themeDecorator()],
-} satisfies Meta<typeof Button>;
+import type { Theme } from '../../theme';
+import MessageSquareWarning from '../../theme/icons/MessageSquareWarning';
+import { useThemeContext } from '../../theme/ThemeContext';
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+const errorItemStyle = css`
+	display: flex;
+	align-items: center;
+	gap: 12px;
+`;
 
-export const Default: Story = {
-	args: { children: 'Click Me', onClick: () => alert('I have been clicked'), className: 'my-button', icon: '👍' },
+const errorIconStyle = (theme: Theme) => css`
+	color: ${theme.colors.error_dark};
+	flex-shrink: 0;
+`;
+
+const errorTextStyle = (theme: Theme) => css`
+	${theme.typography.bodyBold}
+	color: ${theme.colors.error_dark};
+	margin: 0;
+`;
+
+export type ErrorMessageProps = {
+	message: string;
 };
-export const Disabled: Story = {
-	args: { children: 'Disabled', disabled: true },
-};
-export const Loading: Story = {
-	args: { isLoading: true, children: 'Loading...' },
-};
-export const IconOnly: Story = {
-	args: {
-		icon: <FileDownload />,
-		onClick: () => alert('I have been clicked'),
-		className: 'iconButton',
-		iconOnly: true,
-	},
-};
-export const Empty: Story = {
-	args: {},
+
+export const ErrorMessage = ({ message }: ErrorMessageProps) => {
+	const theme: Theme = useThemeContext();
+
+	return (
+		<div css={errorItemStyle}>
+			<MessageSquareWarning style={errorIconStyle(theme)} size={20} />
+			<span css={errorTextStyle(theme)}>{message}</span>
+		</div>
+	);
 };

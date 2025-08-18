@@ -4,7 +4,7 @@
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
  *  GNU Affero General Public License along with this program.
- *   If not, see <http://www.gnu.org/licenses/>.
+ *  If not, see <http://www.gnu.org/licenses/>.
  *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
  *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -18,29 +18,30 @@
  */
 
 import Dropdown from '../../common/Dropdown/Dropdown';
+import {
+	FilterOptions,
+	useDictionaryDataContext,
+	useDictionaryStateContext,
+} from '../../dictionary-controller/DictionaryDataContext';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-export type AttributeFilterDropdownProps = {
-	filters: FilterOptions[];
-	setFilters: (filters: FilterOptions[]) => void;
-	disabled?: boolean;
-};
+const AttributeFilterDropdown = () => {
+	const theme: Theme = useThemeContext();
 
-export type FilterOptions = 'Required' | 'All Fields';
-
-const AttributeFilterDropdown = ({ filters, setFilters, disabled }: AttributeFilterDropdownProps) => {
-	const theme = useThemeContext();
+	const { loading, errors } = useDictionaryDataContext();
+	const { filters, setFilters } = useDictionaryStateContext();
 
 	const { ListFilter } = theme.icons;
 
 	const handleFilterSelect = (selectedFilterName: FilterOptions) => {
-		// Toggles selected filter on click
 		if (filters?.includes(selectedFilterName)) {
 			setFilters([]);
 			return;
 		}
 		setFilters([selectedFilterName]);
 	};
+
 	const menuItems = [
 		{
 			label: 'Required',
@@ -52,7 +53,14 @@ const AttributeFilterDropdown = ({ filters, setFilters, disabled }: AttributeFil
 		},
 	];
 
-	return <Dropdown leftIcon={<ListFilter />} title="Filter By" menuItems={menuItems} disabled={disabled} />;
+	return (
+		<Dropdown
+			leftIcon={<ListFilter />}
+			title="Filter By"
+			menuItems={menuItems}
+			disabled={errors.length > 0 || loading}
+		/>
+	);
 };
 
 export default AttributeFilterDropdown;

@@ -21,9 +21,9 @@
 
 /** @jsxImportSource @emotion/react */
 
+import type { SchemaField } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Description } from '../../../src/viewer-table/ConditionalLogicModal/Description';
-import { SchemaField } from '@overture-stack/lectern-dictionary';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {

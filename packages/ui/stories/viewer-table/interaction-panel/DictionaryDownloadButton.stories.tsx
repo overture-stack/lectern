@@ -21,38 +21,45 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import DictionaryDownloadButton, {
-	DictionaryDownloadButtonProps,
-} from '../../../src/viewer-table/InteractionPanel/DownloadTemplatesButton';
+
+import DictionaryDownloadButton from '../../../src/viewer-table/InteractionPanel/DictionaryDownloadButton';
+import { withDictionaryContext, withErrorState, withLoadingState } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: DictionaryDownloadButton,
 	title: 'Viewer - Table/Interaction - Panel/DictionaryDownloadButton',
 	tags: ['autodocs'],
-	decorators: [themeDecorator()],
+	decorators: [themeDecorator(), withDictionaryContext()],
 } satisfies Meta<typeof DictionaryDownloadButton>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const mockDictionaryDownloadButtonProps: DictionaryDownloadButtonProps = {
-	version: '1.0',
-	name: 'example-dictionary',
-	lecternUrl: 'http://localhost:3031',
-	fileType: 'tsv',
-};
-
-export const Default: Story = {
+export const TSV: Story = {
 	args: {
-		...mockDictionaryDownloadButtonProps,
+		fileType: 'tsv',
 	},
 };
 
-export const Disabled: Story = {
+export const IconOnly: Story = {
 	args: {
-		...mockDictionaryDownloadButtonProps,
-		disabled: true,
+		fileType: 'tsv',
+		iconOnly: true,
+	},
+};
+
+export const Loading: Story = {
+	decorators: [themeDecorator(), withLoadingState()],
+	args: {
+		fileType: 'tsv',
+	},
+};
+
+export const Error: Story = {
+	decorators: [themeDecorator(), withErrorState()],
+	args: {
+		fileType: 'tsv',
 	},
 };

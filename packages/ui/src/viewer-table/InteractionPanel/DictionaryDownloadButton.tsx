@@ -25,15 +25,12 @@ import { css } from '@emotion/react';
 import { useState } from 'react';
 
 import Button from '../../common/Button';
-import { Theme } from '../../theme';
+import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export type DictionaryDownloadButtonProps = {
-	version: string;
-	name: string;
-	lecternUrl: string;
 	fileType: 'tsv' | 'csv';
-	disabled?: boolean;
 	iconOnly?: boolean;
 };
 
@@ -60,17 +57,18 @@ const downloadDictionary = async ({ fetchUrl, name, version }) => {
 	URL.revokeObjectURL(url);
 };
 
-const DictionaryDownloadButton = ({
-	version,
-	name,
-	lecternUrl,
-	fileType = 'tsv',
-	disabled = false,
-	iconOnly = false,
-}: DictionaryDownloadButtonProps) => {
+const DictionaryDownloadButton = ({ fileType, iconOnly = false }: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const theme: Theme = useThemeContext();
 	const { FileDownload } = theme.icons;
+	const { loading, errors, lecternUrl } = useDictionaryDataContext();
+	const { selectedDictionary } = useDictionaryStateContext();
+
+	if (!selectedDictionary || !lecternUrl || !selectedDictionary.name || !selectedDictionary.version) {
+		return null;
+	}
+
+	const { name, version } = selectedDictionary;
 
 	const fetchUrl = `${lecternUrl}/dictionaries/template/download?${new URLSearchParams({
 		name,
@@ -100,7 +98,7 @@ const DictionaryDownloadButton = ({
 					setIsLoading(false);
 				}
 			}}
-			disabled={disabled || isLoading}
+			disabled={loading || errors.length > 0 || isLoading}
 		>
 			Submission Templates
 		</Button>

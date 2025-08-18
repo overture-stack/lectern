@@ -19,23 +19,22 @@
  *
  */
 
-import React from 'react';
-
 import Button from '../../common/Button';
-import { Theme } from '../../theme';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export interface CollapseAllButtonProps {
 	onClick: () => void;
-	disabled?: boolean;
 }
 
-const CollapseAllButton = ({ onClick, disabled }: CollapseAllButtonProps) => {
+const CollapseAllButton = ({ onClick }: CollapseAllButtonProps) => {
 	const theme: Theme = useThemeContext();
+	const { loading, errors } = useDictionaryDataContext();
 	const { Collapse } = theme.icons;
 
 	return (
-		<Button icon={<Collapse />} onClick={onClick} disabled={disabled}>
+		<Button icon={<Collapse />} onClick={onClick} disabled={loading || errors.length > 0}>
 			Collapse All
 		</Button>
 	);

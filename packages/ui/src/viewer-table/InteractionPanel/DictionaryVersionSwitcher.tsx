@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -19,53 +18,49 @@
  *
  */
 
-/** @jsxImportSource @emotion/react */
-
-import { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
-import { Dictionary } from '@overture-stack/lectern-dictionary';
-
 import Dropdown from '../../common/Dropdown/Dropdown';
-import { Theme } from '../../theme';
+import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-export type DictionaryServerUnion = Dictionary | DictionaryServerRecord;
-
-export type DictionaryVersionSwitcherProps = {
-	dictionaryData: DictionaryServerUnion[];
-	dictionaryIndex: number;
-	onVersionChange: (index: number) => void;
-	disabled?: boolean;
-	title: string;
+const formatDate = (dateString: string | undefined): string => {
+	return dateString ? new Date(dateString).toISOString().split('T')[0] : '';
 };
-
-const DictionaryVersionSwitcher = ({
-	dictionaryData,
-	dictionaryIndex,
-	onVersionChange,
-	disabled = false,
-	title,
-}: DictionaryVersionSwitcherProps) => {
+const DictionaryVersionSwitcher = () => {
 	const theme: Theme = useThemeContext();
-
 	const { History } = theme.icons;
 
-	const versionSwitcherObjectArray = dictionaryData?.map((dictionary: DictionaryServerUnion, index: number) => {
-		const displayVersionDate =
-			'createdAt' in dictionaryData?.[dictionaryIndex] ? `(${dictionaryData?.[dictionaryIndex].createdAt})` : '';
+	const { loading, errors, dictionaries } = useDictionaryDataContext();
+	const { selectedDictionary, setCurrentDictionaryIndex } = useDictionaryStateContext();
+
+	const createdAt = selectedDictionary && 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : '';
+
+	const formattedCreatedAt = formatDate(createdAt);
+	const title =
+		selectedDictionary?.version ? `Version ${selectedDictionary.version} (${formattedCreatedAt})` : 'Select Version';
+
+	const versionSwitcherObjectArray = dictionaries?.map((item: any, index: number) => {
+		const itemCreatedAt = 'createdAt' in item ? item.createdAt : '';
+		const itemFormattedDate = formatDate(itemCreatedAt);
+		const displayVersionDate = itemFormattedDate ? `(${itemFormattedDate})` : '';
 		return {
-			label: `Version ${dictionary?.version} ${displayVersionDate}`,
+			label: `Version ${item?.version} ${displayVersionDate}`,
 			action: () => {
-				onVersionChange(index);
+				setCurrentDictionaryIndex(index);
 			},
 		};
 	});
 
-	// If there is only one version, we don't need to show the dropdown as per specifications
 	const displayVersionSwitcher = versionSwitcherObjectArray && versionSwitcherObjectArray.length > 1;
 
 	return (
 		displayVersionSwitcher && (
-			<Dropdown leftIcon={<History />} menuItems={versionSwitcherObjectArray} title={title} disabled={disabled} />
+			<Dropdown
+				leftIcon={<History />}
+				menuItems={versionSwitcherObjectArray}
+				title={title}
+				disabled={loading || errors.length > 0}
+			/>
 		)
 	);
 };

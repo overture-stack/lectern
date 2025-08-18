@@ -37,6 +37,7 @@ export type ModalProps = {
 	title: string;
 };
 
+// Using react-modal's built-in styling system instead of emotion css for modal configuration
 const customStyles = (theme: Theme): Styles => ({
 	content: {
 		top: '50%',

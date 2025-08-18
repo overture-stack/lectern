@@ -20,21 +20,22 @@
  */
 
 import type { Schema } from '@overture-stack/lectern-dictionary';
-import React from 'react';
 
 import Dropdown from '../../common/Dropdown/Dropdown';
-import { Theme } from '../../theme';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 export type TableOfContentsDropdownProps = {
 	schemas: Schema[];
 	onSelect: (schemaIndex: number) => void;
-	disabled?: boolean;
 };
 
-const TableOfContentsDropdown = ({ schemas, onSelect, disabled }: TableOfContentsDropdownProps) => {
+const TableOfContentsDropdown = ({ schemas, onSelect }: TableOfContentsDropdownProps) => {
 	const theme: Theme = useThemeContext();
+	const { loading, errors } = useDictionaryDataContext();
 	const { List } = theme.icons;
+
 	const handleAction = (index: number) => {
 		const anchorId = `#${index}`;
 		onSelect(index);
@@ -49,7 +50,12 @@ const TableOfContentsDropdown = ({ schemas, onSelect, disabled }: TableOfContent
 	}));
 
 	return schemas.length > 0 ?
-			<Dropdown leftIcon={<List />} title="Table of Contents" menuItems={menuItemsFromSchemas} disabled={disabled} />
+			<Dropdown
+				leftIcon={<List />}
+				title="Table of Contents"
+				menuItems={menuItemsFromSchemas}
+				disabled={loading || errors.length > 0}
+			/>
 		:	null;
 };
 
