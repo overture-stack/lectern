@@ -22,9 +22,9 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
@@ -60,12 +60,9 @@ const panelStyles = (theme: Theme) => css`
 const sectionStyles = css`
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	flex-wrap: wrap;
+	gap: 16px;
 `;
-type SkeletonProps = {
-	theme: Theme;
-};
+
 const InteractionPanelSkeleton = () => {
 	const theme = useThemeContext();
 	return (
@@ -79,10 +76,12 @@ const InteractionPanelSkeleton = () => {
 		</SkeletonTheme>
 	);
 };
-const InteractionPanel = ({ onSelect, setIsCollapsed }: InteractionPanelProps) => {
+
+const InteractionPanel = ({ onSelect, isCollapsed, setIsCollapsed }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
 	const { dictionaries, loading } = useDictionaryDataContext();
 	const { currentDictionaryIndex } = useDictionaryStateContext();
+
 	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
 
 	if (!selectedDictionary?.schemas && !loading) {

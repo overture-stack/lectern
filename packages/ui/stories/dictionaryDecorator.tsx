@@ -20,7 +20,6 @@
 import type { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Decorator } from '@storybook/react';
-import React from 'react';
 
 import {
 	DictionaryDataContext,

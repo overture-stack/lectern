@@ -29,8 +29,10 @@ const formatDate = (dateString: string | undefined): string => {
 const DictionaryVersionSwitcher = () => {
 	const theme: Theme = useThemeContext();
 	const { History } = theme.icons;
+
 	const { loading, errors, dictionaries } = useDictionaryDataContext();
 	const { currentDictionaryIndex, setCurrentDictionaryIndex } = useDictionaryStateContext();
+
 	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
 
 	const createdAt = selectedDictionary && 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : '';
