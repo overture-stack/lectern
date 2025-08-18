@@ -24,21 +24,24 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 
 import { fetchAndValidateHostedDictionaries, fetchRemoteDictionary } from './sources';
 
-// Static dictionaries may not have the properties such as createdAt or id - hence the use of Partial<T>
-export type DictionaryServerUnion = Partial<DictionaryServerRecord> | Dictionary;
+export type DictionaryServerUnion = DictionaryServerRecord | Dictionary;
 
 export type FilterOptions = 'Required' | 'All Fields';
 
-export type DictionaryContextType = {
+export type DictionaryDataContextType = {
 	dictionaries?: DictionaryServerUnion[];
 	lecternUrl?: string;
 	name?: string;
 	loading: boolean;
 	errors: string[];
+};
+
+export type DictionaryStateContextType = {
 	currentDictionaryIndex: number;
 	filters: FilterOptions[];
 	setCurrentDictionaryIndex: (index: number) => void;
 	setFilters: (filters: FilterOptions[]) => void;
+	selectedDictionary?: DictionaryServerUnion;
 };
 
 export type StaticDictionaryProviderProps = {
@@ -46,120 +49,144 @@ export type StaticDictionaryProviderProps = {
 	staticDictionaries: DictionaryServerUnion[];
 };
 
-export type RemoteDictionaryProviderProps = {
+export type UrlDictionaryProviderProps = {
+	children: ReactNode;
+	hostedUrl: string;
+};
+
+export type LecternDictionaryProviderProps = {
 	children: ReactNode;
 	lecternUrl: string;
 	dictionaryName: string;
 };
 
-export type HostedDictionaryProviderProps = {
-	children: ReactNode;
-	hostedUrl: string;
-};
+const DictionaryDataContext = createContext<DictionaryDataContextType | undefined>(undefined);
+const DictionaryStateContext = createContext<DictionaryStateContextType | undefined>(undefined);
 
-export type DictionaryProviderProps =
-	| StaticDictionaryProviderProps
-	| RemoteDictionaryProviderProps
-	| HostedDictionaryProviderProps;
-
-const DictionaryDataContext = createContext<DictionaryContextType | undefined>(undefined);
-
-export function useDictionaryDataContext(): DictionaryContextType {
+export const useDictionaryDataContext = (): DictionaryDataContextType => {
 	const context = useContext(DictionaryDataContext);
 	if (context === undefined) {
 		console.error('useDictionaryDataContext must be used within a DictionaryDataProvider');
 		throw new Error('useDictionaryDataContext must be used within a DictionaryDataProvider');
 	}
 	return context;
-}
+};
 
-export function DictionaryDataProvider(props: DictionaryProviderProps) {
+export const useDictionaryStateContext = (): DictionaryStateContextType => {
+	const context = useContext(DictionaryStateContext);
+	if (context === undefined) {
+		console.error('useDictionaryStateContext must be used within a DictionaryStateProvider');
+		throw new Error('useDictionaryStateContext must be used within a DictionaryStateProvider');
+	}
+	return context;
+};
+
+const createErrorMessage = (err: unknown): string => {
+	if (err instanceof Error) {
+		return err.message;
+	} else if (typeof err === 'string') {
+		return err;
+	}
+	return 'Something went wrong';
+};
+
+export const DictionaryStaticDataProvider = ({ children, staticDictionaries }: StaticDictionaryProviderProps) => {
+	const value: DictionaryDataContextType = {
+		dictionaries: staticDictionaries,
+		loading: false,
+		errors: [],
+	};
+
+	return <DictionaryDataContext.Provider value={value}>{children}</DictionaryDataContext.Provider>;
+};
+
+export const HostedDictionaryDataProvider = ({ children, hostedUrl }: UrlDictionaryProviderProps) => {
 	const [dictionaries, setDictionaries] = useState<DictionaryServerUnion[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [errors, setErrors] = useState<string[]>([]);
 
+	useEffect(() => {
+		const fetchHostedDictionaries = async () => {
+			try {
+				const dictionariesData = await fetchAndValidateHostedDictionaries(hostedUrl);
+				setDictionaries([dictionariesData]);
+				setErrors([]);
+			} catch (err) {
+				console.error('Error loading hosted dictionary data:', err);
+				setErrors([createErrorMessage(err)]);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchHostedDictionaries();
+	}, [hostedUrl]);
+
+	const value: DictionaryDataContextType = {
+		dictionaries,
+		loading,
+		errors,
+	};
+
+	return <DictionaryDataContext.Provider value={value}>{children}</DictionaryDataContext.Provider>;
+};
+
+export const DictionaryLecternDataProvider = ({
+	children,
+	lecternUrl,
+	dictionaryName,
+}: LecternDictionaryProviderProps) => {
+	const [dictionaries, setDictionaries] = useState<DictionaryServerUnion[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [errors, setErrors] = useState<string[]>([]);
+
+	useEffect(() => {
+		const fetchRemoteDictionaries = async () => {
+			try {
+				const { dictionaries: fetchedDictionaries } = await fetchRemoteDictionary(lecternUrl, dictionaryName);
+				setDictionaries(fetchedDictionaries);
+				setErrors([]);
+			} catch (err) {
+				console.error('Error loading remote dictionary data:', err);
+				setErrors([createErrorMessage(err)]);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchRemoteDictionaries();
+	}, [lecternUrl, dictionaryName]);
+
+	const value: DictionaryDataContextType = {
+		dictionaries,
+		lecternUrl,
+		name: dictionaryName,
+		loading,
+		errors,
+	};
+
+	return <DictionaryDataContext.Provider value={value}>{children}</DictionaryDataContext.Provider>;
+};
+
+export type DictionaryStateProviderProps = {
+	children: ReactNode;
+};
+
+export const DictionaryStateProvider = ({ children }: DictionaryStateProviderProps) => {
 	const [currentDictionaryIndex, setCurrentDictionaryIndex] = useState(0);
 	const [filters, setFilters] = useState<FilterOptions[]>([]);
 
-	useEffect(() => {
-		if ('staticDictionaries' in props) {
-			setDictionaries(props.staticDictionaries);
-			setLoading(false);
-			setErrors([]);
-			return;
-		}
+	const dictionaryData = useDictionaryDataContext();
+	const { dictionaries } = dictionaryData;
+	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
 
-		if ('hostedUrl' in props) {
-			const fetchHostedDictionaries = async () => {
-				try {
-					const dictionariesData = await fetchAndValidateHostedDictionaries(props.hostedUrl);
-					setDictionaries([dictionariesData]);
-					setErrors([]);
-				} catch (err) {
-					console.error('Error loading hosted dictionary data:', err);
-					let message: string;
-					switch (true) {
-						case err instanceof Error:
-							message = err.message;
-							break;
-						case typeof err === 'string':
-							message = err;
-							break;
-						default:
-							message = 'Something went wrong';
-					}
-					setErrors([message]);
-				} finally {
-					setLoading(false);
-				}
-			};
-			fetchHostedDictionaries();
-			return;
-		}
-
-		if ('lecternUrl' in props) {
-			const fetchRemoteDictionaries = async () => {
-				try {
-					const { dictionaries: fetchedDictionaries } = await fetchRemoteDictionary(
-						props.lecternUrl,
-						props.dictionaryName,
-					);
-					setDictionaries(fetchedDictionaries);
-					setErrors([]);
-				} catch (err) {
-					console.error('Error loading hosted dictionary data:', err);
-					let message: string;
-					switch (true) {
-						case err instanceof Error:
-							message = err.message;
-							break;
-						case typeof err === 'string':
-							message = err;
-							break;
-						default:
-							message = 'Something went wrong';
-					}
-					setErrors([message]);
-				} finally {
-					setLoading(false);
-				}
-			};
-			fetchRemoteDictionaries();
-			return;
-		}
-	}, [props]);
-
-	const value: DictionaryContextType = {
-		dictionaries,
-		lecternUrl: 'lecternUrl' in props ? props.lecternUrl : undefined,
-		name: 'dictionaryName' in props ? props.dictionaryName : undefined,
-		loading,
-		errors,
+	const value: DictionaryStateContextType = {
 		currentDictionaryIndex,
 		filters,
 		setCurrentDictionaryIndex,
 		setFilters,
+		selectedDictionary,
 	};
 
-	return <DictionaryDataContext.Provider value={value}>{props.children}</DictionaryDataContext.Provider>;
-}
+	return <DictionaryStateContext.Provider value={value}>{children}</DictionaryStateContext.Provider>;
+};

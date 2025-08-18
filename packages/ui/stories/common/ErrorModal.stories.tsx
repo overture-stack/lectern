@@ -23,7 +23,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
 import Button from '../../src/common/Button';
-import { ErrorModal } from '../../src/common/ErrorModal';
+import { ErrorModal } from '../../src/common/Error';
 import themeDecorator from '../themeDecorator';
 
 const meta: Meta<typeof ErrorModal> = {

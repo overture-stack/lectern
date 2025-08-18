@@ -22,9 +22,11 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
-import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
-import { Theme } from '../../theme';
+import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
+import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import AttributeFilterDropdown from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
@@ -59,24 +61,40 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const InteractionPanel = ({ onSelect, isCollapsed, setIsCollapsed }: InteractionPanelProps) => {
-	const theme: Theme = useThemeContext();
-	const { dictionaries, currentDictionaryIndex } = useDictionaryDataContext();
-	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
+const InteractionPanelSkeleton = () => {
+	const theme = useThemeContext();
+	return (
+		<SkeletonTheme
+			customHighlightBackground={`linear-gradient(270deg, rgba(229, 237, 243, 0) 0%, ${theme.colors.accent_1} 100%)`}
+			baseColor="transparent"
+		>
+			<Skeleton width={160} height={42} inline />
+			<Skeleton width={120} height={42} inline />
+			<Skeleton width={120} height={42} inline />
+		</SkeletonTheme>
+	);
+};
 
-	if (!selectedDictionary?.schemas) {
+const InteractionPanel = ({ onSelect, setIsCollapsed }: InteractionPanelProps) => {
+	const theme: Theme = useThemeContext();
+	const { loading } = useDictionaryDataContext();
+	const { selectedDictionary } = useDictionaryStateContext();
+
+	if (!selectedDictionary?.schemas && !loading) {
 		return null;
 	}
 
 	return (
 		<div css={panelStyles(theme)}>
-			<div css={sectionStyles}>
-				<TableOfContentsDropdown schemas={selectedDictionary.schemas} onSelect={onSelect} />
-				<AttributeFilterDropdown />
-				<ExpandAllButton onClick={() => setIsCollapsed(false)} />
-				<CollapseAllButton onClick={() => setIsCollapsed(true)} />
-			</div>
-
+			{loading ?
+				<InteractionPanelSkeleton />
+			:	<div css={sectionStyles}>
+					<TableOfContentsDropdown schemas={selectedDictionary?.schemas ?? []} onSelect={onSelect} />
+					<AttributeFilterDropdown />
+					<ExpandAllButton onClick={() => setIsCollapsed(false)} />
+					<CollapseAllButton onClick={() => setIsCollapsed(true)} />
+				</div>
+			}
 			<div css={sectionStyles}>
 				<DictionaryVersionSwitcher />
 				<DictionaryDownloadButton fileType="tsv" />

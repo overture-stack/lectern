@@ -25,7 +25,7 @@ import { css } from '@emotion/react';
 import { useState } from 'react';
 
 import Button from '../../common/Button';
-import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
@@ -70,8 +70,8 @@ export const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaNam
 
 	const theme: Theme = useThemeContext();
 	const { FileDownload } = theme.icons;
-	const { loading, errors, dictionaries, currentDictionaryIndex, lecternUrl } = useDictionaryDataContext();
-	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
+	const { loading, errors, lecternUrl } = useDictionaryDataContext();
+	const { selectedDictionary } = useDictionaryStateContext();
 
 	if (!selectedDictionary || !lecternUrl || !selectedDictionary.name || !selectedDictionary.version) {
 		return null;

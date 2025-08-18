@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -15,52 +16,8 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
-import Dropdown from '../../common/Dropdown/Dropdown';
-import {
-	FilterOptions,
-	useDictionaryDataContext,
-	useDictionaryStateContext,
-} from '../../dictionary-controller/DictionaryDataContext';
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
-
-const AttributeFilterDropdown = () => {
-	const theme: Theme = useThemeContext();
-
-	const { loading, errors } = useDictionaryDataContext();
-	const { filters, setFilters } = useDictionaryStateContext();
-
-	const { ListFilter } = theme.icons;
-
-	const handleFilterSelect = (selectedFilterName: FilterOptions) => {
-		if (filters?.includes(selectedFilterName)) {
-			setFilters([]);
-			return;
-		}
-		setFilters([selectedFilterName]);
-	};
-
-	const menuItems = [
-		{
-			label: 'Required',
-			action: () => handleFilterSelect('Required'),
-		},
-		{
-			label: 'All Fields',
-			action: () => handleFilterSelect('All Fields'),
-		},
-	];
-
-	return (
-		<Dropdown
-			leftIcon={<ListFilter />}
-			title="Filter By"
-			menuItems={menuItems}
-			disabled={errors.length > 0 || loading}
-		/>
-	);
-};
-
-export default AttributeFilterDropdown;
+export { ErrorMessage } from './ErrorMessage';
+export { ErrorModal } from './ErrorModal';

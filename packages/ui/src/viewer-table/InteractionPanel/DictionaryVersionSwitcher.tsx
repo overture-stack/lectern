@@ -19,7 +19,7 @@
  */
 
 import Dropdown from '../../common/Dropdown/Dropdown';
-import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
@@ -29,9 +29,9 @@ const formatDate = (dateString: string | undefined): string => {
 const DictionaryVersionSwitcher = () => {
 	const theme: Theme = useThemeContext();
 	const { History } = theme.icons;
-	const { loading, errors, dictionaries, currentDictionaryIndex, setCurrentDictionaryIndex } =
-		useDictionaryDataContext();
-	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
+
+	const { loading, errors, dictionaries } = useDictionaryDataContext();
+	const { selectedDictionary, setCurrentDictionaryIndex } = useDictionaryStateContext();
 
 	const createdAt = selectedDictionary && 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : '';
 

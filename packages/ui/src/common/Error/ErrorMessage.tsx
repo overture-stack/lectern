@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -15,52 +16,45 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
-import Dropdown from '../../common/Dropdown/Dropdown';
-import {
-	FilterOptions,
-	useDictionaryDataContext,
-	useDictionaryStateContext,
-} from '../../dictionary-controller/DictionaryDataContext';
+/** @jsxImportSource @emotion/react */
+
+import { css } from '@emotion/react';
+
 import type { Theme } from '../../theme';
+import MessageSquareWarning from '../../theme/icons/MessageSquareWarning';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-const AttributeFilterDropdown = () => {
-	const theme: Theme = useThemeContext();
+const errorItemStyle = css`
+	display: flex;
+	align-items: center;
+	gap: 12px;
+`;
 
-	const { loading, errors } = useDictionaryDataContext();
-	const { filters, setFilters } = useDictionaryStateContext();
+const errorIconStyle = (theme: Theme) => css`
+	color: ${theme.colors.error_dark};
+	flex-shrink: 0;
+`;
 
-	const { ListFilter } = theme.icons;
+const errorTextStyle = (theme: Theme) => css`
+	${theme.typography.bodyBold}
+	color: ${theme.colors.error_dark};
+	margin: 0;
+`;
 
-	const handleFilterSelect = (selectedFilterName: FilterOptions) => {
-		if (filters?.includes(selectedFilterName)) {
-			setFilters([]);
-			return;
-		}
-		setFilters([selectedFilterName]);
-	};
-
-	const menuItems = [
-		{
-			label: 'Required',
-			action: () => handleFilterSelect('Required'),
-		},
-		{
-			label: 'All Fields',
-			action: () => handleFilterSelect('All Fields'),
-		},
-	];
-
-	return (
-		<Dropdown
-			leftIcon={<ListFilter />}
-			title="Filter By"
-			menuItems={menuItems}
-			disabled={errors.length > 0 || loading}
-		/>
-	);
+export type ErrorMessageProps = {
+	message: string;
 };
 
-export default AttributeFilterDropdown;
+export const ErrorMessage = ({ message }: ErrorMessageProps) => {
+	const theme: Theme = useThemeContext();
+
+	return (
+		<div css={errorItemStyle}>
+			<MessageSquareWarning style={errorIconStyle(theme)} size={20} />
+			<span css={errorTextStyle(theme)}>{message}</span>
+		</div>
+	);
+};
