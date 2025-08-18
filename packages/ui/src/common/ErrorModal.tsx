@@ -30,6 +30,7 @@ import { useThemeContext } from '../theme/ThemeContext';
 
 Modal.setAppElement('body');
 
+// Using react-modal's built-in styling system instead of emotion css for modal configuration
 const customStyles = (theme: Theme): Styles => ({
 	content: {
 		top: '50%',
