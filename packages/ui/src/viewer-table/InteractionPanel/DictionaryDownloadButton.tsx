@@ -85,7 +85,7 @@ export const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaNam
 		fileType,
 	});
 
-	if (schemaName !== undefined && !schemaName.trim()) {
+	if (schemaName !== undefined && schemaName.trim()) {
 		queryParams.append('schemaName', schemaName);
 	}
 

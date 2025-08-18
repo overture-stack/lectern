@@ -54,10 +54,10 @@ export const WithDownloadButton: Story = {
 		collapseAll: true,
 		accordionItems: [
 			{
-				title: 'Study',
+				title: 'Donor',
 				description: 'Research studies enrolling participants',
-				content: 'Content for study schema',
-				schemaName: 'study',
+				content: 'Content for donor schema',
+				schemaName: 'donor',
 			},
 		],
 	},
