@@ -4,7 +4,7 @@
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
  *  GNU Affero General Public License along with this program.
- *   If not, see <http://www.gnu.org/licenses/>.
+ *  If not, see <http://www.gnu.org/licenses/>.
  *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
  *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -18,13 +18,20 @@
  */
 
 import Dropdown from '../../common/Dropdown/Dropdown';
-import { FilterOptions, useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import {
+	FilterOptions,
+	useDictionaryDataContext,
+	useDictionaryStateContext,
+} from '../../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
 const AttributeFilterDropdown = () => {
 	const theme: Theme = useThemeContext();
-	const { loading, errors, filters, setFilters } = useDictionaryDataContext();
+
+	const { loading, errors } = useDictionaryDataContext();
+	const { filters, setFilters } = useDictionaryStateContext();
+
 	const { ListFilter } = theme.icons;
 
 	const handleFilterSelect = (selectedFilterName: FilterOptions) => {
