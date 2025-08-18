@@ -73,7 +73,7 @@ export function useDictionaryDataContext(): DictionaryContextType {
 	return context;
 }
 
-export function DictionaryDataProvider(props: DictionaryProviderProps) {
+export const DictionaryDataProvider = (props: DictionaryProviderProps) => {
 	const [dictionaries, setDictionaries] = useState<DictionaryServerUnion[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [errors, setErrors] = useState<string[]>([]);
@@ -156,4 +156,4 @@ export function DictionaryDataProvider(props: DictionaryProviderProps) {
 	};
 
 	return <DictionaryDataContext.Provider value={value}>{props.children}</DictionaryDataContext.Provider>;
-}
+};
