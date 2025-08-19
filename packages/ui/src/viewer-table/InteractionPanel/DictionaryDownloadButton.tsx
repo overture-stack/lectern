@@ -32,9 +32,10 @@ import { useThemeContext } from '../../theme/ThemeContext';
 export type DictionaryDownloadButtonProps = {
 	fileType: 'tsv' | 'csv';
 	iconOnly?: boolean;
+	schemaName?: string;
 };
 
-const downloadDictionary = async ({ fetchUrl, name, version }) => {
+const downloadDictionary = async ({ fetchUrl, name, version, schemaName }): Promise<void> => {
 	const res = await fetch(fetchUrl);
 
 	if (!res.ok) {
@@ -49,7 +50,8 @@ const downloadDictionary = async ({ fetchUrl, name, version }) => {
 
 	const a = document.createElement('a');
 	a.href = url;
-	a.download = `${name}_${version}_templates.zip`;
+	const fileName = schemaName ? `${name}_${version}_${schemaName}_template.zip` : `${name}_${version}_templates.zip`;
+	a.download = fileName;
 	document.body.appendChild(a);
 	a.click();
 	document.body.removeChild(a);
@@ -57,8 +59,15 @@ const downloadDictionary = async ({ fetchUrl, name, version }) => {
 	URL.revokeObjectURL(url);
 };
 
-const DictionaryDownloadButton = ({ fileType, iconOnly = false }: DictionaryDownloadButtonProps) => {
+/**
+ * A Button that downloads submission templates.
+ * If a schemaName is provided, it treats the download as an individual schema download
+ * @param {DictionaryDownloadButtonProps} props
+ */
+
+export const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaName }: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
+
 	const theme: Theme = useThemeContext();
 	const { FileDownload } = theme.icons;
 	const { loading, errors, lecternUrl } = useDictionaryDataContext();
@@ -70,11 +79,17 @@ const DictionaryDownloadButton = ({ fileType, iconOnly = false }: DictionaryDown
 
 	const { name, version } = selectedDictionary;
 
-	const fetchUrl = `${lecternUrl}/dictionaries/template/download?${new URLSearchParams({
+	const queryParams = new URLSearchParams({
 		name,
 		version,
 		fileType,
-	})}`;
+	});
+
+	if (schemaName) {
+		queryParams.append('schemaName', schemaName);
+	}
+
+	const fetchUrl = `${lecternUrl}/dictionaries/template/download?${queryParams}`;
 
 	return (
 		<Button
@@ -91,7 +106,7 @@ const DictionaryDownloadButton = ({ fileType, iconOnly = false }: DictionaryDown
 				e.stopPropagation();
 				setIsLoading(true);
 				try {
-					await downloadDictionary({ fetchUrl, name, version });
+					await downloadDictionary({ fetchUrl, name, version, schemaName });
 				} catch (error) {
 					console.error('Error downloading dictionary:', error);
 				} finally {
@@ -104,5 +119,3 @@ const DictionaryDownloadButton = ({ fileType, iconOnly = false }: DictionaryDown
 		</Button>
 	);
 };
-
-export default DictionaryDownloadButton;
