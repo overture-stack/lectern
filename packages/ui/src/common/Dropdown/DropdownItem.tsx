@@ -42,7 +42,7 @@ const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
 	display: flex;
 	align-items: center;
 	padding: 8px 16px;
-	height: 42px;
+	min-height: 42px;
 	box-sizing: border-box;
 	color: ${theme.colors.black};
 	cursor: pointer;
