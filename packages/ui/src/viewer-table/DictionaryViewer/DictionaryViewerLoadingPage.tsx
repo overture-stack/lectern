@@ -27,8 +27,7 @@ import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 import { HeaderSkeleton } from '../Loading/HeaderSkeleton';
 import { InteractionPanelSkeleton } from '../Loading/InteractionPanelSkeleton';
-import LoadingSpinner from '../Loading/LoadingSpinner';
-
+import LoadingSpinnerPage from '../Loading/LoadingSpinnerPage';
 const pageContainerStyle = (theme: Theme) => css`
 	margin: 0 auto;
 	min-height: calc(100vh - ${theme.dimensions.navbar.height}px - ${theme.dimensions.footer.height}px);
@@ -62,7 +61,7 @@ const DictionaryViewerLoadingPage = () => {
 				<InteractionPanelSkeleton />
 			</div>
 			<div css={loadingContentStyles}>
-				<LoadingSpinner size={69} />
+				<LoadingSpinnerPage size={69} />
 			</div>
 		</div>
 	);

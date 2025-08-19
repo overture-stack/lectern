@@ -102,7 +102,6 @@ export const DictionaryTableViewer = () => {
 		return <DictionaryViewerLoadingPage />;
 	}
 
-	// Handle controller errors first
 	if (errors.length > 0) {
 		return (
 			<div css={pageContainerStyle(theme)}>
@@ -128,9 +127,6 @@ export const DictionaryTableViewer = () => {
 			</div>
 		);
 	}
-
-	const { name, description, version } = selectedDictionary;
-
 	return (
 		<div css={pageContainerStyle(theme)}>
 			<div css={headerPanelBlockStyle}>
