@@ -29,7 +29,6 @@ import {
 	withErrorState,
 	withForeverLoading,
 	withLecternUrl,
-	withLoadingState,
 	withMultipleDictionaries,
 	withSingleDictionary,
 } from '../dictionaryDecorator';
@@ -40,6 +39,15 @@ const meta = {
 	title: 'Viewer - Table/Dictionary Page',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		layout: 'fullscreen',
+		docs: {
+			story: {
+				inline: false,
+				iframeHeight: 600,
+			},
+		},
+	},
 } satisfies Meta<typeof DictionaryTableViewer>;
 
 export default meta;
@@ -53,16 +61,20 @@ export const Empty: Story = {
 	decorators: [withEmptyDictionaries],
 };
 
-export const Loading: Story = {
-	decorators: [withLoadingState()],
-};
-
 export const ForeverLoading: Story = {
 	decorators: [withForeverLoading()],
 };
 
 export const ErrorState: Story = {
 	decorators: [withErrorState()],
+	parameters: {
+		docs: {
+			story: {
+				inline: false,
+				iframeHeight: 600,
+			},
+		},
+	},
 };
 
 export const WithStaticData: Story = {

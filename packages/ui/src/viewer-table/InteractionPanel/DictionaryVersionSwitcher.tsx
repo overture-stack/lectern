@@ -37,7 +37,9 @@ const DictionaryVersionSwitcher = () => {
 
 	const formattedCreatedAt = formatDate(createdAt?.toString());
 	const title =
-		selectedDictionary?.version ? `Version ${selectedDictionary.version} (${formattedCreatedAt})` : 'Select Version';
+		selectedDictionary?.version ?
+			`Version ${selectedDictionary.version}${formattedCreatedAt ? ` (${formattedCreatedAt})` : ''}`
+		:	'Select Version';
 
 	const versionSwitcherObjectArray = dictionaries?.map((item: any, index: number) => {
 		const itemCreatedAt = 'createdAt' in item ? item.createdAt : '';

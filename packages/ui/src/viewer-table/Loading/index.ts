@@ -19,7 +19,5 @@
  *
  */
 
-export * from './DictionaryHeader';
-export * from './DictionaryTableViewer';
-export * from './DictionaryViewerPage';
-export * from './Loading';
+export { default as LoadingPage } from './LoadingPage';
+export { default as LoadingSpinner } from './LoadingSpinner';

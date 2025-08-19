@@ -18,55 +18,59 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
 /** @jsxImportSource @emotion/react */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import { css, keyframes } from '@emotion/react';
 
-import { DictionaryDownloadButton } from '../../../src/viewer-table/InteractionPanel/DictionaryDownloadButton';
-import { withDictionaryContext, withErrorState, withLoadingState } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
+const spin = keyframes`
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+`;
 
-const meta = {
-	component: DictionaryDownloadButton,
-	title: 'Viewer - Table/Interaction - Panel/DictionaryDownloadButton',
-	tags: ['autodocs'],
-	decorators: [themeDecorator(), withDictionaryContext()],
-} satisfies Meta<typeof DictionaryDownloadButton>;
+const spinnerStyles = css`
+	animation: ${spin} 1.5s linear infinite;
+`;
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const TSV: Story = {
-	args: {
-		fileType: 'tsv',
-	},
+export type LoadingSpinnerProps = {
+	size?: number;
 };
 
-export const IconOnly: Story = {
-	args: {
-		fileType: 'tsv',
-		iconOnly: true,
-	},
+const LoadingSpinner = ({ size = 69 }: LoadingSpinnerProps) => {
+	return (
+		<svg
+			width={size}
+			height={size}
+			viewBox="0 0 69 69"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			css={spinnerStyles}
+		>
+			<path
+				d="M62 34.5C62 19.3122 49.6878 7 34.5 7C19.3122 7 7 19.3122 7 34.5C7 49.6878 19.3122 62 34.5 62"
+				stroke="url(#paint0_linear_3883_1093)"
+				strokeWidth="13"
+				strokeLinecap="round"
+			/>
+			<defs>
+				<linearGradient
+					id="paint0_linear_3883_1093"
+					x1="70.8272"
+					y1="23.9753"
+					x2="39.3529"
+					y2="55.5294"
+					gradientUnits="userSpaceOnUse"
+				>
+					<stop stopColor="#F5F7F8" />
+					<stop offset="1" stopColor="#E5EDF3" />
+				</linearGradient>
+			</defs>
+		</svg>
+	);
 };
 
-export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
-	args: {
-		fileType: 'tsv',
-	},
-};
-
-export const ForeverLoading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
-	args: {
-		fileType: 'tsv',
-	},
-};
-
-export const Error: Story = {
-	decorators: [themeDecorator(), withErrorState()],
-	args: {
-		fileType: 'tsv',
-	},
-};
+export default LoadingSpinner;

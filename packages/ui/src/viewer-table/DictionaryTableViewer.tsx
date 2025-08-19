@@ -26,6 +26,7 @@ import type { Schema, SchemaFieldRestrictions } from '@overture-stack/lectern-di
 import { useEffect, useRef, useState } from 'react';
 
 import Accordion from '../common/Accordion/Accordion';
+import { ErrorModal } from '../common/Error/ErrorModal';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
@@ -33,6 +34,7 @@ import { isFieldRequired } from '../utils/isFieldRequired';
 import SchemaTable from './DataTable/SchemaTable/SchemaTable';
 import DictionaryHeader from './DictionaryHeader';
 import InteractionPanel from './InteractionPanel/InteractionPanel';
+import { LoadingPage } from './Loading';
 
 const pageContainerStyle = (theme: Theme) => css`
 	margin: 0 auto;
@@ -65,10 +67,8 @@ export const DictionaryTableViewer = () => {
 	const accordionRefs = useRef<(HTMLLIElement | null)[]>([]);
 
 	useEffect(() => {
-		if (errors.length > 0 || (!loading && !selectedDictionary)) {
-			setIsErrorModalOpen(true);
-		}
-	}, [errors, loading, selectedDictionary]);
+		setIsErrorModalOpen(errors.length > 0);
+	}, [errors]);
 
 	const getFilteredSchema = (schema: Schema) => {
 		if (filters.includes('Required')) {
@@ -99,15 +99,34 @@ export const DictionaryTableViewer = () => {
 	};
 
 	if (loading) {
+		return <LoadingPage />;
+	}
+
+	// Handle controller errors first
+	if (errors.length > 0) {
 		return (
 			<div css={pageContainerStyle(theme)}>
-				<DictionaryHeader name="" isLoading />
+				<ErrorModal
+					isOpen={isErrorModalOpen}
+					setIsOpen={setIsErrorModalOpen}
+					errors={errors}
+					onContactClick={() => console.log('Contact administrator clicked')}
+				/>
 			</div>
 		);
 	}
 
 	if (!selectedDictionary) {
-		return <div css={pageContainerStyle(theme)}>{/* No dictionary data found; error handling removed for now */}</div>;
+		return (
+			<div css={pageContainerStyle(theme)}>
+				<ErrorModal
+					isOpen={true}
+					setIsOpen={() => {}}
+					errors={['No dictionary data provided']}
+					onContactClick={() => console.log('Contact administrator clicked')}
+				/>
+			</div>
+		);
 	}
 
 	const { name, description, version } = selectedDictionary;
@@ -124,8 +143,6 @@ export const DictionaryTableViewer = () => {
 				selectedIndex={selectedSchemaIndex}
 				refs={accordionRefs}
 			/>
-
-			{/* Error modal temporarily disabled here; will be handled in stories */}
 		</div>
 	);
 };

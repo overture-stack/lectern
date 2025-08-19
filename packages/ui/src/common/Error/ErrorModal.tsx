@@ -49,7 +49,7 @@ const customStyles = (theme: Theme): Styles => ({
 		backgroundColor: theme.colors.error_modal_bg,
 	},
 	overlay: {
-		backgroundColor: 'transparent',
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 		zIndex: 1000,
 	},
 });
