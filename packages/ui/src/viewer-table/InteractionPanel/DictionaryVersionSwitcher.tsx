@@ -21,14 +21,8 @@
 import Dropdown from '../../common/Dropdown/Dropdown';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../../theme';
-import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
-import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-const formatDate = (dateString: string | undefined): string => {
-	return dateString ? new Date(dateString).toISOString().split('T')[0] : '';
-};
-const DictionaryVersionSwitcher = () => {
 const formatDate = (dateString: string | undefined): string => {
 	return dateString ? new Date(dateString).toISOString().split('T')[0] : '';
 };
@@ -53,7 +47,6 @@ const DictionaryVersionSwitcher = () => {
 		const displayVersionDate = itemFormattedDate ? `(${itemFormattedDate})` : '';
 		return {
 			label: `Version ${item?.version} ${displayVersionDate}`,
-			label: `Version ${item?.version} ${displayVersionDate}`,
 			action: () => {
 				setCurrentDictionaryIndex(index);
 				setCurrentDictionaryIndex(index);
@@ -65,12 +58,6 @@ const DictionaryVersionSwitcher = () => {
 
 	return (
 		displayVersionSwitcher && (
-			<Dropdown
-				leftIcon={<History />}
-				menuItems={versionSwitcherObjectArray}
-				title={title}
-				disabled={loading || errors.length > 0}
-			/>
 			<Dropdown
 				leftIcon={<History />}
 				menuItems={versionSwitcherObjectArray}

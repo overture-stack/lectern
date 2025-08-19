@@ -24,15 +24,10 @@
 import { css } from '@emotion/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../../theme';
-import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
-import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
-import AttributeFilterDropdown from './AttributeFilterDropdown';
 import AttributeFilterDropdown from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
 import { DictionaryDownloadButton } from './DictionaryDownloadButton';
@@ -83,21 +78,6 @@ const InteractionPanelSkeleton = () => {
 };
 
 const InteractionPanel = ({ onSelect, setIsCollapsed }: InteractionPanelProps) => {
-const InteractionPanelSkeleton = () => {
-	const theme = useThemeContext();
-	return (
-		<SkeletonTheme
-			customHighlightBackground={`linear-gradient(270deg, rgba(229, 237, 243, 0) 0%, ${theme.colors.accent_1} 100%)`}
-			baseColor="transparent"
-		>
-			<Skeleton width={160} height={42} inline />
-			<Skeleton width={120} height={42} inline />
-			<Skeleton width={120} height={42} inline />
-		</SkeletonTheme>
-	);
-};
-
-const InteractionPanel = ({ onSelect, setIsCollapsed }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
 	const { loading } = useDictionaryDataContext();
 	const { selectedDictionary } = useDictionaryStateContext();
@@ -105,8 +85,6 @@ const InteractionPanel = ({ onSelect, setIsCollapsed }: InteractionPanelProps) =
 	if (!selectedDictionary?.schemas && !loading) {
 		return null;
 	}
-	const { loading } = useDictionaryDataContext();
-	const { selectedDictionary } = useDictionaryStateContext();
 
 	if (!selectedDictionary?.schemas && !loading) {
 		return null;
