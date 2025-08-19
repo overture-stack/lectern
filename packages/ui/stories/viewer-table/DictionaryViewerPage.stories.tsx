@@ -42,6 +42,10 @@ const meta = {
 	parameters: {
 		layout: 'fullscreen',
 		docs: {
+			description: {
+				component:
+					'The main dictionary viewer page that displays schema information in a table format with interactive features like filtering, expanding/collapsing sections, and conditional logic visualization.',
+			},
 			story: {
 				inline: false,
 				iframeHeight: 600,

@@ -23,8 +23,8 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { InteractionPanelSkeleton } from '../../../src/viewer-table/Loading';
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
+import { InteractionPanelSkeleton } from '../../../src/viewer-table/Loading';
 import { withDictionaryContext } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
@@ -34,6 +34,12 @@ const meta = {
 	tags: ['autodocs'],
 	parameters: {
 		layout: 'fullscreen',
+		docs: {
+			description: {
+				component:
+					'The interaction panel provides controls for dictionary navigation, version switching, filtering, and data export functionality.',
+			},
+		},
 	},
 } satisfies Meta<typeof InteractionPanel>;
 

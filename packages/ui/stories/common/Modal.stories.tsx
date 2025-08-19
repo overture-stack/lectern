@@ -32,6 +32,14 @@ const meta = {
 	title: 'Common/Modal',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component:
+					'A reusable modal component built on react-modal that provides consistent styling and behavior for overlays and dialogs.',
+			},
+		},
+	},
 } satisfies Meta<typeof ModalComponent>;
 
 export default meta;

@@ -31,6 +31,14 @@ const meta: Meta<typeof ErrorModal> = {
 	component: ErrorModal,
 	decorators: [themeDecorator()],
 	tags: ['autodocs'],
+	parameters: {
+		docs: {
+			description: {
+				component:
+					'A modal component for displaying error messages to users with support for single or multiple error lists.',
+			},
+		},
+	},
 };
 
 export default meta;

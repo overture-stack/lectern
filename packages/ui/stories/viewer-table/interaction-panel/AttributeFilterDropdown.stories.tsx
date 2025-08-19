@@ -31,6 +31,14 @@ const meta = {
 	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withMultipleDictionaries],
+	parameters: {
+		docs: {
+			description: {
+				component:
+					'A dropdown component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
+			},
+		},
+	},
 } satisfies Meta<typeof AttributeFilter>;
 
 export default meta;

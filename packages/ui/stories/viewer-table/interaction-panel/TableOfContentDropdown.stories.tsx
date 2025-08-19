@@ -33,6 +33,14 @@ const meta = {
 	title: 'Viewer - Table/Interaction - Panel/Table of Contents Dropdown',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withMultipleDictionaries],
+	parameters: {
+		docs: {
+			description: {
+				component:
+					'A dropdown component that displays the table of contents for dictionary schemas, allowing users to navigate between different schema sections.',
+			},
+		},
+	},
 } satisfies Meta<typeof TableOfContentsDropdown>;
 
 export default meta;

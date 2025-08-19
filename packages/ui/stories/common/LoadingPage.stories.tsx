@@ -28,6 +28,14 @@ const meta = {
 	title: 'Common/LoadingPage',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component:
+					'A full-page loading component that centers a spinner with loading text. Used for page-level loading states.',
+			},
+		},
+	},
 } satisfies Meta<typeof LoadingPage>;
 
 export default meta;
