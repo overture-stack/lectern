@@ -23,14 +23,14 @@
 
 import { css } from '@emotion/react';
 
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 import ReadMoreText from '../common/ReadMoreText';
+import { useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
+import { HeaderSkeleton } from './Loading';
 
 export type DictionaryHeaderProps = {
-	name: string;
+	name?: string;
 	description?: string;
 	version?: string;
 	disabled?: boolean;
@@ -75,46 +75,34 @@ const versionStyle = (theme: Theme) => css`
 	color: ${theme.colors.accent_dark};
 `;
 
-const HeaderSkeleton = ({ gradient }: { gradient: string }) => {
+const DictionaryHeader = () => {
 	const theme: Theme = useThemeContext();
-	return (
-		<SkeletonTheme customHighlightBackground={gradient} baseColor="transparent">
-			<h1 css={titleStyle(theme)}>
-				<Skeleton width={360} />
-			</h1>
-			<Skeleton count={2} height={16} style={{ marginTop: 4, marginBottom: 4 }} />
-			<Skeleton width={180} />
-		</SkeletonTheme>
-	);
-};
+	const dataContext = useDictionaryDataContext();
+	const stateContext = useDictionaryStateContext();
 
-const DictionaryHeader = ({ name, description, version, disabled, isLoading }: DictionaryHeaderProps) => {
-	const theme: Theme = useThemeContext();
+	const { loading } = dataContext;
+	const { selectedDictionary } = stateContext;
 
-	if (disabled) {
-		return <div css={containerStyle} />;
+	const version = selectedDictionary?.version;
+	const description = selectedDictionary?.description;
+
+	if (loading) {
+		return <HeaderSkeleton />;
 	}
-	const gradient = `linear-gradient(270deg, rgba(229, 237, 243, 0) 0%, ${theme.colors.accent_1} 100%)`;
-
 	return (
 		<div css={containerStyle}>
-			{isLoading ?
-				<HeaderSkeleton gradient={gradient} />
-			:	<>
-					<h1 css={titleStyle(theme)}>{name}</h1>
-					{description && (
-						<ReadMoreText
-							maxLines={2}
-							wrapperStyle={descriptionWrapperStyle(theme)}
-							expandedText="Read less"
-							collapsedText="Show more"
-						>
-							{description}
-						</ReadMoreText>
-					)}
-					{version && <span css={versionStyle(theme)}>Version: {version}</span>}
-				</>
-			}
+			<h1 css={titleStyle(theme)}>{selectedDictionary?.name}</h1>
+			{description && (
+				<ReadMoreText
+					maxLines={2}
+					wrapperStyle={descriptionWrapperStyle(theme)}
+					expandedText="Read less"
+					collapsedText="Show more"
+				>
+					{description}
+				</ReadMoreText>
+			)}
+			{version && <span css={versionStyle(theme)}>Version: {version}</span>}
 		</div>
 	);
 };
