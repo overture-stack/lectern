@@ -51,10 +51,10 @@ export const HeaderSkeleton = () => {
 		<div css={containerStyle}>
 			<SkeletonTheme customHighlightBackground={gradient} baseColor="transparent">
 				<h1 css={titleStyle(theme)}>
-					<Skeleton width={360} />
+					<Skeleton width="16.67%" />
 				</h1>
-				<Skeleton count={2} height={16} style={{ marginTop: 4, marginBottom: 4 }} />
-				<Skeleton width={180} />
+				<Skeleton width="16.67%" height={16} style={{ marginTop: 10, marginBottom: 10 }} />
+				<Skeleton width="16.67%" />
 			</SkeletonTheme>
 		</div>
 	);
