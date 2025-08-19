@@ -19,8 +19,5 @@
  *
  */
 
-export * from './DictionaryHeader';
-export * from './DictionaryTableViewer';
-export * from './DictionaryViewer';
-export * from './DictionaryViewerPage';
-export * from './Loading';
+export { default as DictionaryViewerLoadingPage } from './DictionaryViewerLoadingPage';
+

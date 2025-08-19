@@ -25,9 +25,9 @@ import { css } from '@emotion/react';
 
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
-import LoadingSpinner from './LoadingSpinner';
-import { HeaderSkeleton } from './HeaderSkeleton';
-import { InteractionPanelSkeleton } from './InteractionPanelSkeleton';
+import { HeaderSkeleton } from '../Loading/HeaderSkeleton';
+import { InteractionPanelSkeleton } from '../Loading/InteractionPanelSkeleton';
+import LoadingSpinner from '../Loading/LoadingSpinner';
 
 const pageContainerStyle = (theme: Theme) => css`
 	margin: 0 auto;
@@ -50,16 +50,9 @@ const loadingContentStyles = css`
 	align-items: center;
 	justify-content: center;
 	flex: 1;
-	gap: 24px;
 `;
 
-const loadingTextStyles = (theme: Theme) => css`
-	${theme.typography.bodyBold}
-	color: ${theme.colors.accent};
-	margin: 0;
-`;
-
-const LoadingPage = () => {
+const DictionaryViewerLoadingPage = () => {
 	const theme: Theme = useThemeContext();
 
 	return (
@@ -70,10 +63,9 @@ const LoadingPage = () => {
 			</div>
 			<div css={loadingContentStyles}>
 				<LoadingSpinner size={69} />
-				<p css={loadingTextStyles(theme)}>Loading...</p>
 			</div>
 		</div>
 	);
 };
 
-export default LoadingPage;
+export default DictionaryViewerLoadingPage;

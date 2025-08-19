@@ -33,8 +33,8 @@ import { useThemeContext } from '../theme/ThemeContext';
 import { isFieldRequired } from '../utils/isFieldRequired';
 import SchemaTable from './DataTable/SchemaTable/SchemaTable';
 import DictionaryHeader from './DictionaryHeader';
+import { DictionaryViewerLoadingPage } from './DictionaryViewer';
 import InteractionPanel from './InteractionPanel/InteractionPanel';
-import { LoadingPage } from './Loading';
 
 const pageContainerStyle = (theme: Theme) => css`
 	margin: 0 auto;
@@ -99,7 +99,7 @@ export const DictionaryTableViewer = () => {
 	};
 
 	if (loading) {
-		return <LoadingPage />;
+		return <DictionaryViewerLoadingPage />;
 	}
 
 	// Handle controller errors first

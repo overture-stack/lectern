@@ -23,8 +23,8 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
 import { InteractionPanelSkeleton } from '../../../src/viewer-table/Loading';
+import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
 import { withDictionaryContext } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 

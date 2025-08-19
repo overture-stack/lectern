@@ -23,6 +23,9 @@
 
 import { css, keyframes } from '@emotion/react';
 
+import type { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
+
 const spin = keyframes`
 	0% {
 		transform: rotate(0deg);
@@ -32,44 +35,63 @@ const spin = keyframes`
 	}
 `;
 
+const containerStyles = css`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 24px;
+`;
+
 const spinnerStyles = css`
 	animation: ${spin} 1.5s linear infinite;
 `;
 
-export type LoadingSpinnerProps = {
+const loadingTextStyles = (theme: Theme) => css`
+	${theme.typography.bodyBold}
+	color: ${theme.colors.accent};
+	margin: 0;
+`;
+
+interface LoadingSpinnerProps {
 	size?: number;
-};
+}
 
 const LoadingSpinner = ({ size = 69 }: LoadingSpinnerProps) => {
+	const theme: Theme = useThemeContext();
+
 	return (
-		<svg
-			width={size}
-			height={size}
-			viewBox="0 0 69 69"
-			fill="none"
-			xmlns="http://www.w3.org/2000/svg"
-			css={spinnerStyles}
-		>
-			<path
-				d="M62 34.5C62 19.3122 49.6878 7 34.5 7C19.3122 7 7 19.3122 7 34.5C7 49.6878 19.3122 62 34.5 62"
-				stroke="url(#paint0_linear_3883_1093)"
-				strokeWidth="13"
-				strokeLinecap="round"
-			/>
-			<defs>
-				<linearGradient
-					id="paint0_linear_3883_1093"
-					x1="70.8272"
-					y1="23.9753"
-					x2="39.3529"
-					y2="55.5294"
-					gradientUnits="userSpaceOnUse"
-				>
-					<stop stopColor="#F5F7F8" />
-					<stop offset="1" stopColor="#E5EDF3" />
-				</linearGradient>
-			</defs>
-		</svg>
+		<div css={containerStyles}>
+			<svg
+				width={size}
+				height={size}
+				viewBox="0 0 69 69"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+				css={spinnerStyles}
+			>
+				<path
+					d="M62 34.5C62 19.3122 49.6878 7 34.5 7C19.3122 7 7 19.3122 7 34.5C7 49.6878 19.3122 62 34.5 62"
+					stroke="url(#paint0_linear_3883_1093)"
+					strokeWidth="13"
+					strokeLinecap="round"
+				/>
+				<defs>
+					<linearGradient
+						id="paint0_linear_3883_1093"
+						x1="70.8272"
+						y1="23.9753"
+						x2="39.3529"
+						y2="55.5294"
+						gradientUnits="userSpaceOnUse"
+					>
+						<stop stopColor="#F5F7F8" />
+						<stop offset="1" stopColor="#E5EDF3" />
+					</linearGradient>
+				</defs>
+			</svg>
+			<p css={loadingTextStyles(theme)}>Loading...</p>
+		</div>
 	);
 };
 

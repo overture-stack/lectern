@@ -63,12 +63,8 @@ export const InteractionPanelSkeleton = () => {
 					<Skeleton width={160} height={42} />
 					<Skeleton width={120} height={42} />
 					<Skeleton width={80} height={42} />
-					<Skeleton width={80} height={42} />
 				</div>
-				<div css={sectionStyles}>
-					<Skeleton width={140} height={42} />
-					<Skeleton width={100} height={42} />
-				</div>
+				<div css={sectionStyles}></div>
 			</SkeletonTheme>
 		</div>
 	);
