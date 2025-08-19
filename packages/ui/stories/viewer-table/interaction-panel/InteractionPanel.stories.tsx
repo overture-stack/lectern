@@ -25,6 +25,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
 import { withDictionaryContext, withErrorState, withLoadingState } from '../../dictionaryDecorator';
+import { withDictionaryContext, withErrorState, withLoadingState } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
@@ -44,11 +45,13 @@ const mockProps = {
 		alert('setIsCollapsed called with:' + isCollapsed);
 	},
 	onSelect: (schemaNameIndex: number) => {
+	onSelect: (schemaNameIndex: number) => {
 		alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
 	},
 };
 
 export const Default: Story = {
+	decorators: [themeDecorator(), withDictionaryContext()],
 	decorators: [themeDecorator(), withDictionaryContext()],
 	args: {
 		...mockProps,
@@ -78,6 +81,13 @@ export const Loading: Story = {
 
 export const ForeverLoading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
+	args: {
+		...mockProps,
+	},
+};
+
+export const Error: Story = {
+	decorators: [themeDecorator(), withErrorState()],
 	args: {
 		...mockProps,
 	},

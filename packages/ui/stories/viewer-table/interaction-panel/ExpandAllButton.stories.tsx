@@ -37,6 +37,7 @@ const meta = {
 	title: 'Viewer - Table/Interaction - Panel/ExpandAllButton',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withMultipleDictionaries],
+	decorators: [themeDecorator(), withMultipleDictionaries],
 } satisfies Meta<typeof ExpandAllButton>;
 
 export default meta;

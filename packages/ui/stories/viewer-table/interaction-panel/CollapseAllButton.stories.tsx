@@ -37,6 +37,7 @@ const meta = {
 	title: 'Viewer - Table/Interaction - Panel/CollapseAllButton',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withMultipleDictionaries],
+	decorators: [themeDecorator(), withMultipleDictionaries],
 } satisfies Meta<typeof CollapseAllButton>;
 
 export default meta;

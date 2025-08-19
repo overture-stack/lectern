@@ -31,6 +31,7 @@ const meta = {
 	title: 'Viewer - Table/Interaction - Panel/DictionaryDownloadButton',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withDictionaryContext()],
+	decorators: [themeDecorator(), withDictionaryContext()],
 } satisfies Meta<typeof DictionaryDownloadButton>;
 
 export default meta;
@@ -61,12 +62,16 @@ export const ForeverLoading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
 	args: {
 		fileType: 'tsv',
+		fileType: 'tsv',
 	},
 };
 
 export const Error: Story = {
 	decorators: [themeDecorator(), withErrorState()],
+export const Error: Story = {
+	decorators: [themeDecorator(), withErrorState()],
 	args: {
+		fileType: 'tsv',
 		fileType: 'tsv',
 	},
 };

@@ -36,6 +36,7 @@ const meta = {
 	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withMultipleDictionaries],
+	decorators: [themeDecorator(), withMultipleDictionaries],
 } satisfies Meta<typeof AttributeFilter>;
 
 export default meta;
@@ -51,6 +52,9 @@ export const Loading: Story = {
 export const ForeverLoading: Story = {
 	decorators: [themeDecorator(), withForeverLoading()],
 };
+
+export const Error: Story = {
+	decorators: [themeDecorator(), withErrorState()],
 
 export const Error: Story = {
 	decorators: [themeDecorator(), withErrorState()],

@@ -38,6 +38,7 @@ const meta = {
 	title: 'Viewer - Table/Interaction - Panel/Table of Contents Dropdown',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withMultipleDictionaries],
+	decorators: [themeDecorator(), withMultipleDictionaries],
 } satisfies Meta<typeof TableOfContentsDropdown>;
 
 export default meta;
