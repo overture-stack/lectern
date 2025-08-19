@@ -29,14 +29,6 @@ import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
 import { HeaderSkeleton } from './Loading';
 
-export type DictionaryHeaderProps = {
-	name?: string;
-	description?: string;
-	version?: string;
-	disabled?: boolean;
-	isLoading?: boolean;
-};
-
 const descriptionWrapperStyle = (theme: Theme) => css`
 	${theme.typography.body}
 	color: ${theme.colors.accent_dark};

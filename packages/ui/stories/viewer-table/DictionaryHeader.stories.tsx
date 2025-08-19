@@ -25,15 +25,16 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { pick } from 'lodash';
 
 import DictionaryHeader from '../../src/viewer-table/DictionaryHeader';
-import { withForeverLoading } from '../dictionaryDecorator';
+import { HeaderSkeleton } from '../../src/viewer-table/Loading/HeaderSkeleton';
 import biosampleDictionary from '../fixtures/minimalBiosampleModel';
 import themeDecorator from '../themeDecorator';
 
+import { withDictionaryContext } from '../dictionaryDecorator';
 const meta = {
 	component: DictionaryHeader,
 	title: 'Viewer - Table/Dictionary Header',
 	tags: ['autodocs'],
-	decorators: [themeDecorator()],
+	decorators: [themeDecorator(), withDictionaryContext()],
 } satisfies Meta<typeof DictionaryHeader>;
 
 export default meta;
@@ -46,6 +47,7 @@ export const AllHeaderProperties: Story = {
 export const NoVersion: Story = {
 	args: { ...pick(biosampleDictionary, 'name', 'description') },
 };
+
 export const NoDescription: Story = {
 	args: { ...pick(biosampleDictionary, 'name', 'version') },
 };
@@ -56,6 +58,7 @@ export const LongName: Story = {
 		name: 'This is a really really reallt reallty long dictionary name! wow!',
 	},
 };
+
 export const LongDescription: Story = {
 	args: {
 		...pick(biosampleDictionary, 'name', 'version', 'description'),
@@ -72,28 +75,11 @@ export const Disabled: Story = {
 };
 
 export const Loading: Story = {
-	args: {
-		...pick(biosampleDictionary, 'name', 'version', 'description'),
-		isLoading: true,
-	},
+	render: () => <HeaderSkeleton />,
 	parameters: {
 		docs: {
 			description: {
-				story: 'Header shows skeleton placeholders; use as forever-loading showcase.',
-			},
-		},
-	},
-};
-
-export const ForeverLoading: Story = {
-	decorators: [themeDecorator(), withForeverLoading()],
-	args: {
-		...pick(biosampleDictionary, 'name', 'version', 'description'),
-	},
-	parameters: {
-		docs: {
-			description: {
-				story: 'Context-driven loading state showing skeleton placeholders.',
+				story: 'Header shows skeleton placeholders during loading state.',
 			},
 		},
 	},
