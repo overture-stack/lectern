@@ -134,7 +134,7 @@ export const DictionaryTableViewer = () => {
 	return (
 		<div css={pageContainerStyle(theme)}>
 			<div css={headerPanelBlockStyle}>
-				<DictionaryHeader name={name ?? ''} description={description} version={version} />
+				<DictionaryHeader />
 				<InteractionPanel onSelect={handleSchemaSelect} setIsCollapsed={setIsCollapsed} />
 			</div>
 			<Accordion

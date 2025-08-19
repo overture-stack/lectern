@@ -41,19 +41,19 @@ export const multipleDictionaryData: DictionaryTestData = [
 		...DictionarySample,
 		version: '1.0',
 		_id: '1',
-		createdAt: '',
+		createdAt: new Date('2025-01-01T00:00:00.000Z'),
 	},
 	{
 		...DictionarySample,
 		version: '2.0',
 		_id: '2',
-		createdAt: '2025-01-02T00:00:00.000Z',
+		createdAt: new Date('2025-01-02T00:00:00.000Z'),
 	},
 	{
 		...DictionarySample,
 		version: '3.0',
 		_id: '3',
-		createdAt: '2025-01-03T00:00:00.000Z',
+		createdAt: new Date('2025-01-03T00:00:00.000Z'),
 	},
 ] as DictionaryServerUnion[];
 

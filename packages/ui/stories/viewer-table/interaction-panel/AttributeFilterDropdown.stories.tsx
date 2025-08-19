@@ -23,19 +23,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
-import {
-	withErrorState,
-	withForeverLoading,
-	withLoadingState,
-	withMultipleDictionaries,
-} from '../../dictionaryDecorator';
+import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: AttributeFilter,
 	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
 	tags: ['autodocs'],
-	decorators: [themeDecorator(), withMultipleDictionaries],
 	decorators: [themeDecorator(), withMultipleDictionaries],
 } satisfies Meta<typeof AttributeFilter>;
 
@@ -47,15 +41,4 @@ export const Default: Story = {};
 
 export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
-};
-
-export const ForeverLoading: Story = {
-	decorators: [themeDecorator(), withForeverLoading()],
-};
-
-export const Error: Story = {
-	decorators: [themeDecorator(), withErrorState()],
-
-export const Error: Story = {
-	decorators: [themeDecorator(), withErrorState()],
 };

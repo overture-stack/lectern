@@ -24,8 +24,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
-import { withDictionaryContext, withErrorState, withLoadingState } from '../../dictionaryDecorator';
-import { withDictionaryContext, withErrorState, withLoadingState } from '../../dictionaryDecorator';
+import { InteractionPanelSkeleton } from '../../../src/viewer-table/Loading';
+import { withDictionaryContext } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
@@ -38,6 +38,7 @@ const meta = {
 } satisfies Meta<typeof InteractionPanel>;
 
 export default meta;
+
 type Story = StoryObj<typeof meta>;
 
 const mockProps = {
@@ -45,13 +46,11 @@ const mockProps = {
 		alert('setIsCollapsed called with:' + isCollapsed);
 	},
 	onSelect: (schemaNameIndex: number) => {
-	onSelect: (schemaNameIndex: number) => {
 		alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
 	},
 };
 
 export const Default: Story = {
-	decorators: [themeDecorator(), withDictionaryContext()],
 	decorators: [themeDecorator(), withDictionaryContext()],
 	args: {
 		...mockProps,
@@ -73,29 +72,17 @@ export const Collapsed: Story = {
 };
 
 export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
+	decorators: [themeDecorator()],
 	args: {
 		...mockProps,
 	},
-};
-
-export const ForeverLoading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
-	args: {
-		...mockProps,
-	},
-};
-
-export const Error: Story = {
-	decorators: [themeDecorator(), withErrorState()],
-	args: {
-		...mockProps,
-	},
-};
-
-export const Error: Story = {
-	decorators: [themeDecorator(), withErrorState()],
-	args: {
-		...mockProps,
+	render: () => <InteractionPanelSkeleton />,
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Interactive panel displays skeleton placeholders for table controls, version switcher, and download buttons during data loading.',
+			},
+		},
 	},
 };

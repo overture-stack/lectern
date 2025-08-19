@@ -23,14 +23,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { DictionaryDownloadButton } from '../../../src/viewer-table/InteractionPanel/DictionaryDownloadButton';
-import { withDictionaryContext, withErrorState, withLoadingState } from '../../dictionaryDecorator';
+import { withDictionaryContext, withLoadingState } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: DictionaryDownloadButton,
 	title: 'Viewer - Table/Interaction - Panel/DictionaryDownloadButton',
 	tags: ['autodocs'],
-	decorators: [themeDecorator(), withDictionaryContext()],
 	decorators: [themeDecorator(), withDictionaryContext()],
 } satisfies Meta<typeof DictionaryDownloadButton>;
 
@@ -54,24 +53,6 @@ export const IconOnly: Story = {
 export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
 	args: {
-		fileType: 'tsv',
-	},
-};
-
-export const ForeverLoading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
-	args: {
-		fileType: 'tsv',
-		fileType: 'tsv',
-	},
-};
-
-export const Error: Story = {
-	decorators: [themeDecorator(), withErrorState()],
-export const Error: Story = {
-	decorators: [themeDecorator(), withErrorState()],
-	args: {
-		fileType: 'tsv',
 		fileType: 'tsv',
 	},
 };

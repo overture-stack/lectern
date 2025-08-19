@@ -28,6 +28,15 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
+const containerStyle = css`
+	background-color: white;
+	padding: 2.5rem;
+	margin: 0;
+	border-bottom: 1px solid #d1d8df;
+	display: flex;
+	flex-direction: column;
+`;
+
 const titleStyle = (theme: Theme) => css`
 	${theme.typography.subtitleBold}
 	color: ${theme.colors.accent_dark};
@@ -39,12 +48,14 @@ export const HeaderSkeleton = () => {
 	const gradient = `linear-gradient(270deg, rgba(229, 237, 243, 0) 0%, ${theme.colors.accent_1} 100%)`;
 
 	return (
-		<SkeletonTheme customHighlightBackground={gradient} baseColor="transparent">
-			<h1 css={titleStyle(theme)}>
-				<Skeleton width={360} />
-			</h1>
-			<Skeleton count={2} height={16} style={{ marginTop: 4, marginBottom: 4 }} />
-			<Skeleton width={180} />
-		</SkeletonTheme>
+		<div css={containerStyle}>
+			<SkeletonTheme customHighlightBackground={gradient} baseColor="transparent">
+				<h1 css={titleStyle(theme)}>
+					<Skeleton width={360} />
+				</h1>
+				<Skeleton count={2} height={16} style={{ marginTop: 4, marginBottom: 4 }} />
+				<Skeleton width={180} />
+			</SkeletonTheme>
+		</div>
 	);
 };

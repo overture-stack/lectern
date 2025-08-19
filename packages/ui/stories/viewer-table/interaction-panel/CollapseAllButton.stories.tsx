@@ -24,19 +24,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import CollapseAllButton from '../../../src/viewer-table/InteractionPanel/CollapseAllButton';
-import {
-	withErrorState,
-	withForeverLoading,
-	withLoadingState,
-	withMultipleDictionaries,
-} from '../../dictionaryDecorator';
+import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: CollapseAllButton,
 	title: 'Viewer - Table/Interaction - Panel/CollapseAllButton',
 	tags: ['autodocs'],
-	decorators: [themeDecorator(), withMultipleDictionaries],
 	decorators: [themeDecorator(), withMultipleDictionaries],
 } satisfies Meta<typeof CollapseAllButton>;
 
@@ -51,15 +45,5 @@ export const Default: Story = {
 
 export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
-	args: { onClick: mockOnClick },
-};
-
-export const ForeverLoading: Story = {
-	decorators: [themeDecorator(), withForeverLoading()],
-	args: { onClick: mockOnClick },
-};
-
-export const Error: Story = {
-	decorators: [themeDecorator(), withErrorState()],
 	args: { onClick: mockOnClick },
 };
