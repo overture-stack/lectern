@@ -32,6 +32,10 @@ const fieldContainerStyle = (theme: Theme) => css`
 	display: flex;
 	flex-direction: column;
 	gap: 3px;
+
+	p {
+		margin: 0;
+	}
 `;
 
 export type FieldExamplesProps = {
