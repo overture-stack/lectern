@@ -25,7 +25,9 @@ import { css } from '@emotion/react';
 import Modal, { Styles } from 'react-modal';
 
 import type { Theme } from '../../theme';
+import Cancel from '../../theme/icons/Cancel';
 import { useThemeContext } from '../../theme/ThemeContext';
+import Button from '../Button';
 import { ErrorMessage } from './ErrorMessage';
 
 Modal.setAppElement('body');
@@ -47,6 +49,7 @@ const customStyles = (theme: Theme): Styles => ({
 		display: 'flex',
 		flexDirection: 'column',
 		backgroundColor: theme.colors.error_modal_bg,
+		position: 'relative',
 	},
 	overlay: {
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -93,6 +96,18 @@ const errorListStyle = css`
 	margin-top: 8px;
 `;
 
+const closeButtonStyle = css`
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	background: transparent;
+	border: none;
+
+	&:hover {
+		background: transparent;
+	}
+`;
+
 export type ErrorModalProps = {
 	setIsOpen: (isOpen: boolean) => void;
 	isOpen: boolean;
@@ -119,6 +134,12 @@ export const ErrorModal = ({ setIsOpen, isOpen, errors, onContactClick }: ErrorM
 			style={customStyles(theme)}
 			contentLabel="Error Modal"
 		>
+			<Button
+				iconOnly
+				onClick={() => setIsOpen(false)}
+				icon={<Cancel fill={theme.colors.black} />}
+				styleOverride={closeButtonStyle}
+			/>
 			<div css={containerStyle}>
 				<h1 css={titleStyle(theme)}>Error</h1>
 				<p css={subtitleStyle(theme)}>view console logs for more details</p>
