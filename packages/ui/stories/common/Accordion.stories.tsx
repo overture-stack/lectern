@@ -30,7 +30,7 @@ const meta = {
 	component: Accordion,
 	title: 'Common/Accordion',
 	tags: ['autodocs'],
-	decorators: [themeDecorator()],
+	decorators: [themeDecorator(), withLecternUrl()],
 } satisfies Meta<typeof Accordion>;
 
 export default meta;
@@ -50,14 +50,13 @@ export const Default: Story = {
 };
 
 export const WithDownloadButton: Story = {
-	decorators: [withLecternUrl()],
 	args: {
 		collapseAll: true,
 		accordionItems: [
 			{
-				title: 'Study',
+				title: 'Donor',
 				description: 'Research studies enrolling participants',
-				content: 'Content for study schema',
+				content: 'Content for donor schema',
 				schemaName: 'donor',
 			},
 		],
@@ -77,6 +76,7 @@ export const MultipleAccordions: Story = {
 				title: 'Biosample',
 				description: 'Biological samples collected from participants',
 				content: 'Content for biosample schema',
+				schemaName: 'biosample',
 			},
 			{
 				title: 'Participant',
