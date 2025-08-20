@@ -34,7 +34,7 @@ const CollapseAllButton = ({ onClick }: CollapseAllButtonProps) => {
 	const { Minus } = theme.icons;
 
 	return (
-		<Button icon={<Minus />} onClick={onClick} disabled={loading || errors.length > 0}>
+		<Button icon={<Minus fill={theme.colors.accent_dark} />} onClick={onClick} disabled={loading || errors.length > 0}>
 			Collapse All
 		</Button>
 	);
