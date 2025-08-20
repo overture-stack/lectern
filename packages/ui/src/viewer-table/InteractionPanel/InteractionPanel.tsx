@@ -48,7 +48,6 @@ const panelStyles = (theme: Theme) => css`
 	justify-content: space-between;
 	padding: 8px 16px;
 	border-top: 1px solid ${theme.colors.border_muted};
-	border-bottom: 1px solid ${theme.colors.border_muted};
 	background-color: ${theme.colors.white};
 	flex-wrap: nowrap;
 	min-height: 80px;
