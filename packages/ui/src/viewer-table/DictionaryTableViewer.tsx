@@ -131,7 +131,7 @@ export const DictionaryTableViewer = () => {
 		<div css={pageContainerStyle(theme)}>
 			<div css={headerPanelBlockStyle}>
 				<DictionaryHeader />
-				<InteractionPanel onSelect={handleSchemaSelect} setIsCollapsed={setIsCollapsed} />
+				<InteractionPanel onSelect={handleSchemaSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
 			</div>
 			<Accordion
 				accordionItems={accordionItems}

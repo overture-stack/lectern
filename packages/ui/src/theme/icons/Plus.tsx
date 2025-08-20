@@ -19,25 +19,32 @@
  *
  */
 
-import Button from '../../common/Button';
-import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+/** @jsxImportSource @emotion/react */
 
-export interface CollapseAllButtonProps {
-	onClick: () => void;
-}
+import IconProps from './IconProps';
 
-const CollapseAllButton = ({ onClick }: CollapseAllButtonProps) => {
-	const theme: Theme = useThemeContext();
-	const { loading, errors } = useDictionaryDataContext();
-	const { Minus } = theme.icons;
-
+const Plus = ({ fill, width, height, style }: IconProps) => {
 	return (
-		<Button icon={<Minus />} onClick={onClick} disabled={loading || errors.length > 0}>
-			Collapse All
-		</Button>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width={width || '18'}
+			height={height || '18'}
+			viewBox="0 0 18 18"
+			css={style}
+			fill="none"
+		>
+			<path
+				d="M8.29688 0.5625H9.70312C9.82812 0.5625 9.89062 0.625 9.89062 0.75V17.25C9.89062 17.375 9.82812 17.4375 9.70312 17.4375H8.29688C8.17188 17.4375 8.10938 17.375 8.10938 17.25V0.75C8.10938 0.625 8.17188 0.5625 8.29688 0.5625Z"
+				fill={fill || 'black'}
+				fillOpacity="0.45"
+			/>
+			<path
+				d="M1.125 8.10938H16.875C17 8.10938 17.0625 8.17188 17.0625 8.29688V9.70312C17.0625 9.82812 17 9.89062 16.875 9.89062H1.125C1 9.89062 0.9375 9.82812 0.9375 9.70312V8.29688C0.9375 8.17188 1 8.10938 1.125 8.10938Z"
+				fill={fill || 'black'}
+				fillOpacity="0.45"
+			/>
+		</svg>
 	);
 };
 
-export default CollapseAllButton;
+export default Plus;

@@ -28,6 +28,8 @@ import History from '../icons/History';
 import List from '../icons/List';
 import ListFilter from '../icons/ListFilter';
 import MessageSquareWarning from '../icons/MessageSquareWarning';
+import Minus from '../icons/Minus';
+import Plus from '../icons/Plus';
 import Spinner from '../icons/Spinner';
 
 export default {
@@ -42,4 +44,6 @@ export default {
 	History,
 	Hash,
 	Cancel,
+	Plus,
+	Minus,
 };

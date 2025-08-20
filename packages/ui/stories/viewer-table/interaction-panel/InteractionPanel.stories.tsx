@@ -22,6 +22,7 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
 import { InteractionPanelSkeleton } from '../../../src/viewer-table/Loading';
@@ -47,41 +48,59 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const mockProps = {
-	setIsCollapsed: (isCollapsed: boolean) => {
-		alert('setIsCollapsed called with:' + isCollapsed);
-	},
-	onSelect: (schemaNameIndex: number) => {
-		alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
-	},
+const InteractiveInteractionPanel = () => {
+	const [isCollapsed, setIsCollapsed] = useState(true);
+
+	const handleSelect = (schemaNameIndex: number) => {
+		console.log('Selected schema index:', schemaNameIndex);
+	};
+
+	return <InteractionPanel onSelect={handleSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />;
 };
 
 export const Default: Story = {
 	decorators: [themeDecorator(), withDictionaryContext()],
-	args: {
-		...mockProps,
+	render: () => <InteractiveInteractionPanel />,
+};
+
+export const Interactive: Story = {
+	decorators: [themeDecorator(), withDictionaryContext()],
+	render: () => <InteractiveInteractionPanel />,
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Click the expand/collapse button to see it toggle between "Expand All" and "Collapse All" states. Check the console for action logs.',
+			},
+		},
 	},
 };
 
 export const WithSingleVersion: Story = {
 	decorators: [themeDecorator(), withDictionaryContext()],
+	render: () => <InteractiveInteractionPanel />,
+};
+
+export const ShowingExpandButton: Story = {
+	decorators: [themeDecorator(), withDictionaryContext()],
 	args: {
-		...mockProps,
+		onSelect: (schemaNameIndex: number) => console.log('Selected schema index:', schemaNameIndex),
+		setIsCollapsed: (isCollapsed: boolean) => console.log('setIsCollapsed called with:', isCollapsed),
+		isCollapsed: true,
 	},
 };
 
-export const Collapsed: Story = {
+export const ShowingCollapseButton: Story = {
 	decorators: [themeDecorator(), withDictionaryContext()],
 	args: {
-		...mockProps,
+		onSelect: (schemaNameIndex: number) => console.log('Selected schema index:', schemaNameIndex),
+		setIsCollapsed: (isCollapsed: boolean) => console.log('setIsCollapsed called with:', isCollapsed),
+		isCollapsed: false,
 	},
 };
 
 export const Loading: Story = {
 	decorators: [themeDecorator()],
-	args: {
-		...mockProps,
-	},
 	render: () => <InteractionPanelSkeleton />,
 	parameters: {
 		docs: {

@@ -37,6 +37,7 @@ import TableOfContentsDropdown from './TableOfContentsDropdown';
 export type InteractionPanelProps = {
 	onSelect: (schemaNameIndex: number) => void;
 	setIsCollapsed: (collapsed: boolean) => void;
+	isCollapsed: boolean;
 };
 
 const panelStyles = (theme: Theme) => css`
@@ -62,7 +63,7 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const InteractionPanel = ({ onSelect, setIsCollapsed }: InteractionPanelProps) => {
+const InteractionPanel = ({ onSelect, setIsCollapsed, isCollapsed }: InteractionPanelProps) => {
 	const theme: Theme = useThemeContext();
 	const { loading } = useDictionaryDataContext();
 	const { selectedDictionary } = useDictionaryStateContext();
@@ -80,8 +81,9 @@ const InteractionPanel = ({ onSelect, setIsCollapsed }: InteractionPanelProps) =
 			<div css={sectionStyles}>
 				<TableOfContentsDropdown schemas={selectedDictionary?.schemas ?? []} onSelect={onSelect} />
 				<AttributeFilterDropdown />
-				<ExpandAllButton onClick={() => setIsCollapsed(false)} />
-				<CollapseAllButton onClick={() => setIsCollapsed(true)} />
+				{isCollapsed ?
+					<ExpandAllButton onClick={() => setIsCollapsed(false)} />
+				:	<CollapseAllButton onClick={() => setIsCollapsed(true)} />}
 			</div>
 			<div css={sectionStyles}>
 				<DictionaryVersionSwitcher />
