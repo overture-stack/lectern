@@ -58,7 +58,7 @@ const accordionItemStyle = (theme: Theme) => css`
 const accordionItemTitleStyle = css`
 	display: flex;
 	align-items: flex-start;
-	padding: 24px 20px;
+	padding: 24px 30px;
 	transition: all 0.2s ease;
 	width: 100%;
 	box-sizing: border-box;
