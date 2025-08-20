@@ -67,7 +67,7 @@ const accordionItemTitleStyle = css`
 
 const chevronColumnStyle = css`
 	position: relative;
-	top: 20px;
+	top: 5px;
 `;
 
 const accordionItemButtonStyle = css`
