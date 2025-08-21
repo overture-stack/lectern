@@ -60,7 +60,7 @@ export type LecternDictionaryProviderProps = {
 	dictionaryName: string;
 };
 
-const DictionaryDataContext = createContext<DictionaryDataContextType | undefined>(undefined);
+export const DictionaryDataContext = createContext<DictionaryDataContextType | undefined>(undefined);
 const DictionaryStateContext = createContext<DictionaryStateContextType | undefined>(undefined);
 
 export const useDictionaryDataContext = (): DictionaryDataContextType => {

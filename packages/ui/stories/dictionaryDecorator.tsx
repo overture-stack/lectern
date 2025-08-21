@@ -89,6 +89,9 @@ export const withLoadingState = (): Decorator => {
 	);
 };
 
+/*
+ * Hack for forcing the page to load all the time
+ */
 export const withForeverLoading = (): Decorator => {
 	return (Story) => {
 		const ForeverLoadingProvider = ({ children }: { children: React.ReactNode }) => {
