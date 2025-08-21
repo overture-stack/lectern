@@ -107,9 +107,27 @@ export const DictionaryTableViewer = () => {
 	if (loading) {
 		return <DictionaryViewerLoadingPage />;
 	} else if (errors.length > 0) {
-		return <ErrorDisplay errors={errors} onContactClick={() => console.log('TODO')} />;
+		return (
+			<ErrorDisplay
+				errors={errors}
+				onContactClick={() =>
+					console.log(
+						'TODO: need to implement a function for action needs to be done when error modal contact is clicked',
+					)
+				}
+			/>
+		);
 	} else if (!selectedDictionary) {
-		return <ErrorDisplay errors={['No dictionary data provided']} onContactClick={() => console.log('TODO')} />;
+		return (
+			<ErrorDisplay
+				errors={['No dictionary data provided']}
+				onContactClick={() =>
+					console.log(
+						'TODO: need to implement a function for action needs to be done when error modal contact is clicked',
+					)
+				}
+			/>
+		);
 	}
 
 	return (
