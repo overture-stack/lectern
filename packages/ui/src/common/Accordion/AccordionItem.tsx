@@ -23,7 +23,7 @@
 
 import { css } from '@emotion/react';
 import type { RefObject } from 'react';
-import { forwardRef, MouseEvent, useEffect, useRef } from 'react';
+import { MouseEvent, useEffect, useRef } from 'react';
 
 import { useClipboard } from '../../hooks/useClipboard';
 import type { Theme } from '../../theme';
@@ -173,7 +173,7 @@ const hashOnClick = (
 	);
 };
 
-const AccordionItem = forwardRef<HTMLLIElement, AccordionItemProps>(({ index, accordionData, openState }, ref) => {
+const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) => {
 	const accordionRef = useRef<HTMLLIElement>(null);
 	const theme: Theme = useThemeContext();
 	const { setClipboardContents } = useClipboard();
@@ -191,7 +191,7 @@ const AccordionItem = forwardRef<HTMLLIElement, AccordionItemProps>(({ index, ac
 	}, []);
 
 	return (
-		<li ref={ref} css={accordionItemStyle(theme)} id={indexString}>
+		<li ref={accordionRef} css={accordionItemStyle(theme)} id={indexString}>
 			<div onClick={openState.toggle} role="button" css={accordionItemTitleStyle}>
 				<div css={chevronColumnStyle}>
 					<button css={accordionItemButtonStyle}>
@@ -226,8 +226,6 @@ const AccordionItem = forwardRef<HTMLLIElement, AccordionItemProps>(({ index, ac
 			</div>
 		</li>
 	);
-});
-
-AccordionItem.displayName = 'AccordionItem';
+};
 
 export default AccordionItem;

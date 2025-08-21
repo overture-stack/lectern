@@ -22,7 +22,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { ReactNode, RefObject, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 import AccordionItem from './AccordionItem';
 
@@ -36,7 +36,6 @@ export type AccordionProps = {
 	accordionItems: Array<AccordionData>;
 	collapseAll: boolean;
 	selectedIndex?: number;
-	refs?: RefObject<(HTMLLIElement | null)[]>;
 };
 
 export type AccordionOpenState = {
@@ -60,7 +59,7 @@ const accordionStyle = css`
  * @param accordionItems - Array of accordion items to render
  * @param collapseAll - Controls initial state and dynamic collapse/expand of all items. true = collapsed, false = expanded
  */
-const Accordion = ({ accordionItems, collapseAll, selectedIndex, refs }: AccordionProps) => {
+const Accordion = ({ accordionItems, collapseAll, selectedIndex }: AccordionProps) => {
 	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map(() => !collapseAll));
 
 	useEffect(() => {
@@ -84,11 +83,6 @@ const Accordion = ({ accordionItems, collapseAll, selectedIndex, refs }: Accordi
 					openState={{
 						isOpen: openStates[index],
 						toggle: () => handleToggle(index),
-					}}
-					ref={(el) => {
-						if (refs?.current) {
-							refs.current[index] = el;
-						}
 					}}
 				/>
 			))}
