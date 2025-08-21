@@ -97,6 +97,10 @@ const border = {
 	border_button: '#beb2b294',
 };
 
+const gradients = {
+	skeleton: (accentColor: string) => `linear-gradient(270deg, rgba(229, 237, 243, 0) 0%, ${accentColor} 100%)`,
+};
+
 export default {
 	...base,
 	...grey,
@@ -109,4 +113,5 @@ export default {
 	...warning,
 	...background,
 	...border,
+	gradients,
 };

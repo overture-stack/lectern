@@ -51,13 +51,14 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const gradient = (theme: Theme) => `linear-gradient(270deg, rgba(229, 237, 243, 0) 0%, ${theme.colors.accent_1} 100%)`;
-
 export const InteractionPanelSkeleton = () => {
 	const theme = useThemeContext();
 	return (
 		<div css={panelStyles(theme)}>
-			<SkeletonTheme customHighlightBackground={gradient(theme)} baseColor="transparent">
+			<SkeletonTheme
+				customHighlightBackground={theme.colors.gradients.skeleton(theme.colors.accent_1)}
+				baseColor="transparent"
+			>
 				<div css={sectionStyles}>
 					<Skeleton width={160} height={42} />
 					<Skeleton width={120} height={42} />
