@@ -58,6 +58,7 @@ const accordionStyle = css`
  *
  * @param accordionItems - Array of accordion items to render
  * @param collapseAll - Controls initial state and dynamic collapse/expand of all items. true = collapsed, false = expanded
+ * @param selectedIndex - The index of the currently selected accordion item, used for the scroll into views
  */
 const Accordion = ({ accordionItems, collapseAll, selectedIndex }: AccordionProps) => {
 	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map(() => !collapseAll));

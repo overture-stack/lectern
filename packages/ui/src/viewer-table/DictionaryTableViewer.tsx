@@ -95,9 +95,9 @@ export const DictionaryTableViewer = () => {
 			schemaName: schema.name,
 		})) || [];
 
-	const handleSchemaSelect = (schemaIndex: number) => {
-		setSelectedSchemaIndex(schemaIndex);
-		const element = accordionRefs.current[schemaIndex];
+	const handleAccordionSelect = (accordionIndex: number) => {
+		setSelectedSchemaIndex(accordionIndex);
+		const element = accordionRefs.current[accordionIndex];
 		if (element) {
 			element.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}
@@ -116,7 +116,7 @@ export const DictionaryTableViewer = () => {
 		<div css={pageContainerStyle(theme)}>
 			<div css={headerPanelBlockStyle}>
 				<DictionaryHeader />
-				<InteractionPanel onSelect={handleSchemaSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
+				<InteractionPanel onSelect={handleAccordionSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
 			</div>
 			<Accordion accordionItems={accordionItems} collapseAll={isCollapsed} selectedIndex={selectedSchemaIndex} />
 		</div>
