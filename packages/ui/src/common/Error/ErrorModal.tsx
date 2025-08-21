@@ -24,7 +24,6 @@
 import { css } from '@emotion/react';
 import Modal, { Styles } from 'react-modal';
 
-import { ErrorModal } from '.';
 import type { Theme } from '../../theme';
 import Cancel from '../../theme/icons/Cancel';
 import { useThemeContext } from '../../theme/ThemeContext';
@@ -125,7 +124,7 @@ export type ErrorModalProps = {
  * @param onContactClick - Optional callback function for when the contact link is clicked
  * @returns Modal component with error visualization
  */
-const ErrorModal = ({ setIsOpen, isOpen, errors, onContactClick }: ErrorModalProps) => {
+export const ErrorModal = ({ setIsOpen, isOpen, errors, onContactClick }: ErrorModalProps) => {
 	const theme: Theme = useThemeContext();
 
 	return (
@@ -159,4 +158,3 @@ const ErrorModal = ({ setIsOpen, isOpen, errors, onContactClick }: ErrorModalPro
 		</Modal>
 	);
 };
-export default ErrorModal;

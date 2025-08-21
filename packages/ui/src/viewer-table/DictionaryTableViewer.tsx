@@ -26,7 +26,7 @@ import type { Schema, SchemaFieldRestrictions } from '@overture-stack/lectern-di
 import { useRef, useState } from 'react';
 
 import Accordion from '../common/Accordion/Accordion';
-import ErrorModal from '../common/Error/ErrorModal';
+import { ErrorModal } from '../common/Error/ErrorModal';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
