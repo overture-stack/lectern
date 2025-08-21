@@ -45,7 +45,7 @@ interface LoadingSpinnerPageProps {
 	size?: number;
 }
 
-const LoadingSpinnerPage = ({ size = 69 }: LoadingSpinnerPageProps) => {
+const LoadingSpinnerPage = ({ size = 70 }: LoadingSpinnerPageProps) => {
 	const theme: Theme = useThemeContext();
 
 	return (
