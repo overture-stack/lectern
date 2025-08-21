@@ -41,9 +41,9 @@ const loadingTextStyles = (theme: Theme) => css`
 	margin: 0;
 `;
 
-interface LoadingSpinnerPageProps {
+type LoadingSpinnerPageProps = {
 	size?: number;
-}
+};
 
 const LoadingSpinnerPage = ({ size = 70 }: LoadingSpinnerPageProps) => {
 	const theme: Theme = useThemeContext();
