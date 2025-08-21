@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -20,33 +21,24 @@
 
 /** @jsxImportSource @emotion/react */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import IconProps from './IconProps';
 
-import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
-import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
-
-const meta = {
-	component: AttributeFilter,
-	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
-	tags: ['autodocs'],
-	decorators: [themeDecorator(), withMultipleDictionaries],
-	parameters: {
-		docs: {
-			description: {
-				component:
-					'A dropdown component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
-			},
-		},
-	},
-} satisfies Meta<typeof AttributeFilter>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
+const Minus = ({ fill, width, height, style }: IconProps) => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width={width || '18'}
+			height={height || '2'}
+			viewBox="0 0 18 2"
+			css={style}
+			fill="none"
+		>
+			<path
+				d="M17.4375 0.109375H0.5625C0.459375 0.109375 0.375 0.19375 0.375 0.296875V1.70312C0.375 1.80625 0.459375 1.89062 0.5625 1.89062H17.4375C17.5406 1.89062 17.625 1.80625 17.625 1.70312V0.296875C17.625 0.19375 17.5406 0.109375 17.4375 0.109375Z"
+				fill={fill || 'black'}
+			/>
+		</svg>
+	);
 };
+
+export default Minus;

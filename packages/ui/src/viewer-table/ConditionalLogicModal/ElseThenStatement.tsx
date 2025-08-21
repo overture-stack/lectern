@@ -71,7 +71,9 @@ export const ElseThenStatement = ({ restrictions, currentSchemaField, statementT
 	return (
 		<ConditionalStatementWrapper
 			headerText={headerText}
-			simpleRestrictions={renderedSimpleRestrictions}
+			simpleRestrictions={
+				renderedSimpleRestrictions ?? (!renderedConditionalRestrictions && 'no additional restrictions')
+			}
 			conditionalRestrictions={renderedConditionalRestrictions}
 			isContainer={conditionalRestrictions.length > 0}
 		/>

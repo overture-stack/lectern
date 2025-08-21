@@ -685,12 +685,6 @@ const case1Restriction: SchemaFieldRestrictions = {
 	},
 };
 
-const case2Field: SchemaField = {
-	name: 'pipeline_with_array_then',
-	valueType: 'string',
-	description: 'Restriction with then as array (codeList + nested if/then/else)',
-};
-
 const case2Restriction: SchemaFieldRestrictions = {
 	if: {
 		conditions: [{ fields: ['image_format'], match: { value: 'PNG' }, case: 'all' }],
@@ -704,6 +698,12 @@ const case2Restriction: SchemaFieldRestrictions = {
 		},
 	],
 	else: { codeList: ['pipeline_C', 'pipeline_D'] },
+};
+
+const case2Field: SchemaField = {
+	name: 'pipeline_with_array_then',
+	valueType: 'string',
+	description: 'Restriction with then as array (codeList + nested if/then/else)',
 };
 
 const case3Field: SchemaField = {
@@ -742,6 +742,24 @@ const case3Restriction: SchemaFieldRestrictions = {
 	else: { codeList: ['not_a'] },
 };
 
+export const Default: Story = {
+	args: {
+		isOpen: false,
+		setIsOpen: () => {},
+		restrictions: fieldWithConditionalRestrictions.restrictions![0],
+		currentSchemaField: fieldWithConditionalRestrictions,
+	},
+	render: (args) => {
+		const [isOpen, setIsOpen] = useState(false);
+		return (
+			<>
+				<Button onClick={() => setIsOpen(true)}>Default: Conditional Logic Modal</Button>
+				<ConditionalLogicModal {...args} isOpen={isOpen} setIsOpen={setIsOpen} />
+			</>
+		);
+	},
+};
+
 export const Case1_DeeplyNested: Story = {
 	args: {
 		isOpen: false,
@@ -765,7 +783,10 @@ export const Case2_ThenArrayWithNested: Story = {
 		isOpen: false,
 		setIsOpen: () => {},
 		restrictions: case2Restriction,
-		currentSchemaField: case2Field,
+		currentSchemaField: {
+			...case2Field,
+			restrictions: case2Restriction,
+		},
 	},
 	render: (args) => {
 		const [isOpen, setIsOpen] = useState(false);
@@ -783,7 +804,10 @@ export const Case3_HighlyNested: Story = {
 		isOpen: false,
 		setIsOpen: () => {},
 		restrictions: case3Restriction,
-		currentSchemaField: case3Field,
+		currentSchemaField: {
+			...case3Field,
+			restrictions: case3Restriction,
+		},
 	},
 	render: (args) => {
 		const [isOpen, setIsOpen] = useState(false);
@@ -1187,7 +1211,6 @@ const case8Restriction: SchemaFieldRestrictions = {
 							if: { conditions: [{ fields: ['level7'], match: { value: 'G' }, case: 'all' }] },
 							then: {
 								if: { conditions: [{ fields: ['final_condition'], match: { value: 'success' }, case: 'all' }] },
-								then: { codeList: ['ultimate_success_value'] },
 								else: { codeList: ['conditional_failure_value'] },
 							},
 							else: { codeList: ['level7_false'] },
@@ -1284,7 +1307,10 @@ export const Case4_MultipleRestrictions: Story = {
 		isOpen: false,
 		setIsOpen: () => {},
 		restrictions: case4Restriction,
-		currentSchemaField: case4Field,
+		currentSchemaField: {
+			...case4Field,
+			restrictions: case4Restriction,
+		},
 	},
 	render: (args) => {
 		const [isOpen, setIsOpen] = useState(false);
@@ -1302,7 +1328,10 @@ export const Case5_LongCodeLists: Story = {
 		isOpen: false,
 		setIsOpen: () => {},
 		restrictions: case5Restriction,
-		currentSchemaField: case5Field,
+		currentSchemaField: {
+			...case5Field,
+			restrictions: case5Restriction,
+		},
 	},
 	render: (args) => {
 		const [isOpen, setIsOpen] = useState(false);
@@ -1320,7 +1349,10 @@ export const Case6_ExtremeNesting: Story = {
 		isOpen: false,
 		setIsOpen: () => {},
 		restrictions: case6Restriction,
-		currentSchemaField: case6Field,
+		currentSchemaField: {
+			...case6Field,
+			restrictions: case6Restriction,
+		},
 	},
 	render: (args) => {
 		const [isOpen, setIsOpen] = useState(false);
@@ -1338,7 +1370,10 @@ export const Case8_SevenLevelNesting: Story = {
 		isOpen: false,
 		setIsOpen: () => {},
 		restrictions: case8Restriction,
-		currentSchemaField: case8Field,
+		currentSchemaField: {
+			...case8Field,
+			restrictions: case8Restriction,
+		},
 	},
 	render: (args) => {
 		const [isOpen, setIsOpen] = useState(false);
@@ -1356,7 +1391,10 @@ export const Case9_SoccerScores: Story = {
 		isOpen: false,
 		setIsOpen: () => {},
 		restrictions: case9Restriction,
-		currentSchemaField: case9Field,
+		currentSchemaField: {
+			...case9Field,
+			restrictions: case9Restriction,
+		},
 	},
 	render: (args) => {
 		const [isOpen, setIsOpen] = useState(false);

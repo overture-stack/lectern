@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -20,33 +21,39 @@
 
 /** @jsxImportSource @emotion/react */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import { css } from '@emotion/react';
 
-import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
-import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
+import type { Theme } from '../../theme';
+import LoadingSpinnerIcon from '../../theme/icons/LoadingSpinnerIcon';
+import { useThemeContext } from '../../theme/ThemeContext';
 
-const meta = {
-	component: AttributeFilter,
-	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
-	tags: ['autodocs'],
-	decorators: [themeDecorator(), withMultipleDictionaries],
-	parameters: {
-		docs: {
-			description: {
-				component:
-					'A dropdown component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
-			},
-		},
-	},
-} satisfies Meta<typeof AttributeFilter>;
+const containerStyles = css`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 24px;
+`;
 
-export default meta;
+const loadingTextStyles = (theme: Theme) => css`
+	${theme.typography.bodyBold}
+	color: ${theme.colors.accent};
+	margin: 0;
+`;
 
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
+type LoadingSpinnerPageProps = {
+	size?: number;
 };
+
+const LoadingSpinnerPage = ({ size = 70 }: LoadingSpinnerPageProps) => {
+	const theme: Theme = useThemeContext();
+
+	return (
+		<div css={containerStyles}>
+			<LoadingSpinnerIcon size={size} />
+			<p css={loadingTextStyles(theme)}>Loading...</p>
+		</div>
+	);
+};
+
+export default LoadingSpinnerPage;

@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -20,33 +21,51 @@
 
 /** @jsxImportSource @emotion/react */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import { css, keyframes } from '@emotion/react';
+import IconProps from './IconProps';
 
-import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
-import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
+const spin = keyframes`
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+`;
 
-const meta = {
-	component: AttributeFilter,
-	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
-	tags: ['autodocs'],
-	decorators: [themeDecorator(), withMultipleDictionaries],
-	parameters: {
-		docs: {
-			description: {
-				component:
-					'A dropdown component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
-			},
-		},
-	},
-} satisfies Meta<typeof AttributeFilter>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
+const LoadingSpinnerIcon = ({ size = 69 }: IconProps) => {
+	return (
+		<svg
+			width={size}
+			height={size}
+			viewBox="0 0 69 69"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			css={css`
+				animation: ${spin} 1.5s linear infinite;
+			`}
+		>
+			<path
+				d="M62 34.5C62 19.3122 49.6878 7 34.5 7C19.3122 7 7 19.3122 7 34.5C7 49.6878 19.3122 62 34.5 62"
+				stroke="url(#paint0_linear_3883_1093)"
+				strokeWidth="13"
+				strokeLinecap="round"
+			/>
+			<defs>
+				<linearGradient
+					id="paint0_linear_3883_1093"
+					x1="70.8272"
+					y1="23.9753"
+					x2="39.3529"
+					y2="55.5294"
+					gradientUnits="userSpaceOnUse"
+				>
+					<stop stopColor="#F5F7F8" />
+					<stop offset="1" stopColor="#E5EDF3" />
+				</linearGradient>
+			</defs>
+		</svg>
+	);
 };
+
+export default LoadingSpinnerIcon;

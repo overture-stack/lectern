@@ -50,7 +50,7 @@ const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: Se
 	min-width: fit-content;
 	padding: 8px 16px;
 	background-color: ${theme.colors.background_light};
-	color: ${theme.colors.black};
+	color: ${theme.colors.accent_dark};
 	border: 2px solid ${theme.colors.border_button};
 	border-radius: 9px;
 	height: 42px;
@@ -60,9 +60,8 @@ const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: Se
 	transition: all 0.2s ease;
 
 	&:hover {
-		background-color: ${theme.colors.grey_1};
+		background-color: ${theme.colors.accent_1};
 	}
-
 	&:disabled {
 		cursor: not-allowed;
 		opacity: 0.7;
@@ -74,7 +73,7 @@ const getContentStyles = (theme: Theme, shouldShowLoading: boolean) => css`
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	${theme.typography.subtitleSecondary};
+	${theme.typography.buttonText};
 	color: inherit;
 	white-space: nowrap;
 	overflow: hidden;
@@ -133,7 +132,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				{/* If iconOnly is true, we don't show the children */}
 				{!iconOnly && <span css={getContentStyles(theme, shouldShowLoading)}>{children}</span>}
 				<span css={getSpinnerStyles(shouldShowLoading)}>
-					<Spinner height={20} width={20} />
+					<Spinner fill={theme.colors.black} height={20} width={20} />
 				</span>
 			</button>
 		);

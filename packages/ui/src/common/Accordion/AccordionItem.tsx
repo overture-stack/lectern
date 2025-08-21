@@ -58,7 +58,7 @@ const accordionItemStyle = (theme: Theme) => css`
 const accordionItemTitleStyle = css`
 	display: flex;
 	align-items: flex-start;
-	padding: 24px 20px;
+	padding: 24px 30px;
 	transition: all 0.2s ease;
 	width: 100%;
 	box-sizing: border-box;
@@ -67,16 +67,16 @@ const accordionItemTitleStyle = css`
 
 const chevronColumnStyle = css`
 	position: relative;
-	top: 20px;
+	top: 5px;
 `;
 
-const accordionItemButtonStyle = (theme: Theme) => css`
+const accordionItemButtonStyle = css`
 	display: flex;
 	border: none;
 	align-items: center;
 	cursor: pointer;
 	background: transparent;
-	padding: 8px;
+	padding: 3px;
 `;
 
 const contentColumnStyle = css`
@@ -135,7 +135,7 @@ const accordionItemContentStyle = css`
 `;
 
 const contentInnerContainerStyle = (theme: Theme) => css`
-	border-left: 1px solid ${theme.colors.grey_3};
+	border-left: 2px solid ${theme.colors.grey_3};
 	padding-left: 30px;
 	${theme.typography?.data};
 `;
@@ -191,10 +191,10 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 	}, []);
 
 	return (
-		<li ref={accordionRef} role="button" css={accordionItemStyle(theme)} id={indexString} onClick={openState.toggle}>
-			<div css={accordionItemTitleStyle}>
+		<li ref={accordionRef} css={accordionItemStyle(theme)} id={indexString}>
+			<div onClick={openState.toggle} role="button" css={accordionItemTitleStyle}>
 				<div css={chevronColumnStyle}>
-					<button css={accordionItemButtonStyle(theme)}>
+					<button css={accordionItemButtonStyle}>
 						<ChevronDown fill={theme.colors.black} width={16} height={16} style={chevronStyle(openState.isOpen)} />
 					</button>
 				</div>

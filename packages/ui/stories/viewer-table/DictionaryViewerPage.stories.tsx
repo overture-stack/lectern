@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -22,31 +23,72 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
-import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
+import { DictionaryTableViewer } from '../../src/viewer-table/DictionaryTableViewer';
+import {
+	withEmptyDictionaries,
+	withErrorState,
+	withForeverLoading,
+	withLecternUrl,
+	withMultipleDictionaries,
+	withSingleDictionary,
+} from '../dictionaryDecorator';
+import themeDecorator from '../themeDecorator';
 
 const meta = {
-	component: AttributeFilter,
-	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
+	component: DictionaryTableViewer,
+	title: 'Viewer - Table/Dictionary Page',
 	tags: ['autodocs'],
-	decorators: [themeDecorator(), withMultipleDictionaries],
+	decorators: [themeDecorator()],
 	parameters: {
+		layout: 'fullscreen',
 		docs: {
 			description: {
 				component:
-					'A dropdown component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
+					'The main dictionary viewer page that displays schema information in a table format with interactive features like filtering, expanding/collapsing sections, and conditional logic visualization.',
+			},
+			story: {
+				inline: false,
+				iframeHeight: 600,
 			},
 		},
 	},
-} satisfies Meta<typeof AttributeFilter>;
+} satisfies Meta<typeof DictionaryTableViewer>;
 
 export default meta;
-
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	decorators: [withMultipleDictionaries],
+};
 
-export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
+export const Empty: Story = {
+	decorators: [withEmptyDictionaries],
+};
+
+export const ForeverLoading: Story = {
+	decorators: [withForeverLoading()],
+};
+
+export const ErrorState: Story = {
+	decorators: [withErrorState()],
+	parameters: {
+		docs: {
+			story: {
+				inline: false,
+				iframeHeight: 600,
+			},
+		},
+	},
+};
+
+export const WithStaticData: Story = {
+	decorators: [withMultipleDictionaries],
+};
+
+export const SingleDictionary: Story = {
+	decorators: [withSingleDictionary],
+};
+
+export const LecternServer: Story = {
+	decorators: [withLecternUrl()],
 };

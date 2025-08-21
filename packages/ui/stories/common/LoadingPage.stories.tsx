@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -18,35 +19,26 @@
  *
  */
 
-/** @jsxImportSource @emotion/react */
-
 import type { Meta, StoryObj } from '@storybook/react';
-
-import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
-import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
+import LoadingPage from '../../src/common/LoadingPage';
+import themeDecorator from '../themeDecorator';
 
 const meta = {
-	component: AttributeFilter,
-	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
+	component: LoadingPage,
+	title: 'Common/LoadingPage',
 	tags: ['autodocs'],
-	decorators: [themeDecorator(), withMultipleDictionaries],
+	decorators: [themeDecorator()],
 	parameters: {
 		docs: {
 			description: {
 				component:
-					'A dropdown component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
+					'A full-page loading component that centers a spinner with loading text. Used for page-level loading states.',
 			},
 		},
 	},
-} satisfies Meta<typeof AttributeFilter>;
+} satisfies Meta<typeof LoadingPage>;
 
 export default meta;
-
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
-
-export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
-};

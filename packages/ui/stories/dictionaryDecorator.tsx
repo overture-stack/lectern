@@ -20,8 +20,10 @@
 import type { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Decorator } from '@storybook/react';
+import React from 'react';
 
 import {
+	DictionaryDataContext,
 	DictionaryLecternDataProvider,
 	DictionaryStateProvider,
 	DictionaryStaticDataProvider,
@@ -39,19 +41,19 @@ export const multipleDictionaryData: DictionaryTestData = [
 		...DictionarySample,
 		version: '1.0',
 		_id: '1',
-		createdAt: '2025-01-01T00:00:00.000Z',
+		createdAt: new Date('2025-01-01T00:00:00.000Z'),
 	},
 	{
 		...DictionarySample,
 		version: '2.0',
 		_id: '2',
-		createdAt: '2025-01-02T00:00:00.000Z',
+		createdAt: new Date('2025-01-02T00:00:00.000Z'),
 	},
 	{
 		...DictionarySample,
 		version: '3.0',
 		_id: '3',
-		createdAt: '2025-01-03T00:00:00.000Z',
+		createdAt: new Date('2025-01-03T00:00:00.000Z'),
 	},
 ] as DictionaryServerUnion[];
 
@@ -85,6 +87,31 @@ export const withLoadingState = (): Decorator => {
 			</DictionaryStateProvider>
 		</DictionaryLecternDataProvider>
 	);
+};
+
+/*
+ * Hack for forcing the page to load all the time
+ */
+export const withForeverLoading = (): Decorator => {
+	return (Story) => {
+		const ForeverLoadingProvider = ({ children }: { children: React.ReactNode }) => {
+			const value = {
+				dictionaries: undefined,
+				loading: true,
+				errors: [],
+			};
+
+			return <DictionaryDataContext.Provider value={value}>{children}</DictionaryDataContext.Provider>;
+		};
+
+		return (
+			<ForeverLoadingProvider>
+				<DictionaryStateProvider>
+					<Story />
+				</DictionaryStateProvider>
+			</ForeverLoadingProvider>
+		);
+	};
 };
 
 export const withErrorState = (): Decorator => {

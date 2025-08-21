@@ -35,7 +35,17 @@ export type DictionaryDownloadButtonProps = {
 	schemaName?: string;
 };
 
-const downloadDictionary = async ({ fetchUrl, name, version, schemaName }): Promise<void> => {
+const downloadDictionary = async ({
+	fetchUrl,
+	name,
+	version,
+	schemaName,
+}: {
+	fetchUrl: string;
+	name: string;
+	version: string;
+	schemaName?: string;
+}): Promise<void> => {
 	const res = await fetch(fetchUrl);
 
 	if (!res.ok) {
@@ -94,13 +104,10 @@ export const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaNam
 	return (
 		<Button
 			iconOnly={iconOnly}
-			styleOverride={
-				iconOnly ?
-					css`
-						padding: 8px;
-					`
-				:	undefined
-			}
+			styleOverride={css`
+				white-space: nowrap;
+				${iconOnly ? 'padding: 8px;' : ''}
+			`}
 			icon={<FileDownload />}
 			onClick={async (e) => {
 				e.stopPropagation();

@@ -45,7 +45,7 @@ const containerStyle = (theme: Theme, wrapperStyle?: SerializedStyles) => css`
 `;
 
 const linkStyle = (theme: Theme) => css`
-	${theme.typography.captionBold};
+	${theme.typography.paragraphSmallBold};
 	color: ${theme.colors.black};
 	cursor: pointer;
 	display: inline-flex;
@@ -54,6 +54,7 @@ const linkStyle = (theme: Theme) => css`
 	border: none;
 	padding: 0;
 	margin-top: 4px;
+	text-decoration: underline;
 
 	&:hover {
 		text-decoration: underline;

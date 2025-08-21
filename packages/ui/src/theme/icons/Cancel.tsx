@@ -35,7 +35,7 @@ const Cancel = ({ fill, width, height, style }: IconProps) => {
 			height={height}
 			fill={fill || 'none'}
 			viewBox="0 0 24 24"
-			stroke="currentColor"
+			stroke={fill || 'currentColor'}
 			strokeWidth="2"
 			strokeLinecap="round"
 			strokeLinejoin="round"

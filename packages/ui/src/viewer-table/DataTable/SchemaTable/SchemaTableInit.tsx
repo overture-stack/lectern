@@ -48,8 +48,9 @@ export const getSchemaBaseColumns = (schema: Schema) => [
 	columnHelper.accessor('restrictions.required', {
 		header: 'Attribute',
 		cell: (attribute: CellContext<SchemaField, unknown>) => {
-			const fieldLevelRestrictions: SchemaFieldRestrictions = attribute.row.original.restrictions;
-			return renderAttributesColumn(fieldLevelRestrictions);
+			const schemaField: SchemaField = attribute.row.original;
+			const fieldLevelRestrictions: SchemaFieldRestrictions = schemaField.restrictions;
+			return renderAttributesColumn(fieldLevelRestrictions, schemaField);
 		},
 	}),
 

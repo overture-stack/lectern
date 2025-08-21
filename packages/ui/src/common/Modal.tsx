@@ -21,7 +21,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
+import { css, Global } from '@emotion/react';
 import Modal, { Styles } from 'react-modal';
 
 import { Theme } from '../theme';
@@ -88,19 +88,29 @@ Modal.setAppElement('body');
 const ModalComponent = ({ children, setIsOpen, isOpen, onAfterOpen, title }: ModalProps) => {
 	const theme: Theme = useThemeContext();
 	return (
-		<Modal
-			isOpen={isOpen}
-			onAfterOpen={onAfterOpen}
-			onRequestClose={() => setIsOpen(false)}
-			style={customStyles(theme)}
-			contentLabel={title}
-		>
-			<div css={headerStyle(theme)}>
-				<span css={titleStyle(theme)}>{title}</span>
-				<Button iconOnly onClick={() => setIsOpen(false)} icon={<Cancel />} />
-			</div>
-			<div css={bodyStyle}>{children}</div>
-		</Modal>
+		<>
+			<Global
+				styles={css`
+					body.modal-open {
+						overflow: hidden;
+					}
+				`}
+			/>
+			<Modal
+				isOpen={isOpen}
+				onAfterOpen={onAfterOpen}
+				onRequestClose={() => setIsOpen(false)}
+				style={customStyles(theme)}
+				contentLabel={title}
+				bodyOpenClassName="modal-open"
+			>
+				<div css={headerStyle(theme)}>
+					<span css={titleStyle(theme)}>{title}</span>
+					<Button iconOnly onClick={() => setIsOpen(false)} icon={<Cancel />} />
+				</div>
+				<div css={bodyStyle}>{children}</div>
+			</Modal>
+		</>
 	);
 };
 

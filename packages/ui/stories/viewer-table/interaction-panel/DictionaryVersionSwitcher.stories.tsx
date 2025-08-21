@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
@@ -25,7 +24,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import VersionSwitcher from '../../../src/viewer-table/InteractionPanel/DictionaryVersionSwitcher';
 import {
 	withEmptyDictionaries,
-	withErrorState,
 	withLoadingState,
 	withMultipleDictionaries,
 	withSingleDictionary,
@@ -39,6 +37,7 @@ const meta = {
 } satisfies Meta<typeof VersionSwitcher>;
 
 export default meta;
+
 type Story = StoryObj<typeof meta>;
 
 export const MultipleVersions: Story = {
@@ -80,17 +79,6 @@ export const Loading: Story = {
 		docs: {
 			description: {
 				story: 'Component is disabled when loading.',
-			},
-		},
-	},
-};
-
-export const Error: Story = {
-	decorators: [themeDecorator(), withErrorState()],
-	parameters: {
-		docs: {
-			description: {
-				story: 'Component is disabled when there is an error.',
 			},
 		},
 	},

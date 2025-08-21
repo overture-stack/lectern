@@ -31,10 +31,10 @@ export interface ExpandAllButtonProps {
 const ExpandAllButton = ({ onClick }: ExpandAllButtonProps) => {
 	const theme: Theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
-	const { Eye } = theme.icons;
+	const { Plus } = theme.icons;
 
 	return (
-		<Button icon={<Eye />} onClick={onClick} disabled={loading || errors.length > 0}>
+		<Button icon={<Plus fill={theme.colors.accent_dark} />} onClick={onClick} disabled={loading || errors.length > 0}>
 			Expand All
 		</Button>
 	);

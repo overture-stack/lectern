@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -20,33 +21,47 @@
 
 /** @jsxImportSource @emotion/react */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import { css } from '@emotion/react';
+import type { Theme } from '../theme';
+import LoadingSpinnerIcon from '../theme/icons/LoadingSpinnerIcon';
+import { useThemeContext } from '../theme/ThemeContext';
 
-import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
-import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
+const containerStyles = css`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+`;
 
-const meta = {
-	component: AttributeFilter,
-	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
-	tags: ['autodocs'],
-	decorators: [themeDecorator(), withMultipleDictionaries],
-	parameters: {
-		docs: {
-			description: {
-				component:
-					'A dropdown component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
-			},
-		},
-	},
-} satisfies Meta<typeof AttributeFilter>;
+const contentStyles = css`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 24px;
+`;
 
-export default meta;
+const loadingTextStyles = (theme: Theme) => css`
+	${theme.typography.bodyBold}
+	color: ${theme.colors.accent};
+	margin: 0;
+`;
 
-type Story = StoryObj<typeof meta>;
+interface LoadingPageProps {
+	size?: number;
+}
 
-export const Default: Story = {};
+const LoadingPage = ({ size = 69 }: LoadingPageProps) => {
+	const theme: Theme = useThemeContext();
 
-export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
+	return (
+		<div css={containerStyles}>
+			<div css={contentStyles}>
+				<LoadingSpinnerIcon size={size} />
+				<p css={loadingTextStyles(theme)}>Loading...</p>
+			</div>
+		</div>
+	);
 };
+
+export default LoadingPage;

@@ -35,6 +35,7 @@ export type AccordionData = {
 export type AccordionProps = {
 	accordionItems: Array<AccordionData>;
 	collapseAll: boolean;
+	selectedIndex?: number;
 };
 
 export type AccordionOpenState = {
@@ -57,13 +58,18 @@ const accordionStyle = css`
  *
  * @param accordionItems - Array of accordion items to render
  * @param collapseAll - Controls initial state and dynamic collapse/expand of all items. true = collapsed, false = expanded
+ * @param selectedIndex - The index of the currently selected accordion item, used for the scroll into views
  */
-const Accordion = ({ accordionItems, collapseAll }: AccordionProps) => {
+const Accordion = ({ accordionItems, collapseAll, selectedIndex }: AccordionProps) => {
 	const [openStates, setOpenStates] = useState<boolean[]>(accordionItems.map(() => !collapseAll));
 
 	useEffect(() => {
 		setOpenStates(accordionItems.map(() => !collapseAll));
 	}, [collapseAll]);
+
+	useEffect(() => {
+		setOpenStates((prev) => prev.map((isOpen, index) => (index === selectedIndex ? true : isOpen)));
+	}, [selectedIndex, accordionItems.length]);
 
 	const handleToggle = (index: number) => {
 		setOpenStates((prev) => prev.map((isOpen, i) => (i === index ? !isOpen : isOpen)));

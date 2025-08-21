@@ -29,6 +29,7 @@ import type {
 } from '@overture-stack/lectern-dictionary';
 import { Fragment } from 'react';
 
+import ListItem from '../..//common/ListItem';
 import FieldBlock from '../../common/FieldBlock';
 
 const getCaseText = (matchCase: ArrayTestCase, fieldCount: number): string => {
@@ -77,8 +78,17 @@ const valueMatch = (valueMatch: MatchRuleValue, matchCase: ArrayTestCase, fieldC
 };
 
 const codeListMatch = (codeListMatch: MatchRuleCodeList) => {
-	const codeList = codeListMatch?.join(', ');
-	return <Fragment>is one of: {codeList}</Fragment>;
+	return (
+		<Fragment>
+			is one of:{' '}
+			{codeListMatch.map((code: number | string, index: number) => (
+				<ListItem key={code}>
+					{code}
+					{index < codeListMatch.length - 1 && ', '}
+				</ListItem>
+			))}
+		</Fragment>
+	);
 };
 
 const regularExpressionMatch = (regexMatch: MatchRuleRegex) => {

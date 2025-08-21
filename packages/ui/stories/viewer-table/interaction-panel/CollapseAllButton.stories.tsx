@@ -24,7 +24,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import CollapseAllButton from '../../../src/viewer-table/InteractionPanel/CollapseAllButton';
-import { withErrorState, withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
+import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
@@ -45,10 +45,5 @@ export const Default: Story = {
 
 export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
-	args: { onClick: mockOnClick },
-};
-
-export const Error: Story = {
-	decorators: [themeDecorator(), withErrorState()],
 	args: { onClick: mockOnClick },
 };

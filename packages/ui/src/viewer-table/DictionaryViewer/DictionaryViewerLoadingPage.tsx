@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -20,33 +21,50 @@
 
 /** @jsxImportSource @emotion/react */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import { css } from '@emotion/react';
 
-import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
-import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
+import type { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
+import { HeaderSkeleton } from '../Loading/HeaderSkeleton';
+import { InteractionPanelSkeleton } from '../Loading/InteractionPanelSkeleton';
+import LoadingSpinnerPage from '../Loading/LoadingSpinnerPage';
+const pageContainerStyle = (theme: Theme) => css`
+	margin: 0 auto;
+	min-height: calc(100vh - ${theme.dimensions.navbar.height}px - ${theme.dimensions.footer.height}px);
+	padding: 0 16px 40px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+`;
 
-const meta = {
-	component: AttributeFilter,
-	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
-	tags: ['autodocs'],
-	decorators: [themeDecorator(), withMultipleDictionaries],
-	parameters: {
-		docs: {
-			description: {
-				component:
-					'A dropdown component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
-			},
-		},
-	},
-} satisfies Meta<typeof AttributeFilter>;
+const headerPanelBlockStyle = css`
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+`;
 
-export default meta;
+const loadingContentStyles = css`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
+`;
 
-type Story = StoryObj<typeof meta>;
+const DictionaryViewerLoadingPage = () => {
+	const theme: Theme = useThemeContext();
 
-export const Default: Story = {};
-
-export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
+	return (
+		<div css={pageContainerStyle(theme)}>
+			<div css={headerPanelBlockStyle}>
+				<HeaderSkeleton />
+				<InteractionPanelSkeleton />
+			</div>
+			<div css={loadingContentStyles}>
+				<LoadingSpinnerPage size={69} />
+			</div>
+		</div>
+	);
 };
+
+export default DictionaryViewerLoadingPage;

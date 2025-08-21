@@ -22,9 +22,11 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
 import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
-import { withDictionaryContext, withErrorState, withLoadingState } from '../../dictionaryDecorator';
+import { InteractionPanelSkeleton } from '../../../src/viewer-table/Loading';
+import { withDictionaryContext } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
@@ -33,54 +35,79 @@ const meta = {
 	tags: ['autodocs'],
 	parameters: {
 		layout: 'fullscreen',
+		docs: {
+			description: {
+				component:
+					'The interaction panel provides controls for dictionary navigation, version switching, filtering, and data export functionality.',
+			},
+		},
 	},
 } satisfies Meta<typeof InteractionPanel>;
 
 export default meta;
+
 type Story = StoryObj<typeof meta>;
 
-const mockProps = {
-	setIsCollapsed: (isCollapsed: boolean) => {
-		alert('setIsCollapsed called with:' + isCollapsed);
-	},
-	onSelect: (schemaNameIndex: number) => {
-		alert('onSelect called with schemaNameIndex:' + schemaNameIndex);
-	},
-	isCollapsed: false,
+const InteractiveInteractionPanel = () => {
+	const [isCollapsed, setIsCollapsed] = useState(true);
+
+	const handleSelect = (schemaNameIndex: number) => {
+		console.log('Selected schema index:', schemaNameIndex);
+	};
+
+	return <InteractionPanel onSelect={handleSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />;
 };
 
 export const Default: Story = {
 	decorators: [themeDecorator(), withDictionaryContext()],
-	args: {
-		...mockProps,
+	render: () => <InteractiveInteractionPanel />,
+};
+
+export const Interactive: Story = {
+	decorators: [themeDecorator(), withDictionaryContext()],
+	render: () => <InteractiveInteractionPanel />,
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Click the expand/collapse button to see it toggle between "Expand All" and "Collapse All" states. Check the console for action logs.',
+			},
+		},
 	},
 };
 
 export const WithSingleVersion: Story = {
 	decorators: [themeDecorator(), withDictionaryContext()],
-	args: {
-		...mockProps,
-	},
+	render: () => <InteractiveInteractionPanel />,
 };
 
-export const Collapsed: Story = {
+export const ShowingExpandButton: Story = {
 	decorators: [themeDecorator(), withDictionaryContext()],
 	args: {
-		...mockProps,
+		onSelect: (schemaNameIndex: number) => console.log('Selected schema index:', schemaNameIndex),
+		setIsCollapsed: (isCollapsed: boolean) => console.log('setIsCollapsed called with:', isCollapsed),
 		isCollapsed: true,
 	},
 };
 
-export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
+export const ShowingCollapseButton: Story = {
+	decorators: [themeDecorator(), withDictionaryContext()],
 	args: {
-		...mockProps,
+		onSelect: (schemaNameIndex: number) => console.log('Selected schema index:', schemaNameIndex),
+		setIsCollapsed: (isCollapsed: boolean) => console.log('setIsCollapsed called with:', isCollapsed),
+		isCollapsed: false,
 	},
 };
 
-export const Error: Story = {
-	decorators: [themeDecorator(), withErrorState()],
-	args: {
-		...mockProps,
+export const Loading: Story = {
+	decorators: [themeDecorator()],
+	render: () => <InteractionPanelSkeleton />,
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Interactive panel displays skeleton placeholders for table controls, version switcher, and download buttons during data loading.',
+			},
+		},
 	},
 };

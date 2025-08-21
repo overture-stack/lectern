@@ -31,10 +31,10 @@ export interface CollapseAllButtonProps {
 const CollapseAllButton = ({ onClick }: CollapseAllButtonProps) => {
 	const theme: Theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
-	const { Collapse } = theme.icons;
+	const { Minus } = theme.icons;
 
 	return (
-		<Button icon={<Collapse />} onClick={onClick} disabled={loading || errors.length > 0}>
+		<Button icon={<Minus fill={theme.colors.accent_dark} />} onClick={onClick} disabled={loading || errors.length > 0}>
 			Collapse All
 		</Button>
 	);

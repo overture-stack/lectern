@@ -22,8 +22,8 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import DictionaryDownloadButton from '../../../src/viewer-table/InteractionPanel/DictionaryDownloadButton';
-import { withDictionaryContext, withErrorState, withLoadingState } from '../../dictionaryDecorator';
+import { DictionaryDownloadButton } from '../../../src/viewer-table/InteractionPanel/DictionaryDownloadButton';
+import { withDictionaryContext, withLoadingState } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
@@ -52,13 +52,6 @@ export const IconOnly: Story = {
 
 export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
-	args: {
-		fileType: 'tsv',
-	},
-};
-
-export const Error: Story = {
-	decorators: [themeDecorator(), withErrorState()],
 	args: {
 		fileType: 'tsv',
 	},

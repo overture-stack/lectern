@@ -1,10 +1,11 @@
 /*
+ *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
  *  GNU Affero General Public License along with this program.
- *   If not, see <http://www.gnu.org/licenses/>.
+ *  If not, see <http://www.gnu.org/licenses/>.
  *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
  *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -20,33 +21,39 @@
 
 /** @jsxImportSource @emotion/react */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import { css } from '@emotion/react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
-import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
-import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
+import type { Theme } from '../../theme';
+import { useThemeContext } from '../../theme/ThemeContext';
 
-const meta = {
-	component: AttributeFilter,
-	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
-	tags: ['autodocs'],
-	decorators: [themeDecorator(), withMultipleDictionaries],
-	parameters: {
-		docs: {
-			description: {
-				component:
-					'A dropdown component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
-			},
-		},
-	},
-} satisfies Meta<typeof AttributeFilter>;
+const containerStyle = css`
+	background-color: white;
+	padding: 2.5rem;
+	margin: 0;
+	border-bottom: 1px solid #d1d8df;
+	display: flex;
+	flex-direction: column;
+`;
 
-export default meta;
+const titleStyle = (theme: Theme) => css`
+	${theme.typography.subtitleBold}
+	color: ${theme.colors.accent_dark};
+	margin: 0;
+`;
 
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
+export const HeaderSkeleton = () => {
+	const theme: Theme = useThemeContext();
+	return (
+		<div css={containerStyle}>
+			<SkeletonTheme customHighlightBackground={theme.colors.gradients.skeleton(theme.colors.accent_1)} baseColor="transparent">
+				<h1 css={titleStyle(theme)}>
+					<Skeleton width="16.67%" />
+				</h1>
+				<Skeleton width="16.67%" height={16} style={{ marginTop: 10, marginBottom: 10 }} />
+				<Skeleton width="16.67%" />
+			</SkeletonTheme>
+		</div>
+	);
 };

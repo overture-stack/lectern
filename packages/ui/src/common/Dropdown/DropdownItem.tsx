@@ -22,7 +22,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css, SerializedStyles } from '@emotion/react';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
@@ -37,13 +37,12 @@ type DropDownItemProps = {
 	};
 };
 
-// TODO: Get figma designs for dropdown list item and implement that, since current styling is off
 const styledListItemStyle = (theme: Theme, customStyles?: any) => css`
 	${theme.typography?.paragraphSmall};
 	display: flex;
 	align-items: center;
 	padding: 8px 16px;
-	height: 42px;
+	min-height: 42px;
 	box-sizing: border-box;
 	color: ${theme.colors.black};
 	cursor: pointer;

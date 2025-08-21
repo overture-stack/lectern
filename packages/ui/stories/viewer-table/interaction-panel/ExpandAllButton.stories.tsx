@@ -24,7 +24,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import ExpandAllButton from '../../../src/viewer-table/InteractionPanel/ExpandAllButton';
-import { withErrorState, withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
+import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
@@ -43,10 +43,5 @@ export const Default: Story = {
 
 export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
-	args: { onClick: () => alert('All collapsible components are expanded') },
-};
-
-export const Error: Story = {
-	decorators: [themeDecorator(), withErrorState()],
 	args: { onClick: () => alert('All collapsible components are expanded') },
 };

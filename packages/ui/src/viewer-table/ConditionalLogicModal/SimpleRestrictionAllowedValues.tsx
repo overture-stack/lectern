@@ -25,7 +25,6 @@ import { Fragment } from 'react';
 
 import FieldBlock from '../../common/FieldBlock';
 import ListItem from '../../common/ListItem';
-import { isFieldRequired } from '../../utils/isFieldRequired';
 
 export type RenderAllowedValuesProps = {
 	restrictions: SchemaFieldRestrictions;
@@ -98,7 +97,7 @@ const SimpleRestrictionAllowedValues = ({ restrictions, currentSchemaField }: Re
 	}
 	const computeRestrictions = [
 		{
-			condition: isFieldRequired(currentSchemaField),
+			condition: 'required' in restrictions && restrictions.required === true,
 			content: <Fragment>be provided</Fragment>,
 		},
 		{

@@ -24,15 +24,10 @@
 import { css } from '@emotion/react';
 
 import ReadMoreText from '../common/ReadMoreText';
+import { useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
-
-export type DictionaryHeaderProps = {
-	name: string;
-	description?: string;
-	version?: string;
-	disabled?: boolean;
-};
+import { HeaderSkeleton } from './Loading';
 
 const descriptionWrapperStyle = (theme: Theme) => css`
 	${theme.typography.body}
@@ -54,7 +49,8 @@ const descriptionWrapperStyle = (theme: Theme) => css`
 const containerStyle = css`
 	background-color: white;
 	padding: 2.5rem;
-	margin-bottom: 1rem;
+	margin: 0;
+	border-bottom: 1px solid #d1d8df;
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
@@ -71,16 +67,23 @@ const versionStyle = (theme: Theme) => css`
 	color: ${theme.colors.accent_dark};
 `;
 
-const DictionaryHeader = ({ name, description, version, disabled }: DictionaryHeaderProps) => {
+const DictionaryHeader = () => {
 	const theme: Theme = useThemeContext();
+	const dataContext = useDictionaryDataContext();
+	const stateContext = useDictionaryStateContext();
 
-	if (disabled) {
-		return <div css={containerStyle} />;
+	const { loading } = dataContext;
+	const { selectedDictionary } = stateContext;
+
+	const version = selectedDictionary?.version;
+	const description = selectedDictionary?.description;
+
+	if (loading) {
+		return <HeaderSkeleton />;
 	}
-
 	return (
 		<div css={containerStyle}>
-			<h1 css={titleStyle(theme)}>{name}</h1>
+			<h1 css={titleStyle(theme)}>{selectedDictionary?.name}</h1>
 			{description && (
 				<ReadMoreText
 					maxLines={2}
@@ -91,7 +94,7 @@ const DictionaryHeader = ({ name, description, version, disabled }: DictionaryHe
 					{description}
 				</ReadMoreText>
 			)}
-			{version && <span css={versionStyle(theme)}>{version}</span>}
+			{version && <span css={versionStyle(theme)}>Version: {version}</span>}
 		</div>
 	);
 };

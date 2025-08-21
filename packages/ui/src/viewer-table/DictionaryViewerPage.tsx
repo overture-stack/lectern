@@ -18,25 +18,23 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { ReactNode } from 'react';
 import { DictionaryLecternDataProvider, DictionaryStateProvider } from '../dictionary-controller/DictionaryDataContext';
 
+import DictionaryTableViewer from './DictionaryTableViewer';
 export type DictionaryTableViewerProps = {
 	lecternUrl: string;
 	dictionaryName: string;
-	children: ReactNode;
 };
 
 /**
  * DictionaryViewerPage component.
  * @param {DictionaryTableViewerProps} props
  */
-export const DictionaryViewerPage = ({ lecternUrl, dictionaryName, children }: DictionaryTableViewerProps) => {
+export const DictionaryViewerPage = ({ lecternUrl, dictionaryName }: DictionaryTableViewerProps) => {
 	return (
 		<DictionaryLecternDataProvider lecternUrl={lecternUrl} dictionaryName={dictionaryName}>
 			<DictionaryStateProvider>
-				{/* TODO: Write a full fledged dictionary page component and remove children */}
-				{children}
+				<DictionaryTableViewer />
 			</DictionaryStateProvider>
 		</DictionaryLecternDataProvider>
 	);

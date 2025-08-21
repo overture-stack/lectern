@@ -85,6 +85,7 @@ const tableStyle = (theme: Theme) => css`
 	border: 1px solid ${theme.colors.grey_3};
 	margin-top: 8px;
 	position: relative;
+	width: 100%;
 `;
 const tableBorderStyle = (theme: Theme) => css`
 	border: 1px solid ${theme.colors.border_light};

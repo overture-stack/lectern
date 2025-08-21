@@ -5,7 +5,7 @@
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
  *  GNU Affero General Public License along with this program.
- *   If not, see <http://www.gnu.org/licenses/>.
+ *  If not, see <http://www.gnu.org/licenses/>.
  *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
  *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -22,23 +22,11 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
-import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
-import { InteractionPanelSkeleton } from '../Loading';
-import AttributeFilterDropdown from './AttributeFilterDropdown';
-import CollapseAllButton from './CollapseAllButton';
-import { DictionaryDownloadButton } from './DictionaryDownloadButton';
-import DictionaryVersionSwitcher from './DictionaryVersionSwitcher';
-import ExpandAllButton from './ExpandAllButton';
-import TableOfContentsDropdown from './TableOfContentsDropdown';
-
-export type InteractionPanelProps = {
-	onSelect: (schemaNameIndex: number) => void;
-	setIsCollapsed: (collapsed: boolean) => void;
-	isCollapsed: boolean;
-};
 
 const panelStyles = (theme: Theme) => css`
 	display: flex;
@@ -48,6 +36,7 @@ const panelStyles = (theme: Theme) => css`
 	justify-content: space-between;
 	padding: 8px 16px;
 	border-top: 1px solid ${theme.colors.border_muted};
+	border-bottom: 1px solid ${theme.colors.border_muted};
 	background-color: ${theme.colors.white};
 	flex-wrap: nowrap;
 	min-height: 80px;
@@ -62,34 +51,21 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const InteractionPanel = ({ onSelect, setIsCollapsed, isCollapsed }: InteractionPanelProps) => {
-	const theme: Theme = useThemeContext();
-	const { loading } = useDictionaryDataContext();
-	const { selectedDictionary } = useDictionaryStateContext();
-
-	if (!selectedDictionary && !loading) {
-		return null;
-	}
-
-	if (loading) {
-		return <InteractionPanelSkeleton />;
-	}
-
+export const InteractionPanelSkeleton = () => {
+	const theme = useThemeContext();
 	return (
 		<div css={panelStyles(theme)}>
-			<div css={sectionStyles}>
-				<TableOfContentsDropdown schemas={selectedDictionary?.schemas ?? []} onSelect={onSelect} />
-				<AttributeFilterDropdown />
-				{isCollapsed ?
-					<ExpandAllButton onClick={() => setIsCollapsed(false)} />
-				:	<CollapseAllButton onClick={() => setIsCollapsed(true)} />}
-			</div>
-			<div css={sectionStyles}>
-				<DictionaryVersionSwitcher />
-				<DictionaryDownloadButton fileType="tsv" />
-			</div>
+			<SkeletonTheme
+				customHighlightBackground={theme.colors.gradients.skeleton(theme.colors.accent_1)}
+				baseColor="transparent"
+			>
+				<div css={sectionStyles}>
+					<Skeleton width={160} height={42} />
+					<Skeleton width={120} height={42} />
+					<Skeleton width={80} height={42} />
+				</div>
+				<div css={sectionStyles}></div>
+			</SkeletonTheme>
 		</div>
 	);
 };
-
-export default InteractionPanel;
