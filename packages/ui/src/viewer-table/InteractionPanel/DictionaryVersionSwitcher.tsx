@@ -23,8 +23,8 @@ import { useDictionaryDataContext, useDictionaryStateContext } from '../../dicti
 import type { Theme } from '../../theme';
 import { useThemeContext } from '../../theme/ThemeContext';
 
-const formatDate = (dateString: string | undefined): string => {
-	return dateString ? new Date(dateString).toISOString().split('T')[0] : '';
+const formatDate = (date: Date | undefined): string => {
+	return date ? date.toISOString().split('T')[0] : '';
 };
 const DictionaryVersionSwitcher = () => {
 	const theme: Theme = useThemeContext();
@@ -33,9 +33,9 @@ const DictionaryVersionSwitcher = () => {
 	const { loading, errors, dictionaries } = useDictionaryDataContext();
 	const { selectedDictionary, setCurrentDictionaryIndex } = useDictionaryStateContext();
 
-	const createdAt = selectedDictionary && 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : '';
+	const createdAt = selectedDictionary && 'createdAt' in selectedDictionary ? selectedDictionary.createdAt : undefined;
 
-	const formattedCreatedAt = formatDate(createdAt?.toString());
+	const formattedCreatedAt = formatDate(createdAt);
 	const title =
 		selectedDictionary?.version ?
 			`Version ${selectedDictionary.version}${formattedCreatedAt ? ` (${formattedCreatedAt})` : ''}`
