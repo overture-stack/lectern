@@ -23,7 +23,7 @@
 
 import { css } from '@emotion/react';
 import type { Schema, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import Accordion from '../common/Accordion/Accordion';
 import { ErrorModal } from '../common/Error/ErrorModal';
@@ -55,38 +55,43 @@ const isConditionalRestriction = (schemaFieldRestriction: SchemaFieldRestriction
 	return schemaFieldRestriction && 'if' in schemaFieldRestriction && schemaFieldRestriction.if !== undefined;
 };
 
+const getFilteredSchema = (schema: Schema, filters: string[]) => {
+	if (filters.includes('Required')) {
+		return {
+			...schema,
+			fields: schema.fields.filter((field) => {
+				return isFieldRequired(field) || isConditionalRestriction(field.restrictions);
+			}),
+		};
+	}
+	return schema;
+};
+
+const ErrorDisplay = ({ errors, onContactClick }: { errors: string[]; onContactClick: () => void }) => {
+	const theme = useThemeContext();
+	const isErrorModalOpen = errors.length > 0;
+
+	return (
+		<div css={pageContainerStyle(theme)}>
+			<ErrorModal isOpen={isErrorModalOpen} setIsOpen={() => {}} errors={errors} onContactClick={onContactClick} />
+		</div>
+	);
+};
+
 export const DictionaryTableViewer = () => {
-	const theme: Theme = useThemeContext();
-	const { loading, errors, dictionaries } = useDictionaryDataContext();
-	const { currentDictionaryIndex, filters } = useDictionaryStateContext();
-	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
+	const theme = useThemeContext();
+	const { loading, errors } = useDictionaryDataContext();
+	const { filters, selectedDictionary } = useDictionaryStateContext();
 
 	const [isCollapsed, setIsCollapsed] = useState(false);
-	const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 	const [selectedSchemaIndex, setSelectedSchemaIndex] = useState<number | undefined>(undefined);
 	const accordionRefs = useRef<(HTMLLIElement | null)[]>([]);
-
-	useEffect(() => {
-		setIsErrorModalOpen(errors.length > 0);
-	}, [errors]);
-
-	const getFilteredSchema = (schema: Schema) => {
-		if (filters.includes('Required')) {
-			return {
-				...schema,
-				fields: schema.fields.filter((field) => {
-					return isFieldRequired(field) || isConditionalRestriction(field.restrictions);
-				}),
-			};
-		}
-		return schema;
-	};
 
 	const accordionItems =
 		selectedDictionary?.schemas?.map((schema: Schema) => ({
 			title: schema.name,
 			description: schema.description,
-			content: <SchemaTable schema={getFilteredSchema(schema)} />,
+			content: <SchemaTable schema={getFilteredSchema(schema, filters)} />,
 			schemaName: schema.name,
 		})) || [];
 
@@ -100,33 +105,12 @@ export const DictionaryTableViewer = () => {
 
 	if (loading) {
 		return <DictionaryViewerLoadingPage />;
+	} else if (errors.length > 0) {
+		return <ErrorDisplay errors={errors} onContactClick={() => console.log('TODO')} />;
+	} else if (!selectedDictionary) {
+		return <ErrorDisplay errors={['No dictionary data provided']} onContactClick={() => console.log('TODO')} />;
 	}
 
-	if (errors.length > 0) {
-		return (
-			<div css={pageContainerStyle(theme)}>
-				<ErrorModal
-					isOpen={isErrorModalOpen}
-					setIsOpen={setIsErrorModalOpen}
-					errors={errors}
-					onContactClick={() => console.log('Contact administrator clicked')}
-				/>
-			</div>
-		);
-	}
-
-	if (!selectedDictionary) {
-		return (
-			<div css={pageContainerStyle(theme)}>
-				<ErrorModal
-					isOpen={true}
-					setIsOpen={() => {}}
-					errors={['No dictionary data provided']}
-					onContactClick={() => console.log('Contact administrator clicked')}
-				/>
-			</div>
-		);
-	}
 	return (
 		<div css={pageContainerStyle(theme)}>
 			<div css={headerPanelBlockStyle}>
