@@ -26,14 +26,14 @@ import type { Schema, SchemaFieldRestrictions } from '@overture-stack/lectern-di
 import { useRef, useState } from 'react';
 
 import Accordion from '../common/Accordion/Accordion';
-import { ErrorModal } from '../common/Error/ErrorModal';
+import ErrorModal from '../common/Error/ErrorModal';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
 import type { Theme } from '../theme';
 import { useThemeContext } from '../theme/ThemeContext';
 import { isFieldRequired } from '../utils/isFieldRequired';
 import SchemaTable from './DataTable/SchemaTable/SchemaTable';
 import DictionaryHeader from './DictionaryHeader';
-import { DictionaryViewerLoadingPage } from './DictionaryViewer';
+import DictionaryViewerLoadingPage from './DictionaryViewer/DictionaryViewerLoadingPage';
 import InteractionPanel from './InteractionPanel/InteractionPanel';
 
 const pageContainerStyle = (theme: Theme) => css`
@@ -117,12 +117,7 @@ export const DictionaryTableViewer = () => {
 				<DictionaryHeader />
 				<InteractionPanel onSelect={handleSchemaSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
 			</div>
-			<Accordion
-				accordionItems={accordionItems}
-				collapseAll={isCollapsed}
-				selectedIndex={selectedSchemaIndex}
-				refs={accordionRefs}
-			/>
+			<Accordion accordionItems={accordionItems} collapseAll={isCollapsed} selectedIndex={selectedSchemaIndex} />
 		</div>
 	);
 };
