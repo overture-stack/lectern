@@ -43,13 +43,13 @@ const titleStyle = (theme: Theme) => css`
 	margin: 0;
 `;
 
+const gradient = (theme: Theme) => `linear-gradient(270deg, rgba(229, 237, 243, 0) 0%, ${theme.colors.accent_1} 100%)`;
+
 export const HeaderSkeleton = () => {
 	const theme: Theme = useThemeContext();
-	const gradient = `linear-gradient(270deg, rgba(229, 237, 243, 0) 0%, ${theme.colors.accent_1} 100%)`;
-
 	return (
 		<div css={containerStyle}>
-			<SkeletonTheme customHighlightBackground={gradient} baseColor="transparent">
+			<SkeletonTheme customHighlightBackground={gradient(theme)} baseColor="transparent">
 				<h1 css={titleStyle(theme)}>
 					<Skeleton width="16.67%" />
 				</h1>
