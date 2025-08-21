@@ -103,6 +103,7 @@ export const DictionaryTableViewer = () => {
 		}
 	};
 
+	// TODO: Provide a function for the errorModal contact click
 	if (loading) {
 		return <DictionaryViewerLoadingPage />;
 	} else if (errors.length > 0) {
