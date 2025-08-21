@@ -54,7 +54,7 @@ const linkStyle = (theme: Theme) => css`
 	border: none;
 	padding: 0;
 	margin-top: 4px;
-	\ttext-decoration: underline;
+	text-decoration: underline;
 
 	&:hover {
 		text-decoration: underline;
