@@ -19,7 +19,9 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
+
 import { ConditionalBlock } from '../../../src/viewer-table/ConditionalLogicModal/ConditionalBlock';
+
 import themeDecorator from '../../themeDecorator';
 
 const meta = {

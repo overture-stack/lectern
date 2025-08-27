@@ -21,7 +21,8 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import VersionSwitcher from '../../../src/viewer-table/InteractionPanel/DictionaryVersionSwitcher';
+import VersionSwitcher from '../../../src/viewer-table/Toolbar/DictionaryVersionSwitcher';
+
 import {
 	withEmptyDictionaries,
 	withLoadingState,
@@ -32,7 +33,7 @@ import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: VersionSwitcher,
-	title: 'Viewer - Table/Interaction - Panel/Dictionary Version Switcher',
+	title: 'Viewer - Table/Toolbar/Dictionary Version Switcher',
 	tags: ['autodocs'],
 } satisfies Meta<typeof VersionSwitcher>;
 

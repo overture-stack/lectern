@@ -25,8 +25,7 @@ import { css } from '@emotion/react';
 import { ColumnDef, getCoreRowModel, HeaderGroup, useReactTable } from '@tanstack/react-table';
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../theme/index';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
 

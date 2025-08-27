@@ -21,7 +21,8 @@ import { createContext, type PropsWithChildren, useContext, useMemo } from 'reac
 
 import recursiveMerge from '../utils/recursiveMerge';
 import { type RecursivePartial } from '../utils/RecursivePartial';
-import defaultTheme, { type Theme } from './';
+
+import { defaultTheme, type Theme } from './index';
 
 const ThemeContext = createContext<Theme>(defaultTheme);
 

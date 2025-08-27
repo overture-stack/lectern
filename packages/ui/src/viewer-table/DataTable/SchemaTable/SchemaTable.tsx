@@ -18,9 +18,9 @@
  */
 
 import { Schema } from '@overture-stack/lectern-dictionary';
-import React from 'react';
 
 import Table from '../Table';
+
 import { getSchemaBaseColumns } from './SchemaTableInit';
 
 export type SchemaTableProps = {

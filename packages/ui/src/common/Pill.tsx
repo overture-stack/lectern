@@ -20,10 +20,10 @@
 /** @jsxImportSource @emotion/react */
 
 import { css, SerializedStyles } from '@emotion/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
-import { Theme } from '../theme';
-import { useThemeContext } from '../theme/ThemeContext';
+import { type Theme } from '../theme/index';
+import { useThemeContext } from '../theme/index';
 
 export type PillVariant = 'default';
 export type PillSize = 'extra-small' | 'small' | 'medium' | 'large';

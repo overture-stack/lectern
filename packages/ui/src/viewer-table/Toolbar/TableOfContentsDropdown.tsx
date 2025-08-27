@@ -21,10 +21,9 @@
 
 import type { Schema } from '@overture-stack/lectern-dictionary';
 
-import Dropdown from '../../common/Dropdown/Dropdown';
+import Dropdown from '../../common/Dropdown/index';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../theme/index';
 
 export type TableOfContentsDropdownProps = {
 	schemas: Schema[];

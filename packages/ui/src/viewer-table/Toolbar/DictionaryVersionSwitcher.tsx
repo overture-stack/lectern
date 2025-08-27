@@ -18,10 +18,9 @@
  *
  */
 
-import Dropdown from '../../common/Dropdown/Dropdown';
+import Dropdown from '../../common/Dropdown/index';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../theme/index';
 
 const formatDate = (date: Date | undefined): string => {
 	return date ? date.toISOString().split('T')[0] : '';

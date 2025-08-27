@@ -22,10 +22,10 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { type MouseEvent as ReactMouseEvent, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../theme/index';
+
 import DropDownItem from './DropdownItem';
 
 const disabledButtonStyle = css`
@@ -93,7 +93,7 @@ type MenuItem = {
 	action: () => void;
 };
 
-type DropDownProps = {
+export type DropDownProps = {
 	title?: string;
 	leftIcon?: ReactNode;
 	menuItems?: MenuItem[];
@@ -123,15 +123,16 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDow
 		if (open) {
 			document.addEventListener('mousedown', handleClickOutside);
 		}
+
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
 	}, [open]);
 
 	const handleToggle = useCallback(
-		(e: React.MouseEvent) => {
+		(event: ReactMouseEvent) => {
 			if (disabled) return;
-			e.stopPropagation();
+			event.stopPropagation();
 			setOpen((prev) => !prev);
 		},
 		[disabled],

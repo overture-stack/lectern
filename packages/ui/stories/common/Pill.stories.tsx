@@ -24,6 +24,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import Pill from '../../src/common/Pill';
+
 import themeDecorator from '../themeDecorator';
 
 const meta = {

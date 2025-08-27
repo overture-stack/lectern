@@ -25,9 +25,9 @@ import { css } from '@emotion/react';
 
 import ReadMoreText from '../common/ReadMoreText';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
-import type { Theme } from '../theme';
-import { useThemeContext } from '../theme/ThemeContext';
-import { HeaderSkeleton } from './Loading';
+import { type Theme, useThemeContext } from '../theme/index';
+
+import HeaderSkeleton from './Loading/HeaderSkeleton';
 
 const descriptionWrapperStyle = (theme: Theme) => css`
 	${theme.typography.body}

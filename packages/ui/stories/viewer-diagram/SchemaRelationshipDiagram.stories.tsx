@@ -22,6 +22,7 @@
 
 import type { Schema, Values } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
+
 import { SchemaRelationshipDiagram } from '../../src/viewer-diagram/SchemaRelationshipDiagram';
 
 import biosampleDictionary from '../fixtures/minimalBiosampleModel';

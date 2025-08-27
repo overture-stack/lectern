@@ -22,7 +22,9 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import Dropdown from '../../src/common/Dropdown/Dropdown';
+
+import Dropdown from '../../src/common/Dropdown/index';
+
 import themeDecorator from '../themeDecorator';
 
 const meta = {

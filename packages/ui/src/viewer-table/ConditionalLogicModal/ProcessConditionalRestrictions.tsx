@@ -18,7 +18,7 @@
  */
 
 import { TypeUtils, type SchemaField, type SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { ConditionStatement, ConditionalBlock } from './ConditionalBlock';
 import { ElseThenStatement } from './ElseThenStatement';

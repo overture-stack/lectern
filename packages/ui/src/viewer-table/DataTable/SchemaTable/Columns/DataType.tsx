@@ -21,8 +21,7 @@
 
 import { css } from '@emotion/react';
 import { SchemaField } from '@overture-stack/lectern-dictionary';
-import { Theme } from '../../../../theme';
-import { useThemeContext } from '../../../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../../../theme/index';
 
 /**
  * Renders the data type column cell for schema fields.

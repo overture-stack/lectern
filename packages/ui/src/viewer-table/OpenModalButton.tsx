@@ -19,16 +19,13 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { ReactNode } from 'react';
+import { type ReactNode, type SyntheticEvent } from 'react';
 
-import { Theme } from '../theme';
-import { useThemeContext } from '../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../theme/index';
 import Eye from '../theme/icons/Eye';
 
 export type OpenModalButtonProps = {
-	onClick?: (
-		e: React.SyntheticEvent<HTMLButtonElement>,
-	) => any | ((e: React.SyntheticEvent<HTMLButtonElement>) => Promise<any>);
+	onClick?: (e: SyntheticEvent<HTMLButtonElement>) => any | ((e: SyntheticEvent<HTMLButtonElement>) => Promise<any>);
 	children: ReactNode;
 };
 

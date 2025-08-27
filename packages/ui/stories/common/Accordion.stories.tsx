@@ -22,7 +22,9 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import Accordion from '../../src/common/Accordion/Accordion';
+
+import Accordion from '../../src/common/Accordion/index';
+
 import { withLecternUrl } from '../dictionaryDecorator';
 import themeDecorator from '../themeDecorator';
 

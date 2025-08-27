@@ -18,32 +18,48 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-
 /** @jsxImportSource @emotion/react */
 
+import type { Schema } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import CollapseAllButton from '../../../src/viewer-table/InteractionPanel/CollapseAllButton';
+import TableOfContentsDropdown from '../../../src/viewer-table/Toolbar/TableOfContentsDropdown';
+
 import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
+import Dictionary from '../../fixtures/pcgl.json'; // TODO: define a dedicated demo dict.
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
-	component: CollapseAllButton,
-	title: 'Viewer - Table/Interaction - Panel/CollapseAllButton',
+	component: TableOfContentsDropdown,
+	title: 'Viewer - Table/Toolbar/Table of Contents Dropdown',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withMultipleDictionaries],
-} satisfies Meta<typeof CollapseAllButton>;
+} satisfies Meta<typeof TableOfContentsDropdown>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const mockOnClick = () => alert('All collapsible components are collapsed');
+const schemas: Schema[] = Dictionary.schemas as Schema[];
+
+const onSelect = (schemaIndex: number) => {
+	alert(`Accordion has been toggled for the following schema: ${schemas[schemaIndex].name}`);
+};
 
 export const Default: Story = {
-	args: { onClick: mockOnClick },
+	args: {
+		schemas: schemas,
+		onSelect,
+	},
+};
+
+export const Empty: Story = {
+	args: { schemas: [], onSelect: () => {} },
 };
 
 export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
-	args: { onClick: mockOnClick },
+	args: {
+		schemas: schemas,
+		onSelect,
+	},
 };

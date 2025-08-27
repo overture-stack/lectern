@@ -20,18 +20,17 @@
  */
 
 /** @jsxImportSource @emotion/react */
-import { css, SerializedStyles } from '@emotion/react';
-import React, { ReactNode } from 'react';
-import { Theme } from '../theme';
-import { useThemeContext } from '../theme/ThemeContext';
+
+import { css, type SerializedStyles } from '@emotion/react';
+import { forwardRef, type ReactNode, type SyntheticEvent, useState } from 'react';
+
+import { type Theme, useThemeContext } from '../theme/index';
 
 export interface ButtonProps {
 	children?: ReactNode;
 	disabled?: boolean;
 	styleOverride?: SerializedStyles;
-	onClick?: (
-		e: React.SyntheticEvent<HTMLButtonElement>,
-	) => any | ((e: React.SyntheticEvent<HTMLButtonElement>) => Promise<any>);
+	onClick?: (e: SyntheticEvent<HTMLButtonElement>) => any | ((e: SyntheticEvent<HTMLButtonElement>) => Promise<any>);
 	isAsync?: boolean;
 	className?: string;
 	isLoading?: boolean;
@@ -94,7 +93,7 @@ const getIconStyles = () => css`
 	align-items: center;
 `;
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 	(
 		{
 			children,
@@ -110,12 +109,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 		}: ButtonProps,
 		ref,
 	) => {
-		const [internalLoading, setInternalLoading] = React.useState(false);
+		const [internalLoading, setInternalLoading] = useState(false);
 		const theme: Theme = useThemeContext();
 		const { Spinner } = theme.icons;
 
 		const shouldShowLoading = !!controlledLoading || (internalLoading && isAsync);
-		const handleClick = async (event: React.SyntheticEvent<HTMLButtonElement>) => {
+		const handleClick = async (event: SyntheticEvent<HTMLButtonElement>) => {
 			setInternalLoading(true);
 			await onClick(event);
 			setInternalLoading(false);

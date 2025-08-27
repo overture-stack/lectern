@@ -23,9 +23,8 @@
 
 import { css } from '@emotion/react';
 
-import type { Theme } from '../../theme';
+import { type Theme, useThemeContext } from '../../theme/index';
 import MessageSquareWarning from '../../theme/icons/MessageSquareWarning';
-import { useThemeContext } from '../../theme/ThemeContext';
 
 const errorItemStyle = css`
 	display: flex;

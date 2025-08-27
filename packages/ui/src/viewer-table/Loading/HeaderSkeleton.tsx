@@ -25,8 +25,7 @@ import { css } from '@emotion/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../theme/index';
 
 const containerStyle = css`
 	background-color: white;
@@ -43,11 +42,14 @@ const titleStyle = (theme: Theme) => css`
 	margin: 0;
 `;
 
-export const HeaderSkeleton = () => {
+const HeaderSkeleton = () => {
 	const theme: Theme = useThemeContext();
 	return (
 		<div css={containerStyle}>
-			<SkeletonTheme customHighlightBackground={theme.colors.gradients.skeleton(theme.colors.accent_1)} baseColor="transparent">
+			<SkeletonTheme
+				customHighlightBackground={theme.colors.gradients.skeleton(theme.colors.accent_1)}
+				baseColor="transparent"
+			>
 				<h1 css={titleStyle(theme)}>
 					<Skeleton width="16.67%" />
 				</h1>
@@ -57,3 +59,5 @@ export const HeaderSkeleton = () => {
 		</div>
 	);
 };
+
+export default HeaderSkeleton;

@@ -24,6 +24,7 @@ import { useState } from 'react';
 
 import Button from '../../../src/common/Button';
 import { ConditionalLogicModal } from '../../../src/viewer-table/ConditionalLogicModal/ConditionalLogicModal';
+
 import themeDecorator from '../../themeDecorator';
 
 const meta = {

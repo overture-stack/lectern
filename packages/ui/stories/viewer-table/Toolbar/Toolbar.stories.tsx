@@ -24,48 +24,44 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
-import InteractionPanel from '../../../src/viewer-table/InteractionPanel/InteractionPanel';
-import { InteractionPanelSkeleton } from '../../../src/viewer-table/Loading';
+import Toolbar from '../../../src/viewer-table/Toolbar/index';
+import { ToolbarSkeleton } from '../../../src/viewer-table/Loading';
+
 import { withDictionaryContext } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
-	component: InteractionPanel,
-	title: 'Viewer - Table/Interaction - Panel/InteractionPanel',
+	component: Toolbar,
+	title: 'Viewer - Table/Toolbar/Toolbar',
 	tags: ['autodocs'],
 	parameters: {
 		layout: 'fullscreen',
 		docs: {
 			description: {
 				component:
-					'The interaction panel provides controls for dictionary navigation, version switching, filtering, and data export functionality.',
+					'The Toolbar provides controls for dictionary navigation, version switching, filtering, and data export functionality.',
 			},
 		},
 	},
-} satisfies Meta<typeof InteractionPanel>;
+} satisfies Meta<typeof Toolbar>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const InteractiveInteractionPanel = () => {
+const InteractiveToolbar = () => {
 	const [isCollapsed, setIsCollapsed] = useState(true);
 
 	const handleSelect = (schemaNameIndex: number) => {
 		console.log('Selected schema index:', schemaNameIndex);
 	};
 
-	return <InteractionPanel onSelect={handleSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />;
+	return <Toolbar onSelect={handleSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />;
 };
 
 export const Default: Story = {
 	decorators: [themeDecorator(), withDictionaryContext()],
-	render: () => <InteractiveInteractionPanel />,
-};
-
-export const Interactive: Story = {
-	decorators: [themeDecorator(), withDictionaryContext()],
-	render: () => <InteractiveInteractionPanel />,
+	render: () => <InteractiveToolbar />,
 	parameters: {
 		docs: {
 			description: {
@@ -78,7 +74,7 @@ export const Interactive: Story = {
 
 export const WithSingleVersion: Story = {
 	decorators: [themeDecorator(), withDictionaryContext()],
-	render: () => <InteractiveInteractionPanel />,
+	render: () => <InteractiveToolbar />,
 };
 
 export const ShowingExpandButton: Story = {
@@ -101,7 +97,7 @@ export const ShowingCollapseButton: Story = {
 
 export const Loading: Story = {
 	decorators: [themeDecorator()],
-	render: () => <InteractionPanelSkeleton />,
+	render: () => <ToolbarSkeleton />,
 	parameters: {
 		docs: {
 			description: {

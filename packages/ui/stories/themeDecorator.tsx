@@ -21,8 +21,7 @@
 
 import type { Decorator } from '@storybook/react';
 
-import type { PartialTheme } from '../src/theme';
-import { ThemeProvider } from '../src/theme/ThemeContext';
+import { type PartialTheme, ThemeProvider } from '../src/theme/index';
 import recursiveMerge from '../src/utils/recursiveMerge';
 
 const customTheme: PartialTheme = { colors: { accent_dark: 'orange' } };

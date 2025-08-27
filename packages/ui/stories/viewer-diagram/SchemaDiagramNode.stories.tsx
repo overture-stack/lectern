@@ -22,8 +22,10 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { ReactFlowProvider } from 'reactflow';
+
 import { SchemaDiagramNode } from '../../src/viewer-diagram/SchemaDiagramNode';
 import { buildSchemaNode } from '../../src/viewer-diagram/SchemaFlowNode';
+
 import websiteUserDictionary from '../fixtures/websiteUsersDataDictionary';
 
 const meta = {

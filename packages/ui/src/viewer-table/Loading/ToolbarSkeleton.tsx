@@ -25,8 +25,7 @@ import { css } from '@emotion/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../theme/index';
 
 const panelStyles = (theme: Theme) => css`
 	display: flex;
@@ -51,7 +50,7 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-export const InteractionPanelSkeleton = () => {
+const ToolbarSkeleton = () => {
 	const theme = useThemeContext();
 	return (
 		<div css={panelStyles(theme)}>
@@ -69,3 +68,5 @@ export const InteractionPanelSkeleton = () => {
 		</div>
 	);
 };
+
+export default ToolbarSkeleton;

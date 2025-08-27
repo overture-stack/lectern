@@ -24,17 +24,17 @@
 import { css } from '@emotion/react';
 
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
-import { InteractionPanelSkeleton } from '../Loading';
+import { type Theme, useThemeContext } from '../../theme/index';
+import { ToolbarSkeleton } from '../Loading';
+
 import AttributeFilterDropdown from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
-import { DictionaryDownloadButton } from './DictionaryDownloadButton';
+import DictionaryDownloadButton from './DictionaryDownloadButton';
 import DictionaryVersionSwitcher from './DictionaryVersionSwitcher';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
 
-export type InteractionPanelProps = {
+export type ToolbarProps = {
 	onSelect: (schemaNameIndex: number) => void;
 	setIsCollapsed: (collapsed: boolean) => void;
 	isCollapsed: boolean;
@@ -62,7 +62,7 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const InteractionPanel = ({ onSelect, setIsCollapsed, isCollapsed }: InteractionPanelProps) => {
+const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed }: ToolbarProps) => {
 	const theme: Theme = useThemeContext();
 	const { loading } = useDictionaryDataContext();
 	const { selectedDictionary } = useDictionaryStateContext();
@@ -72,7 +72,7 @@ const InteractionPanel = ({ onSelect, setIsCollapsed, isCollapsed }: Interaction
 	}
 
 	if (loading) {
-		return <InteractionPanelSkeleton />;
+		return <ToolbarSkeleton />;
 	}
 
 	return (
@@ -92,4 +92,4 @@ const InteractionPanel = ({ onSelect, setIsCollapsed, isCollapsed }: Interaction
 	);
 };
 
-export default InteractionPanel;
+export default Toolbar;

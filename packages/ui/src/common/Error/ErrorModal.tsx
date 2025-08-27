@@ -24,10 +24,10 @@
 import { css } from '@emotion/react';
 import Modal, { Styles } from 'react-modal';
 
-import type { Theme } from '../../theme';
+import { type Theme, useThemeContext } from '../../theme/index';
 import Cancel from '../../theme/icons/Cancel';
-import { useThemeContext } from '../../theme/ThemeContext';
 import Button from '../Button';
+
 import { ErrorMessage } from './ErrorMessage';
 
 Modal.setAppElement('body');

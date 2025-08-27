@@ -19,7 +19,24 @@
  *
  */
 
-export * from './DictionaryHeader';
-export * from './DictionaryTableViewer';
-export * from './DictionaryViewerPage';
-export * from './Loading';
+import Button from '../../common/Button';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import { type Theme, useThemeContext } from '../../theme/index';
+
+export interface CollapseAllButtonProps {
+	onClick: () => void;
+}
+
+const CollapseAllButton = ({ onClick }: CollapseAllButtonProps) => {
+	const theme: Theme = useThemeContext();
+	const { loading, errors } = useDictionaryDataContext();
+	const { Minus } = theme.icons;
+
+	return (
+		<Button icon={<Minus fill={theme.colors.accent_dark} />} onClick={onClick} disabled={loading || errors.length > 0}>
+			Collapse All
+		</Button>
+	);
+};
+
+export default CollapseAllButton;
