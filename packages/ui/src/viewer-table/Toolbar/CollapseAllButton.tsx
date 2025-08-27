@@ -21,23 +21,22 @@
 
 import Button from '../../common/Button';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../theme/index';
 
-export interface ExpandAllButtonProps {
+export interface CollapseAllButtonProps {
 	onClick: () => void;
 }
 
-const ExpandAllButton = ({ onClick }: ExpandAllButtonProps) => {
+const CollapseAllButton = ({ onClick }: CollapseAllButtonProps) => {
 	const theme: Theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
-	const { Plus } = theme.icons;
+	const { Minus } = theme.icons;
 
 	return (
-		<Button icon={<Plus fill={theme.colors.accent_dark} />} onClick={onClick} disabled={loading || errors.length > 0}>
-			Expand All
+		<Button icon={<Minus fill={theme.colors.accent_dark} />} onClick={onClick} disabled={loading || errors.length > 0}>
+			Collapse All
 		</Button>
 	);
 };
 
-export default ExpandAllButton;
+export default CollapseAllButton;

@@ -19,7 +19,26 @@
  *
  */
 
-export * from './DictionaryHeader';
+export { default as SchemaTable, type SchemaTableProps } from './DataTable/SchemaTable/index';
+export { default as DictionaryHeader } from './DictionaryHeader';
+export { default, type DictionaryTableProps } from './DictionaryViewerPage';
+export {
+	default as Toolbar,
+	type ToolbarProps,
+
+	// individual parts for integrators to build their own
+	AttributeFilterDropdown,
+	CollapseAllButton,
+	type CollapseAllButtonProps,
+	DictionaryDownloadButton,
+	type DictionaryDownloadButtonProps,
+	DictionaryVersionSwitcher,
+	ExpandAllButton,
+	type ExpandAllButtonProps,
+	TableOfContentsDropdown,
+	type TableOfContentsDropdownProps,
+} from './Toolbar/index';
+
+// TODO: study which of the following are worth exporting at root, if any
 export * from './DictionaryTableViewer';
-export * from './DictionaryViewerPage';
 export * from './Loading';

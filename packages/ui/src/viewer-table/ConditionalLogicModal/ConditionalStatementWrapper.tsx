@@ -20,10 +20,9 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../theme/index';
 
 type ConditionalStatementWrapperProps = {
 	headerText: string;

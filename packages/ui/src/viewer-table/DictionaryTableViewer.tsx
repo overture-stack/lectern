@@ -25,16 +25,16 @@ import { css } from '@emotion/react';
 import type { Schema, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import { useRef, useState } from 'react';
 
-import Accordion from '../common/Accordion/Accordion';
+import Accordion from '../common/Accordion/index';
 import { ErrorModal } from '../common/Error/ErrorModal';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
-import type { Theme } from '../theme';
-import { useThemeContext } from '../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../theme/index';
 import { isFieldRequired } from '../utils/isFieldRequired';
-import SchemaTable from './DataTable/SchemaTable/SchemaTable';
+
+import SchemaTable from './DataTable/SchemaTable/index';
 import DictionaryHeader from './DictionaryHeader';
 import DictionaryViewerLoadingPage from './DictionaryViewer/DictionaryViewerLoadingPage';
-import InteractionPanel from './InteractionPanel/InteractionPanel';
+import Toolbar from './Toolbar/index';
 
 const pageContainerStyle = (theme: Theme) => css`
 	margin: 0 auto;
@@ -77,6 +77,9 @@ const ErrorDisplay = ({ errors, onContactClick }: { errors: string[]; onContactC
 		</div>
 	);
 };
+
+// TODO: produce a simplified version that accepts a dictionary and produces this same view,
+// so that there's no requirement for a Lectern server, etc. and without a Toolbar, or a simpler one.
 
 export const DictionaryTableViewer = () => {
 	const theme = useThemeContext();
@@ -134,7 +137,7 @@ export const DictionaryTableViewer = () => {
 		<div css={pageContainerStyle(theme)}>
 			<div css={headerPanelBlockStyle}>
 				<DictionaryHeader />
-				<InteractionPanel onSelect={handleAccordionSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
+				<Toolbar onSelect={handleAccordionSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
 			</div>
 			<Accordion accordionItems={accordionItems} collapseAll={isCollapsed} selectedIndex={selectedSchemaIndex} />
 		</div>

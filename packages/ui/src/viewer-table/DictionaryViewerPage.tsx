@@ -21,16 +21,17 @@
 import { DictionaryLecternDataProvider, DictionaryStateProvider } from '../dictionary-controller/DictionaryDataContext';
 
 import DictionaryTableViewer from './DictionaryTableViewer';
-export type DictionaryTableViewerProps = {
+
+export type DictionaryTableProps = {
 	lecternUrl: string;
 	dictionaryName: string;
 };
 
 /**
  * DictionaryViewerPage component.
- * @param {DictionaryTableViewerProps} props
+ * @param {DictionaryTableProps} props
  */
-export const DictionaryViewerPage = ({ lecternUrl, dictionaryName }: DictionaryTableViewerProps) => {
+const DictionaryViewerPage = ({ lecternUrl, dictionaryName }: DictionaryTableProps) => {
 	return (
 		<DictionaryLecternDataProvider lecternUrl={lecternUrl} dictionaryName={dictionaryName}>
 			<DictionaryStateProvider>
@@ -39,3 +40,5 @@ export const DictionaryViewerPage = ({ lecternUrl, dictionaryName }: DictionaryT
 		</DictionaryLecternDataProvider>
 	);
 };
+
+export default DictionaryViewerPage;

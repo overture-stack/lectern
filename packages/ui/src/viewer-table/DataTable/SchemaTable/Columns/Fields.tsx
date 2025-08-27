@@ -24,8 +24,7 @@ import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary'
 import { Row } from '@tanstack/react-table';
 
 import ReadMoreText from '../../../../common/ReadMoreText';
-import { Theme } from '../../../../theme';
-import { useThemeContext } from '../../../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../../../theme/index';
 
 const fieldContainerStyle = (theme: Theme) => css`
 	${theme.typography.paragraphSmall}

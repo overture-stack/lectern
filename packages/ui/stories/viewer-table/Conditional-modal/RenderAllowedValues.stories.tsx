@@ -22,6 +22,7 @@ import { type Dictionary, replaceReferences } from '@overture-stack/lectern-dict
 import type { Meta, StoryObj } from '@storybook/react';
 
 import SimpleRestrictionAllowedValues from '../../../src/viewer-table/ConditionalLogicModal/SimpleRestrictionAllowedValues';
+
 import pcgl from '../../fixtures/pcgl.json';
 import themeDecorator from '../../themeDecorator';
 

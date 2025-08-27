@@ -23,7 +23,9 @@
 
 import type { SchemaField } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
+
 import { Description } from '../../../src/viewer-table/ConditionalLogicModal/Description';
+
 import themeDecorator from '../../themeDecorator';
 
 const meta = {

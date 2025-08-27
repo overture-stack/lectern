@@ -20,7 +20,9 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
+
 import LoadingPage from '../../src/common/LoadingPage';
+
 import themeDecorator from '../themeDecorator';
 
 const meta = {

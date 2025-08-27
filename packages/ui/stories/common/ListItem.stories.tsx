@@ -21,7 +21,9 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
+
 import ListItem from '../../src/common/ListItem';
+
 import themeDecorator from '../themeDecorator';
 
 const meta = {

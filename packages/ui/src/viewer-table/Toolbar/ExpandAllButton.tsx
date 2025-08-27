@@ -19,31 +19,24 @@
  *
  */
 
-/** @jsxImportSource @emotion/react */
+import Button from '../../common/Button';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import { type Theme, useThemeContext } from '../../theme/index';
 
-import type { Meta, StoryObj } from '@storybook/react';
+export interface ExpandAllButtonProps {
+	onClick: () => void;
+}
 
-import CollapseAllButton from '../../../src/viewer-table/InteractionPanel/CollapseAllButton';
-import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
+const ExpandAllButton = ({ onClick }: ExpandAllButtonProps) => {
+	const theme: Theme = useThemeContext();
+	const { loading, errors } = useDictionaryDataContext();
+	const { Plus } = theme.icons;
 
-const meta = {
-	component: CollapseAllButton,
-	title: 'Viewer - Table/Interaction - Panel/CollapseAllButton',
-	tags: ['autodocs'],
-	decorators: [themeDecorator(), withMultipleDictionaries],
-} satisfies Meta<typeof CollapseAllButton>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-const mockOnClick = () => alert('All collapsible components are collapsed');
-
-export const Default: Story = {
-	args: { onClick: mockOnClick },
+	return (
+		<Button icon={<Plus fill={theme.colors.accent_dark} />} onClick={onClick} disabled={loading || errors.length > 0}>
+			Expand All
+		</Button>
+	);
 };
 
-export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
-	args: { onClick: mockOnClick },
-};
+export default ExpandAllButton;

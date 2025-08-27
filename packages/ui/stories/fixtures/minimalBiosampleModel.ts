@@ -1,5 +1,4 @@
 import { Dictionary } from '@overture-stack/lectern-dictionary';
-import assert from 'node:assert';
 
 const dictionary: Dictionary = {
 	name: 'minimal-biosample-model',

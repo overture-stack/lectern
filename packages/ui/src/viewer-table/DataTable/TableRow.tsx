@@ -24,8 +24,7 @@
 import { css } from '@emotion/react';
 import { Row, flexRender } from '@tanstack/react-table';
 
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../theme/index';
 
 const rowStyle = (index: number, theme: Theme) => css`
 	background-color: ${index % 2 === 0 ? theme.colors.white : theme.colors.background_alternate};

@@ -24,8 +24,7 @@ import type { SchemaField } from '@overture-stack/lectern-dictionary';
 import { SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import { useState } from 'react';
 
-import { Theme } from '../../../../theme';
-import { useThemeContext } from '../../../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../../../theme/index';
 import { isFieldRequired } from '../../../../utils/isFieldRequired';
 import { ConditionalLogicModal } from '../../../ConditionalLogicModal/ConditionalLogicModal';
 import OpenModalButton from '../../../OpenModalButton';

@@ -19,7 +19,9 @@
 /** @jsxImportSource @emotion/react */
 
 import type { Meta, StoryObj } from '@storybook/react';
+
 import { IfStatement } from '../../../src/viewer-table/ConditionalLogicModal/IfStatement';
+
 import themeDecorator from '../../themeDecorator';
 
 const meta = {

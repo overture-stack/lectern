@@ -19,6 +19,6 @@
  *
  */
 
-export { HeaderSkeleton } from './HeaderSkeleton';
-export { InteractionPanelSkeleton } from './InteractionPanelSkeleton';
+export { default as HeaderSkeleton } from './HeaderSkeleton';
 export { default as LoadingSpinnerPage } from './LoadingSpinnerPage';
+export { default as ToolbarSkeleton } from './ToolbarSkeleton';
