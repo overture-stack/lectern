@@ -23,7 +23,7 @@ import {
 	type DataRecord,
 	type DataRecordValue,
 	type SchemaField,
-	type SchemaRestrictions,
+	type SchemaFieldRestrictions,
 } from '@overture-stack/lectern-dictionary';
 import type { FieldRestrictionRule } from '../FieldRestrictionRule';
 import { testConditionalRestriction } from '../conditions/testConditionalRestriction';
@@ -61,7 +61,7 @@ const extractRulesFromRestriction = (restrictions: AnyFieldRestrictions): FieldR
 };
 
 const recursiveResolveRestrictions = (
-	restrictions: SchemaRestrictions,
+	restrictions: SchemaFieldRestrictions,
 	value: DataRecordValue,
 	record: DataRecord,
 ): FieldRestrictionRule[] => {

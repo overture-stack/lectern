@@ -154,10 +154,10 @@ export const getSchemaField = async (
 };
 
 export const downloadTemplates = async (
-	req: Request<{}, {}, {}, { name: string; version: string; fileType: string }>,
+	req: Request<{}, {}, {}, { name: string; version: string; fileType: string; schemaName?: string }>,
 	res: Response,
 ) => {
-	const { name, version } = req.query;
+	const { name, version, schemaName } = req.query;
 
 	if (!name || !version) {
 		throw new BadRequestError('Missing dictionary name or version in query.');
@@ -178,7 +178,17 @@ export const downloadTemplates = async (
 
 		const zip = new JSZip();
 
-		for (const schema of dictionary.schemas || []) {
+		if (schemaName === undefined) {
+			for (const schema of dictionary.schemas || []) {
+				const template = createDataFileTemplate(schema, fileType ? { fileType } : undefined);
+				zip.file(template.fileName, template.content);
+			}
+		} else {
+			const schema = dictionary.schemas.find((schema) => schema.name === schemaName);
+
+			if (!schema) {
+				throw new NotFoundError(`Schema with name "${schemaName}" not found in dictionary "${name}".`);
+			}
 			const template = createDataFileTemplate(schema, fileType ? { fileType } : undefined);
 			zip.file(template.fileName, template.content);
 		}

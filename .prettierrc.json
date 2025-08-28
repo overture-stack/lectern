@@ -1,7 +1,8 @@
 {
-  "arrowParens": "always",
-  "printWidth": 120,
-  "singleQuote": true,
-  "trailingComma": "all",
-  "useTabs": true
+	"arrowParens": "always",
+	"experimentalTernaries": true,
+	"printWidth": 120,
+	"singleQuote": true,
+	"trailingComma": "all",
+	"useTabs": true
 }

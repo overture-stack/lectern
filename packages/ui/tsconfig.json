@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"lib": ["ESNext", "DOM"],
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"jsx": "react-jsx",
+		"jsxImportSource": "@emotion/react",
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"noEmit": true,
+		"downlevelIteration": true,
+		"skipLibCheck": true,
+
+		"strict": true,
+		"noImplicitAny": true,
+		"noUnusedParameters": true,
+		"paths": {
+			"#/*": ["./src/*"]
+		}
+	},
+	"include": ["./src/**/*.ts", "./stories/**/*.ts", "./.storybook/**/*.js", "./test/**/*.ts"]
+}

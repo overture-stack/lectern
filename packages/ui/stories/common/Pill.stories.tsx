@@ -1,0 +1,80 @@
+/*
+ *
+ * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ *  This program and the accompanying materials are made available under the terms of
+ *  the GNU Affero General Public License v3.0. You should have received a copy of the
+ *  GNU Affero General Public License along with this program.
+ *   If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ *  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ *  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+/** @jsxImportSource @emotion/react */
+
+import type { Meta, StoryObj } from '@storybook/react';
+
+import Pill from '../../src/common/Pill';
+
+import themeDecorator from '../themeDecorator';
+
+const meta = {
+	component: Pill,
+	title: 'Common/Pill',
+	tags: ['autodocs'],
+	decorators: [themeDecorator()],
+	argTypes: {
+		size: {
+			control: { type: 'select' },
+			options: ['extra-small', 'small', 'medium', 'large'],
+		},
+		variant: {
+			control: { type: 'select' },
+			options: ['default'],
+		},
+	},
+} satisfies Meta<typeof Pill>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+	args: { children: 'Default Pill' },
+};
+
+export const ExtraSmall: Story = {
+	args: { children: 'XS', size: 'extra-small' },
+};
+
+export const Small: Story = {
+	args: { children: 'Small', size: 'small' },
+};
+
+export const Medium: Story = {
+	args: { children: 'Medium', size: 'medium' },
+};
+
+export const Large: Story = {
+	args: { children: 'Large Pill', size: 'large' },
+};
+
+export const AllSizes: Story = {
+	args: { children: 'Placeholder' },
+	render: () => (
+		<div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+			<Pill size="extra-small">Extra Small</Pill>
+			<Pill size="small">Small</Pill>
+			<Pill size="medium">Medium</Pill>
+			<Pill size="large">Large</Pill>
+		</div>
+	),
+};

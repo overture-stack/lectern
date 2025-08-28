@@ -70,18 +70,21 @@ const schemaProcessingResult = lectern.process.processSchema(dictionary, "donors
 
 switch (schemaProcessingResult.status) {
 	case 'SUCCESS': {
-		const { records } = schemaProcessingResult;
+		const { data } = schemaProcessingResult;
 		// use converted and validated records
+		break;
 	}
 	case 'ERROR_PARSING': {
 		const {  errors, records } = schemaProcessingResult;
 		// errors occured parsing records. read the errors that occurred
 		// records have been return with their values parsed where possible. If an error occurred, the original input string value is returned
+		break;
 	}
 	case 'ERROR_VALIDATION': {
 		const { records, errors } = schemaProcessingResult;
 		// errors occured validating records. these errors have been returned
 		// records were parsed successfully, so this returns all parsed records
+		break;
 	}
 ```
 

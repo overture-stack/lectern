@@ -63,7 +63,7 @@ export const findByNameAndVersion = async (name: string, version: string): Promi
  * @returns
  */
 export const listAll = async (): Promise<DictionaryDocumentSummary[]> => {
-	return DictionaryModel.find({}, 'name version description').lean(true);
+	return DictionaryModel.find({}, 'name version description createdAt').lean(true);
 };
 
 /**
