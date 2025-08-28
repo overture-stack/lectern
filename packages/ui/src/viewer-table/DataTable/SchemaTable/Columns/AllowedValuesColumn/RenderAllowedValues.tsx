@@ -21,11 +21,11 @@
 
 import { css } from '@emotion/react';
 import { SchemaField, SchemaFieldRestrictions, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import ReadMoreText from '../../../../../common/ReadMoreText';
-import type { Theme } from '../../../../../theme';
-import { useThemeContext } from '../../../../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../../../../theme/index';
+
 import { computeAllowedValuesColumn, type RestrictionItem } from './ComputeAllowedValues';
 
 const allowedValuesContainerStyle = css`

@@ -23,25 +23,28 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import ExpandAllButton from '../../../src/viewer-table/InteractionPanel/ExpandAllButton';
+import CollapseAllButton from '../../../src/viewer-table/Toolbar/CollapseAllButton';
+
 import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
-	component: ExpandAllButton,
-	title: 'Viewer - Table/Interaction - Panel/ExpandAllButton',
+	component: CollapseAllButton,
+	title: 'Viewer - Table/Toolbar/CollapseAllButton',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withMultipleDictionaries],
-} satisfies Meta<typeof ExpandAllButton>;
+} satisfies Meta<typeof CollapseAllButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const mockOnClick = () => alert('All collapsible components are collapsed');
+
 export const Default: Story = {
-	args: { onClick: () => alert('All collapsible components are expanded') },
+	args: { onClick: mockOnClick },
 };
 
 export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
-	args: { onClick: () => alert('All collapsible components are expanded') },
+	args: { onClick: mockOnClick },
 };

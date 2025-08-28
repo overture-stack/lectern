@@ -26,8 +26,7 @@ import { useState } from 'react';
 
 import Button from '../../common/Button';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../theme/index';
 
 export type DictionaryDownloadButtonProps = {
 	fileType: 'tsv' | 'csv';
@@ -75,7 +74,7 @@ const downloadDictionary = async ({
  * @param {DictionaryDownloadButtonProps} props
  */
 
-export const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaName }: DictionaryDownloadButtonProps) => {
+const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaName }: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const theme: Theme = useThemeContext();
@@ -126,3 +125,5 @@ export const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaNam
 		</Button>
 	);
 };
+
+export default DictionaryDownloadButton;

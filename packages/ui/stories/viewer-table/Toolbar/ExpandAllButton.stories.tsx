@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -22,31 +23,26 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import AttributeFilter from '../../../src/viewer-table/InteractionPanel/AttributeFilterDropdown';
+import ExpandAllButton from '../../../src/viewer-table/Toolbar/ExpandAllButton';
+
 import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
-	component: AttributeFilter,
-	title: 'Viewer - Table/Interaction - Panel/AttributeFilterDropdown',
+	component: ExpandAllButton,
+	title: 'Viewer - Table/Toolbar/ExpandAllButton',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withMultipleDictionaries],
-	parameters: {
-		docs: {
-			description: {
-				component:
-					'A dropdown component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
-			},
-		},
-	},
-} satisfies Meta<typeof AttributeFilter>;
+} satisfies Meta<typeof ExpandAllButton>;
 
 export default meta;
-
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	args: { onClick: () => alert('All collapsible components are expanded') },
+};
 
 export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
+	args: { onClick: () => alert('All collapsible components are expanded') },
 };

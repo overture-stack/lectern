@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -18,47 +17,37 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
 /** @jsxImportSource @emotion/react */
 
-import type { Schema } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import TableOfContentsDropdown from '../../../src/viewer-table/InteractionPanel/TableOfContentsDropdown';
+import AttributeFilter from '../../../src/viewer-table/Toolbar/AttributeFilterDropdown';
+
 import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
-import Dictionary from '../../fixtures/pcgl.json';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
-	component: TableOfContentsDropdown,
-	title: 'Viewer - Table/Interaction - Panel/Table of Contents Dropdown',
+	component: AttributeFilter,
+	title: 'Viewer - Table/Toolbar/AttributeFilterDropdown',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withMultipleDictionaries],
-} satisfies Meta<typeof TableOfContentsDropdown>;
+	parameters: {
+		docs: {
+			description: {
+				component:
+					'A dropdown component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
+			},
+		},
+	},
+} satisfies Meta<typeof AttributeFilter>;
 
 export default meta;
+
 type Story = StoryObj<typeof meta>;
 
-const schemas: Schema[] = Dictionary.schemas as Schema[];
-
-const onSelect = (schemaIndex: number) => {
-	alert(`Accordion has been toggled for the following schema: ${schemas[schemaIndex].name}`);
-};
-
-export const Default: Story = {
-	args: {
-		schemas: schemas,
-		onSelect,
-	},
-};
-
-export const Empty: Story = {
-	args: { schemas: [], onSelect: () => {} },
-};
+export const Default: Story = {};
 
 export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
-	args: {
-		schemas: schemas,
-		onSelect,
-	},
 };

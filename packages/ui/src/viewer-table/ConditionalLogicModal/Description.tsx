@@ -24,8 +24,7 @@ import { css } from '@emotion/react';
 import type { RestrictionCondition, SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import { Fragment } from 'react';
 import FieldBlock from '../../common/FieldBlock';
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../theme/index';
 
 export type DescriptionProps = {
 	schemaLevelField: SchemaField;

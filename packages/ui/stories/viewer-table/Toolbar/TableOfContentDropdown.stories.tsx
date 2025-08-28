@@ -20,30 +20,46 @@
  */
 /** @jsxImportSource @emotion/react */
 
+import type { Schema } from '@overture-stack/lectern-dictionary';
 import type { Meta, StoryObj } from '@storybook/react';
-import { ReactFlowProvider } from 'reactflow';
 
-import { SchemaDiagramNode } from '../../src/viewer-diagram/SchemaDiagramNode';
-import { buildSchemaNode } from '../../src/viewer-diagram/SchemaFlowNode';
+import TableOfContentsDropdown from '../../../src/viewer-table/Toolbar/TableOfContentsDropdown';
 
-import websiteUserDictionary from '../fixtures/websiteUsersDataDictionary';
+import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
+import Dictionary from '../../fixtures/pcgl.json'; // TODO: define a dedicated demo dict.
+import themeDecorator from '../../themeDecorator';
 
 const meta = {
-	component: SchemaDiagramNode,
-	title: 'Viewer - Diagram/Schema Diagram Node',
+	component: TableOfContentsDropdown,
+	title: 'Viewer - Table/Toolbar/Table of Contents Dropdown',
 	tags: ['autodocs'],
-
-	render: (args) => (
-		<ReactFlowProvider>
-			<SchemaDiagramNode {...args} />
-		</ReactFlowProvider>
-	),
-} satisfies Meta<typeof SchemaDiagramNode>;
+	decorators: [themeDecorator(), withMultipleDictionaries],
+} satisfies Meta<typeof TableOfContentsDropdown>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const BiosampleDonor: Story = {
-	// args: { name: sampleDictionary.name, version: sampleDictionary.name, description: sampleDictionary.description },
-	args: { data: buildSchemaNode(websiteUserDictionary.schemas[0]).data },
+const schemas: Schema[] = Dictionary.schemas as Schema[];
+
+const onSelect = (schemaIndex: number) => {
+	alert(`Accordion has been toggled for the following schema: ${schemas[schemaIndex].name}`);
+};
+
+export const Default: Story = {
+	args: {
+		schemas: schemas,
+		onSelect,
+	},
+};
+
+export const Empty: Story = {
+	args: { schemas: [], onSelect: () => {} },
+};
+
+export const Loading: Story = {
+	decorators: [themeDecorator(), withLoadingState()],
+	args: {
+		schemas: schemas,
+		onSelect,
+	},
 };

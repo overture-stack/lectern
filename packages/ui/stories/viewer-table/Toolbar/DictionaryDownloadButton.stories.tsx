@@ -22,13 +22,14 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { DictionaryDownloadButton } from '../../../src/viewer-table/InteractionPanel/DictionaryDownloadButton';
+import DictionaryDownloadButton from '../../../src/viewer-table/Toolbar/DictionaryDownloadButton';
+
 import { withDictionaryContext, withLoadingState } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: DictionaryDownloadButton,
-	title: 'Viewer - Table/Interaction - Panel/DictionaryDownloadButton',
+	title: 'Viewer - Table/Toolbar/DictionaryDownloadButton',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withDictionaryContext()],
 } satisfies Meta<typeof DictionaryDownloadButton>;

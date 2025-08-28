@@ -20,7 +20,7 @@
 import type { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import type { Decorator } from '@storybook/react';
-import React from 'react';
+import { type ReactNode } from 'react';
 
 import {
 	DictionaryDataContext,
@@ -28,6 +28,7 @@ import {
 	DictionaryStateProvider,
 	DictionaryStaticDataProvider,
 } from '../src/dictionary-controller/DictionaryDataContext';
+
 import DictionarySample from './fixtures/pcgl.json';
 
 type DictionaryServerUnion = DictionaryServerRecord | Dictionary;
@@ -94,7 +95,7 @@ export const withLoadingState = (): Decorator => {
  */
 export const withForeverLoading = (): Decorator => {
 	return (Story) => {
-		const ForeverLoadingProvider = ({ children }: { children: React.ReactNode }) => {
+		const ForeverLoadingProvider = ({ children }: { children: ReactNode }) => {
 			const value = {
 				dictionaries: undefined,
 				loading: true,

@@ -26,10 +26,10 @@ import type { RefObject } from 'react';
 import { MouseEvent, useEffect, useRef } from 'react';
 
 import { useClipboard } from '../../hooks/useClipboard';
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
-import { DictionaryDownloadButton } from '../../viewer-table/InteractionPanel/DictionaryDownloadButton';
+import { type Theme, useThemeContext } from '../../theme/index';
+import DictionaryDownloadButton from '../../viewer-table/Toolbar/DictionaryDownloadButton';
 import ReadMoreText from '../ReadMoreText';
+
 import { AccordionData, AccordionOpenState } from './Accordion';
 
 const MAX_LINES_BEFORE_EXPAND = 2;

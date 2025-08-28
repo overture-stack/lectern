@@ -21,17 +21,16 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css, SerializedStyles } from '@emotion/react';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { css, type SerializedStyles } from '@emotion/react';
+import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 
-import type { Theme } from '../theme';
-import { useThemeContext } from '../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../theme/index';
 
 export type ReadMoreTextProps = {
 	children: ReactNode;
 	maxLines?: number;
 	wrapperStyle?: SerializedStyles;
-	onToggleClick?: (e: React.MouseEvent) => void;
+	onToggleClick?: (e: MouseEvent) => void;
 	expandedText?: string;
 	collapsedText?: string;
 };
@@ -106,7 +105,7 @@ const ReadMoreText = ({
 		}
 	}, []);
 
-	const handleToggle = (e: React.MouseEvent) => {
+	const handleToggle = (e: MouseEvent) => {
 		e.stopPropagation();
 		setIsExpanded(!isExpanded);
 		if (onToggleClick) {

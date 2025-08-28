@@ -22,8 +22,8 @@
 import { css } from '@emotion/react';
 import { ARRAY_TEST_CASE_DEFAULT, type ConditionalRestrictionTest } from '@overture-stack/lectern-dictionary';
 
-import { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
+import { type Theme, useThemeContext } from '../../theme/index';
+
 import { ConditionalRestrictionDetails } from './ConditionalRestrictionDetails';
 
 export type IfStatementProps = {

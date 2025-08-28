@@ -30,7 +30,7 @@ import {
 	SchemaRestrictions,
 } from '@overture-stack/lectern-dictionary';
 import { CellContext } from '@tanstack/react-table';
-import { Fragment, ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 
 import FieldBlock from '../../../../../common/FieldBlock';
 

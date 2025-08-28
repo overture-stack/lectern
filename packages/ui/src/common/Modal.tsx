@@ -22,18 +22,19 @@
 /** @jsxImportSource @emotion/react */
 
 import { css, Global } from '@emotion/react';
-import Modal, { Styles } from 'react-modal';
+import { type ReactNode } from 'react';
+import Modal, { type Styles } from 'react-modal';
 
-import { Theme } from '../theme';
+import { type Theme } from '../theme/index';
 import Cancel from '../theme/icons/Cancel';
-import { useThemeContext } from '../theme/ThemeContext';
+import { useThemeContext } from '../theme/index';
 import Button from './Button';
 
 export type ModalProps = {
 	setIsOpen: (isOpen: boolean) => void;
 	isOpen: boolean;
 	onAfterOpen?: () => void;
-	children?: React.ReactNode;
+	children?: ReactNode;
 	title: string;
 };
 

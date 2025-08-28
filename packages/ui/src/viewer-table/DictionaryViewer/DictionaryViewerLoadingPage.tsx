@@ -23,11 +23,12 @@
 
 import { css } from '@emotion/react';
 
-import type { Theme } from '../../theme';
-import { useThemeContext } from '../../theme/ThemeContext';
-import { HeaderSkeleton } from '../Loading/HeaderSkeleton';
-import { InteractionPanelSkeleton } from '../Loading/InteractionPanelSkeleton';
+import { type Theme, useThemeContext } from '../../theme/index';
+
+import HeaderSkeleton from '../Loading/HeaderSkeleton';
+import ToolbarSkeleton from '../Loading/ToolbarSkeleton';
 import LoadingSpinnerPage from '../Loading/LoadingSpinnerPage';
+
 const pageContainerStyle = (theme: Theme) => css`
 	margin: 0 auto;
 	min-height: calc(100vh - ${theme.dimensions.navbar.height}px - ${theme.dimensions.footer.height}px);
@@ -58,7 +59,7 @@ const DictionaryViewerLoadingPage = () => {
 		<div css={pageContainerStyle(theme)}>
 			<div css={headerPanelBlockStyle}>
 				<HeaderSkeleton />
-				<InteractionPanelSkeleton />
+				<ToolbarSkeleton />
 			</div>
 			<div css={loadingContentStyles}>
 				<LoadingSpinnerPage size={69} />

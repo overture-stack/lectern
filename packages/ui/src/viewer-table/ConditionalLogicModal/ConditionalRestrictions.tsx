@@ -21,7 +21,7 @@
 
 import type { SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { ProcessConditionalRestrictions } from './ProcessConditionalRestrictions';
 
 /**

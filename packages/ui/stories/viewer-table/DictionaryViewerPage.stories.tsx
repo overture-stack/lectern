@@ -24,6 +24,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { DictionaryTableViewer } from '../../src/viewer-table/DictionaryTableViewer';
+
 import {
 	withEmptyDictionaries,
 	withErrorState,

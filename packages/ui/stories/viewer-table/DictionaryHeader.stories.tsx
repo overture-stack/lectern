@@ -25,11 +25,12 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { pick } from 'lodash';
 
 import DictionaryHeader from '../../src/viewer-table/DictionaryHeader';
-import { HeaderSkeleton } from '../../src/viewer-table/Loading';
+import HeaderSkeleton from '../../src/viewer-table/Loading/HeaderSkeleton';
 import biosampleDictionary from '../fixtures/minimalBiosampleModel';
-import themeDecorator from '../themeDecorator';
 
+import themeDecorator from '../themeDecorator';
 import { withDictionaryContext } from '../dictionaryDecorator';
+
 const meta = {
 	component: DictionaryHeader,
 	title: 'Viewer - Table/Dictionary Header',
