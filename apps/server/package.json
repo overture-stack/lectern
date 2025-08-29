@@ -4,8 +4,9 @@
 	"version": "2.0.0-beta.5",
 	"description": "Overture Data Dictionary Management",
 	"scripts": {
-		"build": "tsc -p tsconfig.build.json",
+		"build": "pnpm nuke:build && tsc -p tsconfig.build.json",
 		"debug": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec node --inspect -r ts-node/register ./src/server.ts",
+		"nuke:build": "npx rimraf dist",
 		"start": "NODE_ENV=production ts-node -T src/server.ts",
 		"test": "nyc mocha",
 		"test:integration": "nyc mocha --config .mocharc.integration.json"

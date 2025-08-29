@@ -7,8 +7,8 @@
 	],
 	"main": "dist/index.js",
 	"scripts": {
-		"build": "pnpm build:clean && tsc",
-		"build:clean": "rimraf dist/ && mkdir dist",
+		"build": "pnpm nuke:build && tsc",
+		"nuke:build": "npx rimraf dist",
 		"test": "nyc mocha"
 	},
 	"keywords": [],
