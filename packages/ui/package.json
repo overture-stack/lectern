@@ -11,8 +11,8 @@
 	},
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "pnpm build:clean && tsc -p ./tsconfig.build.json",
-		"build:clean": "rimraf dist/ && mkdir dist",
+		"build": "pnpm nuke:build && tsc -p ./tsconfig.build.json",
+		"nuke:build": "npx rimraf dist",
 		"storybook": "storybook dev -p 6006"
 	},
 	"keywords": [],
