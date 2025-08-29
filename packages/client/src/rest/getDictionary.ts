@@ -17,19 +17,20 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dictionary, DictionaryBase, failure, success, type Result } from '@overture-stack/lectern-dictionary';
+import { DictionaryBase, failure, success, type Result } from '@overture-stack/lectern-dictionary';
 import axios, { AxiosError } from 'axios';
 import { z as zod } from 'zod';
 import formatAxiosError from './formatAxiosError';
 
-const dictionaryRecordSchema = DictionaryBase.extend({
+const dictionaryServerRecordSchema = DictionaryBase.extend({
 	_id: zod.string(),
-	createdAt: zod.string(),
-	updatedAt: zod.string(),
+	createdAt: zod.coerce.date(),
+	updatedAt: zod.coerce.date().optional(),
 });
+export type DictionaryServerRecord = zod.infer<typeof dictionaryServerRecordSchema>;
 
-const getDictionaryByNameAndVersionResponseSchema = zod.tuple([dictionaryRecordSchema]);
-const getDictionaryByIdResponseSchema = dictionaryRecordSchema;
+const getDictionaryByNameAndVersionResponseSchema = zod.tuple([dictionaryServerRecordSchema]);
+const getDictionaryByIdResponseSchema = dictionaryServerRecordSchema;
 
 /**
  * Fetches a single Dictionary from a Lectern server. This can be done either by ID or by Name and Version.
@@ -47,7 +48,7 @@ export const getDictionary = async (
 	options?: {
 		showReferences?: boolean;
 	},
-): Promise<Result<Dictionary>> => {
+): Promise<Result<DictionaryServerRecord>> => {
 	const showReferences = options?.showReferences;
 	try {
 		if ('id' in dictionary) {
