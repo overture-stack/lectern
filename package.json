@@ -1,7 +1,6 @@
 {
 	"name": "@overture-stack/lectern",
 	"private": true,
-	"version": "2.0.0-beta.5",
 	"description": "Schema Manager and Validation for Data Dictionaries",
 	"scripts": {
 		"build:all": "pnpm nx run-many --all --target=build",
@@ -9,6 +8,8 @@
 		"build:validation": "pnpm nx build @overture-stack/lectern-validation",
 		"build:server": "pnpm nx build @overture-stack/lectern-server",
 		"build:client": "pnpm nx build @overture-stack/lectern-client",
+		"nuke:nodeModules": "find . -name 'node_modules' -type d -prune -exec rimraf '{}' +",
+		"reset": "pnpm nuke:nodeModules && pnpm --if-present -r nuke:build ",
 		"test:all": "pnpm nx run-many --all --target=test,test:integration",
 		"test:unit:all": "pnpm nx run-many --all --target=test",
 		"test:unit:dictionary": "pnpm nx test @overture-stack/lectern-dictionary",
@@ -34,6 +35,7 @@
 		"nx": "^16.10.0",
 		"nyc": "^15.1.0",
 		"prettier": "^3.3.3",
+		"rimraf": "^5.0.9",
 		"sinon": "^15.2.0",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.5.4"
