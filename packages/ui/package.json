@@ -18,6 +18,10 @@
 	"keywords": [],
 	"author": "Ontario Institute for Cancer Research",
 	"license": "AGPL-3.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/overture-stack/lectern/tree/main/packages/ui"
+	},
 	"dependencies": {
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.0",
