@@ -98,7 +98,7 @@ pnpm build:client
 
 ## Documentation
 
-Technical resources for those working with or contributing to the project are being updated to our [official documentation site](https://docs.overture.bio/docs/under-development/lectern/), this content can also be updated and read within the `/docs` folder of this repository.
+Technical resources for those working with or contributing to the project are being updated to our [official documentation site](https://docs.overture.bio/docs/core-software/Lectern/overview), this content can also be updated and read within the `/docs` folder of this repository.
 
 ### Meta-Schema
 
