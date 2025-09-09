@@ -33,7 +33,7 @@ const authConfigSchema = z.object({
 
 const parseResult = authConfigSchema.safeParse(process.env);
 
-if (!parseResult.success) {
+if (enabled && !parseResult.success) {
 	throw new EnvironmentConfigError(`auth`, parseResult.error);
 }
 

@@ -36,7 +36,7 @@ import urlJoin from 'url-join';
 const fetchAuthZResource = async (resource: string, token: string, options?: RequestInit) => {
 	const { AUTHZ_ENDPOINT } = authConfig;
 
-	const url = urlJoin(AUTHZ_ENDPOINT, resource);
+	const url = urlJoin(AUTHZ_ENDPOINT || '', resource);
 	const headers = new Headers({
 		Authorization: `Bearer ${token}`,
 		'Content-Type': 'application/json',
