@@ -29,6 +29,8 @@ const authConfigSchema = z.object({
 	AUTH_CLIENT_ID: z.string(),
 	AUTH_CLIENT_SECRET: z.string(),
 	AUTHZ_GROUP_ADMIN: z.string(),
+	SERVICE_ID: z.string(),
+	SERVICE_UUID: z.string(),
 });
 
 const parseResult = authConfigSchema.safeParse(process.env);
