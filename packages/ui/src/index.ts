@@ -1,10 +1,15 @@
 // Model + Controller Logic
 
 export {
-	// data
+	// data - API integration
 	DictionaryLecternDataProvider as LecternDataProvider,
 	useDictionaryDataContext as useLecternData,
 	type LecternDictionaryProviderProps as LecternDataProviderProps,
+	// data - static/hosted alternatives
+	DictionaryStaticDataProvider,
+	type StaticDictionaryProviderProps,
+	HostedDictionaryDataProvider,
+	type UrlDictionaryProviderProps,
 	// state
 	DictionaryStateProvider as DictionaryTableStateProvider,
 	useDictionaryStateContext as useDictionaryTableState,
@@ -20,6 +25,7 @@ export {
 	// Dictionary Table
 	default as DictionaryTable, // the main component for this package
 	type DictionaryTableProps,
+	DictionaryTableViewer,
 
 	// Schema Table
 	default as SchemaTable,
