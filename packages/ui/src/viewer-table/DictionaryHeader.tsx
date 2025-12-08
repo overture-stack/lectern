@@ -75,6 +75,7 @@ const DictionaryHeader = () => {
 	const { loading } = dataContext;
 	const { selectedDictionary } = stateContext;
 
+	const displayName = selectedDictionary?.displayName ?? selectedDictionary?.name;
 	const version = selectedDictionary?.version;
 	const description = selectedDictionary?.description;
 
@@ -83,7 +84,7 @@ const DictionaryHeader = () => {
 	}
 	return (
 		<div css={containerStyle}>
-			<h1 css={titleStyle(theme)}>{selectedDictionary?.name}</h1>
+			<h1 css={titleStyle(theme)}>{displayName}</h1>
 			{description && (
 				<ReadMoreText
 					maxLines={2}
