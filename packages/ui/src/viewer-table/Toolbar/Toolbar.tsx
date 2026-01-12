@@ -30,7 +30,6 @@ import { ToolbarSkeleton } from '../Loading';
 import AttributeFilterDropdown from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
 import DictionaryDownloadButton from './DictionaryDownloadButton';
-import DictionaryVersionSwitcher from './DictionaryVersionSwitcher';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
 
@@ -85,7 +84,6 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed }: ToolbarProps) => {
 				:	<CollapseAllButton onClick={() => setIsCollapsed(true)} />}
 			</div>
 			<div css={sectionStyles}>
-				<DictionaryVersionSwitcher />
 				<DictionaryDownloadButton fileType="tsv" />
 			</div>
 		</div>
