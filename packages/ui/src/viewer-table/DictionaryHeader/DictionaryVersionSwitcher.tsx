@@ -58,10 +58,10 @@ const DictionaryVersionSwitcher = () => {
 	return (
 		displayVersionSwitcher && (
 			<Dropdown
-				leftIcon={<History />}
 				menuItems={versionSwitcherObjectArray}
 				title={title}
 				disabled={loading || errors.length > 0}
+				size = {16}
 			/>
 		)
 	);

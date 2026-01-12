@@ -47,7 +47,6 @@ const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?:
 	color: ${theme.colors.accent_dark};
 	border: 2px solid ${theme.colors.border_button};
 	border-radius: 9px;
-	height: 42px;
 	box-sizing: border-box;
 	cursor: pointer;
 	transition: all 0.2s ease;
@@ -65,8 +64,9 @@ const parentStyle = css`
 	display: inline-block;
 `;
 
-const dropDownTitleStyle = (theme: Theme) => css`
-	${theme.typography?.buttonText};
+const dropDownTitleStyle = ({ theme, size } : { theme: Theme; size: number }) => css`
+	${theme.typography.buttonText};
+	font-size: ${size}px;
 	color: ${theme.colors.accent_dark};
 `;
 
@@ -98,6 +98,7 @@ export type DropDownProps = {
 	leftIcon?: ReactNode;
 	menuItems?: MenuItem[];
 	disabled?: boolean;
+	size?: number;
 };
 
 /**
@@ -107,7 +108,7 @@ export type DropDownProps = {
  * @returns {JSX.Element} Dropdown component
  */
 
-const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDownProps) => {
+const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false, size = 20 }: DropDownProps) => {
 	const [open, setOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const theme: Theme = useThemeContext();
@@ -156,8 +157,8 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDow
 				disabled={disabled}
 			>
 				{leftIcon}
-				<span css={dropDownTitleStyle(theme)}>{title}</span>
-				<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} />
+				<span css={dropDownTitleStyle({ theme, size })}>{title}</span>
+				<ChevronDown fill={theme.colors?.accent_dark} width={size} height={size} />
 			</button>
 			{open && !disabled && (
 				<menu role="menu" css={dropdownMenuStyle(theme)}>
