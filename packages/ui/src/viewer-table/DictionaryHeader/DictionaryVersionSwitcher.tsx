@@ -61,7 +61,7 @@ const DictionaryVersionSwitcher = () => {
 				menuItems={versionSwitcherObjectArray}
 				title={title}
 				disabled={loading || errors.length > 0}
-				size = {16}
+				size={16}
 			/>
 		)
 	);
