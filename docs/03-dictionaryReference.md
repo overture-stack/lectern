@@ -32,10 +32,11 @@ Optional components like descriptions, metadata, and references which can also b
 
 | Property      | Type     | Required | Description                            | Example                                   |
 | ------------- | -------- | -------- | -------------------------------------- | ----------------------------------------- |
-| `name`        | `string` | ✓        | Display name of the dictionary         | `"clinical_data_dictionary"`              |
+| `name`        | `string` | ✓        | Name of the dictionary                 | `"clinical_data_dictionary"`              |
 | `version`     | `string` | ✓        | Semantic version (major.minor.patch)   | `"1.2.0"`                                 |
 | `schemas`     | `Array`  | ✓        | List of schema definitions (minimum 1) | See [Schema Structure](#schema-structure) |
 | `description` | `string` | ✗        | A human-readable description           | `"Clinical trial data schemas"`           |
+| `displayName` | `string` | ✗        | Display name of the dictionary         | `"Clinical Data Dictionary"`              |
 | `meta`        | `object` | ✗        | Any custom defined metadata fields     | `{"author": "Clinical Data Team"}`        |
 | `references`  | `object` | ✗        | Reusable reference values              | See [References](#references)             |
 
@@ -75,13 +76,13 @@ At the schema-level descriptions and metadata can also be optionally added.
 
 #### Schema Properties
 
-| Property      | Type     | Required | Description                                                        |
-| ------------- | -------- | -------- | ------------------------------------------------------------------ |
-| `name`        | `string` | ✓        | The schema identifier (no spaces or dots)                          |
-| `displayName` | `string` | ✗        | A human-readable name for UI display. Can contain periods.         |
-| `fields`      | `Array`  | ✓        | List of field definitions, see [Field Structure](#field-structure) |
-| `description` | `string` | ✗        | A human-readable description                                       |
-| `meta`        | `object` | ✗        | Any custom defined metadata fields                                 |
+| Property      | Type     | Required | Description                                                                                  |
+| ------------- | -------- | -------- | -------------------------------------------------------------------------------------------- |
+| `name`        | `string` | ✓        | The schema identifier. Typically a short name with no spaces. Cannot contain `.` characters. |
+| `displayName` | `string` | ✗        | A human-readable name for UI display. No format restrictions.                                |
+| `fields`      | `Array`  | ✓        | List of field definitions, see [Field Structure](#field-structure)                           |
+| `description` | `string` | ✗        | A human-readable description                                                                 |
+| `meta`        | `object` | ✗        | Any custom defined metadata fields                                                           |
 
 ## Field Structure
 
@@ -140,17 +141,17 @@ The allowed values for `valueType` include:
 
 At the field-level the following properties can also be included:
 
-| Property       | Type           | Required | Default | Description                                                                                              |
-| -------------- | -------------- | -------- | ------- | -------------------------------------------------------------------------------------------------------- |
-| `name`         | `string`       | ✓        | -       | Field identifier (used as a column header)                                                               |
-| `displayName`  | `string`       | ✗        | -       | A human-readable name for UI display. Can contain periods.                                               |
-| `description`  | `string`       | ✗        | `""`    | Human-readable description                                                                               |
-| `valueType`    | `string`       | ✓        | -       | Data type: `string`, `integer`, `number`, `boolean`                                                      |
-| `isArray`      | `boolean`      | ✗        | `false` | Whether field accepts multiple values                                                                    |
-| `delimiter`    | `string`       | ✗        | `","`   | Separator for array values                                                                               |
-| `unique`       | `boolean`      | ✗        | `false` | Whether values must be unique across records                                                             |
-| `restrictions` | `object/array` | ✗        | `{}`    | Where the validation rules/logic for the field is defined, see [Field Restrictions](#field-restrictions) |
-| `meta`         | `object`       | ✗        | `{}`    | Any custom defined metadata fields                                                                       |
+| Property       | Type           | Required | Default | Description                                                                                                       |
+| -------------- | -------------- | -------- | ------- | ----------------------------------------------------------------------------------------------------------------- |
+| `name`         | `string`       | ✓        | -       | Field identifier (used as a column header). Typically a short name with no spaces. Cannot contain `.` characters. |
+| `displayName`  | `string`       | ✗        | -       | A human-readable name for UI display. Can contain periods.                                                        |
+| `description`  | `string`       | ✗        | `""`    | Human-readable description                                                                                        |
+| `valueType`    | `string`       | ✓        | -       | Data type: `string`, `integer`, `number`, `boolean`                                                               |
+| `isArray`      | `boolean`      | ✗        | `false` | Whether field accepts multiple values                                                                             |
+| `delimiter`    | `string`       | ✗        | `","`   | Separator for array values                                                                                        |
+| `unique`       | `boolean`      | ✗        | `false` | Whether values must be unique across records                                                                      |
+| `restrictions` | `object/array` | ✗        | `{}`    | Where the validation rules/logic for the field is defined, see [Field Restrictions](#field-restrictions)          |
+| `meta`         | `object`       | ✗        | `{}`    | Any custom defined metadata fields                                                                                |
 
 ### Display Name Example
 
