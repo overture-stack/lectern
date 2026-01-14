@@ -18,8 +18,6 @@
  *
  */
 
-/** @jsxImportSource @emotion/react */
-
 import { css } from '@emotion/react';
 
 import Dropdown from '../../common/Dropdown/index';
