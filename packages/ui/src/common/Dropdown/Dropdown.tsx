@@ -27,7 +27,6 @@ import { type MouseEvent as ReactMouseEvent, type ReactNode, useCallback, useEff
 import { type Theme, useThemeContext } from '../../theme/index';
 
 import DropDownItem from './DropdownItem';
-import { Serializable } from 'child_process';
 
 const disabledButtonStyle = css`
 	cursor: not-allowed;
