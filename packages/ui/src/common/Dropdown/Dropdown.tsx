@@ -21,7 +21,7 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
+import { css, type SerializedStyles } from '@emotion/react';
 import { type MouseEvent as ReactMouseEvent, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import { type Theme, useThemeContext } from '../../theme/index';
@@ -33,7 +33,17 @@ const disabledButtonStyle = css`
 	opacity: 0.7;
 `;
 
-const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?: string; disabled?: boolean }) => css`
+const dropdownButtonStyle = ({
+	theme,
+	width,
+	disabled,
+	styles,
+}: {
+	theme: Theme;
+	width?: string;
+	disabled?: boolean;
+	styles?: SerializedStyles;
+}) => css`
 	display: flex;
 	flex-wrap: nowrap;
 	white-space: nowrap;
@@ -47,7 +57,6 @@ const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?:
 	color: ${theme.colors.accent_dark};
 	border: 2px solid ${theme.colors.border_button};
 	border-radius: 9px;
-	height: 42px;
 	box-sizing: border-box;
 	cursor: pointer;
 	transition: all 0.2s ease;
@@ -58,6 +67,7 @@ const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?:
 	}
 
 	${disabled && disabledButtonStyle}
+	${styles}
 `;
 
 const parentStyle = css`
@@ -65,8 +75,9 @@ const parentStyle = css`
 	display: inline-block;
 `;
 
-const dropDownTitleStyle = (theme: Theme) => css`
-	${theme.typography?.buttonText};
+const dropDownTitleStyle = ({ theme, size }: { theme: Theme; size: number }) => css`
+	${theme.typography.buttonText};
+	font-size: ${size}px;
 	color: ${theme.colors.accent_dark};
 `;
 
@@ -98,16 +109,24 @@ export type DropDownProps = {
 	leftIcon?: ReactNode;
 	menuItems?: MenuItem[];
 	disabled?: boolean;
+	size?: number;
+	styles?: SerializedStyles;
 };
 
 /**
  * Dropdown component with toggle button and collapsible menu.
  *
- * @param {DropDownProps} props - Dropdown configuration
+ * @param {DropdownProps} props - Dropdown configuration
+ * @param {DropDownProps} title - Text displayed on the dropdown button
+ * @param {DropDownProps} leftIcon - Custom icon displayed on the left side 
+ * @param {DropDownProps} menuItems - Array of menu items with label and action
+ * @param {DropDownProps} disabled - Whether the dropdown is disabled
+ * @param {DropDownProps} size - Font size for title and icon dimensions in pixels
+ * @param {DropDownProps} styles - Custom Emotion CSS styles to applied to the button
  * @returns {JSX.Element} Dropdown component
  */
 
-const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDownProps) => {
+const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false, size = 20, styles }: DropDownProps) => {
 	const [open, setOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const theme: Theme = useThemeContext();
@@ -149,15 +168,15 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDow
 	return (
 		<div ref={dropdownRef} css={parentStyle}>
 			<button
-				css={dropdownButtonStyle({ theme, disabled })}
+				css={dropdownButtonStyle({ theme, disabled, styles })}
 				onClick={handleToggle}
 				aria-haspopup="menu"
 				aria-expanded={open}
 				disabled={disabled}
 			>
 				{leftIcon}
-				<span css={dropDownTitleStyle(theme)}>{title}</span>
-				<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} />
+				<span css={dropDownTitleStyle({ theme, size })}>{title}</span>
+				<ChevronDown fill={theme.colors?.accent_dark} width={size} height={size} />
 			</button>
 			{open && !disabled && (
 				<menu role="menu" css={dropdownMenuStyle(theme)}>

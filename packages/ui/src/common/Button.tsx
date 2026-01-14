@@ -52,7 +52,6 @@ const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: Se
 	color: ${theme.colors.accent_dark};
 	border: 2px solid ${theme.colors.border_button};
 	border-radius: 9px;
-	height: 42px;
 	box-sizing: border-box;
 	cursor: pointer;
 	position: relative;

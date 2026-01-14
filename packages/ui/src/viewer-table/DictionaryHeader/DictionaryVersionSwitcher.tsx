@@ -18,6 +18,8 @@
  *
  */
 
+import { css } from '@emotion/react';
+
 import Dropdown from '../../common/Dropdown/index';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import { type Theme, useThemeContext } from '../../theme/index';
@@ -58,10 +60,13 @@ const DictionaryVersionSwitcher = () => {
 	return (
 		displayVersionSwitcher && (
 			<Dropdown
-				leftIcon={<History />}
 				menuItems={versionSwitcherObjectArray}
 				title={title}
 				disabled={loading || errors.length > 0}
+				size={16}
+				styles={css`
+					padding: 6px 12px;
+				`}
 			/>
 		)
 	);

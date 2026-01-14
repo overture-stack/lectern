@@ -20,7 +20,7 @@
  */
 
 export { default as SchemaTable, type SchemaTableProps } from './DataTable/SchemaTable/index';
-export { default as DictionaryHeader } from './DictionaryHeader';
+export { default as DictionaryHeader, DictionaryVersionSwitcher } from './DictionaryHeader/index';
 export { default, type DictionaryTableProps } from './DictionaryViewerPage';
 export {
 	default as Toolbar,
@@ -32,7 +32,6 @@ export {
 	type CollapseAllButtonProps,
 	DictionaryDownloadButton,
 	type DictionaryDownloadButtonProps,
-	DictionaryVersionSwitcher,
 	ExpandAllButton,
 	type ExpandAllButtonProps,
 	TableOfContentsDropdown,
