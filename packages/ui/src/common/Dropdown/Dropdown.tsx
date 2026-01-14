@@ -116,7 +116,13 @@ export type DropDownProps = {
 /**
  * Dropdown component with toggle button and collapsible menu.
  *
- * @param {DropDownProps} props - Dropdown configuration
+ * @param {DropdownProps} props - Dropdown configuration
+ * @param {DropDownProps} title - Text displayed on the dropdown button
+ * @param {DropDownProps} leftIcon - Custom icon displayed on the left side 
+ * @param {DropDownProps} menuItems - Array of menu items with label and action
+ * @param {DropDownProps} disabled - Whether the dropdown is disabled
+ * @param {DropDownProps} size - Font size for title and icon dimensions in pixels
+ * @param {DropDownProps} styles - Custom Emotion CSS styles to applied to the button
  * @returns {JSX.Element} Dropdown component
  */
 
