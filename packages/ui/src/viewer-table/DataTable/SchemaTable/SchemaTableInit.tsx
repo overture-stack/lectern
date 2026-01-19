@@ -41,7 +41,7 @@ export const getSchemaBaseColumns = (schema: Schema) => [
 		header: 'Fields',
 		cell: (field: CellContext<SchemaField, string>) => {
 			const fieldRow: Row<SchemaField> = field.row;
-			return <FieldsColumn fieldRow={fieldRow} />;
+			return <FieldsColumn fieldRow={fieldRow} schemaName={schema.name} />;
 		},
 	}),
 

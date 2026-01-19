@@ -22,8 +22,8 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import type { Schema, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
-import { useRef, useState } from 'react';
+import type { Dictionary, Schema, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { useCallback, useEffect, useState } from 'react';
 
 import Accordion from '../common/Accordion/index';
 import { ErrorModal } from '../common/Error/ErrorModal';
@@ -35,6 +35,40 @@ import SchemaTable from './DataTable/SchemaTable/index';
 import DictionaryHeader from './DictionaryHeader';
 import DictionaryViewerLoadingPage from './DictionaryViewer/DictionaryViewerLoadingPage';
 import Toolbar from './Toolbar/index';
+
+type ParsedHashTarget = {
+	index: number;
+	schemaName: string;
+	fieldName?: string;
+	type: 'field' | 'schema';
+};
+
+const parseHash = (hash: string, schemas: Dictionary['schemas'] | undefined): ParsedHashTarget | null => {
+	const cleanHash = hash.replace('#', '');
+	if (!cleanHash || !schemas) return null;
+
+	if (cleanHash.includes('.')) {
+		const [schemaName, fieldName] = cleanHash.split('.');
+		const index = schemas.findIndex((s) => s.name === schemaName);
+		if (index >= 0) {
+			return { index, schemaName, fieldName, type: 'field' };
+		}
+		return null;
+	}
+
+	
+	const indexByName = schemas.findIndex((s) => s.name === cleanHash);
+	if (indexByName !== -1) {
+		return { index: indexByName, schemaName: cleanHash, type: 'schema' };
+	}
+
+	const numericIndex = parseInt(cleanHash, 10);
+	if (!isNaN(numericIndex) && numericIndex >= 0 && numericIndex < schemas.length) {
+		return { index: numericIndex, schemaName: schemas[numericIndex].name, type: 'schema' };
+	}
+
+	return null;
+};
 
 const pageContainerStyle = (theme: Theme) => css`
 	margin: 0 auto;
@@ -88,21 +122,65 @@ export const DictionaryTableViewer = () => {
 
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [selectedSchemaIndex, setSelectedSchemaIndex] = useState<number | undefined>(undefined);
-	const accordionRefs = useRef<(HTMLLIElement | null)[]>([]);
+	const [highlightedField, setHighlightedField] = useState<{ schemaName: string; fieldName: string } | null>(null);
+
+	const handleHash = useCallback(() => {
+		const target = parseHash(window.location.hash, selectedDictionary?.schemas);
+		if (!target) return;
+
+		setSelectedSchemaIndex(target.index);
+		if (target.fieldName) {
+			setHighlightedField({ schemaName: target.schemaName, fieldName: target.fieldName });
+		} else {
+			setHighlightedField(null);
+		}
+
+		const currentHash = window.location.hash.replace('#', '');
+		const numericIndex = parseInt(currentHash, 10);
+		if (!isNaN(numericIndex) && currentHash === numericIndex.toString()) {
+			window.history.replaceState(null, '', `#${target.schemaName}`);
+		}
+
+		setTimeout(() => {
+			const elementId = target.fieldName
+				? `${target.schemaName}.${target.fieldName}`
+				: target.schemaName;
+
+			const element = document.getElementById(elementId);
+			if (element) {
+				element.scrollIntoView({
+					behavior: 'smooth',
+					block: target.fieldName ? 'center' : 'start',
+				});
+			}
+		}, 300);
+	}, [selectedDictionary]);
+
+	useEffect(() => {
+		handleHash(); 
+		window.addEventListener('hashchange', handleHash);
+		return () => window.removeEventListener('hashchange', handleHash);
+	}, [handleHash]);
 
 	const accordionItems =
 		selectedDictionary?.schemas?.map((schema: Schema) => ({
 			title: schema.name,
 			description: schema.description,
-			content: <SchemaTable schema={getFilteredSchema(schema, filters)} />,
+			content: (
+				<SchemaTable
+					schema={getFilteredSchema(schema, filters)}
+					highlightedFieldName={highlightedField?.schemaName === schema.name ? highlightedField.fieldName : null}
+				/>
+			),
 			schemaName: schema.name,
 		})) || [];
 
 	const handleAccordionSelect = (accordionIndex: number) => {
-		setSelectedSchemaIndex(accordionIndex);
-		const element = accordionRefs.current[accordionIndex];
-		if (element) {
-			element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		const schemaName = selectedDictionary?.schemas?.[accordionIndex]?.name;
+		if (schemaName) {
+			const newUrl = `${window.location.pathname}${window.location.search}#${schemaName}`;
+			window.history.pushState(null, '', newUrl);
+			window.dispatchEvent(new HashChangeEvent('hashchange'));
 		}
 	};
 

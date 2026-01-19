@@ -22,8 +22,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import type { RefObject } from 'react';
-import { MouseEvent, useEffect, useRef } from 'react';
+import { MouseEvent, useRef } from 'react';
 
 import { useClipboard } from '../../hooks/useClipboard';
 import { type Theme, useThemeContext } from '../../theme/index';
@@ -49,6 +48,7 @@ const accordionItemStyle = (theme: Theme) => css`
 	background-color: ${theme.colors.white};
 	box-shadow: 0px 4px 4px 0px ${theme.shadow.accordion};
 	border: 0.25px solid ${theme.colors.black};
+	scroll-margin-top: 100px;
 	&:hover {
 		box-shadow: 0px 4px 4px 0px ${theme.shadow.accordion};
 	}
@@ -97,11 +97,20 @@ const chevronStyle = (isOpen: boolean) => css`
 	transition: transform 0.2s ease;
 `;
 
-const titleRowStyle = css`
+const titleRowStyle = (theme: Theme) => css`
 	display: flex;
 	gap: 2px;
 	align-items: center;
 	margin-bottom: 10px;
+	&:hover [data-anchor-button] {
+		opacity: 1;
+	}
+	&:hover [data-title-link] {
+		color: ${theme.colors.secondary};
+		text-decoration: underline;
+		text-decoration-thickness: 2px;
+		text-underline-offset: 4px;
+	}
 `;
 
 const hashIconStyle = (theme: Theme) => css`
@@ -112,9 +121,6 @@ const hashIconStyle = (theme: Theme) => css`
 	cursor: pointer;
 	svg {
 		border-bottom: 2px solid ${theme.colors.secondary};
-	}
-	&:hover {
-		opacity: 1;
 	}
 `;
 
@@ -147,30 +153,17 @@ const downloadButtonContainerStyle = css`
 	margin-left: auto;
 `;
 
-const handleInitialHashCheck = (
-	windowLocationHash: string,
-	openState: AccordionOpenState,
-	indexString: string,
-	accordionRef: RefObject<HTMLLIElement | null>,
-) => {
-	if (window.location.hash === windowLocationHash) {
-		openState.toggle();
-		accordionRef.current?.id === indexString ?
-			accordionRef.current.scrollIntoView({ block: 'center', behavior: 'smooth' })
-		:	null;
-	}
-};
-
 const hashOnClick = (
-	event: MouseEvent<HTMLButtonElement>,
+	event: MouseEvent<HTMLButtonElement | HTMLSpanElement>,
 	windowLocationHash: string,
-	setClipboardContents: (currentSchema: string) => void,
+	setClipboardContents: (contents: string) => void,
 ) => {
 	event.stopPropagation();
 	event.preventDefault();
-	setClipboardContents(
-		`${window.location.origin}${window.location.pathname}${window.location.search}${windowLocationHash}`,
-	);
+	const newUrl = `${window.location.pathname}${window.location.search}${windowLocationHash}`;
+	window.history.pushState(null, '', newUrl);
+	window.dispatchEvent(new HashChangeEvent('hashchange'));
+	setClipboardContents(`${window.location.origin}${newUrl}`);
 };
 
 const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) => {
@@ -181,17 +174,11 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 	const { description, title, content, schemaName } = accordionData;
 	const { ChevronDown, Hash } = theme.icons;
 
-	const indexString = index.toString();
-	const windowLocationHash = `#${index}`;
-
-	useEffect(() => {
-		setTimeout(() => {
-			handleInitialHashCheck(windowLocationHash, openState, indexString, accordionRef);
-		}, 100);
-	}, []);
+	const anchorId = schemaName || index.toString();
+	const windowLocationHash = `#${anchorId}`;
 
 	return (
-		<li ref={accordionRef} css={accordionItemStyle(theme)} id={indexString}>
+		<li ref={accordionRef} css={accordionItemStyle(theme)} id={anchorId}>
 			<div onClick={openState.toggle} role="button" css={accordionItemTitleStyle}>
 				<div css={chevronColumnStyle}>
 					<button css={accordionItemButtonStyle}>
@@ -199,10 +186,18 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 					</button>
 				</div>
 				<div css={contentColumnStyle}>
-					<div css={titleRowStyle}>
-						<span css={titleStyle(theme)}>{title}</span>
+					<div css={titleRowStyle(theme)}>
+						<span
+							data-title-link
+							css={titleStyle(theme)}
+							onClick={(event) => hashOnClick(event, windowLocationHash, setClipboardContents)}
+							style={{ cursor: 'pointer' }}
+						>
+							{title}
+						</span>
 						<button
 							type="button"
+							data-anchor-button
 							css={hashIconStyle(theme)}
 							onClick={(event) => hashOnClick(event, windowLocationHash, setClipboardContents)}
 						>

@@ -32,6 +32,8 @@ import TableRow from './TableRow';
 export type GenericTableProps<R> = {
 	data: R[];
 	columns: ColumnDef<R, any>[];
+	schemaName?: string;
+	highlightedFieldName?: string | null;
 };
 
 type ScrollShadowsResult = {
@@ -148,9 +150,11 @@ export const useScrollShadows = (): ScrollShadowsResult => {
  * @template R - Row data type (can be any object type)
  * @param {R[]} data - Array of row data
  * @param {ColumnDef<R, any>[]} columns - TanStack table column definitions
+ * @param {string} schemaName - Optional schema name for field anchor IDs
+ * @param {string | null} highlightedFieldName - Optional field name to highlight
  * @returns {JSX.Element} Generic Table component
  */
-const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
+const Table = <R,>({ columns, data, schemaName, highlightedFieldName }: GenericTableProps<R>) => {
 	const theme: Theme = useThemeContext();
 	const { scrollRef, showLeftShadow, showRightShadow, firstColumnWidth } = useScrollShadows();
 
@@ -172,9 +176,21 @@ const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 						))}
 					</thead>
 					<tbody css={tableBorderStyle(theme)}>
-						{table.getRowModel().rows.map((row, i: number) => (
-							<TableRow key={row.id} row={row} index={i} />
-						))}
+						{table.getRowModel().rows.map((row, i: number) => {
+							const fieldName = (row.original as { name?: string })?.name;
+							const fieldId = schemaName && fieldName ? `${schemaName}.${fieldName}` : undefined;
+							const isHighlighted = highlightedFieldName === fieldName;
+
+							return (
+								<TableRow
+									key={row.id}
+									row={row}
+									index={i}
+									fieldId={fieldId}
+									isHighlighted={isHighlighted}
+								/>
+							);
+						})}
 					</tbody>
 				</table>
 			</div>
