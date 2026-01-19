@@ -22,6 +22,7 @@
 import { css } from '@emotion/react';
 import { DictionaryMeta, SchemaField } from '@overture-stack/lectern-dictionary';
 import { Row } from '@tanstack/react-table';
+import { MouseEvent } from 'react';
 
 import ReadMoreText from '../../../../common/ReadMoreText';
 import { type Theme, useThemeContext } from '../../../../theme/index';
@@ -34,6 +35,34 @@ const fieldContainerStyle = (theme: Theme) => css`
 
 	p {
 		margin: 0;
+	}
+`;
+
+const fieldNameRowStyle = (theme: Theme) => css`
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	&:hover [data-field-anchor] {
+		opacity: 1;
+	}
+	&:hover [data-field-name] {
+		color: ${theme.colors.secondary};
+		text-decoration: underline;
+		text-decoration-thickness: 2px;
+		text-underline-offset: 4px;
+	}
+`;
+
+const fieldHashIconStyle = (theme: Theme) => css`
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	padding: 2px;
+	margin-left: 4px;
+	svg {
+		border-bottom: 2px solid ${theme.colors.secondary};
 	}
 `;
 
@@ -52,6 +81,7 @@ export type FieldNameProps = {
 
 export type FieldColumnProps = {
 	fieldRow: Row<SchemaField>;
+	schemaName: string;
 };
 
 export type FieldDescriptionProps = {
@@ -62,19 +92,38 @@ export type FieldDescriptionProps = {
 /**
  * Renders the fields column cell showing field name, description, and examples.
  * @param {Row<SchemaField>} fieldRow - TanStack table row containing schema field data
+ * @param {string} schemaName - Name of the parent schema for anchor URL generation
  * @returns {JSX.Element} Field display with name, description, and examples in expandable text
  */
 
-export const FieldsColumn = ({ fieldRow }: FieldColumnProps) => {
+export const FieldsColumn = ({ fieldRow, schemaName }: FieldColumnProps) => {
 	const theme: Theme = useThemeContext();
+	const { Hash } = theme.icons;
 
 	const fieldName = fieldRow.original.name;
 	const fieldDescription = fieldRow.original.description;
 	const fieldExamples = fieldRow.original.meta?.examples;
 
+	const anchorId = `#${schemaName}.${fieldName}`;
+
+	const handleAnchorClick = (e: MouseEvent<HTMLButtonElement | HTMLElement>) => {
+		e.stopPropagation();
+		e.preventDefault();
+		const newUrl = `${window.location.pathname}${window.location.search}${anchorId}`;
+		window.history.pushState(null, '', newUrl);
+		window.dispatchEvent(new HashChangeEvent('hashchange'));
+	};
+
 	return (
 		<ReadMoreText maxLines={6} wrapperStyle={fieldContainerStyle(theme)}>
-			<b>{fieldName}</b>
+			<div css={fieldNameRowStyle(theme)}>
+				<b data-field-name onClick={handleAnchorClick} style={{ cursor: 'pointer' }}>
+					{fieldName}
+				</b>
+				<button type="button" data-field-anchor css={fieldHashIconStyle(theme)} onClick={handleAnchorClick}>
+					<Hash width={14} height={14} fill={theme.colors.secondary} />
+				</button>
+			</div>
 			{fieldDescription && <p>{fieldDescription}</p>}
 			{fieldExamples && (
 				<div>
