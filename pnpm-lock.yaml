@@ -90,8 +90,8 @@ importers:
         specifier: ^3.10.1
         version: 3.10.1
       lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: ^4.17.23
+        version: 4.17.23
       memoizee:
         specifier: ^0.4.17
         version: 0.4.17
@@ -193,8 +193,8 @@ importers:
         specifier: ^0.3.3
         version: 0.3.3
       lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: ^4.17.23
+        version: 4.17.23
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -248,8 +248,8 @@ importers:
         specifier: ^10.1.1
         version: 10.1.1
       lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: ^4.17.23
+        version: 4.17.23
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -352,8 +352,8 @@ importers:
         specifier: ^10.1.1
         version: 10.1.1
       lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: ^4.17.23
+        version: 4.17.23
       playwright:
         specifier: ^1.52.0
         version: 1.52.0
@@ -385,8 +385,8 @@ importers:
         specifier: workspace:^
         version: link:../dictionary
       lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: ^4.17.23
+        version: 4.17.23
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -3103,8 +3103,8 @@ packages:
   lodash.once@4.1.1:
     resolution: {integrity: sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==}
 
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+  lodash@4.17.23:
+    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
 
   log-symbols@4.0.0:
     resolution: {integrity: sha512-FN8JBzLx6CzeMrB0tg6pqlGU1wCrXW+ZXGH481kfsBqer0hToTIiHdjH4Mq8xJUbvATujKCvaREGWpGUionraA==}
@@ -4212,7 +4212,7 @@ packages:
   superagent@8.1.2:
     resolution: {integrity: sha512-6WTxW1EB6yCxV5VFOIPQruWGHqc3yI7hEmZK6h+pyk69Lk/Ut7rLUY6W/ONF2MjBuGjvmMiIpsrVJ2vjrHlslA==}
     engines: {node: '>=6.4.0 <13 || >=14'}
-    deprecated: Please upgrade to v9.0.0+ as we have fixed a public vulnerability with formidable dependency. Note that v9.0.0+ requires Node.js v14.18.0+. See https://github.com/ladjs/superagent/pull/1800 for insight. This project is supported and maintained by the team at Forward Email @ https://forwardemail.net
+    deprecated: Please upgrade to superagent v10.2.2+, see release notes at https://github.com/forwardemail/superagent/releases/tag/v10.2.2 - maintenance is supported by Forward Email @ https://forwardemail.net
 
   supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
@@ -5674,7 +5674,7 @@ snapshots:
       chalk: 3.0.0
       css.escape: 1.5.1
       dom-accessibility-api: 0.6.3
-      lodash: 4.17.21
+      lodash: 4.17.23
       redent: 3.0.0
 
   '@testing-library/user-event@14.5.2(@testing-library/dom@10.4.0)':
@@ -6589,7 +6589,7 @@ snapshots:
     dependencies:
       chalk: 2.4.2
       date-fns: 2.30.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       read-pkg: 4.0.1
       rxjs: 6.6.7
       spawn-command: 0.0.2
@@ -7670,7 +7670,7 @@ snapshots:
 
   lodash.once@4.1.1: {}
 
-  lodash@4.17.21: {}
+  lodash@4.17.23: {}
 
   log-symbols@4.0.0:
     dependencies:
@@ -8478,7 +8478,7 @@ snapshots:
 
   request-promise-core@1.1.2(request@2.88.0):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       request: 2.88.0
 
   request-promise-native@1.0.7(request@2.88.0):
@@ -9180,7 +9180,7 @@ snapshots:
       fs-extra: 8.1.0
       handlebars: 4.7.8
       highlight.js: 10.7.3
-      lodash: 4.17.21
+      lodash: 4.17.23
       lunr: 2.3.9
       marked: 1.0.0
       minimatch: 3.1.2

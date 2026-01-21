@@ -41,7 +41,7 @@
 		"@overture-stack/lectern-validation": "workspace:^",
 		"axios": "^1.7.2",
 		"cd": "^0.3.3",
-		"lodash": "^4.17.21",
+		"lodash": "^4.17.23",
 		"zod": "^3.23.8"
 	},
 	"author": "Ontario Institute for Cancer Research"
