@@ -407,7 +407,7 @@ export const computeAllowedValuesColumn = (
 		currentSchemaField.unique === true
 	) {
 		allowedValuesBaseDisplayItem.unique = {
-			prefix: ['A unique value that matches the following restrictions'],
+			prefix: ['Must have a unique value'],
 			content: [],
 		};
 	}

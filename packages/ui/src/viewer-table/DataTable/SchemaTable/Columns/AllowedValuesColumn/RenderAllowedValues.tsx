@@ -82,7 +82,7 @@ export const renderAllowedValuesColumn = (
 					${theme.typography.paragraphSmallBold}
 				`}
 			>
-				No restrictions provided for this field
+				No restrictions provided for this field.
 			</span>
 		);
 	}
