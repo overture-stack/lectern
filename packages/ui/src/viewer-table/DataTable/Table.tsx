@@ -92,6 +92,15 @@ const tableBorderStyle = (theme: Theme) => css`
 	border: 1px solid ${theme.colors.border_light};
 `;
 
+const hasNameProperty = (obj: unknown): obj is { name: string } => {
+	return (
+		typeof obj === 'object' &&
+		obj !== null &&
+		'name' in obj &&
+		typeof (obj as { name: unknown }).name === 'string'
+	);
+};
+
 /**
  * Hook for managing scroll shadows on horizontally scrollable tables.
  * @returns {ScrollShadowsResult} Scroll shadow state and refs
@@ -177,7 +186,7 @@ const Table = <R,>({ columns, data, schemaName, highlightedFieldName }: GenericT
 					</thead>
 					<tbody css={tableBorderStyle(theme)}>
 						{table.getRowModel().rows.map((row, i: number) => {
-							const fieldName = (row.original as { name?: string })?.name;
+							const fieldName = hasNameProperty(row.original) ? row.original.name : undefined;
 							const fieldId = schemaName && fieldName ? `${schemaName}.${fieldName}` : undefined;
 							const isHighlighted = highlightedFieldName === fieldName;
 
