@@ -90,6 +90,7 @@ const titleStyle = (theme: Theme) => css`
 	text-align: left;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
+	cursor: pointer;
 `;
 
 const chevronStyle = (isOpen: boolean) => css`
