@@ -33,7 +33,13 @@ export type SchemaTableProps = {
  * @returns {JSX.Element} Table displaying schema fields with columns for Fields, Attribute, Data Type, and Allowed Values
  */
 const SchemaTable = ({ schema }: SchemaTableProps) => {
-	return <Table data={schema.fields} columns={getSchemaBaseColumns(schema)} />;
+	return (
+		<Table
+			data={schema.fields}
+			columns={getSchemaBaseColumns(schema)}
+			columnWidths={['25%', '15%', '15%', '45%']}
+		/>
+	);
 };
 
 export default SchemaTable;

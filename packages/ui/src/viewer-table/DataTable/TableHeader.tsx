@@ -26,7 +26,8 @@ import { flexRender, HeaderGroup } from '@tanstack/react-table';
 
 import { type Theme, useThemeContext } from '../../theme/index';
 
-const thStyle = (theme: Theme, index: number) => css`
+const thStyle = (theme: Theme, index: number, width?: string) => css`
+	${width && `width: ${width};`}
 	${theme.typography.tableHeader};
 	background: ${theme.colors.white};
 	text-align: ${index === 0 || index === 3 ? 'left' : 'center'};
@@ -42,22 +43,24 @@ const thStyle = (theme: Theme, index: number) => css`
 
 export type TableHeaderProps<T> = {
 	headerGroup: HeaderGroup<T>;
+	columnWidths?: string[];
 };
 
 /**
  * Generic table header component
  * @template T - Row data type
  * @param {HeaderGroup<T>} headerGroup - TanStack table header group containing column definitions and rendering context
+ * @param {string[]} columnWidths - Optional array of CSS width values for each column
  * @returns {JSX.Element} Table header row element
  */
 
-const TableHeader = <T,>({ headerGroup }: TableHeaderProps<T>) => {
+const TableHeader = <T,>({ headerGroup, columnWidths }: TableHeaderProps<T>) => {
 	const theme: Theme = useThemeContext();
 
 	return (
 		<tr key={headerGroup.id}>
 			{headerGroup.headers.map((header, index) => (
-				<th key={header.id} colSpan={header.colSpan} css={thStyle(theme, index)}>
+				<th key={header.id} colSpan={header.colSpan} css={thStyle(theme, index, columnWidths?.[index])}>
 					{flexRender(header.column.columnDef.header, header.getContext())}
 				</th>
 			))}
