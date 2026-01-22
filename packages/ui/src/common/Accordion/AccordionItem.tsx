@@ -210,12 +210,14 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 							<Hash width={20} height={20} fill={theme.colors.secondary} />
 						</button>
 					</div>
-					<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle(theme)}>
-						{description}
-					</ReadMoreText>
+					<div onClick={(e) => e.stopPropagation()}>
+						<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle(theme)}>
+							{description}
+						</ReadMoreText>
+					</div>
 				</div>
 				{schemaName && (
-					<div css={downloadButtonContainerStyle}>
+					<div css={downloadButtonContainerStyle} onClick={(e) => e.stopPropagation()}>
 						<DictionaryDownloadButton fileType="tsv" iconOnly={true} schemaName={schemaName} />
 					</div>
 				)}
