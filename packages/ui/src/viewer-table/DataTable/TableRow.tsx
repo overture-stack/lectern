@@ -30,26 +30,27 @@ const rowStyle = (index: number, theme: Theme) => css`
 	background-color: ${index % 2 === 0 ? theme.colors.white : theme.colors.background_alternate};
 `;
 
-const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number, width?: string) => css`
-	${width && `min-width: ${width};`}
+const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 	${theme.typography.paragraphSmall}
-	padding: 12px;
-	max-width: 30vw;
+	border: 2px solid ${theme.colors.border_light};
 	text-align: ${cellIndex === 1 || cellIndex === 2 ? 'center' : 'left'};
+	padding: 12px;
 	vertical-align: middle;
+	min-width: 150px;
+
 	${cellIndex === 0 &&
 	`
 		position: sticky;
 		left: 0;
+		max-width: 15vw;
+		min-width: 325px;
 		background-color: ${rowIndex % 2 === 0 ? theme.colors.white : theme.colors.background_alternate};
 	`}
-	border: 2px solid ${theme.colors.border_light};
 `;
 
 export type TableRowProps<T> = {
 	row: Row<T>;
 	index: number;
-	columnWidths?: string[];
 };
 
 /**
@@ -57,17 +58,16 @@ export type TableRowProps<T> = {
  * @template T - Row data type
  * @param {Row<T>} row - TanStack table row object
  * @param {number} index - Row index for styling
- * @param {string[]} columnWidths - Optional array of CSS width values for each column
  * @returns {JSX.Element} Table row element
  */
-const TableRow = <T,>({ row, index, columnWidths }: TableRowProps<T>) => {
+const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
 	const theme: Theme = useThemeContext();
 
 	return (
 		<tr key={row.id} css={rowStyle(index, theme)}>
 			{row.getVisibleCells().map((cell, cellIndex) => {
 				return (
-					<td key={cell.id} css={tdStyle(theme, cellIndex, index, columnWidths?.[cellIndex])}>
+					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>
 						<div
 							css={css`
 								${theme.typography.data}

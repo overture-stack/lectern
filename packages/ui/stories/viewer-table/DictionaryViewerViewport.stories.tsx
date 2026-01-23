@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -15,25 +16,49 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
-import { Schema } from '@overture-stack/lectern-dictionary';
+/** @jsxImportSource @emotion/react */
 
-import Table from '../Table';
+import type { Meta, StoryObj } from '@storybook/react';
 
-import { getSchemaBaseColumns } from './SchemaTableInit';
+import { DictionaryTableViewer } from '../../src/viewer-table/DictionaryTableViewer';
+import { withMultipleDictionaries } from '../dictionaryDecorator';
+import themeDecorator from '../themeDecorator';
 
-export type SchemaTableProps = {
-	schema: Schema;
+const meta = {
+	component: DictionaryTableViewer,
+	title: 'Viewer - Table/Viewport Testing',
+	decorators: [themeDecorator(), withMultipleDictionaries],
+	parameters: {
+		layout: 'padded-fullscreen',
+		padding: 64,
+		docs: { disable: true }, // Hide from docs, this is for manual testing
+	},
+} satisfies Meta<typeof DictionaryTableViewer>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+// Default - use Storybook viewport toolbar to resize
+export const Default: Story = {};
+
+// Pre-configured viewport sizes
+export const Mobile: Story = {
+	parameters: {
+		viewport: { defaultViewport: 'mobile1' },
+	},
 };
 
-/**
- * Schema table component that displays dictionary schema fields in a table format.
- * @param {Schema} schema - Dictionary schema containing fields and restrictions
- * @returns {JSX.Element} Table displaying schema fields with columns for Fields, Attribute, Data Type, and Allowed Values
- */
-const SchemaTable = ({ schema }: SchemaTableProps) => {
-	return <Table data={schema.fields} columns={getSchemaBaseColumns(schema)} />;
+export const MobileLarge: Story = {
+	parameters: {
+		viewport: { defaultViewport: 'mobile2' },
+	},
 };
 
-export default SchemaTable;
+export const Tablet: Story = {
+	parameters: {
+		viewport: { defaultViewport: 'tablet' },
+	},
+};

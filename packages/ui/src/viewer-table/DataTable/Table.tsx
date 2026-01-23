@@ -32,7 +32,6 @@ import TableRow from './TableRow';
 export type GenericTableProps<R> = {
 	data: R[];
 	columns: ColumnDef<R, any>[];
-	columnWidths?: string[];
 };
 
 type ScrollShadowsResult = {
@@ -149,10 +148,9 @@ export const useScrollShadows = (): ScrollShadowsResult => {
  * @template R - Row data type (can be any object type)
  * @param {R[]} data - Array of row data
  * @param {ColumnDef<R, any>[]} columns - TanStack table column definitions
- * @param {string[]} columnWidths - Optional array of CSS width values for each column
  * @returns {JSX.Element} Generic Table component
  */
-const Table = <R,>({ columns, data, columnWidths }: GenericTableProps<R>) => {
+const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 	const theme: Theme = useThemeContext();
 	const { scrollRef, showLeftShadow, showRightShadow, firstColumnWidth } = useScrollShadows();
 
@@ -170,12 +168,12 @@ const Table = <R,>({ columns, data, columnWidths }: GenericTableProps<R>) => {
 				<table css={tableStyle(theme)}>
 					<thead css={tableBorderStyle(theme)}>
 						{table.getHeaderGroups().map((headerGroup: HeaderGroup<R>) => (
-							<TableHeader key={headerGroup.id} headerGroup={headerGroup} columnWidths={columnWidths} />
+							<TableHeader key={headerGroup.id} headerGroup={headerGroup} />
 						))}
 					</thead>
 					<tbody css={tableBorderStyle(theme)}>
 						{table.getRowModel().rows.map((row, i: number) => (
-							<TableRow key={row.id} row={row} index={i} columnWidths={columnWidths} />
+							<TableRow key={row.id} row={row} index={i} />
 						))}
 					</tbody>
 				</table>
