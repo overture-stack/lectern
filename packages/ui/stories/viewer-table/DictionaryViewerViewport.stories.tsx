@@ -41,21 +41,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Default - use Storybook viewport toolbar to resize
 export const Default: Story = {};
-
-// Pre-configured viewport sizes
-export const Mobile: Story = {
-	parameters: {
-		viewport: { defaultViewport: 'mobile1' },
-	},
-};
-
-export const MobileLarge: Story = {
-	parameters: {
-		viewport: { defaultViewport: 'mobile2' },
-	},
-};
 
 export const Tablet: Story = {
 	parameters: {
