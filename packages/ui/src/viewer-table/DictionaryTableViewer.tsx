@@ -32,7 +32,7 @@ import { type Theme, useThemeContext } from '../theme/index';
 import { isFieldRequired } from '../utils/isFieldRequired';
 
 import SchemaTable from './DataTable/SchemaTable/index';
-import DictionaryHeader from './DictionaryHeader';
+import DictionaryHeader from './DictionaryHeader/DictionaryHeader';
 import DictionaryViewerLoadingPage from './DictionaryViewer/DictionaryViewerLoadingPage';
 import Toolbar from './Toolbar/index';
 

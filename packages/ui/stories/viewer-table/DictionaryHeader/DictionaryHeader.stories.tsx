@@ -23,7 +23,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import DictionaryHeader from '../../../src/viewer-table/DictionaryHeader';
+import DictionaryHeader from '../../../src/viewer-table/DictionaryHeader/DictionaryHeader';
 import HeaderSkeleton from '../../../src/viewer-table/Loading/HeaderSkeleton';
 
 import { withMultipleDictionaries, withSingleDictionary, withEmptyDictionaries } from '../../dictionaryDecorator';
