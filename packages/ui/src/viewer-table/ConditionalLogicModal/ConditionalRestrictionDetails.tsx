@@ -92,10 +92,16 @@ const codeListMatch = (codeListMatch: MatchRuleCodeList) => {
 };
 
 const regularExpressionMatch = (regexMatch: MatchRuleRegex) => {
-	const regularExpression = Array.isArray(regexMatch) ? regexMatch.join(', ') : regexMatch;
+	const regularExpressions = Array.isArray(regexMatch) ? regexMatch : [regexMatch];
 	return (
 		<Fragment>
-			{Array.isArray(regexMatch) ? 'matches patterns:' : 'matches pattern:'} {regularExpression}
+			{regularExpressions.length > 1 ? 'matches patterns' : 'matches pattern'}{' '}
+			{regularExpressions.map((expression, index) => (
+				<Fragment key={index}>
+					<FieldBlock>{expression}</FieldBlock>
+					{index < regularExpressions.length - 1 && ', '}
+				</Fragment>
+			))}
 		</Fragment>
 	);
 };

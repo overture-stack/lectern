@@ -37,10 +37,16 @@ export type CodeListContainerProps = {
 
 const handleRegularExpression = (restrictions: SchemaFieldRestrictions) => {
 	if (restrictions && 'regex' in restrictions && restrictions.regex !== undefined) {
+		const regularExpressions = Array.isArray(restrictions.regex) ? restrictions.regex : [restrictions.regex];
 		return (
 			<Fragment>
-				match the {Array.isArray(restrictions.regex) ? 'patterns' : 'pattern'}{' '}
-				{Array.isArray(restrictions.regex) ? restrictions.regex.join(', ') : restrictions.regex}
+				match the {regularExpressions.length > 1 ? 'patterns' : 'pattern'}{' '}
+				{regularExpressions.map((expression, index) => (
+					<Fragment key={index}>
+						<FieldBlock>{expression}</FieldBlock>
+						{index < regularExpressions.length - 1 && ', '}
+					</Fragment>
+				))}
 			</Fragment>
 		);
 	}
