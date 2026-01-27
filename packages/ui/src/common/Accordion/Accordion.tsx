@@ -50,7 +50,6 @@ const accordionStyle = css`
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
-	cursor: pointer;
 `;
 
 /**
