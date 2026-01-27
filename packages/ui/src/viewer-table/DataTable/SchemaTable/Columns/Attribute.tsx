@@ -40,6 +40,16 @@ const containerStyle = (theme: Theme) => css`
 	${theme.typography.paragraphSmallBold}
 `;
 
+const buttonTextContainer = css`
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+`;
+
+const buttonTextStyle = css`
+	margin: 0;
+`;
+
 /**
  * Renders the attribute column cell showing field requirement status.
  * @param {SchemaFieldRestrictions} schemaFieldRestrictions - Field-level restrictions containing requirement information
@@ -57,7 +67,12 @@ export const renderAttributesColumn = (
 		<div css={containerStyle(theme)}>
 			{showConditional ?
 				<>
-					<OpenModalButton onClick={() => setIsOpen(true)}>Required When</OpenModalButton>
+					<OpenModalButton onClick={() => setIsOpen(true)}>
+					<div css={buttonTextContainer}>
+						<p css={buttonTextStyle}>Required</p>
+						<p css={buttonTextStyle}>When</p>
+					</div>
+					</OpenModalButton>
 					{currentSchemaField && (
 						<ConditionalLogicModal
 							isOpen={isOpen}

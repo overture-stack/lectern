@@ -29,27 +29,21 @@ export type OpenModalButtonProps = {
 	children: ReactNode;
 };
 
-const pillButtonStyle = (theme: Theme) => css`
+const buttonStyle = (theme: Theme) => css`
 	${theme.typography.paragraphSmallBold}
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: 6px;
-	padding: 4px 12px;
-	border-radius: 5px;
-	background-color: ${theme.colors.white};
+	flex-direction: column;
+	gap: 4px;
+	padding: 0;
+	background: none;
+	border: none;
 	color: ${theme.colors.black};
-	border: 1px solid ${theme.colors.black};
-	transition: all 0.2s ease-in-out;
-	max-width: 130px;
-	text-align: center;
-	word-wrap: break-word;
-	overflow-wrap: break-word;
-	hyphens: auto;
-	white-space: pre-line;
+	text-decoration: underline;
 	cursor: pointer;
 	&:hover {
-		background: ${theme.colors.background_light};
+		color: ${theme.colors.secondary};
 	}
 `;
 
@@ -57,7 +51,7 @@ const OpenModalButton = ({ onClick, children }: OpenModalButtonProps) => {
 	const theme: Theme = useThemeContext();
 
 	return (
-		<button onClick={onClick} css={pillButtonStyle(theme)}>
+		<button onClick={onClick} css={buttonStyle(theme)}>
 			<Eye />
 			{children}
 		</button>
