@@ -40,7 +40,7 @@ const handleRegularExpression = (restrictions: SchemaFieldRestrictions) => {
 		const regularExpressions = Array.isArray(restrictions.regex) ? restrictions.regex : [restrictions.regex];
 		return (
 			<Fragment>
-				match the {regularExpressions.length > 1 ? 'patterns' : 'pattern'}{' '}
+				<p>match the {regularExpressions.length > 1 ? 'patterns' : 'pattern'} </p>
 				{regularExpressions.map((expression, index) => (
 					<Fragment key={index}>
 						<FieldBlock>{expression}</FieldBlock>

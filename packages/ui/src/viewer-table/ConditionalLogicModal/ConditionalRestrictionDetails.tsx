@@ -95,7 +95,7 @@ const regularExpressionMatch = (regexMatch: MatchRuleRegex) => {
 	const regularExpressions = Array.isArray(regexMatch) ? regexMatch : [regexMatch];
 	return (
 		<Fragment>
-			{regularExpressions.length > 1 ? 'matches patterns' : 'matches pattern'}{' '}
+			<p>{regularExpressions.length > 1 ? 'matches patterns' : 'matches pattern'} </p>
 			{regularExpressions.map((expression, index) => (
 				<Fragment key={index}>
 					<FieldBlock>{expression}</FieldBlock>
