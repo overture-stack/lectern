@@ -93,12 +93,10 @@ const tableBorderStyle = (theme: Theme) => css`
 `;
 
 const hasNameProperty = (obj: unknown): obj is { name: string } => {
-	return (
-		typeof obj === 'object' &&
-		obj !== null &&
-		'name' in obj &&
-		typeof (obj as { name: unknown }).name === 'string'
-	);
+	if (typeof obj === 'object' && obj !== null && 'name' in obj && typeof obj.name === 'string') {
+		return true;
+	}
+	return false;
 };
 
 /**
@@ -190,15 +188,7 @@ const Table = <R,>({ columns, data, schemaName, highlightedFieldName }: GenericT
 							const fieldId = schemaName && fieldName ? `${schemaName}.${fieldName}` : undefined;
 							const isHighlighted = highlightedFieldName === fieldName;
 
-							return (
-								<TableRow
-									key={row.id}
-									row={row}
-									index={i}
-									fieldId={fieldId}
-									isHighlighted={isHighlighted}
-								/>
-							);
+							return <TableRow key={row.id} row={row} index={i} fieldId={fieldId} isHighlighted={isHighlighted} />;
 						})}
 					</tbody>
 				</table>
