@@ -91,6 +91,7 @@ const titleStyle = (theme: Theme) => css`
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 	cursor: pointer;
+	padding-bottom: 7px;
 `;
 
 const chevronStyle = (isOpen: boolean) => css`
@@ -100,7 +101,7 @@ const chevronStyle = (isOpen: boolean) => css`
 
 const titleRowStyle = (theme: Theme) => css`
 	display: flex;
-	gap: 2px;
+	gap: 4px;
 	align-items: center;
 	margin-bottom: 10px;
 	&:hover [data-anchor-button] {
@@ -203,7 +204,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 							css={hashIconStyle(theme)}
 							onClick={(event) => hashOnClick(event, windowLocationHash, setClipboardContents)}
 						>
-							<Hash width={20} height={20} fill={theme.colors.secondary} />
+							<Hash width={24} height={24} fill={theme.colors.secondary} />
 						</button>
 					</div>
 					<div onClick={(e) => e.stopPropagation()}>

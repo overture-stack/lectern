@@ -41,7 +41,7 @@ const fieldContainerStyle = (theme: Theme) => css`
 const fieldNameRowStyle = (theme: Theme) => css`
 	display: flex;
 	align-items: center;
-	gap: 2px;
+	gap: 4px;
 	&:hover [data-field-anchor] {
 		opacity: 1;
 	}
@@ -55,15 +55,19 @@ const fieldNameRowStyle = (theme: Theme) => css`
 
 const fieldHashIconStyle = (theme: Theme) => css`
 	opacity: 0;
-	transition: opacity 0.2s ease;
+	padding-block: 0px;
+	padding-inline: 0px;
 	background: transparent;
 	border: none;
 	cursor: pointer;
-	padding: 2px;
-	margin-left: 4px;
 	svg {
 		border-bottom: 2px solid ${theme.colors.secondary};
 	}
+`;
+
+const fieldNameStyle = css`
+	padding-bottom: 6px;
+	cursor: pointer;
 `;
 
 export type FieldExamplesProps = {
@@ -117,11 +121,11 @@ export const FieldsColumn = ({ fieldRow, schemaName }: FieldColumnProps) => {
 	return (
 		<ReadMoreText maxLines={6} wrapperStyle={fieldContainerStyle(theme)}>
 			<div css={fieldNameRowStyle(theme)}>
-				<b data-field-name onClick={handleAnchorClick} style={{ cursor: 'pointer' }}>
+				<b data-field-name onClick={handleAnchorClick} css={fieldNameStyle}>
 					{fieldName}
 				</b>
 				<button type="button" data-field-anchor css={fieldHashIconStyle(theme)} onClick={handleAnchorClick}>
-					<Hash width={14} height={14} fill={theme.colors.secondary} />
+					<Hash width={18} height={18} fill={theme.colors.secondary} />
 				</button>
 			</div>
 			{fieldDescription && <p>{fieldDescription}</p>}
