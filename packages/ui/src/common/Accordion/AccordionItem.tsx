@@ -116,7 +116,8 @@ const titleRowStyle = (theme: Theme) => css`
 
 const hashIconStyle = (theme: Theme) => css`
 	opacity: 0;
-	transition: opacity 0.2s ease;
+	padding-block: 0px;
+	padding-inline: 0px;
 	background: transparent;
 	border: none;
 	cursor: pointer;
