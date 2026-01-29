@@ -56,7 +56,6 @@ const parseHash = (hash: string, schemas: Dictionary['schemas'] | undefined): Pa
 		return null;
 	}
 
-	
 	const indexByName = schemas.findIndex((s) => s.name === cleanHash);
 	if (indexByName !== -1) {
 		return { index: indexByName, schemaName: cleanHash, type: 'schema' };
@@ -141,9 +140,7 @@ export const DictionaryTableViewer = () => {
 		}
 
 		setTimeout(() => {
-			const elementId = target.fieldName
-				? `${target.schemaName}.${target.fieldName}`
-				: target.schemaName;
+			const elementId = target.fieldName ? `${target.schemaName}.${target.fieldName}` : target.schemaName;
 
 			const element = document.getElementById(elementId);
 			if (element) {
@@ -156,7 +153,7 @@ export const DictionaryTableViewer = () => {
 	}, [selectedDictionary]);
 
 	useEffect(() => {
-		handleHash(); 
+		handleHash();
 		window.addEventListener('hashchange', handleHash);
 		return () => window.removeEventListener('hashchange', handleHash);
 	}, [handleHash]);

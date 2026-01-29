@@ -68,7 +68,7 @@ const fieldHashIconStyle = (theme: Theme) => css`
 `;
 
 const fieldNameStyle = css`
-	padding-bottom: 4px; 
+	padding-bottom: 4px;
 	cursor: pointer;
 `;
 
