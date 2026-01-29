@@ -19,8 +19,8 @@
  *
  */
 
-import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
-export const NoMarginParagraph = styled.p`
+export const NoMarginParagraph = css`
 	margin: 0;
 `;

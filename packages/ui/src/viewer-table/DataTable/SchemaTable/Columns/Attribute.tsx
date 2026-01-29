@@ -66,8 +66,8 @@ export const renderAttributesColumn = (
 				<>
 					<OpenModalButton onClick={() => setIsOpen(true)}>
 						<div css={buttonTextContainer}>
-							<NoMarginParagraph>Required</NoMarginParagraph>
-							<NoMarginParagraph>When</NoMarginParagraph>
+							<p css={NoMarginParagraph}>Required</p>
+							<p css={NoMarginParagraph}>When</p>
 						</div>
 					</OpenModalButton>
 					{currentSchemaField && (
