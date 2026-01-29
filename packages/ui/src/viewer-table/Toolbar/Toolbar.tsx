@@ -58,6 +58,7 @@ const panelStyles = (theme: Theme) => css`
 const sectionStyles = css`
 	display: flex;
 	align-items: center;
+flex-wrap: wrap;
 	gap: 16px;
 `;
 
