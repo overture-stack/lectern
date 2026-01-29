@@ -56,7 +56,6 @@ const parseHash = (hash: string, schemas: Dictionary['schemas'] | undefined): Pa
 		return null;
 	}
 
-	
 	const indexByName = schemas.findIndex((s) => s.name === cleanHash);
 	if (indexByName !== -1) {
 		return { index: indexByName, schemaName: cleanHash, type: 'schema' };
@@ -76,7 +75,6 @@ const pageContainerStyle = (theme: Theme) => css`
 	padding: 0 16px 40px;
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
 `;
 
 const headerPanelBlockStyle = css`
@@ -142,9 +140,7 @@ export const DictionaryTableViewer = () => {
 		}
 
 		setTimeout(() => {
-			const elementId = target.fieldName
-				? `${target.schemaName}.${target.fieldName}`
-				: target.schemaName;
+			const elementId = target.fieldName ? `${target.schemaName}.${target.fieldName}` : target.schemaName;
 
 			const element = document.getElementById(elementId);
 			if (element) {
@@ -157,7 +153,7 @@ export const DictionaryTableViewer = () => {
 	}, [selectedDictionary]);
 
 	useEffect(() => {
-		handleHash(); 
+		handleHash();
 		window.addEventListener('hashchange', handleHash);
 		return () => window.removeEventListener('hashchange', handleHash);
 	}, [handleHash]);
@@ -215,8 +211,8 @@ export const DictionaryTableViewer = () => {
 		<div css={pageContainerStyle(theme)}>
 			<div css={headerPanelBlockStyle}>
 				<DictionaryHeader />
-				<Toolbar onSelect={handleAccordionSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
 			</div>
+			<Toolbar onSelect={handleAccordionSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
 			<Accordion accordionItems={accordionItems} collapseAll={isCollapsed} selectedIndex={selectedSchemaIndex} />
 		</div>
 	);
