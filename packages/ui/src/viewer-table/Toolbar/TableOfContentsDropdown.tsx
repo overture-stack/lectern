@@ -35,17 +35,9 @@ const TableOfContentsDropdown = ({ schemas, onSelect }: TableOfContentsDropdownP
 	const { loading, errors } = useDictionaryDataContext();
 	const { List } = theme.icons;
 
-	const handleAction = (index: number) => {
-		const anchorId = `#${index}`;
-		onSelect(index);
-		window.location.hash = anchorId;
-	};
-
 	const menuItemsFromSchemas = schemas.map((schema, index) => ({
 		label: schema.name,
-		action: () => {
-			handleAction(index);
-		},
+		action: () => onSelect(index),
 	}));
 
 	return schemas.length > 0 ?
