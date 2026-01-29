@@ -29,7 +29,6 @@ const formatDate = (date: Date | undefined): string => {
 };
 const DictionaryVersionSwitcher = () => {
 	const theme: Theme = useThemeContext();
-	const { History } = theme.icons;
 
 	const { loading, errors, dictionaries } = useDictionaryDataContext();
 	const { selectedDictionary, setCurrentDictionaryIndex } = useDictionaryStateContext();
