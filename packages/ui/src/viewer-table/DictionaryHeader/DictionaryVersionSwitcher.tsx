@@ -49,7 +49,6 @@ const DictionaryVersionSwitcher = () => {
 			label: `Version ${item?.version} ${displayVersionDate}`,
 			action: () => {
 				setCurrentDictionaryIndex(index);
-				setCurrentDictionaryIndex(index);
 			},
 		};
 	});
