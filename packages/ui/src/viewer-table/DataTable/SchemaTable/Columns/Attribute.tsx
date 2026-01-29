@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -27,6 +27,7 @@ import { useState } from 'react';
 import { type Theme, useThemeContext } from '../../../../theme/index';
 import { isFieldRequired } from '../../../../utils/isFieldRequired';
 import { ConditionalLogicModal } from '../../../ConditionalLogicModal/ConditionalLogicModal';
+import { NoMarginParagraph } from '../../../../theme/emotion';
 import OpenModalButton from '../../../OpenModalButton';
 
 export type Attributes = 'Required' | 'Optional' | 'Required When';
@@ -44,10 +45,6 @@ const buttonTextContainer = css`
 	display: flex;
 	flex-direction: column;
 	gap: 0;
-`;
-
-const buttonTextStyle = css`
-	margin: 0;
 `;
 
 /**
@@ -68,10 +65,10 @@ export const renderAttributesColumn = (
 			{showConditional ?
 				<>
 					<OpenModalButton onClick={() => setIsOpen(true)}>
-					<div css={buttonTextContainer}>
-						<p css={buttonTextStyle}>Required</p>
-						<p css={buttonTextStyle}>When</p>
-					</div>
+						<div css={buttonTextContainer}>
+							<NoMarginParagraph>Required</NoMarginParagraph>
+							<NoMarginParagraph>When</NoMarginParagraph>
+						</div>
 					</OpenModalButton>
 					{currentSchemaField && (
 						<ConditionalLogicModal
