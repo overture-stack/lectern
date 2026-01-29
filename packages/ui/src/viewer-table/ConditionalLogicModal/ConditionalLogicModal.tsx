@@ -57,7 +57,7 @@ export const ConditionalLogicModal = ({
 	const renderResult = ProcessConditionalRestrictions(restrictions, currentSchemaField);
 
 	return (
-		<Modal title="Conditional Logic" setIsOpen={setIsOpen} isOpen={isOpen}>
+		<Modal title={`Conditional Logic: ${currentSchemaField.name}`} setIsOpen={setIsOpen} isOpen={isOpen}>
 			<div css={containerStyle}>
 				<Description schemaLevelField={currentSchemaField} />
 				{renderResult && renderResult.blocks.length > 0 ?
