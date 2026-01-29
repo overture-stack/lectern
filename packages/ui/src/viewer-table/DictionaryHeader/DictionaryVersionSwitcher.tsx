@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -29,7 +29,6 @@ const formatDate = (date: Date | undefined): string => {
 };
 const DictionaryVersionSwitcher = () => {
 	const theme: Theme = useThemeContext();
-	const { History } = theme.icons;
 
 	const { loading, errors, dictionaries } = useDictionaryDataContext();
 	const { selectedDictionary, setCurrentDictionaryIndex } = useDictionaryStateContext();
@@ -49,7 +48,6 @@ const DictionaryVersionSwitcher = () => {
 		return {
 			label: `Version ${item?.version} ${displayVersionDate}`,
 			action: () => {
-				setCurrentDictionaryIndex(index);
 				setCurrentDictionaryIndex(index);
 			},
 		};
