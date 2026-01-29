@@ -53,8 +53,10 @@ const fieldNameRowStyle = (theme: Theme) => css`
 	}
 `;
 
+// Note: Added Line Height 1 for consistent vertical spacing for hashtag icon
 const fieldHashIconStyle = (theme: Theme) => css`
 	opacity: 0;
+	line-height: 1;
 	padding-block: 0px;
 	padding-inline: 0px;
 	background: transparent;
@@ -66,7 +68,7 @@ const fieldHashIconStyle = (theme: Theme) => css`
 `;
 
 const fieldNameStyle = css`
-	padding-bottom: 6px;
+	padding-bottom: 4px; 
 	cursor: pointer;
 `;
 
