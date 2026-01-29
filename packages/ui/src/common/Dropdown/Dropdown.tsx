@@ -52,7 +52,7 @@ const dropdownButtonStyle = ({
 	gap: 11px;
 	width: ${width || 'auto'};
 	min-width: fit-content;
-	padding: 8px 16px;
+	padding: 6px 12px;
 	background-color: ${theme.colors.background_light};
 	color: ${theme.colors.accent_dark};
 	border: 2px solid ${theme.colors.border_button};
