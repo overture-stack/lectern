@@ -42,17 +42,20 @@ const highlightedCellStyle = (theme: Theme) => css`
 
 const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 	${theme.typography.paragraphSmall}
-	padding: 12px;
-	max-width: 30vw;
+	border: 2px solid ${theme.colors.border_light};
 	text-align: ${cellIndex === 1 || cellIndex === 2 ? 'center' : 'left'};
+	padding: 12px;
 	vertical-align: middle;
+	min-width: 150px;
+
 	${cellIndex === 0 &&
 	`
 		position: sticky;
 		left: 0;
+		max-width: 15vw;
+		min-width: 325px;
 		background-color: ${rowIndex % 2 === 0 ? theme.colors.white : theme.colors.background_alternate};
 	`}
-	border: 2px solid ${theme.colors.border_light};
 `;
 
 export type TableRowProps<T> = {
