@@ -21,13 +21,23 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
 import { Row, flexRender } from '@tanstack/react-table';
 
 import { type Theme, useThemeContext } from '../../theme/index';
 
+const highlightPulse = (theme: Theme) => keyframes`
+	0% { background-color: ${theme.colors.accent_light}; }
+	100% { background-color: transparent; }
+`;
+
 const rowStyle = (index: number, theme: Theme) => css`
 	background-color: ${index % 2 === 0 ? theme.colors.white : theme.colors.background_alternate};
+	scroll-margin-top: 100px;
+`;
+
+const highlightedCellStyle = (theme: Theme) => css`
+	animation: ${highlightPulse(theme)} 2s ease-out 0.5s forwards;
 `;
 
 const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
@@ -48,6 +58,8 @@ const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 export type TableRowProps<T> = {
 	row: Row<T>;
 	index: number;
+	fieldId?: string;
+	isHighlighted?: boolean;
 };
 
 /**
@@ -55,16 +67,21 @@ export type TableRowProps<T> = {
  * @template T - Row data type
  * @param {Row<T>} row - TanStack table row object
  * @param {number} index - Row index for styling
+ * @param {string} fieldId - Optional field ID for anchor navigation (format: schemaName.fieldName)
+ * @param {boolean} isHighlighted - Whether to highlight this row with a pulse animation
  * @returns {JSX.Element} Table row element
  */
-const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
+const TableRow = <T,>({ row, index, fieldId, isHighlighted }: TableRowProps<T>) => {
 	const theme: Theme = useThemeContext();
 
 	return (
-		<tr key={row.id} css={rowStyle(index, theme)}>
+		<tr id={fieldId} css={rowStyle(index, theme)}>
 			{row.getVisibleCells().map((cell, cellIndex) => {
 				return (
-					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>
+					<td
+						key={cell.id}
+						css={[tdStyle(theme, cellIndex, index), isHighlighted && highlightedCellStyle(theme)]}
+					>
 						<div
 							css={css`
 								${theme.typography.data}

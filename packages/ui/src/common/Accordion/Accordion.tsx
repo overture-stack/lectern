@@ -67,7 +67,9 @@ const Accordion = ({ accordionItems, collapseAll, selectedIndex }: AccordionProp
 	}, [collapseAll]);
 
 	useEffect(() => {
-		setOpenStates((prev) => prev.map((isOpen, index) => (index === selectedIndex ? true : isOpen)));
+		if (selectedIndex !== undefined) {
+			setOpenStates((prev) => prev.map((isOpen, index) => (index === selectedIndex ? true : isOpen)));
+		}
 	}, [selectedIndex, accordionItems.length]);
 
 	const handleToggle = (index: number) => {
