@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -15,47 +16,11 @@
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
  *  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
-/** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { type ReactNode, type SyntheticEvent } from 'react';
 
-import { type Theme, useThemeContext } from '../theme/index';
-import Eye from '../theme/icons/Eye';
-
-export type OpenModalButtonProps = {
-	onClick?: (e: SyntheticEvent<HTMLButtonElement>) => any | ((e: SyntheticEvent<HTMLButtonElement>) => Promise<any>);
-	children: ReactNode;
-};
-
-const buttonStyle = (theme: Theme) => css`
-	${theme.typography.paragraphSmallBold}
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	gap: 4px;
-	padding: 0;
-	background: none;
-	border: none;
-	color: ${theme.colors.black};
-	text-decoration: underline;
-	cursor: pointer;
-	&:hover {
-		color: ${theme.colors.secondary};
-	}
+export const NoMarginParagraph = css`
+	margin: 0;
 `;
-
-const OpenModalButton = ({ onClick, children }: OpenModalButtonProps) => {
-	const theme: Theme = useThemeContext();
-
-	return (
-		<button onClick={onClick} css={buttonStyle(theme)}>
-			<Eye />
-			{children}
-		</button>
-	);
-};
-
-export default OpenModalButton;
