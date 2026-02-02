@@ -32,6 +32,8 @@ export type DictionaryDownloadButtonProps = {
 	fileType: 'tsv' | 'csv';
 	iconOnly?: boolean;
 	schemaName?: string;
+	text?: string;
+	tooltip?: boolean;
 };
 
 const downloadDictionary = async ({
@@ -72,9 +74,19 @@ const downloadDictionary = async ({
  * A Button that downloads submission templates.
  * If a schemaName is provided, it treats the download as an individual schema download
  * @param {DictionaryDownloadButtonProps} props
+ * @param {string} fileType - The file type to download - either 'tsv' or 'csv'
+ * @param {boolean} iconOnly - Whether to only show the icon
+ * @param {string} schemaName - The name of the schema to download
+ * @param {string} text - The text to display on the button
  */
 
-const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaName }: DictionaryDownloadButtonProps) => {
+const DictionaryDownloadButton = ({
+	fileType,
+	iconOnly = false,
+	schemaName,
+	text,
+	tooltip = false,
+}: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const theme: Theme = useThemeContext();
@@ -120,8 +132,10 @@ const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaName }: Di
 				}
 			}}
 			disabled={loading || errors.length > 0 || isLoading}
+			tooltip={tooltip}
+			tooltipText={`Download ${schemaName} file template`}
 		>
-			Submission Templates
+			{text || 'Submission Templates'}
 		</Button>
 	);
 };
