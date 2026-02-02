@@ -37,6 +37,8 @@ export interface ButtonProps {
 	icon?: ReactNode;
 	width?: string;
 	iconOnly?: boolean;
+	tooltip?: boolean;
+	tooltipText?: string;
 }
 
 const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: SerializedStyles) => css`
@@ -59,6 +61,10 @@ const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: Se
 
 	&:hover {
 		background-color: ${theme.colors.accent_1};
+	}
+	&:hover > [data-tooltip] {
+		opacity: 1;
+		visibility: visible;
 	}
 	&:disabled {
 		cursor: not-allowed;
@@ -92,6 +98,38 @@ const getIconStyles = () => css`
 	align-items: center;
 `;
 
+const getTooltipStyles = (theme: Theme) => css`
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	margin-bottom: 8px;
+	padding: 6px 10px;
+	background-color: ${theme.colors.accent_dark};
+	color: ${theme.colors.white};
+	${theme.typography.data};
+	font-size: 12px;
+	border-radius: 4px;
+	white-space: nowrap;
+	opacity: 0;
+	visibility: hidden;
+	z-index: 10;
+	transition:
+		opacity 0.2s ease,
+		visibility 0.2s ease;
+	pointer-events: none;
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		border: 6px solid transparent;
+		border-top-color: ${theme.colors.accent_dark};
+	}
+`;
+
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 	(
 		{
@@ -105,6 +143,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 			width,
 			iconOnly = false,
 			styleOverride,
+			tooltip = false,
+			tooltipText,
 		}: ButtonProps,
 		ref,
 	) => {
@@ -126,6 +166,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 				className={className}
 				css={getButtonContainerStyles(theme, width, styleOverride)}
 			>
+				{tooltip && tooltipText && (
+					<span data-tooltip css={getTooltipStyles(theme)}>
+						{tooltipText}
+					</span>
+				)}
 				{icon && !shouldShowLoading && <span css={getIconStyles()}>{icon}</span>}
 				{/* If iconOnly is true, we don't show the children */}
 				{!iconOnly && <span css={getContentStyles(theme, shouldShowLoading)}>{children}</span>}

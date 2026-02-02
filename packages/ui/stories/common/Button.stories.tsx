@@ -58,3 +58,17 @@ export const IconOnly: Story = {
 export const Empty: Story = {
 	args: {},
 };
+export const WithTooltip: Story = {
+	decorators: [
+		(Story) => (
+			<div style={{ paddingTop: '50px' }}>
+				<Story />
+			</div>
+		),
+	],
+	args: {
+		children: 'Hover Me',
+		tooltip: true,
+		tooltipText: 'This is a tooltip',
+	},
+};
