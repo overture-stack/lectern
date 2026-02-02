@@ -24,14 +24,14 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import DictionaryDownloadButton from '../../../src/viewer-table/Toolbar/DictionaryDownloadButton';
 
-import { withDictionaryContext, withLoadingState } from '../../dictionaryDecorator';
+import { multipleDictionaryData, withDictionaryContext, withLoadingState } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: DictionaryDownloadButton,
 	title: 'Viewer - Table/Toolbar/DictionaryDownloadButton',
 	tags: ['autodocs'],
-	decorators: [themeDecorator(), withDictionaryContext()],
+	decorators: [themeDecorator(), withDictionaryContext(multipleDictionaryData, "http://localhost:6006")],
 } satisfies Meta<typeof DictionaryDownloadButton>;
 
 export default meta;
@@ -55,5 +55,27 @@ export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
 	args: {
 		fileType: 'tsv',
+	},
+};
+
+export const WithTooltip: Story = {
+	decorators: [
+		(Story) => (
+			<div style={{ paddingTop: '50px' }}>
+				<Story />
+			</div>
+		),
+	],
+	args: {
+		fileType: 'tsv',
+		tooltip: true,
+		schemaName: 'sample_registration',
+	},
+};
+
+export const WithCustomText: Story = {
+	args: {
+		fileType: 'tsv',
+		text: 'Download Template!',
 	},
 };

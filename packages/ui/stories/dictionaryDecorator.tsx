@@ -60,9 +60,12 @@ export const multipleDictionaryData: DictionaryTestData = [
 
 export const emptyDictionaryData: DictionaryTestData = [];
 
-export const withDictionaryContext = (dictionaries: DictionaryTestData = multipleDictionaryData): Decorator => {
+export const withDictionaryContext = (
+	dictionaries: DictionaryTestData = multipleDictionaryData,
+	lecternUrl?: string,
+): Decorator => {
 	return (Story) => (
-		<DictionaryStaticDataProvider staticDictionaries={dictionaries}>
+		<DictionaryStaticDataProvider staticDictionaries={dictionaries} lecternUrl={lecternUrl}>
 			<DictionaryStateProvider>
 				<Story />
 			</DictionaryStateProvider>
