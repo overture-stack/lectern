@@ -22,6 +22,7 @@ import type { DictionaryServerRecord } from '@overture-stack/lectern-client/dist
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
+import { sortDictionariesByVersion } from '../utils/sortDictionaries';
 import { fetchAndValidateHostedDictionaries, fetchRemoteDictionary } from './sources';
 
 export type DictionaryServerUnion = DictionaryServerRecord | Dictionary;
@@ -92,7 +93,7 @@ const createErrorMessage = (err: unknown): string => {
 
 export const DictionaryStaticDataProvider = ({ children, staticDictionaries }: StaticDictionaryProviderProps) => {
 	const value: DictionaryDataContextType = {
-		dictionaries: staticDictionaries,
+		dictionaries: sortDictionariesByVersion(staticDictionaries),
 		loading: false,
 		errors: [],
 	};
@@ -109,7 +110,7 @@ export const HostedDictionaryDataProvider = ({ children, hostedUrl }: UrlDiction
 		const fetchHostedDictionaries = async () => {
 			try {
 				const dictionariesData = await fetchAndValidateHostedDictionaries(hostedUrl);
-				setDictionaries([dictionariesData]);
+				setDictionaries(sortDictionariesByVersion([dictionariesData]));
 				setErrors([]);
 			} catch (err) {
 				console.error('Error loading hosted dictionary data:', err);
@@ -144,7 +145,7 @@ export const DictionaryLecternDataProvider = ({
 		const fetchRemoteDictionaries = async () => {
 			try {
 				const { dictionaries: fetchedDictionaries } = await fetchRemoteDictionary(lecternUrl, dictionaryName);
-				setDictionaries(fetchedDictionaries);
+				setDictionaries(sortDictionariesByVersion(fetchedDictionaries));
 				setErrors([]);
 			} catch (err) {
 				console.error('Error loading remote dictionary data:', err);
