@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -32,6 +32,8 @@ export type DictionaryDownloadButtonProps = {
 	fileType: 'tsv' | 'csv';
 	iconOnly?: boolean;
 	schemaName?: string;
+	text?: string;
+	tooltipText?: string;
 };
 
 const downloadDictionary = async ({
@@ -72,9 +74,19 @@ const downloadDictionary = async ({
  * A Button that downloads submission templates.
  * If a schemaName is provided, it treats the download as an individual schema download
  * @param {DictionaryDownloadButtonProps} props
+ * @param {string} fileType - The file type to download - either 'tsv' or 'csv'
+ * @param {boolean} iconOnly - Whether to only show the icon
+ * @param {string} schemaName - The name of the schema to download
+ * @param {string} text - The text to display on the button
  */
 
-const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaName }: DictionaryDownloadButtonProps) => {
+const DictionaryDownloadButton = ({
+	fileType,
+	iconOnly = false,
+	schemaName,
+	text,
+	tooltipText,
+}: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const theme: Theme = useThemeContext();
@@ -120,8 +132,9 @@ const DictionaryDownloadButton = ({ fileType, iconOnly = false, schemaName }: Di
 				}
 			}}
 			disabled={loading || errors.length > 0 || isLoading}
+			tooltipText={tooltipText}
 		>
-			Submission Templates
+			{text || 'Submission Templates'}
 		</Button>
 	);
 };
