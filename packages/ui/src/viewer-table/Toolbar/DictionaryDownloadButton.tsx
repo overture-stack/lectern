@@ -33,7 +33,7 @@ export type DictionaryDownloadButtonProps = {
 	iconOnly?: boolean;
 	schemaName?: string;
 	text?: string;
-	tooltip?: boolean;
+	tooltipText?: string;
 };
 
 const downloadDictionary = async ({
@@ -85,7 +85,7 @@ const DictionaryDownloadButton = ({
 	iconOnly = false,
 	schemaName,
 	text,
-	tooltip = false,
+	tooltipText,
 }: DictionaryDownloadButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 
