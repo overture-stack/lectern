@@ -22,14 +22,11 @@ import { css } from '@emotion/react';
 
 import Dropdown from '../../common/Dropdown/index';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
-import { type Theme, useThemeContext } from '../../theme/index';
 
 const formatDate = (date: Date | undefined): string => {
 	return date ? date.toISOString().split('T')[0] : '';
 };
 const DictionaryVersionSwitcher = () => {
-	const theme: Theme = useThemeContext();
-
 	const { loading, errors, dictionaries } = useDictionaryDataContext();
 	const { selectedDictionary, setCurrentDictionaryIndex } = useDictionaryStateContext();
 
