@@ -19,7 +19,6 @@ export {
 export { sortDictionariesByVersion } from './dictionary-controller/sortDictionaries.js';
 
 // View Components
-
 export {
 	// Dictionary Header
 	DictionaryHeader,
