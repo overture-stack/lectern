@@ -46,18 +46,18 @@ const panelStyles = (theme: Theme) => css`
 	align-items: center;
 	justify-content: space-between;
 	padding: 8px 16px;
-	border-top: 1px solid ${theme.colors.border_muted};
 	background-color: ${theme.colors.white};
 	flex-wrap: nowrap;
 	min-height: 80px;
 	position: sticky;
-	top: ${theme.dimensions.navbar.height}px;
 	z-index: 10;
+	top: 0px;
 `;
 
 const sectionStyles = css`
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 	gap: 16px;
 `;
 
