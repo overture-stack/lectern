@@ -52,7 +52,7 @@ const dropdownButtonStyle = ({
 	gap: 11px;
 	width: ${width || 'auto'};
 	min-width: fit-content;
-	padding: 8px 16px;
+	padding: 6px 12px;
 	background-color: ${theme.colors.background_light};
 	color: ${theme.colors.accent_dark};
 	border: 2px solid ${theme.colors.border_button};
@@ -118,7 +118,7 @@ export type DropDownProps = {
  *
  * @param {DropdownProps} props - Dropdown configuration
  * @param {DropDownProps} title - Text displayed on the dropdown button
- * @param {DropDownProps} leftIcon - Custom icon displayed on the left side 
+ * @param {DropDownProps} leftIcon - Custom icon displayed on the left side
  * @param {DropDownProps} menuItems - Array of menu items with label and action
  * @param {DropDownProps} disabled - Whether the dropdown is disabled
  * @param {DropDownProps} size - Font size for title and icon dimensions in pixels
