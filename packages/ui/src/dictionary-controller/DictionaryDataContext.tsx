@@ -22,7 +22,7 @@ import type { DictionaryServerRecord } from '@overture-stack/lectern-client/dist
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
-import { sortDictionariesByVersion } from './sortDictionaries';
+import { sortDictionariesByVersion } from '../utils/sortDictionaries';
 import { fetchAndValidateHostedDictionaries, fetchRemoteDictionary } from './sources';
 
 export type DictionaryServerUnion = DictionaryServerRecord | Dictionary;

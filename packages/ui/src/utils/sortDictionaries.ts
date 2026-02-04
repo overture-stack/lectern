@@ -18,7 +18,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { DictionaryServerUnion } from './DictionaryDataContext';
+import type { DictionaryServerUnion } from '../dictionary-controller/DictionaryDataContext';
 
 export const sortDictionariesByVersion = (dictionaries: DictionaryServerUnion[]): DictionaryServerUnion[] => {
 	return [...dictionaries].sort((a, b) => {
