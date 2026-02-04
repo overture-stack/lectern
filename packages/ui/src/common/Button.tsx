@@ -37,7 +37,6 @@ export interface ButtonProps {
 	icon?: ReactNode;
 	width?: string;
 	iconOnly?: boolean;
-	tooltip?: boolean;
 	tooltipText?: string;
 }
 
@@ -143,7 +142,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 			width,
 			iconOnly = false,
 			styleOverride,
-			tooltip = false,
 			tooltipText,
 		}: ButtonProps,
 		ref,
@@ -166,7 +164,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 				className={className}
 				css={getButtonContainerStyles(theme, width, styleOverride)}
 			>
-				{tooltip && tooltipText && (
+				{tooltipText && (
 					<span data-tooltip css={getTooltipStyles(theme)}>
 						{tooltipText}
 					</span>

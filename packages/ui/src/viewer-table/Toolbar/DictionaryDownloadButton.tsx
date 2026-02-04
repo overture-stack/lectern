@@ -132,8 +132,7 @@ const DictionaryDownloadButton = ({
 				}
 			}}
 			disabled={loading || errors.length > 0 || isLoading}
-			tooltip={tooltip}
-			tooltipText={`Download ${schemaName} file template`}
+			tooltipText={tooltipText}
 		>
 			{text || 'Submission Templates'}
 		</Button>
