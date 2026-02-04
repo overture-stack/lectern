@@ -31,7 +31,7 @@ const meta = {
 	component: DictionaryDownloadButton,
 	title: 'Viewer - Table/Toolbar/DictionaryDownloadButton',
 	tags: ['autodocs'],
-	decorators: [themeDecorator(), withDictionaryContext(multipleDictionaryData, "http://localhost:6006")],
+	decorators: [themeDecorator(), withDictionaryContext()],
 } satisfies Meta<typeof DictionaryDownloadButton>;
 
 export default meta;
@@ -68,8 +68,8 @@ export const WithTooltip: Story = {
 	],
 	args: {
 		fileType: 'tsv',
-		tooltip: true,
 		schemaName: 'sample_registration',
+		tooltipText: 'Download sample_registration file template',
 	},
 };
 

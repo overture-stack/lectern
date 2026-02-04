@@ -47,7 +47,6 @@ export type DictionaryStateContextType = {
 export type StaticDictionaryProviderProps = {
 	children: ReactNode;
 	staticDictionaries: DictionaryServerUnion[];
-	lecternUrl?: string;
 };
 
 export type UrlDictionaryProviderProps = {
@@ -91,14 +90,9 @@ const createErrorMessage = (err: unknown): string => {
 	return 'Something went wrong';
 };
 
-export const DictionaryStaticDataProvider = ({
-	children,
-	staticDictionaries,
-	lecternUrl,
-}: StaticDictionaryProviderProps) => {
+export const DictionaryStaticDataProvider = ({ children, staticDictionaries }: StaticDictionaryProviderProps) => {
 	const value: DictionaryDataContextType = {
 		dictionaries: staticDictionaries,
-		lecternUrl,
 		loading: false,
 		errors: [],
 	};

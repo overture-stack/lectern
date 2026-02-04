@@ -68,7 +68,6 @@ export const WithTooltip: Story = {
 	],
 	args: {
 		children: 'Hover Me',
-		tooltip: true,
 		tooltipText: 'This is a tooltip',
 	},
 };
