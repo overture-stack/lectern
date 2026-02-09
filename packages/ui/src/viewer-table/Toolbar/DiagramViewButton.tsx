@@ -34,7 +34,7 @@ const DiagramViewButton = () => {
 
 	return (
 		<>
-			<Button icon={<Eye />} onClick={() => setIsOpen(true)} disabled={loading || errors.length > 0}>
+			<Button icon={<Eye />} onClick={() => setIsOpen(true)} disabled={loading || errors.length > 0} isLoading={loading}>
 				Diagram View
 			</Button>
 			<Modal
