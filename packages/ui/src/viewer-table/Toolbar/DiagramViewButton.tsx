@@ -19,18 +19,21 @@
  *
  */
 
+import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import { useState } from 'react';
 
 import Button from '../../common/Button';
 import Modal from '../../common/Modal';
-import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import { useThemeContext } from '../../theme/index';
+import { EntityRelationshipDiagram } from '../EntityRelationshipDiagram';
 
 const DiagramViewButton = () => {
 	const [isOpen, setIsOpen] = useState(false);
 	const theme = useThemeContext();
 	const { Eye } = theme.icons;
 	const { loading, errors } = useDictionaryDataContext();
+	const { selectedDictionary } = useDictionaryStateContext();
 
 	return (
 		<>
@@ -42,7 +45,13 @@ const DiagramViewButton = () => {
 				subtitle="Select any key field or edge to highlight a relation."
 				isOpen={isOpen}
 				setIsOpen={setIsOpen}
-			/>
+			>
+				{selectedDictionary && (
+					<div style={{ width: '100%', height: '70vh' }}>
+						<EntityRelationshipDiagram dictionary={selectedDictionary as Dictionary} />
+					</div>
+				)}
+			</Modal>
 		</>
 	);
 };
