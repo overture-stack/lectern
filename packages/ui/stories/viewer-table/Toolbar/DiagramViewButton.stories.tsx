@@ -20,7 +20,6 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/test';
 
 import DiagramViewButton from '../../../src/viewer-table/Toolbar/DiagramViewButton';
 
