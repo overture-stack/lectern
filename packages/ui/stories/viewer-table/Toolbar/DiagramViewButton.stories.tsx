@@ -23,14 +23,14 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import DiagramViewButton from '../../../src/viewer-table/Toolbar/DiagramViewButton';
 
-import { multipleDictionaryData, withDictionaryContext, withForeverLoading } from '../../dictionaryDecorator';
+import { emptyDictionaryData, withDictionaryContext, withForeverLoading } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: DiagramViewButton,
 	title: 'Viewer - Table/Toolbar/DiagramViewButton',
 	tags: ['autodocs'],
-	decorators: [themeDecorator(), withDictionaryContext(multipleDictionaryData)],
+	decorators: [themeDecorator(), withDictionaryContext(emptyDictionaryData)],
 } satisfies Meta<typeof DiagramViewButton>;
 
 export default meta;
