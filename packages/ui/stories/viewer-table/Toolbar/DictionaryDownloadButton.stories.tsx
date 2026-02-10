@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -24,7 +24,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import DictionaryDownloadButton from '../../../src/viewer-table/Toolbar/DictionaryDownloadButton';
 
-import { withDictionaryContext, withLoadingState } from '../../dictionaryDecorator';
+import { multipleDictionaryData, withDictionaryContext, withLoadingState } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
@@ -55,5 +55,27 @@ export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],
 	args: {
 		fileType: 'tsv',
+	},
+};
+
+export const WithTooltip: Story = {
+	decorators: [
+		(Story) => (
+			<div style={{ paddingTop: '50px' }}>
+				<Story />
+			</div>
+		),
+	],
+	args: {
+		fileType: 'tsv',
+		schemaName: 'sample_registration',
+		tooltipText: 'Download sample_registration file template',
+	},
+};
+
+export const WithCustomText: Story = {
+	args: {
+		fileType: 'tsv',
+		text: 'Download Template!',
 	},
 };

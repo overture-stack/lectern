@@ -16,8 +16,9 @@ export {
 	type DictionaryStateProviderProps as DictionaryTableStateProviderProps,
 } from './dictionary-controller/DictionaryDataContext.js';
 
-// View Components
+export { sortDictionariesByVersion } from './utils/sortDictionaries.js';
 
+// View Components
 export {
 	// Dictionary Header
 	DictionaryHeader,
