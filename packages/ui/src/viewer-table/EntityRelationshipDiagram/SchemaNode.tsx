@@ -20,126 +20,26 @@
  */
 
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
 import type { Schema } from '@overture-stack/lectern-dictionary';
 import { Handle, Position } from 'reactflow';
 import 'reactflow/dist/style.css';
 import Key from '../../theme/icons/Key';
-import { type Theme, useThemeContext } from '../../theme';
+import { useThemeContext } from '../../theme';
+import {
+	fieldRowStyles,
+	fieldContentStyles,
+	fieldNameStyles,
+	dataTypeBadgeStyles,
+	nodeContainerStyles,
+	nodeHeaderStyles,
+	nodeTitleTextStyle,
+	nodeSubtitleTextStyle,
+	fieldsListStyles,
+	fieldNameContainerStyles,
+	sourceHandleStyles,
+	targetHandleStyles,
+} from '../../theme/emotion/schemaNodeStyles';
 import { createFieldHandleId } from './diagramUtils';
-
-const fieldRowStyles = css`
-	padding: 12px 12px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	transition: background-color 0.2s;
-	position: relative;
-`;
-
-const fieldContentStyles = css`
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	flex: 1;
-	min-width: 0;
-`;
-
-const fieldNameStyles = (theme: Theme) => css`
-	${theme.typography.subtitleSecondary}
-	font-size: 14px;
-	color: #1f2937;
-	line-height: 1.5;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	flex: 1;
-`;
-
-const dataTypeBadgeStyles = (theme: Theme) => css`
-	${theme.typography.regular}
-	font-size: 12px;
-	color: #374151;
-	flex-shrink: 0;
-
-	&:first-letter {
-		text-transform: uppercase;
-	}
-`;
-
-const nodeContainerStyles = css`
-	background: white;
-	border: 1px solid black;
-	border-radius: 8px;
-	box-shadow:
-		0 10px 20px -3px rgba(0, 0, 0, 0.30),
-		0 4px 10px -2px rgba(0, 0, 0, 0.35);
-	min-width: 280px;
-	max-width: 350px;
-	overflow: hidden;
-`;
-
-const nodeHeaderStyles = (theme: Theme) => css`
-	${theme.typography.subtitleSecondary}
-	background: ${theme.colors.accent};
-	color: white;
-	padding: 16px 24px;
-	text-align: left;
-	border-bottom: 1px solid black;
-	letter-spacing: 0.05em;
-	margin: 0;
-	gap: 4px;
-	display: flex;
-	flex-direction: column;
-	align-items: left;
-`;
-
-const nodeTitleTextStyle = css`
-	font-size: 20px;
-	::first-letter {
-		text-transform: uppercase;
-	}
-`;
-
-const nodeSubtitleTextStyle = css`
-	font-size: 16px;
-`;
-
-const fieldsListStyles = css`
-	background: #f8fafc;
-	max-height: 350px;
-	overflow-y: auto;
-	& > div:nth-child(even) {
-		background-color: #e5edf3;
-		border-block: 1.5px solid #d4dce2;
-	}
-`;
-
-const fieldNameContainerStyles = css`
-	display: flex;
-	align-items: center;
-	gap: 4px;
-`;
-
-const baseHandleStyles = css`
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
-	background: transparent;
-	border: none;
-	width: 8px;
-	height: 8px;
-`;
-
-const sourceHandleStyles = css`
-	${baseHandleStyles}
-	right: -10px;
-`;
-
-const targetHandleStyles = css`
-	${baseHandleStyles}
-	left: -10px;
-`;
 
 export function SchemaNode(props: { data: Schema }) {
 	const { data: schema } = props;
