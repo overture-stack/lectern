@@ -21,7 +21,6 @@
 
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import { useState } from 'react';
-
 import Button from '../../common/Button';
 import Modal from '../../common/Modal';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
@@ -48,7 +47,7 @@ const DiagramViewButton = () => {
 			>
 				{selectedDictionary && (
 					<div style={{ width: '100%', height: '70vh' }}>
-						<EntityRelationshipDiagram dictionary={selectedDictionary as Dictionary} />
+						<EntityRelationshipDiagram dictionary={selectedDictionary} />
 					</div>
 				)}
 			</Modal>
