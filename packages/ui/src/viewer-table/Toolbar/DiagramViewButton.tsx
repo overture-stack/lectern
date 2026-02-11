@@ -19,7 +19,6 @@
  *
  */
 
-import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import { useState } from 'react';
 import Button from '../../common/Button';
 import Modal from '../../common/Modal';
