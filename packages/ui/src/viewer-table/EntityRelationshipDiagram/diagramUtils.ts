@@ -20,8 +20,7 @@
  */
 
 import type { Dictionary, Schema } from '@overture-stack/lectern-dictionary';
-import type { Edge, Node } from 'reactflow';
-import { MarkerType } from 'reactflow';
+import { type Edge, type Node, MarkerType } from 'reactflow';
 import { ONE_CARDINALITY_MARKER_ID } from '../../theme/icons/OneCardinalityMarker';
 
 export type SchemaFlowNode = Node<Schema, 'schema'>;
