@@ -46,7 +46,7 @@ const DiagramViewButton = () => {
 				setIsOpen={setIsOpen}
 			>
 				{selectedDictionary && (
-					<div style={{ width: '100%', height: '70vh' }}>
+					<div style={{ width: '100%', height: '50vh' }}>
 						<EntityRelationshipDiagram dictionary={selectedDictionary} />
 					</div>
 				)}
