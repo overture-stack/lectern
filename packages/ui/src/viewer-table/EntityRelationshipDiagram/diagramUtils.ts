@@ -35,7 +35,7 @@ function buildSchemaNode(schema: Schema): Omit<SchemaFlowNode, 'position'> {
 	return {
 		id: schema.name,
 		type: 'schema',
-		data: { ...schema },
+		data: schema,
 	};
 }
 
