@@ -19,26 +19,4 @@
  *
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-
-import DiagramViewButton from '../../../src/viewer-table/Toolbar/DiagramViewButton';
-
-import { emptyDictionaryData, withDictionaryContext, withForeverLoading } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
-
-const meta = {
-	component: DiagramViewButton,
-	title: 'Viewer - Table/Toolbar/DiagramViewButton',
-	tags: ['autodocs'],
-	decorators: [themeDecorator(), withDictionaryContext(emptyDictionaryData)],
-} satisfies Meta<typeof DiagramViewButton>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-export const Loading: Story = {
-	decorators: [themeDecorator(), withForeverLoading()],
-};
+export { EntityRelationshipDiagram } from './EntityRelationshipDiagram';

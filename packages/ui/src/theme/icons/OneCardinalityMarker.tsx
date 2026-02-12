@@ -19,26 +19,33 @@
  *
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+/** @jsxImportSource @emotion/react */
 
-import DiagramViewButton from '../../../src/viewer-table/Toolbar/DiagramViewButton';
+export const ONE_CARDINALITY_MARKER_ID = 'one-cardinality-marker';
 
-import { emptyDictionaryData, withDictionaryContext, withForeverLoading } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
-
-const meta = {
-	component: DiagramViewButton,
-	title: 'Viewer - Table/Toolbar/DiagramViewButton',
-	tags: ['autodocs'],
-	decorators: [themeDecorator(), withDictionaryContext(emptyDictionaryData)],
-} satisfies Meta<typeof DiagramViewButton>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-export const Loading: Story = {
-	decorators: [themeDecorator(), withForeverLoading()],
+type OneCardinalityMarkerProps = {
+	color?: string;
 };
+
+const OneCardinalityMarker = ({ color = '#374151' }: OneCardinalityMarkerProps) => {
+	return (
+		<svg style={{ position: 'absolute', top: 0, left: 0 }}>
+			<defs>
+				<marker
+					id={ONE_CARDINALITY_MARKER_ID}
+					markerWidth="20"
+					markerHeight="20"
+					viewBox="-10 -10 20 20"
+					markerUnits="userSpaceOnUse"
+					orient="auto-start-reverse"
+					refX="0"
+					refY="0"
+				>
+					<line x1="0" y1="-6" x2="0" y2="6" stroke={color} strokeWidth="2" />
+				</marker>
+			</defs>
+		</svg>
+	);
+};
+
+export default OneCardinalityMarker;

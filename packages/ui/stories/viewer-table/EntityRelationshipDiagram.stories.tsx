@@ -20,25 +20,33 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import type { Dictionary } from '@overture-stack/lectern-dictionary';
 
-import DiagramViewButton from '../../../src/viewer-table/Toolbar/DiagramViewButton';
-
-import { emptyDictionaryData, withDictionaryContext, withForeverLoading } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
+import { EntityRelationshipDiagram } from '../../src/viewer-table/EntityRelationshipDiagram';
+import DictionarySample from '../fixtures/pcgl.json';
+import SimpleERDiagram from '../fixtures/simpleERDiagram.json';
+import themeDecorator from '../themeDecorator';
+import React from 'react';
 
 const meta = {
-	component: DiagramViewButton,
-	title: 'Viewer - Table/Toolbar/DiagramViewButton',
-	tags: ['autodocs'],
-	decorators: [themeDecorator(), withDictionaryContext(emptyDictionaryData)],
-} satisfies Meta<typeof DiagramViewButton>;
+	component: EntityRelationshipDiagram,
+	title: 'Viewer - Table/Entity Relationship Diagram',
+	decorators: [themeDecorator()],
+	parameters: {
+		layout: 'fullscreen',
+	},
+} satisfies Meta<typeof EntityRelationshipDiagram>;
 
 export default meta;
-
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
-
-export const Loading: Story = {
-	decorators: [themeDecorator(), withForeverLoading()],
+export const Default: Story = {
+	args: {
+		dictionary: DictionarySample as Dictionary,
+	},
+	render: (args) => (
+		<div style={{ width: '100%', height: '100vh' }}>
+			<EntityRelationshipDiagram {...args} />
+		</div>
+	),
 };
