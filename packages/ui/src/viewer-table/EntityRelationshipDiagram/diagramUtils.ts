@@ -39,6 +39,13 @@ function buildSchemaNode(schema: Schema): Omit<SchemaFlowNode, 'position'> {
 	};
 }
 
+/**
+ * Converts a dictionary's schemas into positioned ReactFlow nodes arranged in a grid layout.
+ *
+ * @param {Dictionary} dictionary — The Lectern dictionary containing schemas to visualize
+ * @param {Partial<SchemaNodeLayout>} layout — Optional overrides for grid layout configuration
+ * @returns {Node[]} Array of positioned ReactFlow nodes
+ */
 export function getNodesForDictionary(dictionary: Dictionary, layout?: Partial<SchemaNodeLayout>): Node[] {
 	const maxColumns = layout?.maxColumns ?? 4;
 	const columnWidth = layout?.columnWidth ?? 500;
@@ -62,6 +69,12 @@ export function getNodesForDictionary(dictionary: Dictionary, layout?: Partial<S
 export const createFieldHandleId = (schemaName: string, fieldName: string, type: 'source' | 'target'): string =>
 	`${schemaName}-${fieldName}-${type}`;
 
+/**
+ * Converts a dictionary's foreign key relationships into ReactFlow edges connecting schema nodes.
+ *
+ * @param {Dictionary} dictionary — The Lectern dictionary containing schemas with foreign key restrictions
+ * @returns {Edge[]} Array of ReactFlow edges representing foreign key relationships
+ */
 export function getEdgesForDictionary(dictionary: Dictionary): Edge[] {
 	return dictionary.schemas.flatMap((schema) => {
 		if (!schema.restrictions?.foreignKey) return [];

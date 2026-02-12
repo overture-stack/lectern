@@ -43,6 +43,15 @@ type EntityRelationshipDiagramProps = {
 	layout?: Partial<SchemaNodeLayout>;
 };
 
+/**
+ * Entity Relationship Diagram visualizing schemas and their foreign key relationships.
+ *
+ * @param {Dictionary} dictionary — The Lectern dictionary whose schemas and relationships to visualize
+ * @param {Partial<SchemaNodeLayout>} layout — Optional overrides for the grid layout of schema nodes.
+ *   maxColumns controls the number of nodes per row before wrapping (default 4),
+ *   columnWidth sets horizontal spacing in pixels between column left edges (default 500),
+ *   and rowHeight sets vertical spacing in pixels between row top edges (default 500)
+ */
 export function EntityRelationshipDiagram({ dictionary, layout }: EntityRelationshipDiagramProps) {
 	const [nodes, , onNodesChange] = useNodesState(getNodesForDictionary(dictionary, layout));
 	const [edges, , onEdgesChange] = useEdgesState(getEdgesForDictionary(dictionary));
