@@ -20,6 +20,8 @@
  */
 
 /** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
+import { type Theme, useThemeContext } from '../../theme';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
 import ReactFlow, {
 	Background,
@@ -52,29 +54,45 @@ type EntityRelationshipDiagramProps = {
  *   columnWidth sets horizontal spacing in pixels between column left edges (default 500),
  *   and rowHeight sets vertical spacing in pixels between row top edges (default 500)
  */
+const edgeHoverStyles = (theme: Theme) => css`
+	.react-flow__edge {
+		cursor: pointer;
+	}
+	.react-flow__edge-path {
+		stroke: ${theme.colors.black};
+		stroke-width: 2;
+	}
+	.react-flow__edge:hover .react-flow__edge-path {
+		stroke: ${theme.colors.secondary_dark};
+	}
+`;
+
 export function EntityRelationshipDiagram({ dictionary, layout }: EntityRelationshipDiagramProps) {
 	const [nodes, , onNodesChange] = useNodesState(getNodesForDictionary(dictionary, layout));
 	const [edges, , onEdgesChange] = useEdgesState(getEdgesForDictionary(dictionary));
+	const theme = useThemeContext();
 
 	return (
 		<>
 			<OneCardinalityMarker />
-			<ReactFlow
-				nodes={nodes}
-				edges={edges}
-				onNodesChange={onNodesChange}
-				onEdgesChange={onEdgesChange}
-				nodeTypes={nodeTypes}
-				fitView
-				fitViewOptions={{ padding: 20, maxZoom: 1.5, minZoom: 0.5 }}
-				style={{ width: '100%', height: '100%' }}
-				defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
-				minZoom={0.1}
-				maxZoom={3}
-			>
-				<Controls />
-				<Background variant={BackgroundVariant.Lines} />
-			</ReactFlow>
+			<div css={edgeHoverStyles(theme)} style={{ width: '100%', height: '100%' }}>
+				<ReactFlow
+					nodes={nodes}
+					edges={edges}
+					onNodesChange={onNodesChange}
+					onEdgesChange={onEdgesChange}
+					nodeTypes={nodeTypes}
+					fitView
+					fitViewOptions={{ padding: 20, maxZoom: 1.5, minZoom: 0.5 }}
+					style={{ width: '100%', height: '100%' }}
+					defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
+					minZoom={0.1}
+					maxZoom={3}
+				>
+					<Controls />
+					<Background variant={BackgroundVariant.Lines} />
+				</ReactFlow>
+			</div>
 		</>
 	);
 }
