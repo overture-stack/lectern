@@ -101,7 +101,6 @@ export const nodeSubtitleTextStyle = css`
 
 export const fieldsListStyles = css`
 	background: #f8fafc;
-	max-height: 350px;
 	overflow-y: auto;
 	& > div:nth-child(even) {
 		background-color: #e5edf3;
