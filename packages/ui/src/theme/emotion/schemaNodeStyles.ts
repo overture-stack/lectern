@@ -22,13 +22,21 @@
 import { css } from '@emotion/react';
 import type { Theme } from '../';
 
-export const fieldRowStyles = css`
+export const fieldRowStyles = (theme: Theme, isForeignKey: boolean, isEven: boolean) => css`
 	padding: 12px 12px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	transition: background-color 0.2s;
 	position: relative;
+	background-color: ${isEven ? '#e5edf3' : 'transparent'};
+	border-block: 1.5px solid ${isEven ? '#d4dce2' : 'transparent'};
+	${isForeignKey ? 'cursor: pointer;' : ''}
+
+	&:hover {
+		background-color: ${isForeignKey ? theme.colors.secondary_1 : theme.colors.grey_3};
+		border-block: 1.5px solid ${isForeignKey ? theme.colors.secondary_dark : theme.colors.grey_4};
+	}
 `;
 
 export const fieldContentStyles = css`
@@ -102,10 +110,6 @@ export const nodeSubtitleTextStyle = css`
 export const fieldsListStyles = css`
 	background: #f8fafc;
 	overflow-y: auto;
-	& > div:nth-child(even) {
-		background-color: #e5edf3;
-		border-block: 1.5px solid #d4dce2;
-	}
 `;
 
 export const fieldNameContainerStyles = css`
