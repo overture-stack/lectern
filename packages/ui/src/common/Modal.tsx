@@ -36,7 +36,7 @@ export type ModalProps = {
 	onAfterOpen?: () => void;
 	children?: ReactNode;
 	title: string;
-	subtitle?: string;
+	subtitle?: ReactNode;
 };
 
 // Using react-modal's built-in styling system instead of emotion css for modal configuration
@@ -73,6 +73,8 @@ const headerStyle = (theme: Theme) => css`
 	border-bottom: 1px solid ${theme.colors.border_subtle};
 	background: ${theme.colors.white};
 	box-shadow: 0px 1px 6px 0px #00000026;
+	position: relative;
+	z-index: 1;
 `;
 
 const bodyStyle = css`
@@ -117,7 +119,7 @@ const ModalComponent = ({ children, setIsOpen, isOpen, onAfterOpen, title, subti
 				<div css={headerStyle(theme)}>
 					<div>
 						<span css={titleStyle(theme)}>{title}</span>
-						{subtitle && <p css={subtitleStyle(theme)}>{subtitle}</p>}
+						{subtitle && <div css={subtitleStyle(theme)}>{subtitle}</div>}
 					</div>
 					<Button iconOnly onClick={() => setIsOpen(false)} icon={<Cancel />} />
 				</div>
