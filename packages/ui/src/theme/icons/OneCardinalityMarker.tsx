@@ -22,12 +22,14 @@
 /** @jsxImportSource @emotion/react */
 
 export const ONE_CARDINALITY_MARKER_ID = 'one-cardinality-marker';
+export const ONE_CARDINALITY_MARKER_ACTIVE_ID = 'one-cardinality-marker-active';
 
 type OneCardinalityMarkerProps = {
 	color?: string;
+	activeColor: string;
 };
 
-const OneCardinalityMarker = ({ color = '#374151' }: OneCardinalityMarkerProps) => {
+const OneCardinalityMarker = ({ color = '#374151', activeColor }: OneCardinalityMarkerProps) => {
 	return (
 		<svg style={{ position: 'absolute', top: 0, left: 0 }}>
 			<defs>
@@ -42,6 +44,18 @@ const OneCardinalityMarker = ({ color = '#374151' }: OneCardinalityMarkerProps) 
 					refY="0"
 				>
 					<line x1="0" y1="-6" x2="0" y2="6" stroke={color} strokeWidth="2" />
+				</marker>
+				<marker
+					id={ONE_CARDINALITY_MARKER_ACTIVE_ID}
+					markerWidth="20"
+					markerHeight="20"
+					viewBox="-10 -10 20 20"
+					markerUnits="userSpaceOnUse"
+					orient="auto-start-reverse"
+					refX="0"
+					refY="0"
+				>
+					<line x1="0" y1="-6" x2="0" y2="6" stroke={activeColor} strokeWidth="2" />
 				</marker>
 			</defs>
 		</svg>
