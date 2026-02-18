@@ -22,15 +22,15 @@
 import { css } from '@emotion/react';
 import type { Theme } from '../';
 
-export const fieldRowStyles = (theme: Theme, isForeignKey: boolean, isEven: boolean) => css`
+export const fieldRowStyles = (theme: Theme, isForeignKey: boolean, isEven: boolean, isHighlighted: boolean = false) => css`
 	padding: 12px 12px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	transition: background-color 0.2s;
 	position: relative;
-	background-color: ${isEven ? '#e5edf3' : 'transparent'};
-	border-block: 1.5px solid ${isEven ? '#d4dce2' : 'transparent'};
+	background-color: ${isHighlighted ? theme.colors.secondary_1 : isEven ? '#e5edf3' : 'transparent'};
+	border-block: 1.5px solid ${isHighlighted ? theme.colors.secondary_dark : isEven ? '#d4dce2' : 'transparent'};
 	${isForeignKey ? 'cursor: pointer;' : ''}
 
 	&:hover {
@@ -69,16 +69,18 @@ export const dataTypeBadgeStyles = (theme: Theme) => css`
 	}
 `;
 
-export const nodeContainerStyles = css`
+export const nodeContainerStyles = (isInactive: boolean = false) => css`
 	background: white;
 	border: 1px solid black;
 	border-radius: 8px;
 	box-shadow:
-		0 10px 20px -3px rgba(0, 0, 0, 0.30),
+		0 10px 20px -3px rgba(0, 0, 0, 0.3),
 		0 4px 10px -2px rgba(0, 0, 0, 0.35);
 	min-width: 280px;
 	max-width: 350px;
 	overflow: hidden;
+	transition: opacity 0.2s;
+	${isInactive ? 'opacity: 0.4;' : ''}
 `;
 
 export const nodeHeaderStyles = (theme: Theme) => css`
