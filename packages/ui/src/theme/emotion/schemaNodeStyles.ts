@@ -29,8 +29,8 @@ export const fieldRowStyles = (theme: Theme, isForeignKey: boolean, isEven: bool
 	justify-content: space-between;
 	transition: background-color 0.2s;
 	position: relative;
-	background-color: ${isEven ? '#e5edf3' : 'transparent'};
-	border-block: 1.5px solid ${isEven ? '#d4dce2' : 'transparent'};
+	background-color: ${isEven ? theme.colors.accent_1 : 'transparent'};
+	border-block: 1.5px solid ${isEven ? theme.colors.accent_2 : 'transparent'};
 	${isForeignKey ? 'cursor: pointer;' : ''}
 
 	&:hover {
