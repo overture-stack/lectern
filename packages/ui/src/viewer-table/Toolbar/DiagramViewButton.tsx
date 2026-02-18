@@ -19,12 +19,17 @@
  *
  */
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Button from '../../common/Button';
 import Modal from '../../common/Modal';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import { useThemeContext } from '../../theme/index';
-import { EntityRelationshipDiagram } from '../EntityRelationshipDiagram';
+import {
+	ActiveRelationshipProvider,
+	buildRelationshipMap,
+	EntityRelationshipDiagramContent,
+} from '../EntityRelationshipDiagram';
+import DiagramSubtitle from './DiagramSubtitle';
 
 const DiagramViewButton = () => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -33,23 +38,32 @@ const DiagramViewButton = () => {
 	const { loading, errors } = useDictionaryDataContext();
 	const { selectedDictionary } = useDictionaryStateContext();
 
+	const relationshipMap = useMemo(
+		() => (selectedDictionary ? buildRelationshipMap(selectedDictionary) : null),
+		[selectedDictionary],
+	);
+
 	return (
 		<>
 			<Button icon={<Eye />} onClick={() => setIsOpen(true)} disabled={loading || errors.length > 0} isLoading={loading}>
 				Diagram View
 			</Button>
-			<Modal
-				title="Diagram View"
-				subtitle="Select any key field or edge to highlight a relation."
-				isOpen={isOpen}
-				setIsOpen={setIsOpen}
-			>
-				{selectedDictionary && (
-					<div style={{ width: '100%', height: '50vh' }}>
-						<EntityRelationshipDiagram dictionary={selectedDictionary} />
-					</div>
-				)}
-			</Modal>
+			{relationshipMap && (
+				<ActiveRelationshipProvider relationshipMap={relationshipMap}>
+					<Modal
+						title="Diagram View"
+						subtitle={<DiagramSubtitle />}
+						isOpen={isOpen}
+						setIsOpen={setIsOpen}
+					>
+						{selectedDictionary && (
+							<div style={{ width: '100%', height: '50vh' }}>
+								<EntityRelationshipDiagramContent dictionary={selectedDictionary} />
+							</div>
+						)}
+					</Modal>
+				</ActiveRelationshipProvider>
+			)}
 		</>
 	);
 };

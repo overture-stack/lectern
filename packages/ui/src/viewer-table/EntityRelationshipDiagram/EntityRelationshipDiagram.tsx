@@ -23,17 +23,26 @@
 import { css } from '@emotion/react';
 import { type Theme, useThemeContext } from '../../theme';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
+import { useCallback, useEffect } from 'react';
 import ReactFlow, {
 	Background,
 	BackgroundVariant,
 	Controls,
 	useEdgesState,
 	useNodesState,
+	type Edge,
 	type NodeTypes,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import OneCardinalityMarker from '../../theme/icons/OneCardinalityMarker';
-import { getEdgesForDictionary, getNodesForDictionary, type SchemaNodeLayout } from './diagramUtils';
+import {
+	getEdgesFromMap,
+	getEdgesWithHighlight,
+	getNodesForDictionary,
+	type RelationshipEdgeData,
+	type SchemaNodeLayout,
+} from './diagramUtils';
+import { useActiveRelationship } from './ActiveRelationshipContext';
 import { SchemaNode } from './SchemaNode';
 
 const nodeTypes: NodeTypes = {
@@ -45,7 +54,7 @@ type EntityRelationshipDiagramProps = {
 	layout?: Partial<SchemaNodeLayout>;
 };
 
-const edgeHoverStyles = (theme: Theme) => css`
+const edgeStyles = (theme: Theme) => css`
 	.react-flow__edge {
 		cursor: pointer;
 	}
@@ -56,10 +65,26 @@ const edgeHoverStyles = (theme: Theme) => css`
 	.react-flow__edge:hover .react-flow__edge-path {
 		stroke: ${theme.colors.secondary_dark};
 	}
+
+	.react-flow__edge.edge-active .react-flow__edge-path {
+		stroke: ${theme.colors.secondary_dark};
+		stroke-width: 3;
+	}
+
+	.react-flow__edge.edge-inactive .react-flow__edge-path {
+		stroke: ${theme.colors.grey_5};
+		stroke-width: 1.5;
+		opacity: 0.9;
+	}
+		
+	.react-flow__edge.edge-inactive .react-flow__edge-path:hover {
+		stroke: ${theme.colors.grey_4};
+	}
 `;
 
 /**
  * Entity Relationship Diagram visualizing schemas and their foreign key relationships.
+ * Must be rendered inside an `ActiveRelationshipProvider`.
  *
  * @param {Dictionary} dictionary — The Lectern dictionary whose schemas and relationships to visualize
  * @param {Partial<SchemaNodeLayout>} layout — Optional overrides for the grid layout of schema nodes.
@@ -67,20 +92,41 @@ const edgeHoverStyles = (theme: Theme) => css`
  *   columnWidth sets horizontal spacing in pixels between column left edges (default 500),
  *   and rowHeight sets vertical spacing in pixels between row top edges (default 500)
  */
-export function EntityRelationshipDiagram({ dictionary, layout }: EntityRelationshipDiagramProps) {
+export function EntityRelationshipDiagramContent({ dictionary, layout }: EntityRelationshipDiagramProps) {
 	const [nodes, , onNodesChange] = useNodesState(getNodesForDictionary(dictionary, layout));
-	const [edges, , onEdgesChange] = useEdgesState(getEdgesForDictionary(dictionary));
+	const { activeEdgeIds, activateRelationship, deactivateRelationship, relationshipMap } = useActiveRelationship();
+	const [edges, setEdges, onEdgesChange] = useEdgesState(getEdgesFromMap(relationshipMap));
 	const theme = useThemeContext();
+
+	useEffect(() => {
+		setEdges((currentEdges) => getEdgesWithHighlight(currentEdges, activeEdgeIds, theme.colors.secondary_dark));
+	}, [activeEdgeIds, setEdges]);
+
+	const onEdgeClick = useCallback(
+		(_event: React.MouseEvent, edge: Edge) => {
+			const edgeData = edge.data as RelationshipEdgeData | undefined;
+			if (edgeData?.fkIndex !== undefined) {
+				activateRelationship(edgeData.fkIndex, edgeData.mappingIndex);
+			}
+		},
+		[activateRelationship],
+	);
+
+	const onPaneClick = useCallback(() => {
+		deactivateRelationship();
+	}, [deactivateRelationship]);
 
 	return (
 		<>
-			<OneCardinalityMarker />
-			<div css={edgeHoverStyles(theme)} style={{ width: '100%', height: '100%' }}>
+			<OneCardinalityMarker activeColor={theme.colors.secondary_dark} />
+			<div css={edgeStyles(theme)} style={{ width: '100%', height: '100%' }}>
 				<ReactFlow
 					nodes={nodes}
 					edges={edges}
 					onNodesChange={onNodesChange}
 					onEdgesChange={onEdgesChange}
+					onEdgeClick={onEdgeClick}
+					onPaneClick={onPaneClick}
 					nodeTypes={nodeTypes}
 					fitView
 					fitViewOptions={{ padding: 20, maxZoom: 1.5, minZoom: 0.5 }}

@@ -21,7 +21,7 @@
 
 import type { Dictionary, Schema } from '@overture-stack/lectern-dictionary';
 import { type Edge, type Node, MarkerType } from 'reactflow';
-import { ONE_CARDINALITY_MARKER_ID } from '../../theme/icons/OneCardinalityMarker';
+import { ONE_CARDINALITY_MARKER_ID, ONE_CARDINALITY_MARKER_ACTIVE_ID } from '../../theme/icons/OneCardinalityMarker';
 
 export type SchemaFlowNode = Node<Schema, 'schema'>;
 
@@ -38,6 +38,28 @@ function buildSchemaNode(schema: Schema): Omit<SchemaFlowNode, 'position'> {
 		data: schema,
 	};
 }
+
+export const createFieldHandleId = (schemaName: string, fieldName: string, type: 'source' | 'target'): string =>
+	`${schemaName}-${fieldName}-${type}`;
+
+type FkRestrictionInfo = {
+	localSchema: string;
+	foreignSchema: string;
+	mappings: { localField: string; foreignField: string }[];
+	edgeIds: string[];
+	fieldKeys: string[];
+	localFieldKeys: string[];
+	foreignFieldKeys: string[];
+};
+
+export type RelationshipEdgeData = { fkIndex: number; mappingIndex: number };
+
+export type RelationshipMap = {
+	fkRestrictions: FkRestrictionInfo[];
+	localFieldKeyToFkIndices: Map<string, number[]>;
+	foreignFieldKeyToFkIndices: Map<string, number[]>;
+	fieldKeyToFkIndices: Map<string, number[]>;
+};
 
 /**
  * Converts a dictionary's schemas into positioned ReactFlow nodes arranged in a grid layout.
@@ -66,38 +88,246 @@ export function getNodesForDictionary(dictionary: Dictionary, layout?: Partial<S
 	});
 }
 
-export const createFieldHandleId = (schemaName: string, fieldName: string, type: 'source' | 'target'): string =>
-	`${schemaName}-${fieldName}-${type}`;
-
 /**
- * Converts a dictionary's foreign key relationships into ReactFlow edges connecting schema nodes.
+ * Builds an FK adjacency graph from the dictionary's foreign key restrictions.
+ * Each FK restriction is indexed, and adjacency maps allow tracing chains
+ * up (child→parent) and down (parent→child).
  *
  * @param {Dictionary} dictionary — The Lectern dictionary containing schemas with foreign key restrictions
- * @returns {Edge[]} Array of ReactFlow edges representing foreign key relationships
+ * @returns {RelationshipMap} FK adjacency graph for chain tracing
  */
-export function getEdgesForDictionary(dictionary: Dictionary): Edge[] {
-	return dictionary.schemas.flatMap((schema) => {
-		if (!schema.restrictions?.foreignKey) return [];
+export function buildRelationshipMap(dictionary: Dictionary): RelationshipMap {
+	const fkRestrictions: FkRestrictionInfo[] = [];
+	const localFieldKeyToFkIndices = new Map<string, number[]>();
+	const foreignFieldKeyToFkIndices = new Map<string, number[]>();
+	const fieldKeyToFkIndices = new Map<string, number[]>();
 
-		return schema.restrictions.foreignKey.flatMap((foreignKey) => {
-			return foreignKey.mappings.map((mapping) => ({
-				id: `${schema.name}-${mapping.local}-to-${foreignKey.schema}-${mapping.foreign}`,
-				source: foreignKey.schema,
-				sourceHandle: createFieldHandleId(foreignKey.schema, mapping.foreign, 'source'),
-				target: schema.name,
-				targetHandle: createFieldHandleId(schema.name, mapping.local, 'target'),
-				type: 'smoothstep',
-				pathOptions: {
-					offset: -20,
-				},
-				markerEnd: {
-					type: MarkerType.Arrow,
-					width: 20,
-					height: 20,
-					color: '#374151',
-				},
-				markerStart: ONE_CARDINALITY_MARKER_ID,
-			}));
+	const addToList = (map: Map<string, number[]>, key: string, index: number) => {
+		const existing = map.get(key) ?? [];
+		existing.push(index);
+		map.set(key, existing);
+	};
+
+	dictionary.schemas.forEach((schema) => {
+		if (!schema.restrictions?.foreignKey) return;
+
+		schema.restrictions.foreignKey.forEach((foreignKey) => {
+			const fkIndex = fkRestrictions.length;
+			const mappings: { localField: string; foreignField: string }[] = [];
+			const edgeIds: string[] = [];
+			const fieldKeys: string[] = [];
+			const localFieldKeys: string[] = [];
+			const foreignFieldKeys: string[] = [];
+
+			foreignKey.mappings.forEach((mapping) => {
+				const edgeId = `${schema.name}-${mapping.local}-to-${foreignKey.schema}-${mapping.foreign}`;
+				mappings.push({ localField: mapping.local, foreignField: mapping.foreign });
+				edgeIds.push(edgeId);
+
+				const localKey = `${schema.name}::${mapping.local}`;
+				const foreignKey_ = `${foreignKey.schema}::${mapping.foreign}`;
+				fieldKeys.push(localKey, foreignKey_);
+				localFieldKeys.push(localKey);
+				foreignFieldKeys.push(foreignKey_);
+				addToList(fieldKeyToFkIndices, localKey, fkIndex);
+				addToList(fieldKeyToFkIndices, foreignKey_, fkIndex);
+				addToList(localFieldKeyToFkIndices, localKey, fkIndex);
+				addToList(foreignFieldKeyToFkIndices, foreignKey_, fkIndex);
+			});
+
+			fkRestrictions.push({
+				localSchema: schema.name,
+				foreignSchema: foreignKey.schema,
+				mappings,
+				edgeIds,
+				fieldKeys,
+				localFieldKeys,
+				foreignFieldKeys,
+			});
 		});
 	});
+
+	return { fkRestrictions, localFieldKeyToFkIndices, foreignFieldKeyToFkIndices, fieldKeyToFkIndices };
+}
+
+/**
+ * Traces the full FK chain from a clicked edge or field, following parent links upward
+ * and child links downward to collect all connected edges and field keys.
+ *
+ * When `mappingIndex` is provided (edge click), only the specific mapping's edge and
+ * field pair are collected, and chains are traced through individual fields.
+ * When `mappingIndex` is omitted (field click), all mappings of the FK are collected.
+ *
+ * @param {number} fkIndex — The index into fkRestrictions for the clicked FK
+ * @param {RelationshipMap} map — The FK adjacency graph
+ * @param {number} [mappingIndex] — Optional index of the specific mapping within the FK
+ * @returns {{ edgeIds: Set<string>, fieldKeys: Set<string>, schemaChain: string[] }} All edges and fields in the chain
+ */
+export function traceChain(
+	fkIndex: number,
+	map: RelationshipMap,
+	mappingIndex?: number,
+): { edgeIds: Set<string>; fieldKeys: Set<string>; schemaChain: string[] } {
+	const edgeIds = new Set<string>();
+	const fieldKeys = new Set<string>();
+	const visitedEdges = new Set<string>();
+
+	if (fkIndex < 0 || fkIndex >= map.fkRestrictions.length) return { edgeIds, fieldKeys, schemaChain: [] };
+
+	const collectMapping = (fkIdx: number, mapIdx: number) => {
+		const fk = map.fkRestrictions[fkIdx];
+		const edgeId = fk.edgeIds[mapIdx];
+		if (!edgeId || visitedEdges.has(edgeId)) return;
+		visitedEdges.add(edgeId);
+		edgeIds.add(edgeId);
+
+		const mapping = fk.mappings[mapIdx];
+		const localKey = `${fk.localSchema}::${mapping.localField}`;
+		const foreignKey = `${fk.foreignSchema}::${mapping.foreignField}`;
+		fieldKeys.add(localKey);
+		fieldKeys.add(foreignKey);
+	};
+
+	const collectAllMappings = (fkIdx: number) => {
+		const fk = map.fkRestrictions[fkIdx];
+		for (let i = 0; i < fk.mappings.length; i++) {
+			collectMapping(fkIdx, i);
+		}
+	};
+
+	// Trace a single field key in a direction, finding which specific mapping in a connected FK uses that field
+	const traceFieldUp = (foreignFieldKey: string) => {
+		const indices = map.localFieldKeyToFkIndices.get(foreignFieldKey);
+		if (!indices) return;
+		for (const idx of indices) {
+			const fk = map.fkRestrictions[idx];
+			for (let i = 0; i < fk.mappings.length; i++) {
+				const localKey = `${fk.localSchema}::${fk.mappings[i].localField}`;
+				if (localKey === foreignFieldKey) {
+					const edgeId = fk.edgeIds[i];
+					if (!visitedEdges.has(edgeId)) {
+						collectMapping(idx, i);
+						const fKey = `${fk.foreignSchema}::${fk.mappings[i].foreignField}`;
+						traceFieldUp(fKey);
+					}
+				}
+			}
+		}
+	};
+
+	const traceFieldDown = (localFieldKey: string) => {
+		const indices = map.foreignFieldKeyToFkIndices.get(localFieldKey);
+		if (!indices) return;
+		for (const idx of indices) {
+			const fk = map.fkRestrictions[idx];
+			for (let i = 0; i < fk.mappings.length; i++) {
+				const foreignKey = `${fk.foreignSchema}::${fk.mappings[i].foreignField}`;
+				if (foreignKey === localFieldKey) {
+					const edgeId = fk.edgeIds[i];
+					if (!visitedEdges.has(edgeId)) {
+						collectMapping(idx, i);
+						const lKey = `${fk.localSchema}::${fk.mappings[i].localField}`;
+						traceFieldDown(lKey);
+					}
+				}
+			}
+		}
+	};
+
+	const clickedFk = map.fkRestrictions[fkIndex];
+
+	if (mappingIndex !== undefined) {
+		// Edge click: collect only the specific mapping, trace through individual fields
+		collectMapping(fkIndex, mappingIndex);
+		const mapping = clickedFk.mappings[mappingIndex];
+		const foreignKey = `${clickedFk.foreignSchema}::${mapping.foreignField}`;
+		const localKey = `${clickedFk.localSchema}::${mapping.localField}`;
+		traceFieldUp(foreignKey);
+		traceFieldDown(localKey);
+	} else {
+		// Field click: collect all mappings of the FK, trace through all fields
+		collectAllMappings(fkIndex);
+		for (const foreignFieldKey of clickedFk.foreignFieldKeys) {
+			traceFieldUp(foreignFieldKey);
+		}
+		for (const localFieldKey of clickedFk.localFieldKeys) {
+			traceFieldDown(localFieldKey);
+		}
+	}
+
+	const visitedFkIndices = new Set<number>();
+	for (const edgeId of visitedEdges) {
+		for (let i = 0; i < map.fkRestrictions.length; i++) {
+			if (map.fkRestrictions[i].edgeIds.includes(edgeId)) {
+				visitedFkIndices.add(i);
+			}
+		}
+	}
+	const schemaChain = buildSchemaChain(visitedFkIndices, map);
+
+	return { edgeIds, fieldKeys, schemaChain };
+}
+
+function buildSchemaChain(visitedFkIndices: Set<number>, map: RelationshipMap): string[] {
+	const schemas = new Set<string>();
+	for (const idx of visitedFkIndices) {
+		const fk = map.fkRestrictions[idx];
+		schemas.add(fk.foreignSchema);
+		schemas.add(fk.localSchema);
+	}
+	return Array.from(schemas);
+}
+
+/**
+ * Returns a new edges array with className set based on the active edge set.
+ * Active edges get 'edge-active', non-active edges get 'edge-inactive',
+ * and when no relationship is active all edges have no className.
+ */
+export function getEdgesWithHighlight(edges: Edge[], activeEdgeIds: Set<string> | null, activeColor?: string): Edge[] {
+	if (!activeEdgeIds) {
+		return edges.map((edge) => ({
+			...edge,
+			className: undefined,
+			markerStart: ONE_CARDINALITY_MARKER_ID,
+			markerEnd: { type: MarkerType.Arrow, width: 20, height: 20, color: '#374151' },
+		}));
+	}
+
+	return edges.map((edge) => {
+		const isActive = activeEdgeIds.has(edge.id);
+		return {
+			...edge,
+			className: isActive ? 'edge-active' : 'edge-inactive',
+			markerStart: isActive ? ONE_CARDINALITY_MARKER_ACTIVE_ID : ONE_CARDINALITY_MARKER_ID,
+			markerEnd: {
+				type: MarkerType.Arrow,
+				width: 20,
+				height: 20,
+				color: isActive ? (activeColor ?? '#374151') : '#374151',
+			},
+		};
+	});
+}
+
+/**
+ * Derives ReactFlow edges from the relationship map, attaching fkIndex to each edge's data
+ *
+ * @param {RelationshipMap} map — The FK adjacency graph built by buildRelationshipMap
+ * @returns {Edge[]} Array of ReactFlow edges representing foreign key relationships
+ */
+export function getEdgesFromMap(map: RelationshipMap): Edge[] {
+	return map.fkRestrictions.flatMap((fk, fkIndex) =>
+		fk.mappings.map((mapping, i) => ({
+			id: fk.edgeIds[i],
+			source: fk.foreignSchema,
+			sourceHandle: createFieldHandleId(fk.foreignSchema, mapping.foreignField, 'source'),
+			target: fk.localSchema,
+			targetHandle: createFieldHandleId(fk.localSchema, mapping.localField, 'target'),
+			type: 'smoothstep',
+			pathOptions: { offset: -20 },
+			data: { fkIndex, mappingIndex: i } satisfies RelationshipEdgeData,
+			markerEnd: { type: MarkerType.Arrow, width: 20, height: 20, color: '#374151' },
+			markerStart: ONE_CARDINALITY_MARKER_ID,
+		})),
+	);
 }
