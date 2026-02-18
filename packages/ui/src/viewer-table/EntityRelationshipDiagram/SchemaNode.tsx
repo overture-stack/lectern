@@ -40,13 +40,17 @@ import {
 	targetHandleStyles,
 } from '../../theme/emotion/schemaNodeStyles';
 import { createFieldHandleId } from './diagramUtils';
+import { useActiveRelationship } from './ActiveRelationshipContext';
 
 export function SchemaNode(props: { data: Schema }) {
 	const { data: schema } = props;
 	const theme = useThemeContext();
+	const { activateRelationship, isFieldInActiveRelationship, activeSchemaNames, relationshipMap } =
+		useActiveRelationship();
+	const isInactive = activeSchemaNames !== null && !activeSchemaNames.has(schema.name);
 
 	return (
-		<div css={nodeContainerStyles}>
+		<div css={nodeContainerStyles(isInactive)}>
 			<div css={nodeHeaderStyles(theme)}>
 				<span css={nodeTitleTextStyle}>{schema.name}</span>
 				<span css={nodeSubtitleTextStyle}>Schema</span>
@@ -61,9 +65,28 @@ export function SchemaNode(props: { data: Schema }) {
 						) || false;
 					const isEvenRow = index % 2 === 1;
 					const valueType = field.isArray ? `${field.valueType}[]` : field.valueType;
+					const isHighlighted = isFieldInActiveRelationship(schema.name, field.name);
+
+					const handleFieldClick =
+						isForeignKey ?
+							() => {
+								const fieldKey = `${schema.name}::${field.name}`;
+								const fkIndices = relationshipMap.fieldKeyToFkIndices.get(fieldKey);
+								if (fkIndices?.[0] !== undefined) {
+									const fkIndex = fkIndices[0];
+									const fk = relationshipMap.fkRestrictions[fkIndex];
+									const mappingIdx = fk.mappings.findIndex((m) => m.localField === field.name);
+									activateRelationship(fkIndex, mappingIdx !== -1 ? mappingIdx : undefined);
+								}
+							}
+						:	undefined;
 
 					return (
-						<div key={index} css={fieldRowStyles(theme, isForeignKey, isEvenRow)}>
+						<div
+							key={index}
+							css={fieldRowStyles(theme, isForeignKey, isEvenRow, isHighlighted)}
+							onClick={handleFieldClick}
+						>
 							<div css={fieldContentStyles}>
 								<span css={fieldNameStyles(theme)}>{field.name}</span>
 							</div>
