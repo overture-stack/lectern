@@ -21,24 +21,48 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
+import { useMemo } from 'react';
 
-import { EntityRelationshipDiagram } from '../../src/viewer-table/EntityRelationshipDiagram';
-import DictionarySample from '../fixtures/pcgl.json';
-import SimpleERDiagram from '../fixtures/simpleERDiagram.json';
-import themeDecorator from '../themeDecorator';
 import React from 'react';
+import {
+	ActiveRelationshipProvider,
+	buildRelationshipMap,
+	EntityRelationshipDiagramContent,
+} from '../../src/viewer-table/EntityRelationshipDiagram';
+import DictionarySample from '../fixtures/pcgl.json';
+import SimpleClinicalERDiagram from '../fixtures/simpleClinicalERDiagram.json';
+import SingleSchemaFixture from '../fixtures/singleSchema.json';
+import TwoIsolatedSchemasFixture from '../fixtures/twoIsolatedSchemas.json';
+import TwoSchemaLinearFixture from '../fixtures/twoSchemaLinear.json';
+import ThreeSchemaChainFixture from '../fixtures/threeSchemaChain.json';
+import MultiFkFixture from '../fixtures/multiFk.json';
+import FanOutFixture from '../fixtures/fanOut.json';
+import MixedRelationsFixture from '../fixtures/mixedRelations.json';
+import CompoundKeyFixture from '../fixtures/compoundKey.json';
+import CyclicalFixture from '../fixtures/cyclical.json';
+import InvalidUniqueKeyFixture from '../fixtures/invalid_uniquekey.json';
+import themeDecorator from '../themeDecorator';
 
 const meta = {
-	component: EntityRelationshipDiagram,
+	component: EntityRelationshipDiagramContent,
 	title: 'Viewer - Table/Entity Relationship Diagram',
 	decorators: [themeDecorator()],
 	parameters: {
 		layout: 'fullscreen',
 	},
-} satisfies Meta<typeof EntityRelationshipDiagram>;
+} satisfies Meta<typeof EntityRelationshipDiagramContent>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+const StoryWrapper = ({ dictionary }: { dictionary: Dictionary }) => {
+	const relationshipMap = useMemo(() => buildRelationshipMap(dictionary), [dictionary]);
+	return (
+		<ActiveRelationshipProvider relationshipMap={relationshipMap}>
+			<EntityRelationshipDiagramContent dictionary={dictionary} />
+		</ActiveRelationshipProvider>
+	);
+};
 
 export const Default: Story = {
 	args: {
@@ -46,7 +70,128 @@ export const Default: Story = {
 	},
 	render: (args) => (
 		<div style={{ width: '100%', height: '100vh' }}>
-			<EntityRelationshipDiagram {...args} />
+			<StoryWrapper dictionary={args.dictionary} />
+		</div>
+	),
+};
+
+export const SimpleClinicalExample: Story = {
+	args: {
+		dictionary: SimpleClinicalERDiagram as Dictionary,
+	},
+	render: (args) => (
+		<div style={{ width: '100%', height: '100vh' }}>
+			<StoryWrapper dictionary={args.dictionary} />
+		</div>
+	),
+};
+
+export const SingleSchema: Story = {
+	args: {
+		dictionary: SingleSchemaFixture as Dictionary,
+	},
+	render: (args) => (
+		<div style={{ width: '100%', height: '100vh' }}>
+			<StoryWrapper dictionary={args.dictionary} />
+		</div>
+	),
+};
+
+export const TwoIsolatedSchemas: Story = {
+	args: {
+		dictionary: TwoIsolatedSchemasFixture as Dictionary,
+	},
+	render: (args) => (
+		<div style={{ width: '100%', height: '100vh' }}>
+			<StoryWrapper dictionary={args.dictionary} />
+		</div>
+	),
+};
+
+export const TwoSchemaLinear: Story = {
+	args: {
+		dictionary: TwoSchemaLinearFixture as Dictionary,
+	},
+	render: (args) => (
+		<div style={{ width: '100%', height: '100vh' }}>
+			<StoryWrapper dictionary={args.dictionary} />
+		</div>
+	),
+};
+
+export const ThreeSchemaChain: Story = {
+	args: {
+		dictionary: ThreeSchemaChainFixture as Dictionary,
+	},
+	render: (args) => (
+		<div style={{ width: '100%', height: '100vh' }}>
+			<StoryWrapper dictionary={args.dictionary} />
+		</div>
+	),
+};
+
+export const MultiFk: Story = {
+	args: {
+		dictionary: MultiFkFixture as Dictionary,
+	},
+	render: (args) => (
+		<div style={{ width: '100%', height: '100vh' }}>
+			<StoryWrapper dictionary={args.dictionary} />
+		</div>
+	),
+};
+
+export const FanOut: Story = {
+	args: {
+		dictionary: FanOutFixture as Dictionary,
+	},
+	render: (args) => (
+		<div style={{ width: '100%', height: '100vh' }}>
+			<StoryWrapper dictionary={args.dictionary} />
+		</div>
+	),
+};
+
+export const MixedRelations: Story = {
+	args: {
+		dictionary: MixedRelationsFixture as Dictionary,
+	},
+	render: (args) => (
+		<div style={{ width: '100%', height: '100vh' }}>
+			<StoryWrapper dictionary={args.dictionary} />
+		</div>
+	),
+};
+
+export const CompoundKey: Story = {
+	args: {
+		dictionary: CompoundKeyFixture as Dictionary,
+	},
+	render: (args) => (
+		<div style={{ width: '100%', height: '100vh' }}>
+			<StoryWrapper dictionary={args.dictionary} />
+		</div>
+	),
+};
+
+export const Cyclical: Story = {
+	args: {
+		dictionary: CyclicalFixture as Dictionary,
+	},
+	render: (args) => (
+		<div style={{ width: '100%', height: '100vh' }}>
+			<StoryWrapper dictionary={args.dictionary} />
+		</div>
+	),
+};
+
+export const NonUniqueForeignKey: Story = {
+	args: {
+		dictionary: InvalidUniqueKeyFixture as Dictionary,
+	},
+	render: (args) => (
+		<div style={{ width: '100%', height: '100vh' }}>
+			<StoryWrapper dictionary={args.dictionary} />
 		</div>
 	),
 };

@@ -1,0 +1,193 @@
+{
+	"name": "Simple ER Diagram Example",
+	"version": "1.0",
+	"description": "A simplified clinical data model demonstrating entity relationships",
+	"schemas": [
+		{
+			"name": "Participant",
+			"description": "Study participants",
+			"fields": [
+				{
+					"name": "participant_id",
+					"description": "Unique identifier for the participant",
+					"valueType": "string",
+					"unique": true,
+					"restrictions": { "required": true }
+				},
+				{
+					"name": "duo_modifier",
+					"description": "Data Use Ontology modifier",
+					"valueType": "string"
+				},
+				{
+					"name": "treatment_id",
+					"description": "Reference to treatment",
+					"valueType": "string",
+					"unique": true
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["participant_id"]
+			}
+		},
+		{
+			"name": "Diagnosis",
+			"description": "Medical diagnoses for participants",
+			"fields": [
+				{
+					"name": "diagnosis_id",
+					"description": "Unique identifier for the diagnosis",
+					"valueType": "string",
+					"unique": true,
+					"restrictions": { "required": true }
+				},
+				{
+					"name": "participant_id",
+					"description": "Reference to participant",
+					"valueType": "string",
+					"unique": true,
+					"restrictions": { "required": true }
+				},
+				{
+					"name": "primary_site",
+					"description": "Primary site of disease",
+					"valueType": "string"
+				},
+				{
+					"name": "age_at_diagnosis",
+					"description": "Age at time of diagnosis",
+					"valueType": "integer"
+				},
+				{
+					"name": "cancer_type",
+					"description": "Type of cancer diagnosed",
+					"valueType": "string"
+				},
+				{
+					"name": "staging system",
+					"description": "Cancer staging system used",
+					"valueType": "string"
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["diagnosis_id"],
+				"foreignKey": [
+					{
+						"schema": "Participant",
+						"mappings": [
+							{
+								"local": "participant_id",
+								"foreign": "participant_id"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"name": "Sequencing",
+			"description": "Sequencing data related to treatments",
+			"fields": [
+				{
+					"name": "participant_id",
+					"description": "Reference to participant",
+					"valueType": "string",
+					"unique": true,
+					"restrictions": { "required": true }
+				},
+				{
+					"name": "treatment_id",
+					"description": "Unique treatment identifier",
+					"valueType": "string",
+					"unique": true,
+					"restrictions": { "required": true }
+				},
+				{
+					"name": "treatment_type",
+					"description": "Type of treatment administered",
+					"valueType": "string"
+				},
+				{
+					"name": "treatment_start",
+					"description": "Start day of treatment",
+					"valueType": "integer"
+				},
+				{
+					"name": "treatment_duration",
+					"description": "Duration of treatment in days",
+					"valueType": "integer"
+				},
+				{
+					"name": "treatment_response",
+					"description": "Response to treatment",
+					"valueType": "string"
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["treatment_id"],
+				"foreignKey": [
+					{
+						"schema": "Participant",
+						"mappings": [
+							{
+								"local": "participant_id",
+								"foreign": "participant_id"
+							}
+						]
+					},
+					{
+						"schema": "Participant",
+						"mappings": [
+							{
+								"local": "treatment_id"	,
+								"foreign": "treatment_id"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"name": "Followup",
+			"description": "Follow-up records for treatments",
+			"fields": [
+				{
+					"name": "treatment_id",
+					"description": "Reference to treatment",
+					"valueType": "string",
+					"unique": true,
+					"restrictions": { "required": true }
+				},
+				{
+					"name": "followup_id",
+					"description": "Unique follow-up identifier",
+					"valueType": "string"
+				},
+				{
+					"name": "followup_interval",
+					"description": "Days since treatment started",
+					"valueType": "integer"
+				},
+				{
+					"name": "disease status",
+					"description": "Current disease status",
+					"valueType": "string"
+				}
+			],
+			"restrictions": {
+				"uniqueKey": ["treatment_id"],
+				"foreignKey": [
+					{
+						"schema": "Sequencing",
+						"mappings": [
+							{
+								"local": "treatment_id",
+								"foreign": "treatment_id"
+							}
+						]
+					}
+				]
+			}
+		}
+	]
+}

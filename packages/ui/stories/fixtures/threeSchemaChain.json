@@ -1,0 +1,54 @@
+{
+	"name": "three_schema_chain",
+	"version": "1.0",
+	"description": "Three schemas forming a linear FK chain",
+	"schemas": [
+		{
+			"name": "participant",
+			"description": "Study participants",
+			"fields": [
+				{ "name": "participant_id", "valueType": "string", "unique": true },
+				{ "name": "age", "valueType": "integer" }
+			],
+			"restrictions": {
+				"uniqueKey": ["participant_id"]
+			}
+		},
+		{
+			"name": "diagnosis",
+			"description": "Diagnoses linked to participants",
+			"fields": [
+				{ "name": "diagnosis_id", "valueType": "string", "unique": true },
+				{ "name": "participant_id", "valueType": "string" },
+				{ "name": "disease_code", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["diagnosis_id"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [{ "local": "participant_id", "foreign": "participant_id" }]
+					}
+				]
+			}
+		},
+		{
+			"name": "treatment",
+			"description": "Treatments linked to diagnoses",
+			"fields": [
+				{ "name": "treatment_id", "valueType": "string", "unique": true },
+				{ "name": "diagnosis_id", "valueType": "string" },
+				{ "name": "treatment_type", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["treatment_id"],
+				"foreignKey": [
+					{
+						"schema": "diagnosis",
+						"mappings": [{ "local": "diagnosis_id", "foreign": "diagnosis_id" }]
+					}
+				]
+			}
+		}
+	]
+}
