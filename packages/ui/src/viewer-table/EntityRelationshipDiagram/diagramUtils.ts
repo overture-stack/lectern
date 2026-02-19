@@ -87,7 +87,6 @@ export function getEdgesForDictionary(dictionary: Dictionary): Edge[] {
 				target: schema.name,
 				targetHandle: createFieldHandleId(schema.name, mapping.local, 'target'),
 				type: 'smoothstep',
-				style: { stroke: '#374151', strokeWidth: 2 },
 				pathOptions: {
 					offset: -20,
 				},
