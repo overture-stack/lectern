@@ -52,7 +52,7 @@ type FkRestrictionInfo = {
 	foreignFieldKeys: string[];
 };
 
-export type RelationshipEdgeData = { fkIndex: number; mappingIndex: number };
+export type RelationshipEdgeData = { fkIndex: number };
 
 export type RelationshipMap = {
 	fkRestrictions: FkRestrictionInfo[];
@@ -151,131 +151,74 @@ export function buildRelationshipMap(dictionary: Dictionary): RelationshipMap {
 }
 
 /**
- * Traces the full FK chain from a clicked edge or field, following parent links upward
+ * Traces the full FK chain from a clicked edge, following parent links upward
  * and child links downward to collect all connected edges and field keys.
- *
- * When `mappingIndex` is provided (edge click), only the specific mapping's edge and
- * field pair are collected, and chains are traced through individual fields.
- * When `mappingIndex` is omitted (field click), all mappings of the FK are collected.
  *
  * @param {number} fkIndex — The index into fkRestrictions for the clicked FK
  * @param {RelationshipMap} map — The FK adjacency graph
- * @param {number} [mappingIndex] — Optional index of the specific mapping within the FK
- * @returns {{ edgeIds: Set<string>, fieldKeys: Set<string>, schemaChain: string[] }} All edges and fields in the chain
+ * @returns {{ edgeIds: Set<string>, fieldKeys: Set<string>, schemaChain: string[] }} All edges, fields, and schema names in the chain
  */
 export function traceChain(
 	fkIndex: number,
 	map: RelationshipMap,
-	mappingIndex?: number,
 ): { edgeIds: Set<string>; fieldKeys: Set<string>; schemaChain: string[] } {
 	const edgeIds = new Set<string>();
 	const fieldKeys = new Set<string>();
-	const visitedEdges = new Set<string>();
+	const visitedFkIndices = new Set<number>();
 
 	if (fkIndex < 0 || fkIndex >= map.fkRestrictions.length) return { edgeIds, fieldKeys, schemaChain: [] };
 
-	const collectMapping = (fkIdx: number, mapIdx: number) => {
-		const fk = map.fkRestrictions[fkIdx];
-		const edgeId = fk.edgeIds[mapIdx];
-		if (!edgeId || visitedEdges.has(edgeId)) return;
-		visitedEdges.add(edgeId);
-		edgeIds.add(edgeId);
-
-		const mapping = fk.mappings[mapIdx];
-		const localKey = `${fk.localSchema}::${mapping.localField}`;
-		const foreignKey = `${fk.foreignSchema}::${mapping.foreignField}`;
-		fieldKeys.add(localKey);
-		fieldKeys.add(foreignKey);
+	const collectFk = (index: number) => {
+		if (visitedFkIndices.has(index)) return;
+		visitedFkIndices.add(index);
+		const fk = map.fkRestrictions[index];
+		fk.edgeIds.forEach((id) => edgeIds.add(id));
+		fk.fieldKeys.forEach((key) => fieldKeys.add(key));
 	};
 
-	const collectAllMappings = (fkIdx: number) => {
-		const fk = map.fkRestrictions[fkIdx];
-		for (let i = 0; i < fk.mappings.length; i++) {
-			collectMapping(fkIdx, i);
-		}
-	};
-
-	// Trace a single field key in a direction, finding which specific mapping in a connected FK uses that field
-	const traceFieldUp = (foreignFieldKey: string) => {
-		const indices = map.localFieldKeyToFkIndices.get(foreignFieldKey);
-		if (!indices) return;
-		for (const idx of indices) {
-			const fk = map.fkRestrictions[idx];
-			for (let i = 0; i < fk.mappings.length; i++) {
-				const localKey = `${fk.localSchema}::${fk.mappings[i].localField}`;
-				if (localKey === foreignFieldKey) {
-					const edgeId = fk.edgeIds[i];
-					if (!visitedEdges.has(edgeId)) {
-						collectMapping(idx, i);
-						const fKey = `${fk.foreignSchema}::${fk.mappings[i].foreignField}`;
-						traceFieldUp(fKey);
-					}
-				}
-			}
-		}
-	};
-
-	const traceFieldDown = (localFieldKey: string) => {
-		const indices = map.foreignFieldKeyToFkIndices.get(localFieldKey);
-		if (!indices) return;
-		for (const idx of indices) {
-			const fk = map.fkRestrictions[idx];
-			for (let i = 0; i < fk.mappings.length; i++) {
-				const foreignKey = `${fk.foreignSchema}::${fk.mappings[i].foreignField}`;
-				if (foreignKey === localFieldKey) {
-					const edgeId = fk.edgeIds[i];
-					if (!visitedEdges.has(edgeId)) {
-						collectMapping(idx, i);
-						const lKey = `${fk.localSchema}::${fk.mappings[i].localField}`;
-						traceFieldDown(lKey);
-					}
-				}
-			}
-		}
-	};
+	collectFk(fkIndex);
 
 	const clickedFk = map.fkRestrictions[fkIndex];
 
-	if (mappingIndex !== undefined) {
-		// Edge click: collect only the specific mapping, trace through individual fields
-		collectMapping(fkIndex, mappingIndex);
-		const mapping = clickedFk.mappings[mappingIndex];
-		const foreignKey = `${clickedFk.foreignSchema}::${mapping.foreignField}`;
-		const localKey = `${clickedFk.localSchema}::${mapping.localField}`;
-		traceFieldUp(foreignKey);
-		traceFieldDown(localKey);
-	} else {
-		// Field click: collect all mappings of the FK, trace through all fields
-		collectAllMappings(fkIndex);
-		for (const foreignFieldKey of clickedFk.foreignFieldKeys) {
-			traceFieldUp(foreignFieldKey);
-		}
-		for (const localFieldKey of clickedFk.localFieldKeys) {
-			traceFieldDown(localFieldKey);
-		}
-	}
-
-	const visitedFkIndices = new Set<number>();
-	for (const edgeId of visitedEdges) {
-		for (let i = 0; i < map.fkRestrictions.length; i++) {
-			if (map.fkRestrictions[i].edgeIds.includes(edgeId)) {
-				visitedFkIndices.add(i);
+	// Trace UP: from foreign field keys, find FK restrictions where that field is the local side (parent's own FKs)
+	const traceUp = (fk: FkRestrictionInfo) => {
+		for (const foreignFieldKey of fk.foreignFieldKeys) {
+			const indices = map.localFieldKeyToFkIndices.get(foreignFieldKey);
+			if (!indices) continue;
+			for (const idx of indices) {
+				if (!visitedFkIndices.has(idx)) {
+					collectFk(idx);
+					traceUp(map.fkRestrictions[idx]);
+				}
 			}
 		}
-	}
-	const schemaChain = buildSchemaChain(visitedFkIndices, map);
+	};
 
-	return { edgeIds, fieldKeys, schemaChain };
-}
+	// Trace DOWN: from local field keys, find FK restrictions where that field is the foreign side (children pointing here)
+	const traceDown = (fk: FkRestrictionInfo) => {
+		for (const localFieldKey of fk.localFieldKeys) {
+			const indices = map.foreignFieldKeyToFkIndices.get(localFieldKey);
+			if (!indices) continue;
+			for (const idx of indices) {
+				if (!visitedFkIndices.has(idx)) {
+					collectFk(idx);
+					traceDown(map.fkRestrictions[idx]);
+				}
+			}
+		}
+	};
 
-function buildSchemaChain(visitedFkIndices: Set<number>, map: RelationshipMap): string[] {
-	const schemas = new Set<string>();
+	traceUp(clickedFk);
+	traceDown(clickedFk);
+
+	const schemaNames = new Set<string>();
 	for (const idx of visitedFkIndices) {
 		const fk = map.fkRestrictions[idx];
-		schemas.add(fk.foreignSchema);
-		schemas.add(fk.localSchema);
+		schemaNames.add(fk.localSchema);
+		schemaNames.add(fk.foreignSchema);
 	}
-	return Array.from(schemas);
+
+	return { edgeIds, fieldKeys, schemaChain: Array.from(schemaNames) };
 }
 
 /**
@@ -325,7 +268,7 @@ export function getEdgesFromMap(map: RelationshipMap): Edge[] {
 			targetHandle: createFieldHandleId(fk.localSchema, mapping.localField, 'target'),
 			type: 'smoothstep',
 			pathOptions: { offset: -20 },
-			data: { fkIndex, mappingIndex: i } satisfies RelationshipEdgeData,
+			data: { fkIndex } satisfies RelationshipEdgeData,
 			markerEnd: { type: MarkerType.Arrow, width: 20, height: 20, color: '#374151' },
 			markerStart: ONE_CARDINALITY_MARKER_ID,
 		})),

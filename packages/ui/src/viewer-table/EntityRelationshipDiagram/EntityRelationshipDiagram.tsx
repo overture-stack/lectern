@@ -54,7 +54,7 @@ type EntityRelationshipDiagramProps = {
 	layout?: Partial<SchemaNodeLayout>;
 };
 
-const edgeStyles = (theme: Theme) => css`
+const edgeHoverStyles = (theme: Theme) => css`
 	.react-flow__edge {
 		cursor: pointer;
 	}
@@ -76,7 +76,7 @@ const edgeStyles = (theme: Theme) => css`
 		stroke-width: 1.5;
 		opacity: 0.9;
 	}
-		
+
 	.react-flow__edge.edge-inactive .react-flow__edge-path:hover {
 		stroke: ${theme.colors.grey_4};
 	}
@@ -106,7 +106,7 @@ export function EntityRelationshipDiagramContent({ dictionary, layout }: EntityR
 		(_event: React.MouseEvent, edge: Edge) => {
 			const edgeData = edge.data as RelationshipEdgeData | undefined;
 			if (edgeData?.fkIndex !== undefined) {
-				activateRelationship(edgeData.fkIndex, edgeData.mappingIndex);
+				activateRelationship(edgeData.fkIndex);
 			}
 		},
 		[activateRelationship],
@@ -119,7 +119,7 @@ export function EntityRelationshipDiagramContent({ dictionary, layout }: EntityR
 	return (
 		<>
 			<OneCardinalityMarker activeColor={theme.colors.secondary_dark} />
-			<div css={edgeStyles(theme)} style={{ width: '100%', height: '100%' }}>
+			<div css={edgeHoverStyles(theme)} style={{ width: '100%', height: '100%' }}>
 				<ReactFlow
 					nodes={nodes}
 					edges={edges}

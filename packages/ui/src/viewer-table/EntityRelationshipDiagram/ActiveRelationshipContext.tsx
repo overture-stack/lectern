@@ -33,7 +33,7 @@ type ActiveRelationshipContextValue = {
 	activeFieldKeys: Set<string> | null;
 	activeSchemaNames: Set<string> | null;
 	activeSchemaChain: string[] | null;
-	activateRelationship: (fkIndex: number, mappingIndex?: number) => void;
+	activateRelationship: (fkIndex: number) => void;
 	deactivateRelationship: () => void;
 	relationshipMap: RelationshipMap;
 	isFieldInActiveRelationship: (schemaName: string, fieldName: string) => boolean;
@@ -58,8 +58,8 @@ export function ActiveRelationshipProvider({ relationshipMap, children }: Active
 	const [activeState, setActiveState] = useState<ActiveRelationshipState>(null);
 
 	const activateRelationship = useCallback(
-		(fkIndex: number, mappingIndex?: number) => {
-			const result = traceChain(fkIndex, relationshipMap, mappingIndex);
+		(fkIndex: number) => {
+			const result = traceChain(fkIndex, relationshipMap);
 			setActiveState(result);
 		},
 		[relationshipMap],

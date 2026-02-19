@@ -73,10 +73,7 @@ export function SchemaNode(props: { data: Schema }) {
 								const fieldKey = `${schema.name}::${field.name}`;
 								const fkIndices = relationshipMap.fieldKeyToFkIndices.get(fieldKey);
 								if (fkIndices?.[0] !== undefined) {
-									const fkIndex = fkIndices[0];
-									const fk = relationshipMap.fkRestrictions[fkIndex];
-									const mappingIdx = fk.mappings.findIndex((m) => m.localField === field.name);
-									activateRelationship(fkIndex, mappingIdx !== -1 ? mappingIdx : undefined);
+									activateRelationship(fkIndices[0]);
 								}
 							}
 						:	undefined;
