@@ -246,6 +246,7 @@ export function getEdgesWithHighlight(edges: Edge[], activeEdgeIds: Set<string> 
 				type: MarkerType.Arrow,
 				width: 20,
 				height: 20,
+				
 				color: isActive ? (activeColor ?? '#374151') : '#374151',
 			},
 		};
