@@ -22,22 +22,36 @@
 import { css } from '@emotion/react';
 import type { Theme } from '../';
 
-export const fieldRowStyles = (theme: Theme, isForeignKey: boolean, isEven: boolean, isHighlighted: boolean = false) => css`
-	padding: 12px 12px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	transition: background-color 0.2s;
-	position: relative;
-	background-color: ${isHighlighted ? theme.colors.secondary_1 : isEven ? theme.colors.accent_1 : 'transparent'};
-	border-block: 1.5px solid ${isHighlighted ? theme.colors.secondary_dark : isEven ? theme.colors.accent_2 : 'transparent'};
-	${isForeignKey ? 'cursor: pointer;' : ''}
-
-	&:hover {
+export const fieldRowStyles = (theme: Theme, isForeignKey: boolean, isHighlighted: boolean = false) => {
+	const hoverText = css`
 		background-color: ${isForeignKey ? theme.colors.secondary_1 : theme.colors.grey_3};
 		border-block: 1.5px solid ${isForeignKey ? theme.colors.secondary_dark : theme.colors.grey_4};
-	}
-`;
+	`;
+
+	return css`
+		padding: 12px 12px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		transition: background-color 0.2s;
+		position: relative;
+		border-block: 1.5px solid ${isHighlighted ? theme.colors.secondary_dark : 'transparent'};
+		${isForeignKey ? 'cursor: pointer;' : ''}
+
+		&:hover {
+			${hoverText}
+		}
+
+		&:nth-child(even) {
+			background-color: ${theme.colors.accent_1};
+			border-block: 1.5px solid ${theme.colors.accent_2};
+		}
+
+		&:nth-child(even):hover {
+			${hoverText}
+		}
+	`;
+};
 
 export const fieldContentStyles = css`
 	display: flex;
