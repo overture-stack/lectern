@@ -26,7 +26,7 @@ type ActiveRelationshipState = {
 	edgeIds: Set<string>;
 	fieldKeys: Set<string>;
 	schemaChain: string[];
-} | null;
+};
 
 type ActiveRelationshipContextValue = {
 	activeEdgeIds: Set<string> | null;
