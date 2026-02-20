@@ -63,7 +63,6 @@ export function SchemaNode(props: { data: Schema }) {
 						schema.restrictions?.foreignKey?.some((fk) =>
 							fk.mappings.some((mapping) => mapping.local === field.name),
 						) || false;
-					const isEvenRow = index % 2 === 1;
 					const valueType = field.isArray ? `${field.valueType}[]` : field.valueType;
 					const isHighlighted = isFieldInActiveRelationship(schema.name, field.name);
 
@@ -81,7 +80,7 @@ export function SchemaNode(props: { data: Schema }) {
 					return (
 						<div
 							key={index}
-							css={fieldRowStyles(theme, isForeignKey, isEvenRow, isHighlighted)}
+							css={fieldRowStyles(theme, isForeignKey, isHighlighted)}
 							onClick={handleFieldClick}
 						>
 							<div css={fieldContentStyles}>
