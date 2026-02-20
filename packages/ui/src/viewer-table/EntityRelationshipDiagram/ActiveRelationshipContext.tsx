@@ -71,18 +71,24 @@ export function ActiveRelationshipProvider({ relationshipMap, children }: Active
 
 	const isFieldInActiveRelationship = useCallback(
 		(schemaName: string, fieldName: string): boolean => {
-			if (!activeState) return false;
+			if (!activeState) {
+				return false;
+			}
 			return activeState.fieldKeys.has(`${schemaName}::${fieldName}`);
 		},
 		[activeState],
 	);
 
 	const activeSchemaNames = useMemo(() => {
-		if (!activeState) return null;
+		if (!activeState) {
+			return undefined;
+		}
 		const names = new Set<string>();
 		for (const key of activeState.fieldKeys) {
 			const schemaName = key.split('::')[0];
-			if (schemaName) names.add(schemaName);
+			if (schemaName) {
+				names.add(schemaName);
+			}
 		}
 		return names;
 	}, [activeState]);

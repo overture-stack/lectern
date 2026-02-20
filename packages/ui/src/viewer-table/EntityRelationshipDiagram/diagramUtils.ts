@@ -109,8 +109,9 @@ export function buildRelationshipMap(dictionary: Dictionary): RelationshipMap {
 	};
 
 	dictionary.schemas.forEach((schema) => {
-		if (!schema.restrictions?.foreignKey) return;
-
+		if (!schema.restrictions?.foreignKey) {
+			return;
+		}
 		schema.restrictions.foreignKey.forEach((foreignKey) => {
 			const fkIndex = fkRestrictions.length;
 			const mappings: { localField: string; foreignField: string }[] = [];
@@ -166,9 +167,12 @@ export function traceChain(
 	const fieldKeys = new Set<string>();
 	const visitedFkIndices = new Set<number>();
 
-	if (fkIndex < 0 || fkIndex >= map.fkRestrictions.length) return { edgeIds, fieldKeys, schemaChain: [] };
+	if (chainStartingIndex < 0 || chainStartingIndex >= map.fkRestrictions.length) {
+		return { edgeIds, fieldKeys, schemaChain: [] };
+	}
 
-	const collectFk = (index: number) => {
+	// Visit FK: Marks an FK restriction as visited and collects its edge IDs and field keys into the outer accumulators
+	const visitFk = (index: number) => {
 		if (visitedFkIndices.has(index)) return;
 		visitedFkIndices.add(index);
 		const fk = map.fkRestrictions[index];
@@ -184,7 +188,9 @@ export function traceChain(
 	const traceUp = (fk: FkRestrictionInfo) => {
 		for (const foreignFieldKey of fk.foreignFieldKeys) {
 			const indices = map.localFieldKeyToFkIndices.get(foreignFieldKey);
-			if (!indices) continue;
+			if (!indices) {
+				continue;
+			}
 			for (const idx of indices) {
 				if (!visitedFkIndices.has(idx)) {
 					collectFk(idx);
@@ -198,7 +204,9 @@ export function traceChain(
 	const traceDown = (fk: FkRestrictionInfo) => {
 		for (const localFieldKey of fk.localFieldKeys) {
 			const indices = map.foreignFieldKeyToFkIndices.get(localFieldKey);
-			if (!indices) continue;
+			if (!indices) {
+				continue;
+			}
 			for (const idx of indices) {
 				if (!visitedFkIndices.has(idx)) {
 					collectFk(idx);
