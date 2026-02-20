@@ -58,8 +58,8 @@ export function ActiveRelationshipProvider({ relationshipMap, children }: Active
 	const [activeState, setActiveState] = useState<ActiveRelationshipState | null>(null);
 
 	const activateRelationship = useCallback(
-		(fkIndex: number) => {
-			const result = traceChain(fkIndex, relationshipMap);
+		(chainStartingIndex: number) => {
+			const result = traceChain(chainStartingIndex, relationshipMap);
 			setActiveState(result);
 		},
 		[relationshipMap],

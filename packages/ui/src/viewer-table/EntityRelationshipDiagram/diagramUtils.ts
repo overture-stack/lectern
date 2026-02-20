@@ -152,15 +152,15 @@ export function buildRelationshipMap(dictionary: Dictionary): RelationshipMap {
 }
 
 /**
- * Traces the full FK chain from a clicked edge, following parent links upward
+ * Traces the full FK chain from a starting edge, following parent links upward
  * and child links downward to collect all connected edges and field keys.
  *
- * @param {number} fkIndex — The index into fkRestrictions for the clicked FK
+ * @param {number} chainStartingIndex — The index into fkRestrictions for the FK that initiates the chain traversal
  * @param {RelationshipMap} map — The FK adjacency graph
  * @returns {{ edgeIds: Set<string>, fieldKeys: Set<string>, schemaChain: string[] }} All edges, fields, and schema names in the chain
  */
 export function traceChain(
-	fkIndex: number,
+	chainStartingIndex: number,
 	map: RelationshipMap,
 ): { edgeIds: Set<string>; fieldKeys: Set<string>; schemaChain: string[] } {
 	const edgeIds = new Set<string>();
@@ -173,16 +173,18 @@ export function traceChain(
 
 	// Visit FK: Marks an FK restriction as visited and collects its edge IDs and field keys into the outer accumulators
 	const visitFk = (index: number) => {
-		if (visitedFkIndices.has(index)) return;
+		if (visitedFkIndices.has(index)) {
+			return;
+		}
 		visitedFkIndices.add(index);
 		const fk = map.fkRestrictions[index];
 		fk.edgeIds.forEach((id) => edgeIds.add(id));
 		fk.fieldKeys.forEach((key) => fieldKeys.add(key));
 	};
 
-	collectFk(fkIndex);
+	visitFk(chainStartingIndex);
 
-	const clickedFk = map.fkRestrictions[fkIndex];
+	const chainStartingFk = map.fkRestrictions[chainStartingIndex];
 
 	// Trace UP: from foreign field keys, find FK restrictions where that field is the local side (parent's own FKs)
 	const traceUp = (fk: FkRestrictionInfo) => {
@@ -193,7 +195,7 @@ export function traceChain(
 			}
 			for (const idx of indices) {
 				if (!visitedFkIndices.has(idx)) {
-					collectFk(idx);
+					visitFk(idx);
 					traceUp(map.fkRestrictions[idx]);
 				}
 			}
@@ -209,15 +211,15 @@ export function traceChain(
 			}
 			for (const idx of indices) {
 				if (!visitedFkIndices.has(idx)) {
-					collectFk(idx);
+					visitFk(idx);
 					traceDown(map.fkRestrictions[idx]);
 				}
 			}
 		}
 	};
 
-	traceUp(clickedFk);
-	traceDown(clickedFk);
+	traceUp(chainStartingFk);
+	traceDown(chainStartingFk);
 
 	const schemaNames = new Set<string>();
 	for (const idx of visitedFkIndices) {
