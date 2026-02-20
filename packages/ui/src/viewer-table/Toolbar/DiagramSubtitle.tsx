@@ -75,7 +75,7 @@ const DiagramSubtitle = () => {
 	}
 
 	return (
-		<div>
+		<>
 			<div css={chainRowStyle}>
 				<span css={chainLabelStyle}>Highlighting schema relation:</span>
 				{activeSchemaChain.map((schema, index) => (
@@ -90,7 +90,7 @@ const DiagramSubtitle = () => {
 					Clear Highlight
 				</button>
 			</div>
-		</div>
+		</>
 	);
 };
 
