@@ -29,11 +29,11 @@ type ActiveRelationshipState = {
 };
 
 type ActiveRelationshipContextValue = {
-	activeEdgeIds: Set<string> | null;
-	activeFieldKeys: Set<string> | null;
-	activeSchemaNames: Set<string> | null;
-	activeSchemaChain: string[] | null;
-	activateRelationship: (fkIndex: number) => void;
+	activeEdgeIds?: Set<string>;
+	activeFieldKeys?: Set<string>;
+	activeSchemaNames?: Set<string>;
+	activeSchemaChain?: string[];
+	activateRelationship: (chainStartingIndex: number) => void;
 	deactivateRelationship: () => void;
 	relationshipMap: RelationshipMap;
 	isFieldInActiveRelationship: (schemaName: string, fieldName: string) => boolean;
@@ -55,7 +55,7 @@ type ActiveRelationshipProviderProps = {
  * @param {ReactNode} children — Child components that can consume the active relationship context
  */
 export function ActiveRelationshipProvider({ relationshipMap, children }: ActiveRelationshipProviderProps) {
-	const [activeState, setActiveState] = useState<ActiveRelationshipState>(null);
+	const [activeState, setActiveState] = useState<ActiveRelationshipState | null>(null);
 
 	const activateRelationship = useCallback(
 		(fkIndex: number) => {
@@ -90,10 +90,10 @@ export function ActiveRelationshipProvider({ relationshipMap, children }: Active
 	return (
 		<ActiveRelationshipContext.Provider
 			value={{
-				activeEdgeIds: activeState?.edgeIds ?? null,
-				activeFieldKeys: activeState?.fieldKeys ?? null,
+				activeEdgeIds: activeState?.edgeIds,
+				activeFieldKeys: activeState?.fieldKeys,
 				activeSchemaNames,
-				activeSchemaChain: activeState?.schemaChain ?? null,
+				activeSchemaChain: activeState?.schemaChain,
 				activateRelationship,
 				deactivateRelationship,
 				relationshipMap,
