@@ -101,7 +101,7 @@ export const nodeHeaderStyles = (theme: Theme) => css`
 	${theme.typography.subtitleSecondary}
 	background: ${theme.colors.accent};
 	color: white;
-	padding: 16px 24px;
+	padding: 16px 12px;
 	text-align: left;
 	border-bottom: 1px solid black;
 	letter-spacing: 0.05em;
