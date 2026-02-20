@@ -236,7 +236,7 @@ export function traceChain(
  * Active edges get 'edge-active', non-active edges get 'edge-inactive',
  * and when no relationship is active all edges have no className.
  */
-export function getEdgesWithHighlight(edges: Edge[], activeEdgeIds: Set<string> | null, activeColor?: string): Edge[] {
+export function getEdgesWithHighlight(edges: Edge[], activeEdgeIds?: Set<string>, activeColor?: string): Edge[] {
 	if (!activeEdgeIds) {
 		return edges.map((edge) => ({
 			...edge,

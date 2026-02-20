@@ -47,7 +47,7 @@ export function SchemaNode(props: { data: Schema }) {
 	const theme = useThemeContext();
 	const { activateRelationship, isFieldInActiveRelationship, activeSchemaNames, relationshipMap } =
 		useActiveRelationship();
-	const isInactive = activeSchemaNames !== null && !activeSchemaNames.has(schema.name);
+	const isInactive = activeSchemaNames !== undefined && !activeSchemaNames.has(schema.name);
 
 	return (
 		<div css={nodeContainerStyles(isInactive)}>
