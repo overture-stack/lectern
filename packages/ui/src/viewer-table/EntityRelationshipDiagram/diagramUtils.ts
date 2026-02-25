@@ -23,6 +23,13 @@ import type { Dictionary, Schema } from '@overture-stack/lectern-dictionary';
 import { type Edge, type Node, MarkerType } from 'reactflow';
 import { ONE_CARDINALITY_MARKER_ID, ONE_CARDINALITY_MARKER_ACTIVE_ID } from '../../theme/icons/OneCardinalityMarker';
 
+const DEFAULT_MARKER_CONFIG = {
+	type: MarkerType.Arrow,
+	width: 20,
+	height: 20,
+	color: '#374151',
+};
+
 export type SchemaFlowNode = Node<Schema, 'schema'>;
 
 export type SchemaNodeLayout = {
@@ -242,7 +249,7 @@ export function getEdgesWithHighlight(edges: Edge[], activeEdgeIds?: Set<string>
 			...edge,
 			className: undefined,
 			markerStart: ONE_CARDINALITY_MARKER_ID,
-			markerEnd: { type: MarkerType.Arrow, width: 20, height: 20, color: '#374151' },
+			markerEnd: DEFAULT_MARKER_CONFIG,
 		}));
 	}
 
@@ -252,12 +259,7 @@ export function getEdgesWithHighlight(edges: Edge[], activeEdgeIds?: Set<string>
 			...edge,
 			className: isActive ? 'edge-active' : 'edge-inactive',
 			markerStart: isActive ? ONE_CARDINALITY_MARKER_ACTIVE_ID : ONE_CARDINALITY_MARKER_ID,
-			markerEnd: {
-				type: MarkerType.Arrow,
-				width: 20,
-				height: 20,
-				color: isActive && activeColor ? activeColor : '#374151',
-			},
+			markerEnd: isActive && activeColor ? { ...DEFAULT_MARKER_CONFIG, color: activeColor } : DEFAULT_MARKER_CONFIG,
 		};
 	});
 }
@@ -279,7 +281,7 @@ export function getEdgesFromMap(map: RelationshipMap): Edge[] {
 			type: 'smoothstep',
 			pathOptions: { offset: -20 },
 			data: { fkIndex } satisfies RelationshipEdgeData,
-			markerEnd: { type: MarkerType.Arrow, width: 20, height: 20, color: '#374151' },
+			markerEnd: DEFAULT_MARKER_CONFIG,
 			markerStart: ONE_CARDINALITY_MARKER_ID,
 		})),
 	);
