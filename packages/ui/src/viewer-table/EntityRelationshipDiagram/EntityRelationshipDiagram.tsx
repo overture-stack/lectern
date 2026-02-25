@@ -23,7 +23,7 @@
 import { css } from '@emotion/react';
 import { type Theme, useThemeContext } from '../../theme';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 import ReactFlow, {
 	Background,
 	BackgroundVariant,
@@ -95,12 +95,13 @@ const edgeHoverStyles = (theme: Theme) => css`
 export function EntityRelationshipDiagramContent({ dictionary, layout }: EntityRelationshipDiagramProps) {
 	const [nodes, , onNodesChange] = useNodesState(getNodesForDictionary(dictionary, layout));
 	const { activeEdgeIds, activateRelationship, deactivateRelationship, relationshipMap } = useActiveRelationship();
-	const [edges, setEdges, onEdgesChange] = useEdgesState(getEdgesFromMap(relationshipMap));
+	const [edges, , onEdgesChange] = useEdgesState(getEdgesFromMap(relationshipMap));
 	const theme = useThemeContext();
 
-	useEffect(() => {
-		setEdges((currentEdges) => getEdgesWithHighlight(currentEdges, activeEdgeIds, theme.colors.secondary_dark));
-	}, [activeEdgeIds, setEdges]);
+	const highlightedEdges = useMemo(
+		() => getEdgesWithHighlight(edges, activeEdgeIds, theme.colors.secondary_dark),
+		[edges, activeEdgeIds],
+	);
 
 	const onEdgeClick = useCallback(
 		(_event: React.MouseEvent, edge: Edge) => {
@@ -122,7 +123,7 @@ export function EntityRelationshipDiagramContent({ dictionary, layout }: EntityR
 			<div css={edgeHoverStyles(theme)} style={{ width: '100%', height: '100%' }}>
 				<ReactFlow
 					nodes={nodes}
-					edges={edges}
+					edges={highlightedEdges}
 					onNodesChange={onNodesChange}
 					onEdgesChange={onEdgesChange}
 					onEdgeClick={onEdgeClick}
