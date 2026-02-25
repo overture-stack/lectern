@@ -179,14 +179,13 @@ export function traceChain(
 	}
 
 	// Visit FK: Marks an FK restriction as visited and collects its edge IDs and field keys into the outer accumulators
-	const visitFk = (index: number) => {
-		if (visitedFkIndices.has(index)) {
-			return;
-		}
+	const visitFk = (index: number): boolean => {
+		if (visitedFkIndices.has(index)) return false;
 		visitedFkIndices.add(index);
 		const fk = map.fkRestrictions[index];
 		fk.edgeIds.forEach((id) => edgeIds.add(id));
 		fk.fieldKeys.forEach((key) => fieldKeys.add(key));
+		return true;
 	};
 
 	visitFk(chainStartingIndex);
@@ -201,8 +200,7 @@ export function traceChain(
 				continue;
 			}
 			for (const idx of indices) {
-				if (!visitedFkIndices.has(idx)) {
-					visitFk(idx);
+				if (visitFk(idx)) {
 					traceUp(map.fkRestrictions[idx]);
 				}
 			}
@@ -217,8 +215,7 @@ export function traceChain(
 				continue;
 			}
 			for (const idx of indices) {
-				if (!visitedFkIndices.has(idx)) {
-					visitFk(idx);
+				if (visitFk(idx)) {
 					traceDown(map.fkRestrictions[idx]);
 				}
 			}
