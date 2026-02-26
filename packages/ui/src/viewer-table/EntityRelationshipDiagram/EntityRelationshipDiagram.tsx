@@ -120,10 +120,10 @@ export function EntityRelationshipDiagramContent({ dictionary }: EntityRelations
 					onPaneClick={onPaneClick}
 					nodeTypes={nodeTypes}
 					fitView
-					fitViewOptions={{ padding: 20, maxZoom: 1.5, minZoom: 0.5 }}
+					fitViewOptions={{ padding: 0.2, maxZoom: 1 }}
 					style={{ width: '100%', height: '100%' }}
 					defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
-					minZoom={0.1}
+					minZoom={0.05}
 					maxZoom={3}
 				>
 					<Controls />
