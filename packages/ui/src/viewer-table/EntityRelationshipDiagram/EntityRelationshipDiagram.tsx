@@ -35,13 +35,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import OneCardinalityMarker from '../../theme/icons/OneCardinalityMarker';
-import {
-	getEdgesFromMap,
-	getEdgesWithHighlight,
-	getNodesForDictionary,
-	type RelationshipEdgeData,
-	type SchemaNodeLayout,
-} from './diagramUtils';
+import { getEdgesFromMap, getEdgesWithHighlight, getLayoutedDiagram, type RelationshipEdgeData } from './diagramUtils';
 import { useActiveRelationship } from './ActiveRelationshipContext';
 import { SchemaNode } from './SchemaNode';
 
@@ -51,7 +45,6 @@ const nodeTypes: NodeTypes = {
 
 type EntityRelationshipDiagramProps = {
 	dictionary: Dictionary;
-	layout?: Partial<SchemaNodeLayout>;
 };
 
 const edgeHoverStyles = (theme: Theme) => css`
