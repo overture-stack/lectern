@@ -104,7 +104,7 @@ export function getLayoutedElements(nodes: SchemaFlowNode[], edges: Edge[]): Nod
 	const schemaByName = new Map<string, Schema>();
 
 	for (const node of nodes) {
-		schemaByName.set(node.id, node.data as Schema);
+		schemaByName.set(node.id, node.data);
 	}
 
 	const layout = sugiyama().nodeSize((dagNode: GraphNode<StratifyDatum, undefined>): [number, number] => {
@@ -135,7 +135,7 @@ export function getLayoutedElements(nodes: SchemaFlowNode[], edges: Edge[]): Nod
  * @returns {{ nodes: Node[]; edges: Edge[] }} Positioned nodes and the original edges
  */
 export function getLayoutedDiagram(dictionary: Dictionary, edges: Edge[]): { nodes: Node[]; edges: Edge[] } {
-	const unpositionedNodes: Node[] = dictionary.schemas.map((schema) => ({
+	const unpositionedNodes: SchemaFlowNode[] = dictionary.schemas.map((schema) => ({
 		...buildSchemaNode(schema),
 		position: { x: 0, y: 0 },
 	}));
