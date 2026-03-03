@@ -78,17 +78,21 @@ function estimateNodeHeight(schema: Schema): number {
 /**
  * Computes node positions using d3-dag's Sugiyama layout algorithm.
  */
-export function getLayoutedElements(nodes: Node[], edges: Edge[]): Node[] {
+export function getLayoutedElements(nodes: SchemaFlowNode[], edges: Edge[]): Node[] {
 	if (nodes.length === 0) {
 		return [];
 	}
 
 	const parentMap = new Map<string, Set<string>>();
 	for (const edge of edges) {
-		if (!parentMap.has(edge.target)) {
-			parentMap.set(edge.target, new Set());
+		let parentSet = parentMap.get(edge.target);
+
+		if (!parentSet) {
+			parentSet = new Set();
+			parentMap.set(edge.target, parentSet);
 		}
-		parentMap.get(edge.target)!.add(edge.source);
+
+		parentSet.add(edge.source);
 	}
 
 	const stratifyData: StratifyDatum[] = nodes.map((node) => ({
