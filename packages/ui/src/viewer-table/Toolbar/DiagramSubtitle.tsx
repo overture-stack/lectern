@@ -66,18 +66,18 @@ const chainLabelStyle = css`
 	padding-right: 5px;
 `;
 
-const DiagramSubtitle = () => {
+const DiagramSubtitle = ({ isFocused }: { isFocused?: boolean }) => {
 	const { activeSchemaChain, deactivateRelationship } = useActiveRelationship();
 	const theme = useThemeContext();
 
 	if (!activeSchemaChain) {
-		return <span>Select any key field or edge to highlight a relation.</span>;
+		return <span css={{paddingBottom: '10px'}}>Select any key field or edge to highlight a relation.</span>;
 	}
 
 	return (
 		<>
 			<div css={chainRowStyle}>
-				<span css={chainLabelStyle}>Highlighting schema relation:</span>
+				<span css={chainLabelStyle}>{isFocused ? 'Schema relation:' : 'Highlighting schema relation:'}</span>
 				{activeSchemaChain.map((schema, index) => (
 					<span key={index} css={chainItemStyle}>
 						{index > 0 && <span css={arrowStyle}>{'\u2192'}</span>}
@@ -85,11 +85,13 @@ const DiagramSubtitle = () => {
 					</span>
 				))}
 			</div>
-			<div>
-				<button css={clearButtonStyle(theme)} onClick={deactivateRelationship}>
-					Clear Highlight
-				</button>
-			</div>
+			{!isFocused && (
+				<div>
+					<button css={clearButtonStyle(theme)} onClick={deactivateRelationship}>
+						Clear Highlight
+					</button>
+				</div>
+			)}
 		</>
 	);
 };
