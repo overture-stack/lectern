@@ -19,52 +19,21 @@
  *
  */
 
-import { useMemo, useState } from 'react';
 import Button from '../../common/Button';
-import Modal from '../../common/Modal';
-import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { useThemeContext } from '../../theme/index';
-import {
-	ActiveRelationshipProvider,
-	buildRelationshipMap,
-	EntityRelationshipDiagramContent,
-} from '../EntityRelationshipDiagram';
-import DiagramSubtitle from './DiagramSubtitle';
+import { useDiagramViewContext } from '../DiagramViewContext';
 
 const DiagramViewButton = () => {
-	const [isOpen, setIsOpen] = useState(false);
 	const theme = useThemeContext();
 	const { Eye } = theme.icons;
 	const { loading, errors } = useDictionaryDataContext();
-	const { selectedDictionary } = useDictionaryStateContext();
-
-	const relationshipMap = useMemo(
-		() => (selectedDictionary ? buildRelationshipMap(selectedDictionary) : null),
-		[selectedDictionary],
-	);
+	const { openDiagram } = useDiagramViewContext();
 
 	return (
-		<>
-			<Button icon={<Eye />} onClick={() => setIsOpen(true)} disabled={loading || errors.length > 0} isLoading={loading}>
-				Diagram View
-			</Button>
-			{relationshipMap && (
-				<ActiveRelationshipProvider relationshipMap={relationshipMap}>
-					<Modal
-						title="Diagram View"
-						subtitle={<DiagramSubtitle />}
-						isOpen={isOpen}
-						setIsOpen={setIsOpen}
-					>
-						{selectedDictionary && (
-							<div style={{ width: '100%', height: '50vh' }}>
-								<EntityRelationshipDiagramContent dictionary={selectedDictionary} />
-							</div>
-						)}
-					</Modal>
-				</ActiveRelationshipProvider>
-			)}
-		</>
+		<Button icon={<Eye />} onClick={() => openDiagram()} disabled={loading || errors.length > 0} isLoading={loading}>
+			Diagram View
+		</Button>
 	);
 };
 
