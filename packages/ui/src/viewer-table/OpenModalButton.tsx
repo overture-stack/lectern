@@ -22,7 +22,6 @@ import { css } from '@emotion/react';
 import { type ReactNode, type SyntheticEvent } from 'react';
 
 import { type Theme, useThemeContext } from '../theme/index';
-import Eye from '../theme/icons/Eye';
 
 export type OpenModalButtonProps = {
 	onClick?: (e: SyntheticEvent<HTMLButtonElement>) => any | ((e: SyntheticEvent<HTMLButtonElement>) => Promise<any>);
@@ -42,9 +41,6 @@ const buttonStyle = (theme: Theme) => css`
 	color: ${theme.colors.black};
 	text-decoration: underline;
 	cursor: pointer;
-	&:hover {
-		color: ${theme.colors.secondary};
-	}
 `;
 
 const OpenModalButton = ({ onClick, children }: OpenModalButtonProps) => {
@@ -52,7 +48,6 @@ const OpenModalButton = ({ onClick, children }: OpenModalButtonProps) => {
 
 	return (
 		<button onClick={onClick} css={buttonStyle(theme)}>
-			<Eye />
 			{children}
 		</button>
 	);
