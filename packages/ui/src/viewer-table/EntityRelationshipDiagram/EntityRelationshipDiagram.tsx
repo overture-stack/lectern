@@ -23,7 +23,7 @@
 import { css } from '@emotion/react';
 import { type Theme, useThemeContext } from '../../theme';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import ReactFlow, {
 	Background,
 	BackgroundVariant,
@@ -31,11 +31,18 @@ import ReactFlow, {
 	useEdgesState,
 	useNodesState,
 	type Edge,
+	type Node,
 	type NodeTypes,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import OneCardinalityMarker from '../../theme/icons/OneCardinalityMarker';
-import { getEdgesFromMap, getEdgesWithHighlight, getLayoutedDiagram, type RelationshipEdgeData } from './diagramUtils';
+import {
+	getEdgesFromMap,
+	getEdgesWithHighlight,
+	getLayoutedDiagram,
+	traceChain,
+	type RelationshipEdgeData,
+} from './diagramUtils';
 import { useActiveRelationship } from './ActiveRelationshipContext';
 import { SchemaNode } from './SchemaNode';
 
@@ -43,8 +50,9 @@ const nodeTypes: NodeTypes = {
 	schema: SchemaNode,
 };
 
-type EntityRelationshipDiagramProps = {
+type RelationshipDiagramContentProps = {
 	dictionary: Dictionary;
+	focusField?: { schemaName: string; fieldName: string };
 };
 
 const edgeHoverStyles = (theme: Theme) => css`
@@ -76,21 +84,68 @@ const edgeHoverStyles = (theme: Theme) => css`
 `;
 
 /**
- * Entity Relationship Diagram visualizing schemas and their foreign key relationships.
+ * Unified relationship diagram component. When `focusField` is provided, traces the FK
+ * chain for that field and renders a focused grid layout. Otherwise renders the full ERD
+ * using the Sugiyama algorithm.
+ *
  * Must be rendered inside an `ActiveRelationshipProvider`.
- * Uses d3-dag's Sugiyama algorithm to compute a hierarchical layout from FK relationships.
  */
-export function EntityRelationshipDiagramContent({ dictionary }: EntityRelationshipDiagramProps) {
-	const { activeEdgeIds, activateRelationship, deactivateRelationship, relationshipMap } = useActiveRelationship();
+export function RelationshipDiagramContent({ dictionary, focusField }: RelationshipDiagramContentProps) {
+	const { relationshipMap, activateRelationship } = useActiveRelationship();
 	const allEdges = getEdgesFromMap(relationshipMap);
-	const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedDiagram(dictionary, allEdges);
-	const [nodes, , onNodesChange] = useNodesState(layoutedNodes);
-	const [edges, , onEdgesChange] = useEdgesState(layoutedEdges);
+
+	useEffect(() => {
+		if (!focusField) return;
+		const fieldKey = `${focusField.schemaName}::${focusField.fieldName}`;
+		const fkIndices = relationshipMap.fieldKeyToFkIndices.get(fieldKey);
+		if (fkIndices?.[0] !== undefined) {
+			activateRelationship(fkIndices[0]);
+		}
+	}, [focusField, activateRelationship, relationshipMap]);
+
+	if (focusField) {
+		const fieldKey = `${focusField.schemaName}::${focusField.fieldName}`;
+		const fkIndices = relationshipMap.fieldKeyToFkIndices.get(fieldKey);
+		if (!fkIndices?.length) {
+			return (
+				<div style={{ padding: 24, textAlign: 'center' }}>
+					No relationship found for this field.
+				</div>
+			);
+		}
+
+		const { schemaChain, edgeIds } = traceChain(fkIndices[0], relationshipMap);
+		const filteredSchemas = dictionary.schemas.filter((s) => schemaChain.includes(s.name));
+		const filteredEdges = allEdges.filter((e) => edgeIds.has(e.id));
+		const { nodes, edges } = getLayoutedDiagram(filteredSchemas, filteredEdges, 'grid');
+		return <RelationshipDiagramFlow nodes={nodes} edges={edges} isFocused />;
+	}
+
+	const { nodes, edges } = getLayoutedDiagram(dictionary.schemas, allEdges);
+	return <RelationshipDiagramFlow nodes={nodes} edges={edges} />;
+}
+
+/**
+ * Shared ReactFlow shell. Must be rendered inside an `ActiveRelationshipProvider`.
+ * Handles edge/pane clicks for FK chain highlighting.
+ */
+function RelationshipDiagramFlow({
+	nodes: initialNodes,
+	edges: initialEdges,
+	isFocused,
+}: {
+	nodes: Node[];
+	edges: Edge[];
+	isFocused?: boolean;
+}) {
+	const { activeEdgeIds, activateRelationship, deactivateRelationship } = useActiveRelationship();
+	const [nodes, , onNodesChange] = useNodesState(initialNodes);
+	const [edges, , onEdgesChange] = useEdgesState(initialEdges);
 	const theme = useThemeContext();
 
 	const highlightedEdges = useMemo(
 		() => getEdgesWithHighlight(edges, activeEdgeIds, theme.colors.secondary_dark),
-		[edges, activeEdgeIds],
+		[edges, activeEdgeIds, theme.colors.secondary_dark],
 	);
 
 	const onEdgeClick = useCallback(
@@ -104,8 +159,10 @@ export function EntityRelationshipDiagramContent({ dictionary }: EntityRelations
 	);
 
 	const onPaneClick = useCallback(() => {
-		deactivateRelationship();
-	}, [deactivateRelationship]);
+		if (!isFocused) {
+			deactivateRelationship();
+		}
+	}, [isFocused, deactivateRelationship]);
 
 	return (
 		<>
