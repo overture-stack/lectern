@@ -35,13 +35,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import OneCardinalityMarker from '../../theme/icons/OneCardinalityMarker';
-import {
-	getEdgesFromMap,
-	getEdgesWithHighlight,
-	getNodesForDictionary,
-	type RelationshipEdgeData,
-	type SchemaNodeLayout,
-} from './diagramUtils';
+import { getEdgesFromMap, getEdgesWithHighlight, getLayoutedDiagram, type RelationshipEdgeData } from './diagramUtils';
 import { useActiveRelationship } from './ActiveRelationshipContext';
 import { SchemaNode } from './SchemaNode';
 
@@ -51,7 +45,6 @@ const nodeTypes: NodeTypes = {
 
 type EntityRelationshipDiagramProps = {
 	dictionary: Dictionary;
-	layout?: Partial<SchemaNodeLayout>;
 };
 
 const edgeHoverStyles = (theme: Theme) => css`
@@ -85,17 +78,14 @@ const edgeHoverStyles = (theme: Theme) => css`
 /**
  * Entity Relationship Diagram visualizing schemas and their foreign key relationships.
  * Must be rendered inside an `ActiveRelationshipProvider`.
- *
- * @param {Dictionary} dictionary — The Lectern dictionary whose schemas and relationships to visualize
- * @param {Partial<SchemaNodeLayout>} layout — Optional overrides for the grid layout of schema nodes.
- *   maxColumns controls the number of nodes per row before wrapping (default 4),
- *   columnWidth sets horizontal spacing in pixels between column left edges (default 500),
- *   and rowHeight sets vertical spacing in pixels between row top edges (default 500)
+ * Uses d3-dag's Sugiyama algorithm to compute a hierarchical layout from FK relationships.
  */
-export function EntityRelationshipDiagramContent({ dictionary, layout }: EntityRelationshipDiagramProps) {
-	const [nodes, , onNodesChange] = useNodesState(getNodesForDictionary(dictionary, layout));
+export function EntityRelationshipDiagramContent({ dictionary }: EntityRelationshipDiagramProps) {
 	const { activeEdgeIds, activateRelationship, deactivateRelationship, relationshipMap } = useActiveRelationship();
-	const [edges, , onEdgesChange] = useEdgesState(getEdgesFromMap(relationshipMap));
+	const allEdges = getEdgesFromMap(relationshipMap);
+	const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedDiagram(dictionary, allEdges);
+	const [nodes, , onNodesChange] = useNodesState(layoutedNodes);
+	const [edges, , onEdgesChange] = useEdgesState(layoutedEdges);
 	const theme = useThemeContext();
 
 	const highlightedEdges = useMemo(
@@ -130,10 +120,10 @@ export function EntityRelationshipDiagramContent({ dictionary, layout }: EntityR
 					onPaneClick={onPaneClick}
 					nodeTypes={nodeTypes}
 					fitView
-					fitViewOptions={{ padding: 20, maxZoom: 1.5, minZoom: 0.5 }}
+					fitViewOptions={{ padding: 0.2, maxZoom: 1 }}
 					style={{ width: '100%', height: '100%' }}
 					defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
-					minZoom={0.1}
+					minZoom={0.05}
 					maxZoom={3}
 				>
 					<Controls />
