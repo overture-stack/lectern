@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import * as dotenv from 'dotenv';
+import 'dotenv/config';
 import * as vault from '../external/vault';
 
 export interface AppConfig {
@@ -35,9 +35,7 @@ export interface AppConfig {
 	mongoUrl(): string; // allow overriding all the url
 }
 
-const buildBootstrapContext = async () => {
-	dotenv.config();
-
+const loadVaultSecrets = async () => {
 	const vaultEnabled = process.env.VAULT_ENABLED || false;
 	let secrets: Record<string, any> = {};
 	/** Vault */
@@ -104,6 +102,6 @@ const buildAppContext = async (secrets: any): Promise<AppConfig> => {
 };
 
 export const getAppConfig = async (): Promise<AppConfig> => {
-	const secrets = await buildBootstrapContext();
+	const secrets = await loadVaultSecrets();
 	return buildAppContext(secrets);
 };
