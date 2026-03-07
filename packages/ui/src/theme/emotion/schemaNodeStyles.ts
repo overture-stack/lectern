@@ -35,6 +35,7 @@ export const fieldRowStyles = (theme: Theme, isForeignKey: boolean, isHighlighte
 		justify-content: space-between;
 		transition: background-color 0.2s;
 		position: relative;
+		background-color: ${isHighlighted ? theme.colors.secondary_1 : 'transparent'};
 		border-block: 1.5px solid ${isHighlighted ? theme.colors.secondary_dark : 'transparent'};
 		${isForeignKey ? 'cursor: pointer;' : ''}
 
@@ -43,8 +44,8 @@ export const fieldRowStyles = (theme: Theme, isForeignKey: boolean, isHighlighte
 		}
 
 		&:nth-child(even) {
-			background-color: ${theme.colors.accent_1};
-			border-block: 1.5px solid ${theme.colors.accent_2};
+			background-color: ${isHighlighted ? theme.colors.secondary_1 : theme.colors.accent_1};
+			border-block: 1.5px solid ${isHighlighted ? theme.colors.secondary_dark : theme.colors.accent_2};
 		}
 
 		&:nth-child(even):hover {

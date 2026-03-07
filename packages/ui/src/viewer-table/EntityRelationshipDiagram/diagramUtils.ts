@@ -21,6 +21,7 @@
 
 import type { Dictionary, Schema } from '@overture-stack/lectern-dictionary';
 import { type Edge, type Node, MarkerType } from 'reactflow';
+import { graphStratify, sugiyama, type GraphNode } from 'd3-dag';
 import { ONE_CARDINALITY_MARKER_ID, ONE_CARDINALITY_MARKER_ACTIVE_ID } from '../../theme/icons/OneCardinalityMarker';
 
 const DEFAULT_MARKER_CONFIG = {
@@ -30,13 +31,15 @@ const DEFAULT_MARKER_CONFIG = {
 	color: '#374151',
 };
 
+const NODE_WIDTH = 350;
+const HEADER_HEIGHT = 60;
+const FIELD_ROW_HEIGHT = 45;
+const GAP_X = 100;
+const GAP_Y = 100;
+
 export type SchemaFlowNode = Node<Schema, 'schema'>;
 
-export type SchemaNodeLayout = {
-	maxColumns: number;
-	columnWidth: number;
-	rowHeight: number;
-};
+type StratifyDatum = { id: string; parentIds: string[] };
 
 function buildSchemaNode(schema: Schema): Omit<SchemaFlowNode, 'position'> {
 	return {
@@ -68,31 +71,76 @@ export type RelationshipMap = {
 	fieldKeyToFkIndices: Map<string, number[]>;
 };
 
+function estimateNodeHeight(schema: Schema): number {
+	return HEADER_HEIGHT + schema.fields.length * FIELD_ROW_HEIGHT;
+}
+
 /**
- * Converts a dictionary's schemas into positioned ReactFlow nodes arranged in a grid layout.
+ * Computes node positions using d3-dag's Sugiyama layout algorithm.
+ */
+export function getLayoutedElements(nodes: SchemaFlowNode[], edges: Edge[]): Node[] {
+	if (nodes.length === 0) {
+		return [];
+	}
+
+	const parentMap = new Map<string, Set<string>>();
+	for (const edge of edges) {
+		let parentSet = parentMap.get(edge.target);
+
+		if (!parentSet) {
+			parentSet = new Set();
+			parentMap.set(edge.target, parentSet);
+		}
+
+		parentSet.add(edge.source);
+	}
+
+	const stratifyData: StratifyDatum[] = nodes.map((node) => ({
+		id: node.id,
+		parentIds: Array.from(parentMap.get(node.id) ?? []),
+	}));
+
+	const dag = graphStratify()(stratifyData);
+	const schemaByName = new Map<string, Schema>();
+
+	for (const node of nodes) {
+		schemaByName.set(node.id, node.data);
+	}
+
+	const layout = sugiyama().nodeSize((dagNode: GraphNode<StratifyDatum, undefined>): [number, number] => {
+		const schema = schemaByName.get(dagNode.data.id);
+		const height = schema ? estimateNodeHeight(schema) : HEADER_HEIGHT;
+		return [NODE_WIDTH + GAP_X, height + GAP_Y];
+	});
+
+	layout(dag);
+
+	const positionMap = new Map<string, { x: number; y: number }>();
+	for (const dagNode of dag.nodes()) {
+		positionMap.set(dagNode.data.id, { x: dagNode.x, y: dagNode.y });
+	}
+
+	return nodes.map((node) => ({
+		...node,
+		position: positionMap.get(node.id) ?? { x: 0, y: 0 },
+	}));
+}
+
+/**
+ * Builds unpositioned nodes from the dictionary and computes layout using
+ * d3-dag's Sugiyama algorithm.
  *
  * @param {Dictionary} dictionary — The Lectern dictionary containing schemas to visualize
- * @param {Partial<SchemaNodeLayout>} layout — Optional overrides for grid layout configuration
- * @returns {Node[]} Array of positioned ReactFlow nodes
+ * @param {Edge[]} edges — ReactFlow edges representing foreign key relationships
+ * @returns {{ nodes: Node[]; edges: Edge[] }} Positioned nodes and the original edges
  */
-export function getNodesForDictionary(dictionary: Dictionary, layout?: Partial<SchemaNodeLayout>): Node[] {
-	const maxColumns = layout?.maxColumns ?? 4;
-	const columnWidth = layout?.columnWidth ?? 500;
-	const rowHeight = layout?.rowHeight ?? 500;
-
-	return dictionary.schemas.map((schema, index) => {
-		const partialNode = buildSchemaNode(schema);
-
-		const row = Math.floor(index / maxColumns);
-		const col = index % maxColumns;
-
-		const position: Node['position'] = {
-			x: col * columnWidth,
-			y: row * rowHeight,
-		};
-
-		return { ...partialNode, position };
-	});
+export function getLayoutedDiagram(dictionary: Dictionary, edges: Edge[]): { nodes: Node[]; edges: Edge[] } {
+	const unpositionedNodes: SchemaFlowNode[] = dictionary.schemas.map((schema) => ({
+		...buildSchemaNode(schema),
+		position: { x: 0, y: 0 },
+	}));
+	const layoutedNodes = getLayoutedElements(unpositionedNodes, edges);
+	return { nodes: layoutedNodes, edges };
 }
 
 /**
