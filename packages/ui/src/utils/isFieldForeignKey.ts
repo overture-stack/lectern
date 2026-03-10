@@ -19,22 +19,10 @@
  *
  */
 
-import Button from '../../common/Button';
-import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
-import { useThemeContext } from '../../theme/index';
-import { useDiagramViewContext } from '../DiagramViewContext';
+import type { Schema, SchemaField } from '@overture-stack/lectern-dictionary';
 
-const DiagramViewButton = () => {
-	const theme = useThemeContext();
-	const { Eye } = theme.icons;
-	const { loading, errors } = useDictionaryDataContext();
-	const { openDiagram } = useDiagramViewContext();
-
+export function isFieldForeignKey(schema: Schema, field: SchemaField): boolean {
 	return (
-		<Button icon={<Eye />} onClick={() => openDiagram()} disabled={loading || errors.length > 0} isLoading={loading}>
-			Diagram View
-		</Button>
+		schema.restrictions?.foreignKey?.some((fk) => fk.mappings.some((mapping) => mapping.local === field.name)) || false
 	);
-};
-
-export default DiagramViewButton;
+}

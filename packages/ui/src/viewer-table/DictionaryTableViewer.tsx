@@ -23,17 +23,26 @@
 
 import { css } from '@emotion/react';
 import type { Dictionary, Schema, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Accordion from '../common/Accordion/index';
+import Modal from '../common/Modal';
 import { ErrorModal } from '../common/Error/ErrorModal';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
 import { type Theme, useThemeContext } from '../theme/index';
 import { isFieldRequired } from '../utils/isFieldRequired';
+import { DiagramViewProvider, useDiagramViewContext } from './DiagramViewContext';
+import {
+	ActiveRelationshipProvider,
+	buildRelationshipMap,
+	RelationshipDiagramContent,
+	useActiveRelationship,
+} from './EntityRelationshipDiagram';
 
 import SchemaTable from './DataTable/SchemaTable/index';
 import DictionaryHeader from './DictionaryHeader/DictionaryHeader';
 import DictionaryViewerLoadingPage from './DictionaryViewer/DictionaryViewerLoadingPage';
+import DiagramSubtitle from './Toolbar/DiagramSubtitle';
 import Toolbar from './Toolbar/index';
 
 type ParsedHashTarget = {
@@ -110,10 +119,40 @@ const ErrorDisplay = ({ errors, onContactClick }: { errors: string[]; onContactC
 	);
 };
 
+const DiagramModal = () => {
+	const { isOpen, focusField, closeDiagram } = useDiagramViewContext();
+	const { selectedDictionary } = useDictionaryStateContext();
+	const { deactivateRelationship } = useActiveRelationship();
+
+	// Clear the relationship when the modal is closed
+	useEffect(() => {
+		if (!isOpen) {
+			deactivateRelationship();
+		}
+	}, [isOpen, deactivateRelationship]);
+
+	return (
+		<Modal
+			title="Diagram View"
+			subtitle={<DiagramSubtitle isFocused={!!focusField} />}
+			isOpen={isOpen}
+			setIsOpen={(open) => {
+				if (!open) closeDiagram();
+			}}
+		>
+			{selectedDictionary && (
+				<div style={{ width: '100%', height: '50vh' }}>
+					<RelationshipDiagramContent dictionary={selectedDictionary} focusField={focusField} />
+				</div>
+			)}
+		</Modal>
+	);
+};
+
 // TODO: produce a simplified version that accepts a dictionary and produces this same view,
 // so that there's no requirement for a Lectern server, etc. and without a Toolbar, or a simpler one.
 
-export const DictionaryTableViewer = () => {
+const DictionaryTableViewerContent = () => {
 	const theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
 	const { filters, selectedDictionary } = useDictionaryStateContext();
@@ -121,6 +160,11 @@ export const DictionaryTableViewer = () => {
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [selectedSchemaIndex, setSelectedSchemaIndex] = useState<number | undefined>(undefined);
 	const [highlightedField, setHighlightedField] = useState<{ schemaName: string; fieldName: string } | null>(null);
+
+	const relationshipMap = useMemo(
+		() => (selectedDictionary ? buildRelationshipMap(selectedDictionary) : null),
+		[selectedDictionary],
+	);
 
 	const handleHash = useCallback(() => {
 		const target = parseHash(window.location.hash, selectedDictionary?.schemas);
@@ -208,14 +252,27 @@ export const DictionaryTableViewer = () => {
 	}
 
 	return (
-		<div css={pageContainerStyle(theme)}>
-			<div css={headerPanelBlockStyle}>
-				<DictionaryHeader />
+		<>
+			<div css={pageContainerStyle(theme)}>
+				<div css={headerPanelBlockStyle}>
+					<DictionaryHeader />
+				</div>
+				<Toolbar onSelect={handleAccordionSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
+				<Accordion accordionItems={accordionItems} collapseAll={isCollapsed} selectedIndex={selectedSchemaIndex} />
 			</div>
-			<Toolbar onSelect={handleAccordionSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
-			<Accordion accordionItems={accordionItems} collapseAll={isCollapsed} selectedIndex={selectedSchemaIndex} />
-		</div>
+			{relationshipMap && !loading && errors.length === 0 && (
+				<ActiveRelationshipProvider relationshipMap={relationshipMap}>
+					<DiagramModal />
+				</ActiveRelationshipProvider>
+			)}
+		</>
 	);
 };
+
+export const DictionaryTableViewer = () => (
+	<DiagramViewProvider>
+		<DictionaryTableViewerContent />
+	</DiagramViewProvider>
+);
 
 export default DictionaryTableViewer;

@@ -19,6 +19,6 @@
  *
  */
 
-export { EntityRelationshipDiagramContent } from './EntityRelationshipDiagram';
+export { RelationshipDiagramContent } from './EntityRelationshipDiagram';
 export { ActiveRelationshipProvider, useActiveRelationship } from './ActiveRelationshipContext';
 export { buildRelationshipMap } from './diagramUtils';

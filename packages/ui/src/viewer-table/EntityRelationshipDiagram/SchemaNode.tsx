@@ -25,6 +25,8 @@ import { Handle, Position } from 'reactflow';
 import 'reactflow/dist/style.css';
 import Key from '../../theme/icons/Key';
 import { useThemeContext } from '../../theme';
+import { isFieldForeignKey } from '../../utils/isFieldForeignKey';
+import { isFieldUniqueKey } from '../../utils/isFieldUniqueKey';
 import {
 	fieldRowStyles,
 	fieldContentStyles,
@@ -58,11 +60,8 @@ export function SchemaNode(props: { data: Schema }) {
 
 			<div css={fieldsListStyles}>
 				{schema.fields.map((field, index) => {
-					const isUniqueKey = schema.restrictions?.uniqueKey?.includes(field.name) || field.unique === true;
-					const isForeignKey =
-						schema.restrictions?.foreignKey?.some((fk) =>
-							fk.mappings.some((mapping) => mapping.local === field.name),
-						) || false;
+					const isUniqueKey = isFieldUniqueKey(schema, field);
+					const isForeignKey = isFieldForeignKey(schema, field);
 					const valueType = field.isArray ? `${field.valueType}[]` : field.valueType;
 					const isHighlighted = isFieldInActiveRelationship(schema.name, field.name);
 
