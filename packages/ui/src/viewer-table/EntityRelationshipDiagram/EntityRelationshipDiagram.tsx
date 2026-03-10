@@ -94,35 +94,31 @@ export function RelationshipDiagramContent({ dictionary, focusField }: Relations
 	const { relationshipMap, activateRelationship } = useActiveRelationship();
 	const allEdges = getEdgesFromMap(relationshipMap);
 
+	const fieldKey = focusField ? `${focusField.schemaName}::${focusField.fieldName}` : null;
+	const fkIndices = fieldKey ? relationshipMap.fieldKeyToFkIndices.get(fieldKey) : null;
+
+	let currentNodes = dictionary.schemas;
+	let currentEdges = allEdges;
+
+	if (focusField && fkIndices?.length) {
+		const { schemaChain, edgeIds } = traceChain(fkIndices[0], relationshipMap);
+		currentNodes = dictionary.schemas.filter((s) => schemaChain.includes(s.name));
+		currentEdges = allEdges.filter((e) => edgeIds.has(e.id));
+	}
+
 	useEffect(() => {
-		if (!focusField) return;
-		const fieldKey = `${focusField.schemaName}::${focusField.fieldName}`;
-		const fkIndices = relationshipMap.fieldKeyToFkIndices.get(fieldKey);
 		if (fkIndices?.[0] !== undefined) {
 			activateRelationship(fkIndices[0]);
 		}
-	}, [focusField, activateRelationship, relationshipMap]);
+	}, [fkIndices, activateRelationship]);
 
-	if (focusField) {
-		const fieldKey = `${focusField.schemaName}::${focusField.fieldName}`;
-		const fkIndices = relationshipMap.fieldKeyToFkIndices.get(fieldKey);
-		if (!fkIndices?.length) {
-			return (
-				<div style={{ padding: 24, textAlign: 'center' }}>
-					No relationship found for this field.
-				</div>
-			);
-		}
+	const { nodes, edges } = getLayoutedDiagram(currentNodes, currentEdges, focusField ? 'grid' : undefined);
 
-		const { schemaChain, edgeIds } = traceChain(fkIndices[0], relationshipMap);
-		const filteredSchemas = dictionary.schemas.filter((s) => schemaChain.includes(s.name));
-		const filteredEdges = allEdges.filter((e) => edgeIds.has(e.id));
-		const { nodes, edges } = getLayoutedDiagram(filteredSchemas, filteredEdges, 'grid');
-		return <RelationshipDiagramFlow nodes={nodes} edges={edges} isFocused />;
-	}
-
-	const { nodes, edges } = getLayoutedDiagram(dictionary.schemas, allEdges);
-	return <RelationshipDiagramFlow nodes={nodes} edges={edges} />;
+	return focusField && !fkIndices?.length ? (
+		<div style={{ padding: 24, textAlign: 'center' }}>No relationship found for this field.</div>
+	) : (
+		<RelationshipDiagramFlow nodes={nodes} edges={edges} isFocused={!!focusField} />
+	);
 }
 
 /**
