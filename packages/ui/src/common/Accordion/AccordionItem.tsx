@@ -42,7 +42,6 @@ export type AccordionItemProps = {
 const accordionItemStyle = (theme: Theme) => css`
 	list-style: none;
 	width: 100%;
-	border-radius: 8px;
 	margin-bottom: 1px;
 	overflow: hidden;
 	background-color: ${theme.colors.white};
@@ -58,7 +57,7 @@ const accordionItemStyle = (theme: Theme) => css`
 const accordionItemTitleStyle = css`
 	display: flex;
 	align-items: flex-start;
-	padding: 24px 30px;
+	padding: 24px 30px 32px;
 	transition: all 0.2s ease;
 	width: 100%;
 	box-sizing: border-box;
@@ -82,7 +81,6 @@ const accordionItemButtonStyle = css`
 const contentColumnStyle = css`
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
 `;
 
 const titleStyle = (theme: Theme) => css`
@@ -91,7 +89,6 @@ const titleStyle = (theme: Theme) => css`
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 	cursor: pointer;
-	padding-bottom: 7px;
 `;
 
 const chevronStyle = (isOpen: boolean) => css`
@@ -103,28 +100,27 @@ const titleRowStyle = (theme: Theme) => css`
 	display: flex;
 	gap: 4px;
 	align-items: center;
-	margin-bottom: 10px;
+
 	&:hover [data-anchor-button] {
 		opacity: 1;
 	}
 	&:hover [data-title-link] {
 		color: ${theme.colors.secondary};
-		text-decoration: underline;
 		text-decoration-thickness: 2px;
 		text-underline-offset: 4px;
 	}
 `;
 
-const hashIconStyle = (theme: Theme) => css`
+const hashIconStyle = () => css`
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	opacity: 0;
 	padding-block: 0px;
 	padding-inline: 0px;
 	background: transparent;
 	border: none;
 	cursor: pointer;
-	svg {
-		border-bottom: 2px solid ${theme.colors.secondary};
-	}
 `;
 
 const descriptionWrapperStyle = (theme: Theme) => css`
@@ -140,12 +136,11 @@ const accordionCollapseStyle = (isOpen: boolean) => css`
 `;
 
 const accordionItemContentStyle = css`
-	padding: 0px 30px 30px 30px;
+	padding: 0px 0px 30px;
+	border: none;
 `;
 
 const contentInnerContainerStyle = (theme: Theme) => css`
-	border-left: 2px solid ${theme.colors.grey_3};
-	padding-left: 30px;
 	${theme.typography?.data};
 `;
 
@@ -185,7 +180,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 			<div onClick={openState.toggle} role="button" css={accordionItemTitleStyle}>
 				<div css={chevronColumnStyle}>
 					<button css={accordionItemButtonStyle}>
-						<ChevronDown fill={theme.colors.black} width={16} height={16} style={chevronStyle(openState.isOpen)} />
+						<ChevronDown fill={theme.colors.black} width={20} height={20} style={chevronStyle(openState.isOpen)} />
 					</button>
 				</div>
 				<div css={contentColumnStyle}>
@@ -201,7 +196,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 						<button
 							type="button"
 							data-anchor-button
-							css={hashIconStyle(theme)}
+							css={hashIconStyle()}
 							onClick={(event) => hashOnClick(event, windowLocationHash, setClipboardContents)}
 						>
 							<Hash width={24} height={24} fill={theme.colors.secondary} />
