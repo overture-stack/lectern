@@ -22,6 +22,7 @@ import { css } from '@emotion/react';
 
 import Dropdown from '../../common/Dropdown/index';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
+import History from '../../theme/icons/History';
 
 const formatDate = (date: Date | undefined): string => {
 	return date ? date.toISOString().split('T')[0] : '';
@@ -57,11 +58,9 @@ const DictionaryVersionSwitcher = () => {
 			<Dropdown
 				menuItems={versionSwitcherObjectArray}
 				title={title}
+				leftIcon = {<History />}
 				disabled={loading || errors.length > 0}
 				size={16}
-				styles={css`
-					padding: 6px 12px;
-				`}
 			/>
 		)
 	);
