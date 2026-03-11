@@ -104,10 +104,10 @@ export const renderAllowedValuesColumn = (
 				`}
 			>
 				No restrictions provided for this field.
-				{isForeignKey && (
+				{isForeignKey && schema && (
 					<button
 						css={viewInDiagramButtonStyle(theme)}
-						onClick={() => openFocusedDiagram({ schemaName: schema!.name, fieldName: currentSchemaField.name })}
+						onClick={() => openFocusedDiagram({ schemaName: schema.name, fieldName: currentSchemaField.name })}
 					>
 						View in diagram
 					</button>
@@ -127,10 +127,10 @@ export const renderAllowedValuesColumn = (
 					:	null
 				);
 			})}
-			{isForeignKey && (
+			{isForeignKey && schema && (
 				<button
 					css={viewInDiagramButtonStyle(theme)}
-					onClick={() => openFocusedDiagram({ schemaName: schema!.name, fieldName: currentSchemaField.name })}
+					onClick={() => openFocusedDiagram({ schemaName: schema.name, fieldName: currentSchemaField.name })}
 				>
 					View in diagram
 				</button>

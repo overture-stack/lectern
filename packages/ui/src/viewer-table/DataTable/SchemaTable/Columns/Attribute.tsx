@@ -57,7 +57,6 @@ const diagramLinkStyle = (theme: Theme) => css`
 	&:hover {
 		color: ${theme.colors.secondary};
 	}
-
 `;
 
 const hoverGroupStyle = (theme: Theme) => css`
@@ -94,8 +93,8 @@ export const renderAttributesColumn = (
 	const { openFocusedDiagram } = useDiagramViewContext();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const showConditional = !!(schemaFieldRestrictions && 'if' in schemaFieldRestrictions);
-	const isUniqueKey = !!(schema && currentSchemaField) && isFieldUniqueKey(schema, currentSchemaField);
-	const isForeignKey = !!(schema && currentSchemaField) && isFieldForeignKey(schema, currentSchemaField);
+	const isUniqueKey = schema && currentSchemaField && isFieldUniqueKey(schema, currentSchemaField);
+	const isForeignKey = schema && currentSchemaField && isFieldForeignKey(schema, currentSchemaField);
 	const isRequired = currentSchemaField && isFieldRequired(currentSchemaField);
 
 	return (
@@ -126,11 +125,12 @@ export const renderAttributesColumn = (
 					<Key width={18} height={18} />
 					<button
 						css={diagramLinkStyle(theme)}
-						onClick={() =>
-							schema &&
-							currentSchemaField &&
-							openFocusedDiagram({ schemaName: schema.name, fieldName: currentSchemaField.name })
+						onClick={() => {
+						if (!schema || !currentSchemaField) {
+							return;
 						}
+						openFocusedDiagram({ schemaName: schema.name, fieldName: currentSchemaField.name });
+					}}
 					>
 						{isRequired ? 'Required' : 'Optional'}
 					</button>
