@@ -28,7 +28,7 @@ import { type Theme, useThemeContext } from '../../theme/index';
 
 const highlightPulse = (theme: Theme) => keyframes`
 	0% { background-color: ${theme.colors.accent_light}; }
-	100% { background-color: transparent; }
+	100% { background-color: inherit; }
 `;
 
 const rowStyle = (index: number, theme: Theme) => css`
@@ -37,14 +37,15 @@ const rowStyle = (index: number, theme: Theme) => css`
 `;
 
 const highlightedCellStyle = (theme: Theme) => css`
-	animation: ${highlightPulse(theme)} 2s ease-out 0.5s forwards;
+	animation: ${highlightPulse(theme)} 2s ease-out 0.5s;
 `;
 
-const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
+const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number, total: number) => css`
 	${theme.typography.paragraphSmall}
-	border: 2px solid ${theme.colors.border_light};
+	border-block: 2px solid ${theme.colors.border_light};
+	border-right: 2px solid ${theme.colors.border_light};
 	text-align: ${cellIndex === 1 || cellIndex === 2 ? 'center' : 'left'};
-	padding: 12px;
+	padding: 16px;
 	vertical-align: middle;
 	min-width: 150px;
 
@@ -52,10 +53,14 @@ const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
 	`
 		position: sticky;
 		left: 0;
+		z-index: 2;
 		max-width: 15vw;
 		min-width: 325px;
 		background-color: ${rowIndex % 2 === 0 ? theme.colors.white : theme.colors.background_alternate};
+		border-right: none;
+		box-shadow: inset -2px 0 0 0 ${theme.colors.border_light};
 	`}
+	${cellIndex === total - 1 && `border-right: none;`}
 `;
 
 export type TableRowProps<T> = {
@@ -79,11 +84,11 @@ const TableRow = <T,>({ row, index, fieldId, isHighlighted }: TableRowProps<T>) 
 
 	return (
 		<tr id={fieldId} css={rowStyle(index, theme)}>
-			{row.getVisibleCells().map((cell, cellIndex) => {
+			{row.getVisibleCells().map((cell, cellIndex, cells) => {
 				return (
 					<td
 						key={cell.id}
-						css={[tdStyle(theme, cellIndex, index), isHighlighted && highlightedCellStyle(theme)]}
+						css={[tdStyle(theme, cellIndex, index, cells.length), isHighlighted && highlightedCellStyle(theme)]}
 					>
 						<div
 							css={css`
