@@ -52,7 +52,7 @@ const dropdownButtonStyle = ({
 	gap: 11px;
 	width: ${width || 'auto'};
 	min-width: fit-content;
-	padding: 6px 12px;
+	padding: 2px 12px;
 	background-color: ${theme.colors.background_light};
 	color: ${theme.colors.accent_dark};
 	border: 2px solid ${theme.colors.border_button};
@@ -126,7 +126,7 @@ export type DropDownProps = {
  * @returns {JSX.Element} Dropdown component
  */
 
-const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false, size = 20, styles }: DropDownProps) => {
+const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false, size = 16, styles }: DropDownProps) => {
 	const [open, setOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const theme: Theme = useThemeContext();
