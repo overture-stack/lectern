@@ -52,7 +52,7 @@ const scrollWrapperStyle = css`
 
 const shadowStyle = css`
 	position: absolute;
-	top: 2%;
+	top: 1%;
 	width: 20px;
 	height: 100%;
 	pointer-events: none;
@@ -80,16 +80,12 @@ const tableContainerStyle = css`
 	max-width: 100%;
 `;
 
-const tableStyle = (theme: Theme) => css`
+const tableStyle = () => css`
 	min-width: 1200px;
 	border-collapse: collapse;
-	border: 1px solid ${theme.colors.grey_3};
 	margin-top: 8px;
 	position: relative;
 	width: 100%;
-`;
-const tableBorderStyle = (theme: Theme) => css`
-	border: 1px solid ${theme.colors.border_light};
 `;
 
 const hasNameProperty = (obj: unknown): obj is { name: string } => {
@@ -176,13 +172,13 @@ const Table = <R,>({ columns, data, schemaName, highlightedFieldName }: GenericT
 			<div css={tableContainerStyle} ref={scrollRef}>
 				<div css={leftShadowStyle(firstColumnWidth, showLeftShadow ? 1 : 0, theme)} />
 				<div css={rightShadowStyle(showRightShadow ? 1 : 0, theme)} />
-				<table css={tableStyle(theme)}>
-					<thead css={tableBorderStyle(theme)}>
+				<table css={tableStyle()}>
+					<thead>
 						{table.getHeaderGroups().map((headerGroup: HeaderGroup<R>) => (
 							<TableHeader key={headerGroup.id} headerGroup={headerGroup} />
 						))}
 					</thead>
-					<tbody css={tableBorderStyle(theme)}>
+					<tbody>
 						{table.getRowModel().rows.map((row, i: number) => {
 							const fieldName = hasNameProperty(row.original) ? row.original.name : undefined;
 							const fieldId = schemaName && fieldName ? `${schemaName}.${fieldName}` : undefined;
