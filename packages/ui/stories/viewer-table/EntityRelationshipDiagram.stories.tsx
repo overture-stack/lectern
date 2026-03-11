@@ -27,7 +27,7 @@ import React from 'react';
 import {
 	ActiveRelationshipProvider,
 	buildRelationshipMap,
-	EntityRelationshipDiagramContent,
+	RelationshipDiagramContent,
 } from '../../src/viewer-table/EntityRelationshipDiagram';
 import DictionarySample from '../fixtures/pcgl.json';
 import SimpleClinicalERDiagram from '../fixtures/simpleClinicalERDiagram.json';
@@ -44,13 +44,13 @@ import InvalidUniqueKeyFixture from '../fixtures/invalid_uniquekey.json';
 import themeDecorator from '../themeDecorator';
 
 const meta = {
-	component: EntityRelationshipDiagramContent,
+	component: RelationshipDiagramContent,
 	title: 'Viewer - Table/Entity Relationship Diagram',
 	decorators: [themeDecorator()],
 	parameters: {
 		layout: 'fullscreen',
 	},
-} satisfies Meta<typeof EntityRelationshipDiagramContent>;
+} satisfies Meta<typeof RelationshipDiagramContent>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -59,7 +59,7 @@ const StoryWrapper = ({ dictionary }: { dictionary: Dictionary }) => {
 	const relationshipMap = useMemo(() => buildRelationshipMap(dictionary), [dictionary]);
 	return (
 		<ActiveRelationshipProvider relationshipMap={relationshipMap}>
-			<EntityRelationshipDiagramContent dictionary={dictionary} />
+			<RelationshipDiagramContent dictionary={dictionary} />
 		</ActiveRelationshipProvider>
 	);
 };

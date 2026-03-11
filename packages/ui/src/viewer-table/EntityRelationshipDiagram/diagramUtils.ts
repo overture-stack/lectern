@@ -21,7 +21,7 @@
 
 import type { Dictionary, Schema } from '@overture-stack/lectern-dictionary';
 import { type Edge, type Node, MarkerType } from 'reactflow';
-import { graphStratify, sugiyama, type GraphNode } from 'd3-dag';
+import { graphStratify, grid, laneGreedy, sugiyama, type GraphNode } from 'd3-dag';
 import { ONE_CARDINALITY_MARKER_ID, ONE_CARDINALITY_MARKER_ACTIVE_ID } from '../../theme/icons/OneCardinalityMarker';
 
 const DEFAULT_MARKER_CONFIG = {
@@ -34,7 +34,7 @@ const DEFAULT_MARKER_CONFIG = {
 const NODE_WIDTH = 350;
 const HEADER_HEIGHT = 60;
 const FIELD_ROW_HEIGHT = 45;
-const GAP_X = 100;
+const GAP_X = 250;
 const GAP_Y = 100;
 
 export type SchemaFlowNode = Node<Schema, 'schema'>;
@@ -75,10 +75,21 @@ function estimateNodeHeight(schema: Schema): number {
 	return HEADER_HEIGHT + schema.fields.length * FIELD_ROW_HEIGHT;
 }
 
+type DiagramLayout = 'sugiyama' | 'grid';
+
 /**
- * Computes node positions using d3-dag's Sugiyama layout algorithm.
+ * Builds positioned nodes from schemas and edges using d3-dag's Sugiyama or grid layout algorithm.
+ *
+ * @param {Schema[]} schemas — The schemas to visualize
+ * @param {Edge[]} edges — ReactFlow edges representing foreign key relationships
+ * @param {DiagramLayout} algorithm — Layout algorithm: 'sugiyama' (default, full ERD) or 'grid' (FK chain view)
+ * @returns {{ nodes: Node[]; edges: Edge[] }} Positioned nodes and the original edges
  */
-export function getLayoutedElements(nodes: SchemaFlowNode[], edges: Edge[]): Node[] {
+export function getLayoutedElements(
+	nodes: SchemaFlowNode[],
+	edges: Edge[],
+	algorithm: DiagramLayout = 'sugiyama',
+): Node[] {
 	if (nodes.length === 0) {
 		return [];
 	}
@@ -102,22 +113,36 @@ export function getLayoutedElements(nodes: SchemaFlowNode[], edges: Edge[]): Nod
 
 	const dag = graphStratify()(stratifyData);
 	const schemaByName = new Map<string, Schema>();
-
 	for (const node of nodes) {
 		schemaByName.set(node.id, node.data);
 	}
 
-	const layout = sugiyama().nodeSize((dagNode: GraphNode<StratifyDatum, undefined>): [number, number] => {
-		const schema = schemaByName.get(dagNode.data.id);
-		const height = schema ? estimateNodeHeight(schema) : HEADER_HEIGHT;
-		return [NODE_WIDTH + GAP_X, height + GAP_Y];
-	});
-
-	layout(dag);
-
 	const positionMap = new Map<string, { x: number; y: number }>();
-	for (const dagNode of dag.nodes()) {
-		positionMap.set(dagNode.data.id, { x: dagNode.x, y: dagNode.y });
+
+	if (algorithm === 'grid') {
+		const layout = grid()
+			.nodeSize((dagNode: GraphNode<StratifyDatum, undefined>): [number, number] => {
+				const schema = schemaByName.get(dagNode.data.id);
+				const height = schema ? estimateNodeHeight(schema) : HEADER_HEIGHT;
+				return [height + GAP_Y, NODE_WIDTH + GAP_X];
+			})
+			.lane(laneGreedy());
+		layout(dag);
+
+		for (const dagNode of dag.nodes()) {
+			positionMap.set(dagNode.data.id, { x: dagNode.y, y: dagNode.x });
+		}
+	} else {
+		const layout = sugiyama().nodeSize((dagNode: GraphNode<StratifyDatum, undefined>): [number, number] => {
+			const schema = schemaByName.get(dagNode.data.id);
+			const height = schema ? estimateNodeHeight(schema) : HEADER_HEIGHT;
+			return [NODE_WIDTH + GAP_X, height + GAP_Y];
+		});
+		layout(dag);
+
+		for (const dagNode of dag.nodes()) {
+			positionMap.set(dagNode.data.id, { x: dagNode.x, y: dagNode.y });
+		}
 	}
 
 	return nodes.map((node) => ({
@@ -127,20 +152,27 @@ export function getLayoutedElements(nodes: SchemaFlowNode[], edges: Edge[]): Nod
 }
 
 /**
- * Builds unpositioned nodes from the dictionary and computes layout using
- * d3-dag's Sugiyama algorithm.
+ * Builds positioned nodes from schemas and edges using d3-dag's Sugiyama or grid layout algorithm.
  *
- * @param {Dictionary} dictionary — The Lectern dictionary containing schemas to visualize
+ * @param {Schema[]} schemas — The schemas to visualize
  * @param {Edge[]} edges — ReactFlow edges representing foreign key relationships
+ * @param {DiagramLayout} algorithm — Layout algorithm: 'sugiyama' (default, full ERD) or 'grid' (FK chain view)
  * @returns {{ nodes: Node[]; edges: Edge[] }} Positioned nodes and the original edges
  */
-export function getLayoutedDiagram(dictionary: Dictionary, edges: Edge[]): { nodes: Node[]; edges: Edge[] } {
-	const unpositionedNodes: SchemaFlowNode[] = dictionary.schemas.map((schema) => ({
+export function getLayoutedDiagram(
+	schemas: Schema[],
+	edges: Edge[],
+	algorithm: DiagramLayout = 'sugiyama',
+): { nodes: Node[]; edges: Edge[] } {
+	if (schemas.length === 0) {
+		return { nodes: [], edges: [] };
+	}
+	const unpositionedNodes: SchemaFlowNode[] = schemas.map((schema) => ({
 		...buildSchemaNode(schema),
 		position: { x: 0, y: 0 },
 	}));
-	const layoutedNodes = getLayoutedElements(unpositionedNodes, edges);
-	return { nodes: layoutedNodes, edges };
+	const nodes = getLayoutedElements(unpositionedNodes, edges, algorithm);
+	return { nodes, edges };
 }
 
 /**
@@ -327,7 +359,6 @@ export function getEdgesFromMap(map: RelationshipMap): Edge[] {
 			pathOptions: { offset: -20 },
 			data: { fkIndex } satisfies RelationshipEdgeData,
 			markerEnd: DEFAULT_MARKER_CONFIG,
-			markerStart: ONE_CARDINALITY_MARKER_ID,
 		})),
 	);
 }

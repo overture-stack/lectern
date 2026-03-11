@@ -20,11 +20,13 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { SchemaField, SchemaFieldRestrictions, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
+import { Schema, SchemaField, SchemaFieldRestrictions, SchemaRestrictions } from '@overture-stack/lectern-dictionary';
 import { type ReactNode } from 'react';
 
 import ReadMoreText from '../../../../../common/ReadMoreText';
 import { type Theme, useThemeContext } from '../../../../../theme/index';
+import { isFieldForeignKey } from '../../../../../utils/isFieldForeignKey';
+import { useDiagramViewContext } from '../../../../DiagramViewContext';
 
 import { computeAllowedValuesColumn, type RestrictionItem } from './ComputeAllowedValues';
 
@@ -45,6 +47,22 @@ const codeListContentStyle = css`
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
+`;
+
+const viewInDiagramButtonStyle = (theme: Theme) => css`
+	${theme.typography.paragraphSmallBold}
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 0;
+	background: none;
+	border: none;
+	text-decoration: underline;
+	cursor: pointer;
+	margin-top: 4px;
+	&:hover {
+		color: ${theme.colors.secondary};
+	}
 `;
 
 const renderRestrictionItem = (value: RestrictionItem, key: string): ReactNode => {
@@ -71,9 +89,12 @@ export const renderAllowedValuesColumn = (
 	fieldLevelRestrictions: SchemaFieldRestrictions,
 	schemaLevelRestrictions: SchemaRestrictions,
 	currentSchemaField: SchemaField,
+	schema?: Schema,
 ) => {
 	const items = computeAllowedValuesColumn(fieldLevelRestrictions, schemaLevelRestrictions, currentSchemaField);
 	const theme: Theme = useThemeContext();
+	const { openFocusedDiagram } = useDiagramViewContext();
+	const isForeignKey = schema ? isFieldForeignKey(schema, currentSchemaField) : false;
 
 	if (!items || Object.keys(items).length === 0) {
 		return (
@@ -83,6 +104,14 @@ export const renderAllowedValuesColumn = (
 				`}
 			>
 				No restrictions provided for this field.
+				{isForeignKey && schema && (
+					<button
+						css={viewInDiagramButtonStyle(theme)}
+						onClick={() => openFocusedDiagram({ schemaName: schema.name, fieldName: currentSchemaField.name })}
+					>
+						View in diagram
+					</button>
+				)}
 			</span>
 		);
 	}
@@ -98,6 +127,14 @@ export const renderAllowedValuesColumn = (
 					:	null
 				);
 			})}
+			{isForeignKey && schema && (
+				<button
+					css={viewInDiagramButtonStyle(theme)}
+					onClick={() => openFocusedDiagram({ schemaName: schema.name, fieldName: currentSchemaField.name })}
+				>
+					View in diagram
+				</button>
+			)}
 		</ReadMoreText>
 	);
 };
