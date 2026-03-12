@@ -78,7 +78,7 @@ const DiagramSubtitle = ({ isFocused }: { isFocused?: boolean }) => {
 		<>
 			<div css={chainRowStyle}>
 				<span css={chainLabelStyle}>{isFocused ? 'Schema relation:' : 'Highlighting schema relation:'}</span>
-				{activeSchemaChain.map((schema, index) => (
+				{activeSchemaChain.toReversed().map((schema, index) => (
 					<span key={index} css={chainItemStyle}>
 						{index > 0 && <span css={arrowStyle}>{'\u2192'}</span>}
 						<span css={pillStyle(theme)}>{schema}</span>

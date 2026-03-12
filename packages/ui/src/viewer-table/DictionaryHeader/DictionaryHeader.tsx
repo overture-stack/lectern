@@ -49,7 +49,7 @@ const descriptionWrapperStyle = (theme: Theme) => css`
 
 const containerStyle = css`
 	background-color: white;
-	padding: 2.5rem;
+	padding: 2.5rem 0;
 	margin: 0;
 	border-bottom: 1px solid #d1d8df;
 	display: flex;

@@ -49,10 +49,9 @@ const panelStyles = (theme: Theme) => css`
 	width: -webkit-fit-content;
 	align-items: center;
 	justify-content: space-between;
-	padding: 8px 16px;
+	padding: 16px 0;
 	background-color: ${theme.colors.white};
 	flex-wrap: nowrap;
-	min-height: 80px;
 	position: sticky;
 	z-index: 10;
 	top: 0px;
@@ -82,26 +81,27 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, customFilterDropdowns 
 		<div css={panelStyles(theme)}>
 			<div css={sectionStyles}>
 				<TableOfContentsDropdown schemas={selectedDictionary?.schemas ?? []} onSelect={onSelect} />
-				<AttributeFilterDropdown />
-				{customFilterDropdowns && customFilterDropdowns.map((dropdown) => (
-					<Dropdown
-						key={dropdown.label}
-						title={dropdown.selectedValue ?? dropdown.label}
-						menuItems={[
-							{ label: 'All', action: () => dropdown.onSelect(undefined) },
-							...dropdown.options.map((option) => ({
-								label: option,
-								action: () => dropdown.onSelect(option),
-							})),
-						]}
-					/>
-				))}
+				<DiagramViewButton />
+				{customFilterDropdowns &&
+					customFilterDropdowns.map((dropdown) => (
+						<Dropdown
+							key={dropdown.label}
+							title={dropdown.selectedValue ?? dropdown.label}
+							menuItems={[
+								{ label: 'All', action: () => dropdown.onSelect(undefined) },
+								...dropdown.options.map((option) => ({
+									label: option,
+									action: () => dropdown.onSelect(option),
+								})),
+							]}
+						/>
+					))}
 				{isCollapsed ?
 					<ExpandAllButton onClick={() => setIsCollapsed(false)} />
 				:	<CollapseAllButton onClick={() => setIsCollapsed(true)} />}
+				<AttributeFilterDropdown />
 			</div>
 			<div css={sectionStyles}>
-				<DiagramViewButton />
 				<DictionaryDownloadButton fileType="tsv" />
 			</div>
 		</div>

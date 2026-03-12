@@ -42,33 +42,28 @@ const fieldNameRowStyle = (theme: Theme) => css`
 	display: flex;
 	align-items: center;
 	gap: 4px;
+	line-height: 1;
 	&:hover [data-field-anchor] {
 		opacity: 1;
 	}
 	&:hover [data-field-name] {
 		color: ${theme.colors.secondary};
-		text-decoration: underline;
-		text-decoration-thickness: 2px;
-		text-underline-offset: 4px;
 	}
 `;
 
-// Note: Added Line Height 1 for consistent vertical spacing for hashtag icon
-const fieldHashIconStyle = (theme: Theme) => css`
+const fieldHashIconStyle = css`
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	opacity: 0;
-	line-height: 1;
 	padding-block: 0px;
 	padding-inline: 0px;
 	background: transparent;
 	border: none;
 	cursor: pointer;
-	svg {
-		border-bottom: 2px solid ${theme.colors.secondary};
-	}
 `;
 
 const fieldNameStyle = css`
-	padding-bottom: 4px;
 	cursor: pointer;
 `;
 
@@ -126,7 +121,7 @@ export const FieldsColumn = ({ fieldRow, schemaName }: FieldColumnProps) => {
 				<b data-field-name onClick={handleAnchorClick} css={fieldNameStyle}>
 					{fieldName}
 				</b>
-				<button type="button" data-field-anchor css={fieldHashIconStyle(theme)} onClick={handleAnchorClick}>
+				<button type="button" data-field-anchor css={fieldHashIconStyle} onClick={handleAnchorClick}>
 					<Hash width={18} height={18} fill={theme.colors.secondary} />
 				</button>
 			</div>
