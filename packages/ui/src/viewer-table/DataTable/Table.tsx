@@ -179,12 +179,12 @@ const Table = <R,>({ columns, data, schemaName, highlightedFieldName }: GenericT
 						))}
 					</thead>
 					<tbody>
-						{table.getRowModel().rows.map((row, i: number) => {
+						{table.getRowModel().rows.map((row) => {
 							const fieldName = hasNameProperty(row.original) ? row.original.name : undefined;
 							const fieldId = schemaName && fieldName ? `${schemaName}.${fieldName}` : undefined;
 							const isHighlighted = highlightedFieldName === fieldName;
 
-							return <TableRow key={row.id} row={row} index={i} fieldId={fieldId} isHighlighted={isHighlighted} />;
+							return <TableRow key={row.id} row={row} fieldId={fieldId} isHighlighted={isHighlighted} />;
 						})}
 					</tbody>
 				</table>
