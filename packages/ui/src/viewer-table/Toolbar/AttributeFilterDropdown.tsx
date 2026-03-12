@@ -55,7 +55,7 @@ const AttributeFilterDropdown = () => {
 	return (
 		<Dropdown
 			leftIcon={<ListFilter />}
-			title="Filter By"
+			title="Filters"
 			menuItems={menuItems}
 			disabled={errors.length > 0 || loading}
 		/>

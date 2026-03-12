@@ -35,6 +35,7 @@ export interface ButtonProps {
 	className?: string;
 	isLoading?: boolean;
 	icon?: ReactNode;
+	size?: number;
 	width?: string;
 	iconOnly?: boolean;
 	tooltipText?: string;
@@ -48,7 +49,7 @@ const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: Se
 	gap: 11px;
 	width: ${width || 'auto'};
 	min-width: fit-content;
-	padding: 6px 12px;
+	padding: 2px 12px;
 	background-color: ${theme.colors.background_light};
 	color: ${theme.colors.accent_dark};
 	border: 2px solid ${theme.colors.border_button};
@@ -72,7 +73,15 @@ const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: Se
 	${styleOverride}
 `;
 
-const getContentStyles = (theme: Theme, shouldShowLoading: boolean) => css`
+const getContentStyles = ({
+	theme,
+	size,
+	shouldShowLoading,
+}: {
+	theme: Theme;
+	size: number;
+	shouldShowLoading: boolean;
+}) => css`
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -81,6 +90,7 @@ const getContentStyles = (theme: Theme, shouldShowLoading: boolean) => css`
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	font-size: ${size}px;
 	visibility: ${shouldShowLoading ? 'hidden' : 'visible'};
 `;
 
@@ -140,6 +150,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 			isLoading: controlledLoading,
 			icon,
 			width,
+			size = 16,
 			iconOnly = false,
 			styleOverride,
 			tooltipText,
@@ -171,7 +182,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 				)}
 				{icon && !shouldShowLoading && <span css={getIconStyles()}>{icon}</span>}
 				{/* If iconOnly is true, we don't show the children */}
-				{!iconOnly && <span css={getContentStyles(theme, shouldShowLoading)}>{children}</span>}
+				{!iconOnly && <span css={getContentStyles({ theme, size, shouldShowLoading })}>{children}</span>}
 				<span css={getSpinnerStyles(shouldShowLoading)}>
 					<Spinner fill={theme.colors.black} height={20} width={20} />
 				</span>

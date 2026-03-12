@@ -144,7 +144,7 @@ const headingSmall = css`
 const buttonText = css`
 	${baseFont}
 	font-size: 20px;
-	font-weight: 700;
+	font-weight: 500;
 	line-height: 1.5;
 	vertical-align: middle;
 `;
@@ -172,7 +172,7 @@ const fieldBlock = css`
 
 const tableHeader = css`
 	${baseFont}
-	font-size: 18px;
+	font-size: 20px;
 	font-weight: 600;
 	line-height: 20px;
 	vertical-align: middle;
