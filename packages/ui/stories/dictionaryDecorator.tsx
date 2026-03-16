@@ -125,6 +125,37 @@ export const withErrorState = (): Decorator => {
 	);
 };
 
+const schemaMetaMap: Record<string, { category: string; tier: string }> = {
+	participant: { category: 'Clinical', tier: 'Required' },
+	sociodemographic: { category: 'Clinical', tier: 'Optional' },
+	demographic: { category: 'Clinical', tier: 'Required' },
+	diagnosis: { category: 'Clinical', tier: 'Required' },
+	treatment: { category: 'Clinical', tier: 'Optional' },
+	follow_up: { category: 'Clinical', tier: 'Optional' },
+	procedure: { category: 'Clinical', tier: 'Optional' },
+	medication: { category: 'Clinical', tier: 'Optional' },
+	radiation: { category: 'Clinical', tier: 'Optional' },
+	measurement: { category: 'Clinical', tier: 'Optional' },
+	phenotype: { category: 'Clinical', tier: 'Optional' },
+	comorbidity: { category: 'Clinical', tier: 'Optional' },
+	exposure: { category: 'Clinical', tier: 'Optional' },
+	specimen: { category: 'Biospecimen', tier: 'Required' },
+	sample: { category: 'Biospecimen', tier: 'Required' },
+	experiment: { category: 'Genomic', tier: 'Required' },
+	read_group: { category: 'Genomic', tier: 'Optional' },
+};
+
+const customFilterDictionaryData: DictionaryTestData = [
+	{
+		...DictionarySample,
+		schemas: DictionarySample.schemas.map((schema) => ({
+			...schema,
+			meta: schemaMetaMap[schema.name] ?? {},
+		})),
+	} as DictionaryServerUnion,
+];
+
 export const withMultipleDictionaries = withDictionaryContext(multipleDictionaryData);
 export const withSingleDictionary = withDictionaryContext(singleDictionaryData);
 export const withEmptyDictionaries = withDictionaryContext(emptyDictionaryData);
+export const withCustomFilterDictionary = withDictionaryContext(customFilterDictionaryData);

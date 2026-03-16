@@ -32,6 +32,7 @@ import {
 	withLecternUrl,
 	withMultipleDictionaries,
 	withSingleDictionary,
+	withCustomFilterDictionary,
 } from '../dictionaryDecorator';
 import themeDecorator from '../themeDecorator';
 
@@ -92,4 +93,14 @@ export const SingleDictionary: Story = {
 
 export const LecternServer: Story = {
 	decorators: [withLecternUrl()],
+};
+
+export const WithCustomFilterDropdowns: Story = {
+	decorators: [withCustomFilterDictionary],
+	args: {
+		customFilterDropdowns: [
+			{ label: 'Category', filterProperty: 'meta.category' },
+			{ label: 'Tier', filterProperty: 'meta.tier' },
+		],
+	},
 };

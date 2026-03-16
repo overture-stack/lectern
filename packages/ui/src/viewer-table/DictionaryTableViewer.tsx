@@ -45,6 +45,30 @@ import DictionaryViewerLoadingPage from './DictionaryViewer/DictionaryViewerLoad
 import DiagramSubtitle from './Toolbar/DiagramSubtitle';
 import Toolbar from './Toolbar/index';
 
+export type CustomFilterDropdown = {
+	label: string;
+	filterProperty: string;
+};
+
+export type DictionaryTableViewerProps = {
+	customFilterDropdowns?: CustomFilterDropdown[];
+};
+
+export type ToolbarCustomDropdown = {
+	label: string;
+	options: string[];
+	selectedValue: string | undefined;
+	onSelect: (value: string | undefined) => void;
+};
+
+const getByDotPath = (obj: unknown, path: string): unknown =>
+	path
+		.split('.')
+		.reduce<unknown>(
+			(acc, key) => (acc != null && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined),
+			obj,
+		);
+
 type ParsedHashTarget = {
 	index: number;
 	schemaName: string;
@@ -92,18 +116,52 @@ const headerPanelBlockStyle = css`
 	gap: 0;
 `;
 
+const emptyFilterMessageStyle = (theme: Theme) => css`
+	${theme.typography.subtitle}
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 48px;
+	color: ${theme.colors.black};
+`;
+
 const isConditionalRestriction = (schemaFieldRestriction: SchemaFieldRestrictions) => {
 	return schemaFieldRestriction && 'if' in schemaFieldRestriction && schemaFieldRestriction.if !== undefined;
 };
 
-const getFilteredSchema = (schema: Schema, filters: string[]) => {
+const getFilteredSchema = (schema: Schema, filters: string[], activeFilters: [string, string][]): Schema | null => {
+	// Schema-level: hide entire schema if it doesn't match active custom filters
+	if (activeFilters.length > 0) {
+		const matches = activeFilters.every(([filterProperty, value]) => {
+			const metaValue = getByDotPath(schema, filterProperty);
+
+			if (metaValue == null) {
+				return false;
+			}
+
+			if (Array.isArray(metaValue)) {
+				return metaValue.some((v) => String(v) === value);
+			}
+
+			return String(metaValue) === value;
+		});
+
+		if (!matches) {
+			return null;
+		}
+	}
+
+	// Field-level: filter fields within the schema
 	if (filters.includes('Required')) {
-		return {
-			...schema,
-			fields: schema.fields.filter((field) => {
-				return isFieldRequired(field) || isConditionalRestriction(field.restrictions);
-			}),
-		};
+		const filteredFields = schema.fields.filter((field) => {
+			return isFieldRequired(field) || isConditionalRestriction(field.restrictions);
+		});
+
+		if (filteredFields.length === schema.fields.length) {
+			return schema;
+		}
+
+		return { ...schema, fields: filteredFields };
 	}
 	return schema;
 };
@@ -152,7 +210,7 @@ const DiagramModal = () => {
 // TODO: produce a simplified version that accepts a dictionary and produces this same view,
 // so that there's no requirement for a Lectern server, etc. and without a Toolbar, or a simpler one.
 
-const DictionaryTableViewerContent = () => {
+const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTableViewerProps) => {
 	const theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
 	const { filters, selectedDictionary } = useDictionaryStateContext();
@@ -160,11 +218,47 @@ const DictionaryTableViewerContent = () => {
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [selectedSchemaIndex, setSelectedSchemaIndex] = useState<number | undefined>(undefined);
 	const [highlightedField, setHighlightedField] = useState<{ schemaName: string; fieldName: string } | null>(null);
+	const [customFilterSelections, setCustomFilterSelections] = useState<Record<string, string | undefined>>({});
 
 	const relationshipMap = useMemo(
 		() => (selectedDictionary ? buildRelationshipMap(selectedDictionary) : null),
 		[selectedDictionary],
 	);
+
+	const toolbarCustomDropdowns: ToolbarCustomDropdown[] | undefined = useMemo(() => {
+		if (!customFilterDropdowns?.length || !selectedDictionary?.schemas) {
+			return undefined;
+		}
+
+		const dropdownContexts = customFilterDropdowns.map((dropdown) => ({
+			dropdown,
+			set: new Set<string>(),
+		}));
+
+		for (const schema of selectedDictionary.schemas) {
+			for (const context of dropdownContexts) {
+				const val = getByDotPath(schema, context.dropdown.filterProperty);
+
+				if (val == null) {
+					continue;
+				}
+
+				if (Array.isArray(val)) {
+					val.forEach((v) => context.set.add(String(v)));
+				} else {
+					context.set.add(String(val));
+				}
+			}
+		}
+
+		return dropdownContexts.map(({ dropdown, set }) => ({
+			label: dropdown.label,
+			options: Array.from(set),
+			selectedValue: customFilterSelections[dropdown.filterProperty],
+			onSelect: (value: string | undefined) =>
+				setCustomFilterSelections((prev) => ({ ...prev, [dropdown.filterProperty]: value })),
+		}));
+	}, [customFilterDropdowns, selectedDictionary?.schemas, customFilterSelections]);
 
 	const handleHash = useCallback(() => {
 		const target = parseHash(window.location.hash, selectedDictionary?.schemas);
@@ -202,21 +296,42 @@ const DictionaryTableViewerContent = () => {
 		return () => window.removeEventListener('hashchange', handleHash);
 	}, [handleHash]);
 
-	const accordionItems =
-		selectedDictionary?.schemas?.map((schema: Schema) => ({
-			title: schema.name,
-			description: schema.description,
-			content: (
-				<SchemaTable
-					schema={getFilteredSchema(schema, filters)}
-					highlightedFieldName={highlightedField?.schemaName === schema.name ? highlightedField.fieldName : null}
-				/>
-			),
-			schemaName: schema.name,
-		})) || [];
+	const activeFilters: [string, string][] = (customFilterDropdowns ?? []).flatMap((dropdown) => {
+		const value = customFilterSelections[dropdown.filterProperty];
+
+		if (value === undefined) {
+			return [];
+		}
+
+		return [[dropdown.filterProperty, value]];
+	});
+
+	const accordionItems = useMemo(() => {
+		return (selectedDictionary?.schemas ?? []).flatMap((schema: Schema) => {
+			const filtered = getFilteredSchema(schema, filters, activeFilters);
+
+			if (!filtered) {
+				return [];
+			}
+
+			return [
+				{
+					title: schema.name,
+					description: schema.description,
+					content: (
+						<SchemaTable
+							schema={filtered}
+							highlightedFieldName={highlightedField?.schemaName === schema.name ? highlightedField.fieldName : null}
+						/>
+					),
+					schemaName: schema.name,
+				},
+			];
+		});
+	}, [selectedDictionary?.schemas, filters, activeFilters, highlightedField]);
 
 	const handleAccordionSelect = (accordionIndex: number) => {
-		const schemaName = selectedDictionary?.schemas?.[accordionIndex]?.name;
+		const schemaName = accordionItems[accordionIndex]?.schemaName;
 		if (schemaName) {
 			const newUrl = `${window.location.pathname}${window.location.search}#${schemaName}`;
 			window.history.pushState(null, '', newUrl);
@@ -257,8 +372,15 @@ const DictionaryTableViewerContent = () => {
 				<div css={headerPanelBlockStyle}>
 					<DictionaryHeader />
 				</div>
-				<Toolbar onSelect={handleAccordionSelect} setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
-				<Accordion accordionItems={accordionItems} collapseAll={isCollapsed} selectedIndex={selectedSchemaIndex} />
+				<Toolbar
+					onSelect={handleAccordionSelect}
+					setIsCollapsed={setIsCollapsed}
+					isCollapsed={isCollapsed}
+					customFilterDropdowns={toolbarCustomDropdowns}
+				/>
+				{accordionItems.length === 0 && activeFilters.length > 0 ?
+					<div css={emptyFilterMessageStyle(theme)}>No schemas match the selected filter criteria.</div>
+				:	<Accordion accordionItems={accordionItems} collapseAll={isCollapsed} selectedIndex={selectedSchemaIndex} />}
 			</div>
 			{relationshipMap && !loading && errors.length === 0 && (
 				<ActiveRelationshipProvider relationshipMap={relationshipMap}>
@@ -269,9 +391,9 @@ const DictionaryTableViewerContent = () => {
 	);
 };
 
-export const DictionaryTableViewer = () => (
+export const DictionaryTableViewer = ({ customFilterDropdowns }: DictionaryTableViewerProps) => (
 	<DiagramViewProvider>
-		<DictionaryTableViewerContent />
+		<DictionaryTableViewerContent customFilterDropdowns={customFilterDropdowns} />
 	</DiagramViewProvider>
 );
 

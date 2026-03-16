@@ -27,6 +27,8 @@ import { useDictionaryDataContext, useDictionaryStateContext } from '../../dicti
 import { type Theme, useThemeContext } from '../../theme/index';
 import { ToolbarSkeleton } from '../Loading';
 
+import Dropdown from '../../common/Dropdown/index';
+import type { ToolbarCustomDropdown } from '../DictionaryTableViewer';
 import AttributeFilterDropdown from './AttributeFilterDropdown';
 import CollapseAllButton from './CollapseAllButton';
 import DiagramViewButton from './DiagramViewButton';
@@ -38,6 +40,7 @@ export type ToolbarProps = {
 	onSelect: (schemaNameIndex: number) => void;
 	setIsCollapsed: (collapsed: boolean) => void;
 	isCollapsed: boolean;
+	customFilterDropdowns?: ToolbarCustomDropdown[];
 };
 
 const panelStyles = (theme: Theme) => css`
@@ -61,7 +64,7 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed }: ToolbarProps) => {
+const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, customFilterDropdowns }: ToolbarProps) => {
 	const theme: Theme = useThemeContext();
 	const { loading } = useDictionaryDataContext();
 	const { selectedDictionary } = useDictionaryStateContext();
@@ -79,6 +82,20 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed }: ToolbarProps) => {
 			<div css={sectionStyles}>
 				<TableOfContentsDropdown schemas={selectedDictionary?.schemas ?? []} onSelect={onSelect} />
 				<DiagramViewButton />
+				{customFilterDropdowns &&
+					customFilterDropdowns.map((dropdown) => (
+						<Dropdown
+							key={dropdown.label}
+							title={dropdown.selectedValue ?? dropdown.label}
+							menuItems={[
+								{ label: 'All', action: () => dropdown.onSelect(undefined) },
+								...dropdown.options.map((option) => ({
+									label: option,
+									action: () => dropdown.onSelect(option),
+								})),
+							]}
+						/>
+					))}
 				{isCollapsed ?
 					<ExpandAllButton onClick={() => setIsCollapsed(false)} />
 				:	<CollapseAllButton onClick={() => setIsCollapsed(true)} />}
