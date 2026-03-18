@@ -99,7 +99,17 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, customFilterDropdowns 
 				{isCollapsed ?
 					<ExpandAllButton onClick={() => setIsCollapsed(false)} />
 				:	<CollapseAllButton onClick={() => setIsCollapsed(true)} />}
-				<AttributeFilterDropdown />
+				<AttributeFilterButton />
+				{customFilterCategories && customFilterCategories.length > 0 && (
+					<Dropdown
+						leftIcon={<theme.icons.ListFilter />}
+						title={customFilterCategories.length === 1 ? customFilterCategories[0].label : 'Filters'}
+						disabled={loading || errors.length > 0}
+						panelStyles={customFilterPanelStyles}
+					>
+						<FilterRows categories={customFilterCategories} />
+					</Dropdown>
+				)}
 			</div>
 			<div css={sectionStyles}>
 				<DictionaryDownloadButton fileType="tsv" />

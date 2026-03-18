@@ -20,7 +20,7 @@
 
 import type { DictionaryServerRecord } from '@overture-stack/lectern-client/dist/rest';
 import type { Dictionary } from '@overture-stack/lectern-dictionary';
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 
 import { sortDictionariesByVersion } from '../utils/sortDictionaries';
 import { fetchAndValidateHostedDictionaries, fetchRemoteDictionary } from './sources';
@@ -37,12 +37,17 @@ export type DictionaryDataContextType = {
 	errors: string[];
 };
 
+export type CustomFilterSelections = Record<string, string[]>;
+
 export type DictionaryStateContextType = {
 	currentDictionaryIndex: number;
 	filters: FilterOptions[];
 	setCurrentDictionaryIndex: (index: number) => void;
 	setFilters: (filters: FilterOptions[]) => void;
 	selectedDictionary?: DictionaryServerUnion;
+	customFilterSelections: CustomFilterSelections;
+	toggleCustomFilter: (filterProperty: string, value: string) => void;
+	resetCustomFilters: () => void;
 };
 
 export type StaticDictionaryProviderProps = {
@@ -176,10 +181,27 @@ export type DictionaryStateProviderProps = {
 export const DictionaryStateProvider = ({ children }: DictionaryStateProviderProps) => {
 	const [currentDictionaryIndex, setCurrentDictionaryIndex] = useState(0);
 	const [filters, setFilters] = useState<FilterOptions[]>([]);
+	const [customFilterSelections, setCustomFilterSelections] = useState<CustomFilterSelections>({});
 
 	const dictionaryData = useDictionaryDataContext();
 	const { dictionaries } = dictionaryData;
 	const selectedDictionary = dictionaries?.[currentDictionaryIndex];
+
+	useEffect(() => {
+		setCustomFilterSelections({});
+	}, [currentDictionaryIndex]);
+
+	const toggleCustomFilter = useCallback((filterProperty: string, value: string) => {
+		setCustomFilterSelections((prev) => {
+			const current = prev[filterProperty] ?? [];
+			const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+			return { ...prev, [filterProperty]: next };
+		});
+	}, []);
+
+	const resetCustomFilters = useCallback(() => {
+		setCustomFilterSelections({});
+	}, []);
 
 	const value: DictionaryStateContextType = {
 		currentDictionaryIndex,
@@ -187,6 +209,9 @@ export const DictionaryStateProvider = ({ children }: DictionaryStateProviderPro
 		setCurrentDictionaryIndex,
 		setFilters,
 		selectedDictionary,
+		customFilterSelections,
+		toggleCustomFilter,
+		resetCustomFilters,
 	};
 
 	return <DictionaryStateContext.Provider value={value}>{children}</DictionaryStateContext.Provider>;

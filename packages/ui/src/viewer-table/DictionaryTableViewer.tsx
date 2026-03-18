@@ -50,6 +50,12 @@ export type CustomFilterDropdown = {
 	filterProperty: string;
 };
 
+export type CustomFilterCategory = {
+	label: string;
+	filterProperty: string;
+	options: string[];
+};
+
 export type DictionaryTableViewerProps = {
 	customFilterDropdowns?: CustomFilterDropdown[];
 };
@@ -131,8 +137,10 @@ const isConditionalRestriction = (schemaFieldRestriction: SchemaFieldRestriction
 
 const getFilteredSchema = (schema: Schema, filters: string[], activeFilters: [string, string][]): Schema | null => {
 	// Schema-level: hide entire schema if it doesn't match active custom filters
+	// Within a category: OR (schema matches any selected value)
+	// Across categories: AND (schema must match all categories)
 	if (activeFilters.length > 0) {
-		const matches = activeFilters.every(([filterProperty, value]) => {
+		const matches = activeFilters.every(([filterProperty, values]) => {
 			const metaValue = getByDotPath(schema, filterProperty);
 
 			if (metaValue == null) {
@@ -140,10 +148,10 @@ const getFilteredSchema = (schema: Schema, filters: string[], activeFilters: [st
 			}
 
 			if (Array.isArray(metaValue)) {
-				return metaValue.some((v) => String(v) === value);
+				return metaValue.some((v) => values.includes(String(v)));
 			}
 
-			return String(metaValue) === value;
+			return values.includes(String(metaValue));
 		});
 
 		if (!matches) {
@@ -253,12 +261,13 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 
 		return dropdownContexts.map(({ dropdown, set }) => ({
 			label: dropdown.label,
+			filterProperty: dropdown.filterProperty,
 			options: Array.from(set),
 			selectedValue: customFilterSelections[dropdown.filterProperty],
 			onSelect: (value: string | undefined) =>
 				setCustomFilterSelections((prev) => ({ ...prev, [dropdown.filterProperty]: value })),
 		}));
-	}, [customFilterDropdowns, selectedDictionary?.schemas, customFilterSelections]);
+	}, [customFilterDropdowns, selectedDictionary?.schemas]);
 
 	const handleHash = useCallback(() => {
 		const target = parseHash(window.location.hash, selectedDictionary?.schemas);
@@ -296,14 +305,14 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 		return () => window.removeEventListener('hashchange', handleHash);
 	}, [handleHash]);
 
-	const activeFilters: [string, string][] = (customFilterDropdowns ?? []).flatMap((dropdown) => {
-		const value = customFilterSelections[dropdown.filterProperty];
+	const activeFilters: [string, string[]][] = (customFilterDropdowns ?? []).flatMap((dropdown) => {
+		const values = customFilterSelections[dropdown.filterProperty];
 
-		if (value === undefined) {
+		if (values === undefined || values.length === 0) {
 			return [];
 		}
 
-		return [[dropdown.filterProperty, value]];
+		return [[dropdown.filterProperty, values]];
 	});
 
 	const accordionItems = useMemo(() => {
@@ -376,7 +385,7 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 					onSelect={handleAccordionSelect}
 					setIsCollapsed={setIsCollapsed}
 					isCollapsed={isCollapsed}
-					customFilterDropdowns={toolbarCustomDropdowns}
+					customFilterCategories={customFilterCategories}
 				/>
 				{accordionItems.length === 0 && activeFilters.length > 0 ?
 					<div css={emptyFilterMessageStyle(theme)}>No schemas match the selected filter criteria.</div>
