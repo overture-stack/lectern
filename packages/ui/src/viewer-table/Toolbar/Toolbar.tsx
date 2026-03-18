@@ -26,11 +26,8 @@ import { css } from '@emotion/react';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import { type Theme, useThemeContext } from '../../theme/index';
 import { ToolbarSkeleton } from '../Loading';
-import type { CustomFilterCategory } from '../DictionaryTableViewer';
-
-import Dropdown from '../../common/Dropdown/index';
+import Dropdown, { FilterRow, type FilterCategory } from '../../common/Dropdown/index';
 import AttributeFilterButton from './AttributeFilterButton';
-import FilterRows from './FilterRows';
 import CollapseAllButton from './CollapseAllButton';
 import DiagramViewButton from './DiagramViewButton';
 import DictionaryDownloadButton from './DictionaryDownloadButton';
@@ -41,7 +38,7 @@ export type ToolbarProps = {
 	onSelect: (schemaNameIndex: number) => void;
 	setIsCollapsed: (collapsed: boolean) => void;
 	isCollapsed: boolean;
-	customFilterCategories?: CustomFilterCategory[];
+	filterCategories?: FilterCategory[];
 };
 
 const panelStyles = (theme: Theme) => css`
@@ -65,15 +62,10 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const customFilterPanelStyles = css`
-	min-width: 200px;
-	max-height: 300px;
-`;
-
-const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, customFilterCategories }: ToolbarProps) => {
+const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, filterCategories }: ToolbarProps) => {
 	const theme: Theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
-	const { selectedDictionary } = useDictionaryStateContext();
+	const { selectedDictionary, customFilterSelections, toggleCustomFilter } = useDictionaryStateContext();
 	const { ListFilter } = theme.icons;
 
 	if (!selectedDictionary && !loading) {
@@ -93,14 +85,22 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, customFilterCategories
 					<ExpandAllButton onClick={() => setIsCollapsed(false)} />
 				:	<CollapseAllButton onClick={() => setIsCollapsed(true)} />}
 				<AttributeFilterButton />
-				{customFilterCategories && customFilterCategories.length > 0 && (
+				{filterCategories && filterCategories.length > 0 && (
 					<Dropdown
 						leftIcon={<ListFilter />}
-						title={customFilterCategories.length === 1 ? customFilterCategories[0].label : 'Filters'}
+						title={filterCategories.length === 1 ? filterCategories[0].label : 'Filters'}
 						disabled={loading || errors.length > 0}
-						panelStyles={customFilterPanelStyles}
+						closeOnSelect={false}
 					>
-						<FilterRows categories={customFilterCategories} />
+						{filterCategories.map((category) => (
+							<FilterRow
+								key={category.filterProperty}
+								category={category}
+								showHeader={filterCategories.length > 1}
+								selections={customFilterSelections[category.filterProperty] ?? []}
+								onToggle={(option) => toggleCustomFilter(category.filterProperty, option)}
+							/>
+						))}
 					</Dropdown>
 				)}
 			</div>

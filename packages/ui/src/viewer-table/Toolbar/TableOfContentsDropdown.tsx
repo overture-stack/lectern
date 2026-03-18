@@ -22,6 +22,7 @@
 import type { Schema } from '@overture-stack/lectern-dictionary';
 
 import Dropdown from '../../common/Dropdown/index';
+import DropDownItem from '../../common/Dropdown/DropdownItem';
 import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
 import { type Theme, useThemeContext } from '../../theme/index';
 
@@ -41,12 +42,13 @@ const TableOfContentsDropdown = ({ schemas, onSelect }: TableOfContentsDropdownP
 	}));
 
 	return schemas.length > 0 ?
-			<Dropdown
-				leftIcon={<List />}
-				title="Table of Contents"
-				menuItems={menuItemsFromSchemas}
-				disabled={loading || errors.length > 0}
-			/>
+			<Dropdown leftIcon={<List />} title="Table of Contents" disabled={loading || errors.length > 0}>
+				{menuItemsFromSchemas.map(({ label, action }) => (
+					<DropDownItem key={label} action={action}>
+						{label}
+					</DropDownItem>
+				))}
+			</Dropdown>
 		:	null;
 };
 
