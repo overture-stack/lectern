@@ -74,6 +74,7 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, customFilterCategories
 	const theme: Theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
 	const { selectedDictionary } = useDictionaryStateContext();
+	const { ListFilter } = theme.icons;
 
 	if (!selectedDictionary && !loading) {
 		return null;
@@ -94,7 +95,7 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, customFilterCategories
 				<AttributeFilterButton />
 				{customFilterCategories && customFilterCategories.length > 0 && (
 					<Dropdown
-						leftIcon={<theme.icons.ListFilter />}
+						leftIcon={<ListFilter />}
 						title={customFilterCategories.length === 1 ? customFilterCategories[0].label : 'Filters'}
 						disabled={loading || errors.length > 0}
 						panelStyles={customFilterPanelStyles}
