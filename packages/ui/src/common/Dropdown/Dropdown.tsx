@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -111,6 +111,8 @@ export type DropDownProps = {
 	disabled?: boolean;
 	size?: number;
 	styles?: SerializedStyles;
+	children?: ReactNode;
+	panelStyles?: SerializedStyles;
 };
 
 /**
@@ -126,7 +128,7 @@ export type DropDownProps = {
  * @returns {JSX.Element} Dropdown component
  */
 
-const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false, size = 16, styles }: DropDownProps) => {
+const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false, size = 16, styles, children, panelStyles }: DropDownProps) => {
 	const [open, setOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const theme: Theme = useThemeContext();
@@ -179,9 +181,11 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false, size = 16
 				<ChevronDown fill={theme.colors?.accent_dark} width={size} height={size} />
 			</button>
 			{open && !disabled && (
-				<menu role="menu" css={dropdownMenuStyle(theme)}>
-					{renderMenuItems()}
-				</menu>
+				children ?
+					<div css={[dropdownMenuStyle(theme), panelStyles]}>{children}</div>
+				:	<menu role="menu" css={[dropdownMenuStyle(theme), panelStyles]}>
+						{renderMenuItems()}
+					</menu>
 			)}
 		</div>
 	);
