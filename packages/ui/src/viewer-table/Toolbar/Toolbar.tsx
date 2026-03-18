@@ -26,10 +26,11 @@ import { css } from '@emotion/react';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import { type Theme, useThemeContext } from '../../theme/index';
 import { ToolbarSkeleton } from '../Loading';
+import type { CustomFilterCategory } from '../DictionaryTableViewer';
 
 import Dropdown from '../../common/Dropdown/index';
-import type { ToolbarCustomDropdown } from '../DictionaryTableViewer';
-import AttributeFilterDropdown from './AttributeFilterDropdown';
+import AttributeFilterButton from './AttributeFilterButton';
+import FilterRows from './FilterRows';
 import CollapseAllButton from './CollapseAllButton';
 import DiagramViewButton from './DiagramViewButton';
 import DictionaryDownloadButton from './DictionaryDownloadButton';
@@ -40,7 +41,7 @@ export type ToolbarProps = {
 	onSelect: (schemaNameIndex: number) => void;
 	setIsCollapsed: (collapsed: boolean) => void;
 	isCollapsed: boolean;
-	customFilterDropdowns?: ToolbarCustomDropdown[];
+	customFilterCategories?: CustomFilterCategory[];
 };
 
 const panelStyles = (theme: Theme) => css`
@@ -64,9 +65,14 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, customFilterDropdowns }: ToolbarProps) => {
+const customFilterPanelStyles = css`
+	min-width: 200px;
+	max-height: 300px;
+`;
+
+const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, customFilterCategories }: ToolbarProps) => {
 	const theme: Theme = useThemeContext();
-	const { loading } = useDictionaryDataContext();
+	const { loading, errors } = useDictionaryDataContext();
 	const { selectedDictionary } = useDictionaryStateContext();
 
 	if (!selectedDictionary && !loading) {
@@ -82,20 +88,6 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, customFilterDropdowns 
 			<div css={sectionStyles}>
 				<TableOfContentsDropdown schemas={selectedDictionary?.schemas ?? []} onSelect={onSelect} />
 				<DiagramViewButton />
-				{customFilterDropdowns &&
-					customFilterDropdowns.map((dropdown) => (
-						<Dropdown
-							key={dropdown.label}
-							title={dropdown.selectedValue ?? dropdown.label}
-							menuItems={[
-								{ label: 'All', action: () => dropdown.onSelect(undefined) },
-								...dropdown.options.map((option) => ({
-									label: option,
-									action: () => dropdown.onSelect(option),
-								})),
-							]}
-						/>
-					))}
 				{isCollapsed ?
 					<ExpandAllButton onClick={() => setIsCollapsed(false)} />
 				:	<CollapseAllButton onClick={() => setIsCollapsed(true)} />}
