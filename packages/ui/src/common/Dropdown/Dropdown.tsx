@@ -26,8 +26,6 @@ import { type MouseEvent as ReactMouseEvent, type ReactNode, useCallback, useEff
 
 import { type Theme, useThemeContext } from '../../theme/index';
 
-import DropDownItem from './DropdownItem';
-
 const disabledButtonStyle = css`
 	cursor: not-allowed;
 	opacity: 0.7;
@@ -94,41 +92,42 @@ const dropdownMenuStyle = (theme: Theme) => css`
 	z-index: 100;
 	max-height: 150px;
 	overflow-y: auto;
-	list-style: none;
 	margin: 0;
 	padding: 0;
 `;
 
-type MenuItem = {
-	label: string;
-	action: () => void;
-};
-
 export type DropDownProps = {
 	title?: string;
 	leftIcon?: ReactNode;
-	menuItems?: MenuItem[];
 	disabled?: boolean;
 	size?: number;
 	styles?: SerializedStyles;
 	children?: ReactNode;
-	panelStyles?: SerializedStyles;
+	closeOnSelect?: boolean;
 };
 
 /**
  * Dropdown component with toggle button and collapsible menu.
  *
- * @param {DropdownProps} props - Dropdown configuration
- * @param {DropDownProps} title - Text displayed on the dropdown button
- * @param {DropDownProps} leftIcon - Custom icon displayed on the left side
- * @param {DropDownProps} menuItems - Array of menu items with label and action
- * @param {DropDownProps} disabled - Whether the dropdown is disabled
- * @param {DropDownProps} size - Font size for title and icon dimensions in pixels
- * @param {DropDownProps} styles - Custom Emotion CSS styles to applied to the button
+ * @param {DropDownProps} props - Dropdown configuration
+ * @param {string} title - Text displayed on the dropdown button
+ * @param {ReactNode} leftIcon - Custom icon displayed on the left side
+ * @param {boolean} disabled - Whether the dropdown is disabled
+ * @param {number} size - Font size for title and icon dimensions in pixels
+ * @param {SerializedStyles} styles - Custom Emotion CSS styles applied to the button
+ * @param {ReactNode} children - Content rendered inside the dropdown panel
+ * @param {boolean} closeOnSelect - Whether clicking inside the panel closes the dropdown
  * @returns {JSX.Element} Dropdown component
  */
-
-const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false, size = 16, styles, children, panelStyles }: DropDownProps) => {
+const Dropdown = ({
+	title,
+	leftIcon,
+	disabled = false,
+	size = 16,
+	styles,
+	children,
+	closeOnSelect = true,
+}: DropDownProps) => {
 	const [open, setOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const theme: Theme = useThemeContext();
@@ -159,14 +158,6 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false, size = 16
 		[disabled],
 	);
 
-	const renderMenuItems = () => {
-		return menuItems.map(({ label, action }) => (
-			<DropDownItem key={label} action={action} onItemClick={() => setOpen(false)}>
-				{label}
-			</DropDownItem>
-		));
-	};
-
 	return (
 		<div ref={dropdownRef} css={parentStyle}>
 			<button
@@ -181,11 +172,9 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false, size = 16
 				<ChevronDown fill={theme.colors?.accent_dark} width={size} height={size} />
 			</button>
 			{open && !disabled && (
-				children ?
-					<div css={[dropdownMenuStyle(theme), panelStyles]}>{children}</div>
-				:	<menu role="menu" css={[dropdownMenuStyle(theme), panelStyles]}>
-						{renderMenuItems()}
-					</menu>
+				<div css={dropdownMenuStyle(theme)} onClick={closeOnSelect ? () => setOpen(false) : undefined}>
+					{children}
+				</div>
 			)}
 		</div>
 	);
