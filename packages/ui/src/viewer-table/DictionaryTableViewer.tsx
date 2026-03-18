@@ -38,6 +38,7 @@ import {
 	RelationshipDiagramContent,
 	useActiveRelationship,
 } from './EntityRelationshipDiagram';
+import { NoMarginParagraph } from '../theme/emotion/index';
 
 import SchemaTable from './DataTable/SchemaTable/index';
 import DictionaryHeader from './DictionaryHeader/DictionaryHeader';
@@ -58,13 +59,6 @@ export type CustomFilterCategory = {
 
 export type DictionaryTableViewerProps = {
 	customFilterDropdowns?: CustomFilterDropdown[];
-};
-
-export type ToolbarCustomDropdown = {
-	label: string;
-	options: string[];
-	selectedValue: string | undefined;
-	onSelect: (value: string | undefined) => void;
 };
 
 const getByDotPath = (obj: unknown, path: string): unknown =>
@@ -122,20 +116,53 @@ const headerPanelBlockStyle = css`
 	gap: 0;
 `;
 
-const emptyFilterMessageStyle = (theme: Theme) => css`
-	${theme.typography.subtitle}
+const emptyFilterContainerStyle = css`
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	padding: 48px;
-	color: ${theme.colors.black};
+	padding: 100px 48px 0;
+	gap: 12px;
+`;
+
+const emptyFilterMessageStyle = (theme: Theme) => css`
+	${theme.typography.subtitleSecondary}
+	font-size: 28px;
+	color: ${theme.colors.grey_6};
+	text-align: center;
+`;
+
+const emptyFilterSubtextStyle = (theme: Theme) => css`
+	${theme.typography.body}
+	color: ${theme.colors.grey_6};
+	text-align: center;
+`;
+
+const resetFilterButtonStyle = (theme: Theme) => css`
+	${theme.typography.body}
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 16px;
+	line-height: 1;
+	margin-top: 8px;
+	padding: 6px 16px;
+	background-color: transparent;
+	color: ${theme.colors.grey_6};
+	border: 1px solid ${theme.colors.border_button};
+	border-radius: 9px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	&:hover {
+		background-color: ${theme.colors.accent_1};
+	}
 `;
 
 const isConditionalRestriction = (schemaFieldRestriction: SchemaFieldRestrictions) => {
 	return schemaFieldRestriction && 'if' in schemaFieldRestriction && schemaFieldRestriction.if !== undefined;
 };
 
-const getFilteredSchema = (schema: Schema, filters: string[], activeFilters: [string, string][]): Schema | null => {
+const getFilteredSchema = (schema: Schema, filters: string[], activeFilters: [string, string[]][]): Schema | null => {
 	// Schema-level: hide entire schema if it doesn't match active custom filters
 	// Within a category: OR (schema matches any selected value)
 	// Across categories: AND (schema must match all categories)
@@ -221,19 +248,19 @@ const DiagramModal = () => {
 const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTableViewerProps) => {
 	const theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
-	const { filters, selectedDictionary } = useDictionaryStateContext();
+	const { filters, selectedDictionary, customFilterSelections, resetCustomFilters } = useDictionaryStateContext();
 
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [selectedSchemaIndex, setSelectedSchemaIndex] = useState<number | undefined>(undefined);
 	const [highlightedField, setHighlightedField] = useState<{ schemaName: string; fieldName: string } | null>(null);
-	const [customFilterSelections, setCustomFilterSelections] = useState<Record<string, string | undefined>>({});
+	const { CircleSlash, Refresh } = theme.icons;
 
 	const relationshipMap = useMemo(
 		() => (selectedDictionary ? buildRelationshipMap(selectedDictionary) : null),
 		[selectedDictionary],
 	);
 
-	const toolbarCustomDropdowns: ToolbarCustomDropdown[] | undefined = useMemo(() => {
+	const customFilterCategories: CustomFilterCategory[] | undefined = useMemo(() => {
 		if (!customFilterDropdowns?.length || !selectedDictionary?.schemas) {
 			return undefined;
 		}
@@ -263,9 +290,6 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 			label: dropdown.label,
 			filterProperty: dropdown.filterProperty,
 			options: Array.from(set),
-			selectedValue: customFilterSelections[dropdown.filterProperty],
-			onSelect: (value: string | undefined) =>
-				setCustomFilterSelections((prev) => ({ ...prev, [dropdown.filterProperty]: value })),
 		}));
 	}, [customFilterDropdowns, selectedDictionary?.schemas]);
 
@@ -388,7 +412,15 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 					customFilterCategories={customFilterCategories}
 				/>
 				{accordionItems.length === 0 && activeFilters.length > 0 ?
-					<div css={emptyFilterMessageStyle(theme)}>No schemas match the selected filter criteria.</div>
+					<div css={emptyFilterContainerStyle}>
+						<CircleSlash />
+						<div css={emptyFilterMessageStyle(theme)}>No schemas match the selected filters</div>
+						<div css={emptyFilterSubtextStyle(theme)}>Try adjusting or clearing your filter selections</div>
+						<button css={resetFilterButtonStyle(theme)} onClick={resetCustomFilters}>
+							<Refresh fill={theme.colors.grey_6} />
+							<p css={NoMarginParagraph}>Reset all filters</p>
+						</button>
+					</div>
 				:	<Accordion accordionItems={accordionItems} collapseAll={isCollapsed} selectedIndex={selectedSchemaIndex} />}
 			</div>
 			{relationshipMap && !loading && errors.length === 0 && (
