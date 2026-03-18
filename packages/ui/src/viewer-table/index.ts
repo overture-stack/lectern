@@ -40,4 +40,5 @@ export {
 
 // TODO: study which of the following are worth exporting at root, if any
 export * from './DictionaryTableViewer';
+export { type FilterCategory } from '../common/Dropdown/index';
 export * from './Loading';
