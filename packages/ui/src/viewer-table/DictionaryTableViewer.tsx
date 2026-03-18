@@ -243,7 +243,7 @@ const DiagramModal = () => {
 const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTableViewerProps) => {
 	const theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
-	const { filters, selectedDictionary, customFilterSelections, resetCustomFilters } = useDictionaryStateContext();
+	const { filters, selectedDictionary, filterSelections, resetFilters } = useDictionaryStateContext();
 
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [selectedSchemaIndex, setSelectedSchemaIndex] = useState<number | undefined>(undefined);
@@ -325,7 +325,7 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 	}, [handleHash]);
 
 	const activeFilters: [string, string[]][] = (customFilterDropdowns ?? []).flatMap((dropdown) => {
-		const values = customFilterSelections[dropdown.filterProperty];
+		const values = filterSelections[dropdown.filterProperty];
 
 		if (values === undefined || values.length === 0) {
 			return [];
@@ -411,7 +411,7 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 						<CircleSlash />
 						<div css={emptyFilterMessageStyle(theme)}>No schemas match the selected filters</div>
 						<div css={emptyFilterSubtextStyle(theme)}>Try adjusting or clearing your filter selections</div>
-						<button css={resetFilterButtonStyle(theme)} onClick={resetCustomFilters}>
+						<button css={resetFilterButtonStyle(theme)} onClick={resetFilters}>
 							<Refresh fill={theme.colors.grey_6} />
 							<p css={NoMarginParagraph}>Reset all filters</p>
 						</button>

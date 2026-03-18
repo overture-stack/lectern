@@ -65,7 +65,7 @@ const sectionStyles = css`
 const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, filterCategories }: ToolbarProps) => {
 	const theme: Theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
-	const { selectedDictionary, customFilterSelections, toggleCustomFilter } = useDictionaryStateContext();
+	const { selectedDictionary, filterSelections, toggleFilter } = useDictionaryStateContext();
 	const { ListFilter } = theme.icons;
 
 	if (!selectedDictionary && !loading) {
@@ -97,8 +97,8 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, filterCategories }: To
 								key={category.filterProperty}
 								category={category}
 								showHeader={filterCategories.length > 1}
-								selections={customFilterSelections[category.filterProperty] ?? []}
-								onToggle={(option) => toggleCustomFilter(category.filterProperty, option)}
+								selections={filterSelections[category.filterProperty] ?? []}
+								onToggle={(option) => toggleFilter(category.filterProperty, option)}
 							/>
 						))}
 					</Dropdown>
