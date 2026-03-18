@@ -27,7 +27,7 @@ import { fetchAndValidateHostedDictionaries, fetchRemoteDictionary } from './sou
 
 export type DictionaryServerUnion = DictionaryServerRecord | Dictionary;
 
-export type FilterOptions = 'Required' | 'All Fields';
+export type FilterOptions = 'Required';
 
 export type DictionaryDataContextType = {
 	dictionaries?: DictionaryServerUnion[];

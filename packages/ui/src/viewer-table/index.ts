@@ -27,7 +27,7 @@ export {
 	type ToolbarProps,
 
 	// individual parts for integrators to build their own
-	AttributeFilterDropdown,
+	AttributeFilterButton,
 	CollapseAllButton,
 	type CollapseAllButtonProps,
 	DictionaryDownloadButton,
