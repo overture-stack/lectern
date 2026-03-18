@@ -26,6 +26,7 @@ import type { Dictionary, Schema, SchemaFieldRestrictions } from '@overture-stac
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Accordion from '../common/Accordion/index';
+import type { FilterCategory } from '../common/Dropdown/index';
 import Modal from '../common/Modal';
 import { ErrorModal } from '../common/Error/ErrorModal';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
@@ -49,12 +50,6 @@ import Toolbar from './Toolbar/index';
 export type CustomFilterDropdown = {
 	label: string;
 	filterProperty: string;
-};
-
-export type CustomFilterCategory = {
-	label: string;
-	filterProperty: string;
-	options: string[];
 };
 
 export type DictionaryTableViewerProps = {
@@ -260,7 +255,7 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 		[selectedDictionary],
 	);
 
-	const customFilterCategories: CustomFilterCategory[] | undefined = useMemo(() => {
+	const filterCategories: FilterCategory[] | undefined = useMemo(() => {
 		if (!customFilterDropdowns?.length || !selectedDictionary?.schemas) {
 			return undefined;
 		}
@@ -409,7 +404,7 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 					onSelect={handleAccordionSelect}
 					setIsCollapsed={setIsCollapsed}
 					isCollapsed={isCollapsed}
-					customFilterCategories={customFilterCategories}
+					filterCategories={filterCategories}
 				/>
 				{accordionItems.length === 0 && activeFilters.length > 0 ?
 					<div css={emptyFilterContainerStyle}>
