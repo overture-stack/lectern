@@ -23,9 +23,13 @@
 
 import { css } from '@emotion/react';
 
-import { useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import { type Theme, useThemeContext } from '../../theme/index';
-import type { CustomFilterCategory } from '../DictionaryTableViewer';
+
+export type FilterCategory = {
+	label: string;
+	filterProperty: string;
+	options: string[];
+};
 
 const sectionHeaderStyle = (theme: Theme) => css`
 	${theme.typography.buttonText};
@@ -39,6 +43,7 @@ const sectionHeaderStyle = (theme: Theme) => css`
 `;
 
 const categoryGroupStyle = css`
+	min-width: 200px;
 	&:first-of-type > div:first-of-type {
 		border-top: none;
 	}
@@ -65,40 +70,30 @@ const checkboxLabelStyle = (theme: Theme) => css`
 	user-select: none;
 `;
 
-export type FilterRowsProps = {
-	categories: CustomFilterCategory[];
+export type FilterRowProps = {
+	category: FilterCategory;
+	showHeader: boolean;
+	selections: string[];
+	onToggle: (option: string) => void;
 };
 
-const FilterRows = ({ categories }: FilterRowsProps) => {
+const FilterRow = ({ category, showHeader, selections, onToggle }: FilterRowProps) => {
 	const theme = useThemeContext();
-	const { customFilterSelections, toggleCustomFilter } = useDictionaryStateContext();
-	const hasMultipleCategories = categories.length > 1;
 
 	return (
-		<>
-			{categories.map((category) => {
-				const selected = customFilterSelections[category.filterProperty] ?? [];
+		<div css={categoryGroupStyle}>
+			{showHeader && <div css={sectionHeaderStyle(theme)}>{category.label} Filter</div>}
+			{category.options.map((option) => {
+				const isChecked = selections.includes(option);
 				return (
-					<div key={category.filterProperty} css={categoryGroupStyle}>
-						{hasMultipleCategories && <div css={sectionHeaderStyle(theme)}>{category.label} Filter</div>}
-						{category.options.map((option) => {
-							const isChecked = selected.includes(option);
-							return (
-								<label key={option} css={checkboxRowStyle(theme)}>
-									<input
-										type="checkbox"
-										checked={isChecked}
-										onChange={() => toggleCustomFilter(category.filterProperty, option)}
-									/>
-									<span css={checkboxLabelStyle(theme)}>{option}</span>
-								</label>
-							);
-						})}
-					</div>
+					<label key={option} css={checkboxRowStyle(theme)}>
+						<input type="checkbox" checked={isChecked} onChange={() => onToggle(option)} />
+						<span css={checkboxLabelStyle(theme)}>{option}</span>
+					</label>
 				);
 			})}
-		</>
+		</div>
 	);
 };
 
-export default FilterRows;
+export default FilterRow;
