@@ -111,7 +111,7 @@ const titleRowStyle = (theme: Theme) => css`
 	}
 `;
 
-const hashIconStyle = () => css`
+const hashIconStyle = css`
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -196,7 +196,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 						<button
 							type="button"
 							data-anchor-button
-							css={hashIconStyle()}
+							css={hashIconStyle}
 							onClick={(event) => hashOnClick(event, windowLocationHash, setClipboardContents)}
 						>
 							<Hash width={24} height={24} fill={theme.colors.secondary} />
