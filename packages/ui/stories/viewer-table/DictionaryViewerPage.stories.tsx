@@ -95,12 +95,19 @@ export const LecternServer: Story = {
 	decorators: [withLecternUrl()],
 };
 
+export const WithSingleCustomFilter: Story = {
+	decorators: [withCustomFilterDictionary],
+	args: {
+		customFilterDropdowns: [{ label: 'Submitter', filterProperty: 'meta.submitter' }],
+	},
+};
+
 export const WithCustomFilterDropdowns: Story = {
 	decorators: [withCustomFilterDictionary],
 	args: {
 		customFilterDropdowns: [
-			{ label: 'Category', filterProperty: 'meta.category' },
-			{ label: 'Tier', filterProperty: 'meta.tier' },
+			{ label: 'Submitter', filterProperty: 'meta.submitter' },
+			{ label: 'Domain', filterProperty: 'meta.domain' },
 		],
 	},
 };
