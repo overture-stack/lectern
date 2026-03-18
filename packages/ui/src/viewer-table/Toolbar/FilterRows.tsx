@@ -72,7 +72,6 @@ export type FilterRowsProps = {
 const FilterRows = ({ categories }: FilterRowsProps) => {
 	const theme = useThemeContext();
 	const { customFilterSelections, toggleCustomFilter } = useDictionaryStateContext();
-
 	const hasMultipleCategories = categories.length > 1;
 
 	return (
