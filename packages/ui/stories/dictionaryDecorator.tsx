@@ -145,7 +145,7 @@ const schemaMetaMap: Record<string, { submitter: string; domain: string }> = {
 	read_group: { submitter: 'Researcher', domain: 'Clinical' },
 };
 
-const customFilterDictionaryData: DictionaryTestData = [
+const filterDictionaryData: DictionaryTestData = [
 	{
 		...DictionarySample,
 		schemas: DictionarySample.schemas.map((schema) => ({
@@ -158,4 +158,4 @@ const customFilterDictionaryData: DictionaryTestData = [
 export const withMultipleDictionaries = withDictionaryContext(multipleDictionaryData);
 export const withSingleDictionary = withDictionaryContext(singleDictionaryData);
 export const withEmptyDictionaries = withDictionaryContext(emptyDictionaryData);
-export const withCustomFilterDictionary = withDictionaryContext(customFilterDictionaryData);
+export const withFilterDictionary = withDictionaryContext(filterDictionaryData);
