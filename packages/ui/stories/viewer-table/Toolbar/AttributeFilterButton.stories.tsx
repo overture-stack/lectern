@@ -22,25 +22,25 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import AttributeFilter from '../../../src/viewer-table/Toolbar/AttributeFilterDropdown';
+import AttributeFilterButton from '../../../src/viewer-table/Toolbar/AttributeFilterButton';
 
 import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
-	component: AttributeFilter,
-	title: 'Viewer - Table/Toolbar/AttributeFilterDropdown',
+	component: AttributeFilterButton,
+	title: 'Viewer - Table/Toolbar/AttributeFilterButton',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withMultipleDictionaries],
 	parameters: {
 		docs: {
 			description: {
 				component:
-					'A dropdown component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
+					'A button component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
 			},
 		},
 	},
-} satisfies Meta<typeof AttributeFilter>;
+} satisfies Meta<typeof AttributeFilterButton>;
 
 export default meta;
 
