@@ -39,6 +39,8 @@ export type DictionaryDataContextType = {
 
 export type FilterSelections = Record<string, string[]>;
 
+export type ActiveFilter = [string, string[]];
+
 export type DictionaryStateContextType = {
 	currentDictionaryIndex: number;
 	filters: FilterOptions[];

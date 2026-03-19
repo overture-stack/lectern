@@ -29,7 +29,7 @@ import Accordion from '../common/Accordion/index';
 import type { FilterCategory } from '../common/Dropdown/index';
 import Modal from '../common/Modal';
 import { ErrorModal } from '../common/Error/ErrorModal';
-import { useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
+import { type ActiveFilter, useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
 import { type Theme, useThemeContext } from '../theme/index';
 import { isFieldRequired } from '../utils/isFieldRequired';
 import { DiagramViewProvider, useDiagramViewContext } from './DiagramViewContext';
@@ -157,8 +157,8 @@ const isConditionalRestriction = (schemaFieldRestriction: SchemaFieldRestriction
 	return schemaFieldRestriction && 'if' in schemaFieldRestriction && schemaFieldRestriction.if !== undefined;
 };
 
-const getFilteredSchema = (schema: Schema, filters: string[], activeFilters: [string, string[]][]): Schema | null => {
-	// Schema-level: hide entire schema if it doesn't match active custom filters
+const getFilteredSchema = (schema: Schema, filters: string[], activeFilters: ActiveFilter[]): Schema | null => {
+	// Schema-level: hide entire schema if it doesn't match active filters
 	// Within a category: OR (schema matches any selected value)
 	// Across categories: AND (schema must match all categories)
 	if (activeFilters.length > 0) {
@@ -324,7 +324,7 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 		return () => window.removeEventListener('hashchange', handleHash);
 	}, [handleHash]);
 
-	const activeFilters: [string, string[]][] = (customFilterDropdowns ?? []).flatMap((dropdown) => {
+	const activeFilters: ActiveFilter[] = (filterDropdowns ?? []).flatMap((dropdown) => {
 		const values = filterSelections[dropdown.filterProperty];
 
 		if (values === undefined || values.length === 0) {
