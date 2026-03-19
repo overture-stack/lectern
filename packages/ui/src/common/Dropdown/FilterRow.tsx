@@ -33,9 +33,9 @@ export type FilterCategory = {
 
 const sectionHeaderStyle = (theme: Theme) => css`
 	${theme.typography.buttonText};
-	font-size: 13px;
+	font-size: 10px;
 	color: ${theme.colors.accent_dark};
-	padding: 6px 12px;
+	padding: 6px 8px;
 	border-top: 1px solid ${theme.colors.border_button};
 	border-bottom: 1px solid ${theme.colors.border_button};
 	text-transform: uppercase;
@@ -43,7 +43,6 @@ const sectionHeaderStyle = (theme: Theme) => css`
 `;
 
 const categoryGroupStyle = css`
-	min-width: 200px;
 	&:first-of-type > div:first-of-type {
 		border-top: none;
 	}
@@ -53,7 +52,7 @@ const checkboxRowStyle = (theme: Theme) => css`
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	padding: 4px 12px;
+	padding: 4px;
 	cursor: pointer;
 	&:hover {
 		background-color: ${theme.colors.accent_1};
@@ -65,6 +64,7 @@ const checkboxRowStyle = (theme: Theme) => css`
 
 const checkboxLabelStyle = (theme: Theme) => css`
 	${theme.typography.body};
+	font-size: 13px;
 	color: ${theme.colors.accent_dark};
 	cursor: pointer;
 	user-select: none;
