@@ -90,7 +90,7 @@ const dropdownMenuStyle = (theme: Theme) => css`
 	border-radius: 9px;
 	box-sizing: border-box;
 	z-index: 100;
-	max-height: 150px;
+	max-height: 300px;
 	overflow-y: auto;
 	margin: 0;
 	padding: 0;
