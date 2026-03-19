@@ -157,7 +157,7 @@ const isConditionalRestriction = (schemaFieldRestriction: SchemaFieldRestriction
 	return schemaFieldRestriction && 'if' in schemaFieldRestriction && schemaFieldRestriction.if !== undefined;
 };
 
-const getFilteredSchema = (schema: Schema, filters: string[], activeFilters: ActiveFilter[]): Schema | null => {
+const getFilteredSchema = (schema: Schema, filters: string[], activeFilters: ActiveFilter): Schema | null => {
 	// Schema-level: hide entire schema if it doesn't match active filters
 	// Within a category: OR (schema matches any selected value)
 	// Across categories: AND (schema must match all categories)
@@ -324,7 +324,7 @@ const DictionaryTableViewerContent = ({ filterDropdowns }: DictionaryTableViewer
 		return () => window.removeEventListener('hashchange', handleHash);
 	}, [handleHash]);
 
-	const activeFilters: ActiveFilter[] = (filterDropdowns ?? []).flatMap((dropdown) => {
+	const activeFilters: ActiveFilter = (filterDropdowns ?? []).flatMap((dropdown) => {
 		const values = filterSelections[dropdown.filterProperty];
 
 		if (values === undefined || values.length === 0) {
