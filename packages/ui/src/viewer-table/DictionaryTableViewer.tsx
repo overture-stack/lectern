@@ -47,13 +47,13 @@ import DictionaryViewerLoadingPage from './DictionaryViewer/DictionaryViewerLoad
 import DiagramSubtitle from './Toolbar/DiagramSubtitle';
 import Toolbar from './Toolbar/index';
 
-export type CustomFilterDropdown = {
+export type FilterDropdown = {
 	label: string;
 	filterProperty: string;
 };
 
 export type DictionaryTableViewerProps = {
-	customFilterDropdowns?: CustomFilterDropdown[];
+	filterDropdowns?: FilterDropdown[];
 };
 
 const getByDotPath = (obj: unknown, path: string): unknown =>
@@ -240,7 +240,7 @@ const DiagramModal = () => {
 // TODO: produce a simplified version that accepts a dictionary and produces this same view,
 // so that there's no requirement for a Lectern server, etc. and without a Toolbar, or a simpler one.
 
-const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTableViewerProps) => {
+const DictionaryTableViewerContent = ({ filterDropdowns }: DictionaryTableViewerProps) => {
 	const theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
 	const { filters, selectedDictionary, filterSelections, resetFilters } = useDictionaryStateContext();
@@ -256,11 +256,11 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 	);
 
 	const filterCategories: FilterCategory[] | undefined = useMemo(() => {
-		if (!customFilterDropdowns?.length || !selectedDictionary?.schemas) {
+		if (!filterDropdowns?.length || !selectedDictionary?.schemas) {
 			return undefined;
 		}
 
-		const dropdownContexts = customFilterDropdowns.map((dropdown) => ({
+		const dropdownContexts = filterDropdowns.map((dropdown) => ({
 			dropdown,
 			set: new Set<string>(),
 		}));
@@ -286,7 +286,7 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 			filterProperty: dropdown.filterProperty,
 			options: Array.from(set),
 		}));
-	}, [customFilterDropdowns, selectedDictionary?.schemas]);
+	}, [filterDropdowns, selectedDictionary?.schemas]);
 
 	const handleHash = useCallback(() => {
 		const target = parseHash(window.location.hash, selectedDictionary?.schemas);
@@ -427,9 +427,9 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 	);
 };
 
-export const DictionaryTableViewer = ({ customFilterDropdowns }: DictionaryTableViewerProps) => (
+export const DictionaryTableViewer = ({ filterDropdowns }: DictionaryTableViewerProps) => (
 	<DiagramViewProvider>
-		<DictionaryTableViewerContent customFilterDropdowns={customFilterDropdowns} />
+		<DictionaryTableViewerContent filterDropdowns={filterDropdowns} />
 	</DiagramViewProvider>
 );
 
