@@ -182,7 +182,7 @@ export type DictionaryStateProviderProps = {
 
 export const DictionaryStateProvider = ({ children }: DictionaryStateProviderProps) => {
 	const [currentDictionaryIndex, setCurrentDictionaryIndex] = useState(0);
-	const [filters, setFilters] = useState<FilterOptions[]>([]);
+	const [filters, setFilters] = useState<FilterOptions[]>(['Required']);
 	const [filterSelections, setFilterSelections] = useState<FilterSelections>({});
 
 	const dictionaryData = useDictionaryDataContext();
