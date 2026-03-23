@@ -1,4 +1,4 @@
-export { default as AttributeFilterDropdown } from './AttributeFilterDropdown.js';
+export { default as AttributeFilterButton } from './AttributeFilterButton.js';
 export { default as CollapseAllButton, type CollapseAllButtonProps } from './CollapseAllButton.js';
 export { default as DiagramViewButton } from './DiagramViewButton.js';
 export { default as DictionaryDownloadButton, type DictionaryDownloadButtonProps } from './DictionaryDownloadButton.js';

@@ -26,10 +26,8 @@ import { css } from '@emotion/react';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import { type Theme, useThemeContext } from '../../theme/index';
 import { ToolbarSkeleton } from '../Loading';
-
-import Dropdown from '../../common/Dropdown/index';
-import type { ToolbarCustomDropdown } from '../DictionaryTableViewer';
-import AttributeFilterDropdown from './AttributeFilterDropdown';
+import Dropdown, { FilterRow, type FilterCategory } from '../../common/Dropdown/index';
+import AttributeFilterButton from './AttributeFilterButton';
 import CollapseAllButton from './CollapseAllButton';
 import DiagramViewButton from './DiagramViewButton';
 import DictionaryDownloadButton from './DictionaryDownloadButton';
@@ -40,7 +38,7 @@ export type ToolbarProps = {
 	onSelect: (schemaNameIndex: number) => void;
 	setIsCollapsed: (collapsed: boolean) => void;
 	isCollapsed: boolean;
-	customFilterDropdowns?: ToolbarCustomDropdown[];
+	filterCategories?: FilterCategory[];
 };
 
 const panelStyles = (theme: Theme) => css`
@@ -64,10 +62,11 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, customFilterDropdowns }: ToolbarProps) => {
+const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, filterCategories }: ToolbarProps) => {
 	const theme: Theme = useThemeContext();
-	const { loading } = useDictionaryDataContext();
-	const { selectedDictionary } = useDictionaryStateContext();
+	const { loading, errors } = useDictionaryDataContext();
+	const { selectedDictionary, filterSelections, toggleFilter } = useDictionaryStateContext();
+	const { ListFilter } = theme.icons;
 
 	if (!selectedDictionary && !loading) {
 		return null;
@@ -82,24 +81,28 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, customFilterDropdowns 
 			<div css={sectionStyles}>
 				<TableOfContentsDropdown schemas={selectedDictionary?.schemas ?? []} onSelect={onSelect} />
 				<DiagramViewButton />
-				{customFilterDropdowns &&
-					customFilterDropdowns.map((dropdown) => (
-						<Dropdown
-							key={dropdown.label}
-							title={dropdown.selectedValue ?? dropdown.label}
-							menuItems={[
-								{ label: 'All', action: () => dropdown.onSelect(undefined) },
-								...dropdown.options.map((option) => ({
-									label: option,
-									action: () => dropdown.onSelect(option),
-								})),
-							]}
-						/>
-					))}
 				{isCollapsed ?
 					<ExpandAllButton onClick={() => setIsCollapsed(false)} />
 				:	<CollapseAllButton onClick={() => setIsCollapsed(true)} />}
-				<AttributeFilterDropdown />
+				<AttributeFilterButton />
+				{filterCategories && filterCategories.length > 0 && (
+					<Dropdown
+						leftIcon={<ListFilter />}
+						title={filterCategories.length === 1 ? filterCategories[0].label : 'Filters'}
+						disabled={loading || errors.length > 0}
+						closeOnSelect={false}
+					>
+						{filterCategories.map((category) => (
+							<FilterRow
+								key={category.filterProperty}
+								category={category}
+								showHeader={filterCategories.length > 1}
+								selections={filterSelections[category.filterProperty] ?? []}
+								onToggle={(option) => toggleFilter(category.filterProperty, option)}
+							/>
+						))}
+					</Dropdown>
+				)}
 			</div>
 			<div css={sectionStyles}>
 				<DictionaryDownloadButton fileType="tsv" />

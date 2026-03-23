@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -26,9 +26,10 @@ import type { Dictionary, Schema, SchemaFieldRestrictions } from '@overture-stac
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Accordion from '../common/Accordion/index';
+import type { FilterCategory } from '../common/Dropdown/index';
 import Modal from '../common/Modal';
 import { ErrorModal } from '../common/Error/ErrorModal';
-import { useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
+import { type ActiveFilter, useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
 import { type Theme, useThemeContext } from '../theme/index';
 import { isFieldRequired } from '../utils/isFieldRequired';
 import { DiagramViewProvider, useDiagramViewContext } from './DiagramViewContext';
@@ -38,6 +39,7 @@ import {
 	RelationshipDiagramContent,
 	useActiveRelationship,
 } from './EntityRelationshipDiagram';
+import { NoMarginParagraph } from '../theme/emotion/index';
 
 import SchemaTable from './DataTable/SchemaTable/index';
 import DictionaryHeader from './DictionaryHeader/DictionaryHeader';
@@ -45,20 +47,13 @@ import DictionaryViewerLoadingPage from './DictionaryViewer/DictionaryViewerLoad
 import DiagramSubtitle from './Toolbar/DiagramSubtitle';
 import Toolbar from './Toolbar/index';
 
-export type CustomFilterDropdown = {
+export type FilterDropdown = {
 	label: string;
 	filterProperty: string;
 };
 
 export type DictionaryTableViewerProps = {
-	customFilterDropdowns?: CustomFilterDropdown[];
-};
-
-export type ToolbarCustomDropdown = {
-	label: string;
-	options: string[];
-	selectedValue: string | undefined;
-	onSelect: (value: string | undefined) => void;
+	filterDropdowns?: FilterDropdown[];
 };
 
 const getByDotPath = (obj: unknown, path: string): unknown =>
@@ -116,23 +111,58 @@ const headerPanelBlockStyle = css`
 	gap: 0;
 `;
 
-const emptyFilterMessageStyle = (theme: Theme) => css`
-	${theme.typography.subtitle}
+const emptyFilterContainerStyle = css`
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	padding: 48px;
-	color: ${theme.colors.black};
+	padding: 100px 48px 0;
+	gap: 12px;
+`;
+
+const emptyFilterMessageStyle = (theme: Theme) => css`
+	${theme.typography.subtitleSecondary}
+	font-size: 28px;
+	color: ${theme.colors.grey_6};
+	text-align: center;
+`;
+
+const emptyFilterSubtextStyle = (theme: Theme) => css`
+	${theme.typography.body}
+	color: ${theme.colors.grey_6};
+	text-align: center;
+`;
+
+const resetFilterButtonStyle = (theme: Theme) => css`
+	${theme.typography.body}
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 16px;
+	line-height: 1;
+	margin-top: 8px;
+	padding: 6px 16px;
+	background-color: transparent;
+	color: ${theme.colors.grey_6};
+	border: 1px solid ${theme.colors.border_button};
+	border-radius: 9px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	&:hover {
+		background-color: ${theme.colors.accent_1};
+	}
 `;
 
 const isConditionalRestriction = (schemaFieldRestriction: SchemaFieldRestrictions) => {
 	return schemaFieldRestriction && 'if' in schemaFieldRestriction && schemaFieldRestriction.if !== undefined;
 };
 
-const getFilteredSchema = (schema: Schema, filters: string[], activeFilters: [string, string][]): Schema | null => {
-	// Schema-level: hide entire schema if it doesn't match active custom filters
+const getFilteredSchema = (schema: Schema, filters: string[], activeFilters: ActiveFilter): Schema | null => {
+	// Schema-level: hide entire schema if it doesn't match active filters
+	// Within a category: OR (schema matches any selected value)
+	// Across categories: AND (schema must match all categories)
 	if (activeFilters.length > 0) {
-		const matches = activeFilters.every(([filterProperty, value]) => {
+		const matches = activeFilters.every(([filterProperty, values]) => {
 			const metaValue = getByDotPath(schema, filterProperty);
 
 			if (metaValue == null) {
@@ -140,10 +170,10 @@ const getFilteredSchema = (schema: Schema, filters: string[], activeFilters: [st
 			}
 
 			if (Array.isArray(metaValue)) {
-				return metaValue.some((v) => String(v) === value);
+				return metaValue.some((v) => values.includes(String(v)));
 			}
 
-			return String(metaValue) === value;
+			return values.includes(String(metaValue));
 		});
 
 		if (!matches) {
@@ -210,27 +240,27 @@ const DiagramModal = () => {
 // TODO: produce a simplified version that accepts a dictionary and produces this same view,
 // so that there's no requirement for a Lectern server, etc. and without a Toolbar, or a simpler one.
 
-const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTableViewerProps) => {
+const DictionaryTableViewerContent = ({ filterDropdowns }: DictionaryTableViewerProps) => {
 	const theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
-	const { filters, selectedDictionary } = useDictionaryStateContext();
+	const { filters, selectedDictionary, filterSelections, resetFilters } = useDictionaryStateContext();
 
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [selectedSchemaIndex, setSelectedSchemaIndex] = useState<number | undefined>(undefined);
 	const [highlightedField, setHighlightedField] = useState<{ schemaName: string; fieldName: string } | null>(null);
-	const [customFilterSelections, setCustomFilterSelections] = useState<Record<string, string | undefined>>({});
+	const { CircleSlash, Refresh } = theme.icons;
 
 	const relationshipMap = useMemo(
 		() => (selectedDictionary ? buildRelationshipMap(selectedDictionary) : null),
 		[selectedDictionary],
 	);
 
-	const toolbarCustomDropdowns: ToolbarCustomDropdown[] | undefined = useMemo(() => {
-		if (!customFilterDropdowns?.length || !selectedDictionary?.schemas) {
+	const filterCategories: FilterCategory[] | undefined = useMemo(() => {
+		if (!filterDropdowns?.length || !selectedDictionary?.schemas) {
 			return undefined;
 		}
 
-		const dropdownContexts = customFilterDropdowns.map((dropdown) => ({
+		const dropdownContexts = filterDropdowns.map((dropdown) => ({
 			dropdown,
 			set: new Set<string>(),
 		}));
@@ -253,12 +283,10 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 
 		return dropdownContexts.map(({ dropdown, set }) => ({
 			label: dropdown.label,
+			filterProperty: dropdown.filterProperty,
 			options: Array.from(set),
-			selectedValue: customFilterSelections[dropdown.filterProperty],
-			onSelect: (value: string | undefined) =>
-				setCustomFilterSelections((prev) => ({ ...prev, [dropdown.filterProperty]: value })),
 		}));
-	}, [customFilterDropdowns, selectedDictionary?.schemas, customFilterSelections]);
+	}, [filterDropdowns, selectedDictionary?.schemas]);
 
 	const handleHash = useCallback(() => {
 		const target = parseHash(window.location.hash, selectedDictionary?.schemas);
@@ -296,14 +324,14 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 		return () => window.removeEventListener('hashchange', handleHash);
 	}, [handleHash]);
 
-	const activeFilters: [string, string][] = (customFilterDropdowns ?? []).flatMap((dropdown) => {
-		const value = customFilterSelections[dropdown.filterProperty];
+	const activeFilters: ActiveFilter = (filterDropdowns ?? []).flatMap((dropdown) => {
+		const values = filterSelections[dropdown.filterProperty];
 
-		if (value === undefined) {
+		if (values === undefined || values.length === 0) {
 			return [];
 		}
 
-		return [[dropdown.filterProperty, value]];
+		return [[dropdown.filterProperty, values]];
 	});
 
 	const accordionItems = useMemo(() => {
@@ -376,10 +404,18 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 					onSelect={handleAccordionSelect}
 					setIsCollapsed={setIsCollapsed}
 					isCollapsed={isCollapsed}
-					customFilterDropdowns={toolbarCustomDropdowns}
+					filterCategories={filterCategories}
 				/>
 				{accordionItems.length === 0 && activeFilters.length > 0 ?
-					<div css={emptyFilterMessageStyle(theme)}>No schemas match the selected filter criteria.</div>
+					<div css={emptyFilterContainerStyle}>
+						<CircleSlash />
+						<div css={emptyFilterMessageStyle(theme)}>No schemas match the selected filters</div>
+						<div css={emptyFilterSubtextStyle(theme)}>Try adjusting or clearing your filter selections</div>
+						<button css={resetFilterButtonStyle(theme)} onClick={resetFilters}>
+							<Refresh fill={theme.colors.grey_6} />
+							<p css={NoMarginParagraph}>Reset all filters</p>
+						</button>
+					</div>
 				:	<Accordion accordionItems={accordionItems} collapseAll={isCollapsed} selectedIndex={selectedSchemaIndex} />}
 			</div>
 			{relationshipMap && !loading && errors.length === 0 && (
@@ -391,9 +427,9 @@ const DictionaryTableViewerContent = ({ customFilterDropdowns }: DictionaryTable
 	);
 };
 
-export const DictionaryTableViewer = ({ customFilterDropdowns }: DictionaryTableViewerProps) => (
+export const DictionaryTableViewer = ({ filterDropdowns }: DictionaryTableViewerProps) => (
 	<DiagramViewProvider>
-		<DictionaryTableViewerContent customFilterDropdowns={customFilterDropdowns} />
+		<DictionaryTableViewerContent filterDropdowns={filterDropdowns} />
 	</DiagramViewProvider>
 );
 

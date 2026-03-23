@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
@@ -19,37 +18,36 @@
  *
  */
 
-import type { Schema } from '@overture-stack/lectern-dictionary';
+/** @jsxImportSource @emotion/react */
 
-import Dropdown from '../../common/Dropdown/index';
-import DropDownItem from '../../common/Dropdown/DropdownItem';
-import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
-import { type Theme, useThemeContext } from '../../theme/index';
+import type { Meta, StoryObj } from '@storybook/react';
 
-export type TableOfContentsDropdownProps = {
-	schemas: Schema[];
-	onSelect: (schemaIndex: number) => void;
+import AttributeFilterButton from '../../../src/viewer-table/Toolbar/AttributeFilterButton';
+
+import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
+import themeDecorator from '../../themeDecorator';
+
+const meta = {
+	component: AttributeFilterButton,
+	title: 'Viewer - Table/Toolbar/AttributeFilterButton',
+	tags: ['autodocs'],
+	decorators: [themeDecorator(), withMultipleDictionaries],
+	parameters: {
+		docs: {
+			description: {
+				component:
+					'A button component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
+			},
+		},
+	},
+} satisfies Meta<typeof AttributeFilterButton>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
+
+export const Loading: Story = {
+	decorators: [themeDecorator(), withLoadingState()],
 };
-
-const TableOfContentsDropdown = ({ schemas, onSelect }: TableOfContentsDropdownProps) => {
-	const theme: Theme = useThemeContext();
-	const { loading, errors } = useDictionaryDataContext();
-	const { List } = theme.icons;
-
-	const menuItemsFromSchemas = schemas.map((schema, index) => ({
-		label: schema.name,
-		action: () => onSelect(index),
-	}));
-
-	return schemas.length > 0 ?
-			<Dropdown leftIcon={<List />} title="Table of Contents" disabled={loading || errors.length > 0}>
-				{menuItemsFromSchemas.map(({ label, action }) => (
-					<DropDownItem key={label} action={action}>
-						{label}
-					</DropDownItem>
-				))}
-			</Dropdown>
-		:	null;
-};
-
-export default TableOfContentsDropdown;

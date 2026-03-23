@@ -125,27 +125,27 @@ export const withErrorState = (): Decorator => {
 	);
 };
 
-const schemaMetaMap: Record<string, { category: string; tier: string }> = {
-	participant: { category: 'Clinical', tier: 'Required' },
-	sociodemographic: { category: 'Clinical', tier: 'Optional' },
-	demographic: { category: 'Clinical', tier: 'Required' },
-	diagnosis: { category: 'Clinical', tier: 'Required' },
-	treatment: { category: 'Clinical', tier: 'Optional' },
-	follow_up: { category: 'Clinical', tier: 'Optional' },
-	procedure: { category: 'Clinical', tier: 'Optional' },
-	medication: { category: 'Clinical', tier: 'Optional' },
-	radiation: { category: 'Clinical', tier: 'Optional' },
-	measurement: { category: 'Clinical', tier: 'Optional' },
-	phenotype: { category: 'Clinical', tier: 'Optional' },
-	comorbidity: { category: 'Clinical', tier: 'Optional' },
-	exposure: { category: 'Clinical', tier: 'Optional' },
-	specimen: { category: 'Biospecimen', tier: 'Required' },
-	sample: { category: 'Biospecimen', tier: 'Required' },
-	experiment: { category: 'Genomic', tier: 'Required' },
-	read_group: { category: 'Genomic', tier: 'Optional' },
+const schemaMetaMap: Record<string, { submitter: string; domain: string }> = {
+	participant: { submitter: 'Clinician', domain: 'Health' },
+	sociodemographic: { submitter: 'Clinician', domain: 'Health' },
+	demographic: { submitter: 'Clinician', domain: 'Health' },
+	diagnosis: { submitter: 'Clinician', domain: 'Clinical' },
+	treatment: { submitter: 'Clinician', domain: 'Clinical' },
+	follow_up: { submitter: 'Clinician', domain: 'Clinical' },
+	procedure: { submitter: 'Clinician', domain: 'Clinical' },
+	medication: { submitter: 'Laboratory', domain: 'Health' },
+	radiation: { submitter: 'Laboratory', domain: 'Health' },
+	measurement: { submitter: 'Laboratory', domain: 'Clinical' },
+	phenotype: { submitter: 'Researcher', domain: 'Clinical' },
+	comorbidity: { submitter: 'Researcher', domain: 'Clinical' },
+	exposure: { submitter: 'Researcher', domain: 'Clinical' },
+	specimen: { submitter: 'Laboratory', domain: 'Health' },
+	sample: { submitter: 'Laboratory', domain: 'Clinical' },
+	experiment: { submitter: 'Researcher', domain: 'Clinical' },
+	read_group: { submitter: 'Researcher', domain: 'Clinical' },
 };
 
-const customFilterDictionaryData: DictionaryTestData = [
+const filterDictionaryData: DictionaryTestData = [
 	{
 		...DictionarySample,
 		schemas: DictionarySample.schemas.map((schema) => ({
@@ -158,4 +158,4 @@ const customFilterDictionaryData: DictionaryTestData = [
 export const withMultipleDictionaries = withDictionaryContext(multipleDictionaryData);
 export const withSingleDictionary = withDictionaryContext(singleDictionaryData);
 export const withEmptyDictionaries = withDictionaryContext(emptyDictionaryData);
-export const withCustomFilterDictionary = withDictionaryContext(customFilterDictionaryData);
+export const withFilterDictionary = withDictionaryContext(filterDictionaryData);
