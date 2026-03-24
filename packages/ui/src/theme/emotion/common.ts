@@ -20,7 +20,21 @@
  */
 
 import { css } from '@emotion/react';
+import type { Theme } from '../index';
 
 export const NoMarginParagraph = css`
 	margin: 0;
+`;
+
+export const pillStyle = (theme: Theme) => css`
+	display: inline-flex;
+	align-items: center;
+	font-size: 16px;
+	padding: 2px 8px;
+	border: 0.5px solid ${theme.colors.accent_dark};
+	border-radius: 20px;
+	background-color: rgba(255, 255, 255, 0.15);
+	color: ${theme.colors.accent_dark};
+	${theme.typography.data};
+	gap: 3px;
 `;
