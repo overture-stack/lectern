@@ -25,6 +25,7 @@ import { css } from '@emotion/react';
 import { MouseEvent, useRef } from 'react';
 
 import { useClipboard } from '../../hooks/useClipboard';
+import { pillStyle } from '../../theme/emotion/index';
 import { type Theme, useThemeContext } from '../../theme/index';
 import DictionaryDownloadButton from '../../viewer-table/Toolbar/DictionaryDownloadButton';
 import ReadMoreText from '../ReadMoreText';
@@ -151,6 +152,22 @@ const downloadButtonContainerStyle = css`
 	margin-left: auto;
 `;
 
+const tagPillContainerStyle = css`
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 6px;
+`;
+
+const tagLabelStyle = (theme: Theme) => css`
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	${theme.typography.data};
+	color: ${theme.colors.black};
+`;
+
 const hashOnClick = (
 	event: MouseEvent<HTMLButtonElement | HTMLSpanElement>,
 	windowLocationHash: string,
@@ -169,8 +186,8 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 	const theme: Theme = useThemeContext();
 	const { setClipboardContents } = useClipboard();
 
-	const { description, title, content, schemaName } = accordionData;
-	const { ChevronDown, Hash } = theme.icons;
+	const { description, title, content, schemaName, tags } = accordionData;
+	const { ChevronDown, Hash, Tags } = theme.icons;
 
 	const anchorId = schemaName || index.toString();
 	const windowLocationHash = `#${anchorId}`;
@@ -207,6 +224,19 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 							{description}
 						</ReadMoreText>
 					</div>
+					{tags && tags.length > 0 && (
+						<div css={tagPillContainerStyle}>
+							<span css={tagLabelStyle(theme)}>
+								<Tags width={16} height={16} fill={theme.colors.black} />
+								Tags
+							</span>
+							{tags.map((pill, index) => (
+								<span key={`${pill.label}-${pill.value}-${index}`} css={pillStyle(theme)}>
+									{pill.label}: {pill.value}
+								</span>
+							))}
+						</div>
+					)}
 				</div>
 				{schemaName && (
 					<div css={downloadButtonContainerStyle} onClick={(e) => e.stopPropagation()}>
