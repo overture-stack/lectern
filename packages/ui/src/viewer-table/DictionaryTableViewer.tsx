@@ -29,7 +29,11 @@ import Accordion from '../common/Accordion/index';
 import type { FilterCategory } from '../common/Dropdown/index';
 import Modal from '../common/Modal';
 import { ErrorModal } from '../common/Error/ErrorModal';
-import { type ActiveFilter, useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
+import {
+	type ActiveFilter,
+	useDictionaryDataContext,
+	useDictionaryStateContext,
+} from '../dictionary-controller/DictionaryDataContext';
 import { type Theme, useThemeContext } from '../theme/index';
 import { isFieldRequired } from '../utils/isFieldRequired';
 import { DiagramViewProvider, useDiagramViewContext } from './DiagramViewContext';
@@ -335,12 +339,31 @@ const DictionaryTableViewerContent = ({ filterDropdowns }: DictionaryTableViewer
 	});
 
 	const accordionItems = useMemo(() => {
+		const dropdownMap = new Map((filterDropdowns ?? []).map((dropdown) => [dropdown.filterProperty, dropdown.label]));
+
 		return (selectedDictionary?.schemas ?? []).flatMap((schema: Schema) => {
 			const filtered = getFilteredSchema(schema, filters, activeFilters);
 
 			if (!filtered) {
 				return [];
 			}
+
+			const pills = activeFilters.flatMap(([filterProperty, selectedValues]) => {
+				const label = dropdownMap.get(filterProperty);
+
+				if (!label) {
+					return [];
+				}
+
+				const schemaVal = getByDotPath(schema, filterProperty);
+
+				if (schemaVal == null) {
+					return [];
+				}
+
+				const schemaValuesSet = new Set(Array.isArray(schemaVal) ? schemaVal.map(String) : [String(schemaVal)]);
+				return selectedValues.filter((value) => schemaValuesSet.has(value)).map((value) => ({ label, value }));
+			});
 
 			return [
 				{
@@ -353,6 +376,7 @@ const DictionaryTableViewerContent = ({ filterDropdowns }: DictionaryTableViewer
 						/>
 					),
 					schemaName: schema.name,
+					tags: pills,
 				},
 			];
 		});
