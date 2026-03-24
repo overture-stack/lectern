@@ -339,8 +339,6 @@ const DictionaryTableViewerContent = ({ filterDropdowns }: DictionaryTableViewer
 	});
 
 	const accordionItems = useMemo(() => {
-		const dropdownMap = new Map((filterDropdowns ?? []).map((dropdown) => [dropdown.filterProperty, dropdown.label]));
-
 		return (selectedDictionary?.schemas ?? []).flatMap((schema: Schema) => {
 			const filtered = getFilteredSchema(schema, filters, activeFilters);
 
@@ -348,21 +346,15 @@ const DictionaryTableViewerContent = ({ filterDropdowns }: DictionaryTableViewer
 				return [];
 			}
 
-			const pills = activeFilters.flatMap(([filterProperty, selectedValues]) => {
-				const label = dropdownMap.get(filterProperty);
+			const pills = (filterDropdowns ?? []).flatMap((dropdown) => {
+				const value = getByDotPath(schema, dropdown.filterProperty);
 
-				if (!label) {
+				if (value == null) {
 					return [];
 				}
-
-				const schemaVal = getByDotPath(schema, filterProperty);
-
-				if (schemaVal == null) {
-					return [];
-				}
-
-				const schemaValuesSet = new Set(Array.isArray(schemaVal) ? schemaVal.map(String) : [String(schemaVal)]);
-				return selectedValues.filter((value) => schemaValuesSet.has(value)).map((value) => ({ label, value }));
+				
+				const values = Array.isArray(value) ? value.map(String) : [String(value)];
+				return values.map((value) => ({ label: dropdown.label, value }));
 			});
 
 			return [
