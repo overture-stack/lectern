@@ -33,6 +33,7 @@ import DiagramViewButton from './DiagramViewButton';
 import DictionaryDownloadButton from './DictionaryDownloadButton';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
+import ActiveFilterBar from './ActiveFilterBar';
 
 export type ToolbarProps = {
 	onSelect: (schemaNameIndex: number) => void;
@@ -43,16 +44,21 @@ export type ToolbarProps = {
 
 const panelStyles = (theme: Theme) => css`
 	display: flex;
-	width: 100%
-	width: -webkit-fit-content;
-	align-items: center;
-	justify-content: space-between;
+	flex-direction: column;
+	width: 100%;
 	padding: 16px 0;
 	background-color: ${theme.colors.white};
 	flex-wrap: nowrap;
 	position: sticky;
 	z-index: 10;
 	top: 0px;
+`;
+
+const buttonRowStyles = css`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
 `;
 
 const sectionStyles = css`
@@ -78,35 +84,38 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, filterCategories }: To
 
 	return (
 		<div css={panelStyles(theme)}>
-			<div css={sectionStyles}>
-				<TableOfContentsDropdown schemas={selectedDictionary?.schemas ?? []} onSelect={onSelect} />
-				<DiagramViewButton />
-				{isCollapsed ?
-					<ExpandAllButton onClick={() => setIsCollapsed(false)} />
-				:	<CollapseAllButton onClick={() => setIsCollapsed(true)} />}
-				<AttributeFilterButton />
-				{filterCategories && filterCategories.length > 0 && (
-					<Dropdown
-						leftIcon={<ListFilter />}
-						title={filterCategories.length === 1 ? filterCategories[0].label : 'Filters'}
-						disabled={loading || errors.length > 0}
-						closeOnSelect={false}
-					>
-						{filterCategories.map((category) => (
-							<FilterRow
-								key={category.filterProperty}
-								category={category}
-								showHeader={filterCategories.length > 1}
-								selections={filterSelections[category.filterProperty] ?? []}
-								onToggle={(option) => toggleFilter(category.filterProperty, option)}
-							/>
-						))}
-					</Dropdown>
-				)}
+			<div css={buttonRowStyles}>
+				<div css={sectionStyles}>
+					<TableOfContentsDropdown schemas={selectedDictionary?.schemas ?? []} onSelect={onSelect} />
+					<DiagramViewButton />
+					{isCollapsed ?
+						<ExpandAllButton onClick={() => setIsCollapsed(false)} />
+					:	<CollapseAllButton onClick={() => setIsCollapsed(true)} />}
+					<AttributeFilterButton />
+					{filterCategories && filterCategories.length > 0 && (
+						<Dropdown
+							leftIcon={<ListFilter />}
+							title={filterCategories.length === 1 ? filterCategories[0].label : 'Filters'}
+							disabled={loading || errors.length > 0}
+							closeOnSelect={false}
+						>
+							{filterCategories.map((category) => (
+								<FilterRow
+									key={category.filterProperty}
+									category={category}
+									showHeader={filterCategories.length > 1}
+									selections={filterSelections[category.filterProperty] ?? []}
+									onToggle={(option) => toggleFilter(category.filterProperty, option)}
+								/>
+							))}
+						</Dropdown>
+					)}
+				</div>
+				<div css={sectionStyles}>
+					<DictionaryDownloadButton fileType="tsv" />
+				</div>
 			</div>
-			<div css={sectionStyles}>
-				<DictionaryDownloadButton fileType="tsv" />
-			</div>
+			<ActiveFilterBar />
 		</div>
 	);
 };
