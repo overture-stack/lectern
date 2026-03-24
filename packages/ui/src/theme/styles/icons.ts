@@ -33,6 +33,7 @@ import Minus from '../icons/Minus';
 import Plus from '../icons/Plus';
 import Refresh from '../icons/Refresh';
 import Spinner from '../icons/Spinner';
+import Tags from '../icons/Tags';
 
 export default {
 	ChevronDown,
@@ -50,4 +51,5 @@ export default {
 	Plus,
 	Minus,
 	Refresh,
+	Tags,
 };
