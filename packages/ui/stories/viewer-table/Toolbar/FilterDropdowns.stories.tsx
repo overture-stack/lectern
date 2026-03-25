@@ -42,6 +42,7 @@ const meta = {
 					'Stories demonstrating the optional filter dropdown feature, which allows schemas to be filtered by metadata properties and displays tag pills on accordion headers.',
 			},
 			story: {
+				autoplay: false,
 				inline: false,
 				iframeHeight: 600,
 			},
@@ -90,9 +91,17 @@ export const FilterSelected: Story = {
 			{ label: 'Domain', filterProperty: 'meta.domain' },
 		],
 	},
+	parameters: {
+		docs: {
+			story: {
+				inline: true,
+				autoplay: false,
+			},
+		},
+	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const filtersButton = await canvas.findByRole('button', { name: /Filters/i });
+		const filtersButton = await canvas.findByRole('button', { name: 'Filters' });
 		await userEvent.click(filtersButton);
 		const clinicianCheckbox = await canvas.findByLabelText('Clinician');
 		await userEvent.click(clinicianCheckbox);
@@ -112,9 +121,17 @@ export const EmptyState: Story = {
 			{ label: 'Domain', filterProperty: 'meta.domain' },
 		],
 	},
+	parameters: {
+		docs: {
+			story: {
+				inline: true,
+				autoplay: false,
+			},
+		},
+	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const filtersButton = await canvas.findByRole('button', { name: /Filters/i });
+		const filtersButton = await canvas.findByRole('button', { name: 'Filters' });
 		await userEvent.click(filtersButton);
 		const researcherCheckbox = await canvas.findByLabelText('Researcher');
 		await userEvent.click(researcherCheckbox);
