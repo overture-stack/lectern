@@ -1,5 +1,10 @@
-import { Meta, Controls } from '@storybook/blocks';
-import { SchemaRelationshipDiagram } from '../src/viewer-diagram/SchemaRelationshipDiagram';
+import { Meta } from '@storybook/blocks';
+import {
+	ActiveRelationshipProvider,
+	buildRelationshipMap,
+	RelationshipDiagramContent,
+} from '../src/viewer-table/EntityRelationshipDiagram';
+import { ThemeProvider } from '../src/theme';
 import biosampleDictionary from './fixtures/minimalBiosampleModel';
 
 <Meta title="Lectern Web Components" />
@@ -8,10 +13,14 @@ import biosampleDictionary from './fixtures/minimalBiosampleModel';
 
 ## Dictionary Viewer
 
-### Entity Relation Diagram
+### Entity Relationship Diagram
 
 <section style={{ height: '300px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-	<SchemaRelationshipDiagram dictionary={biosampleDictionary} />
+	<ThemeProvider>
+		<ActiveRelationshipProvider relationshipMap={buildRelationshipMap(biosampleDictionary)}>
+			<RelationshipDiagramContent dictionary={biosampleDictionary} focusField={{ schemaName: 'specimen', fieldName: 'donor_submitter_id' }} />
+		</ActiveRelationshipProvider>
+	</ThemeProvider>
 </section>
 
 ### Table View
