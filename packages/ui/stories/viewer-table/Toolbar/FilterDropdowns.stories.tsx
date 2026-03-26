@@ -21,13 +21,19 @@
 
 /** @jsxImportSource @emotion/react */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Decorator, Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 
 import { DictionaryTableViewer } from '../../../src/viewer-table/DictionaryTableViewer';
 
 import { withFilterDictionary, withMultipleDictionaries } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
+
+const withFixedHeight: Decorator = (Story) => (
+	<div style={{ height: '600px', overflow: 'auto' }}>
+		<Story />
+	</div>
+);
 
 const meta = {
 	component: DictionaryTableViewer,
@@ -39,7 +45,7 @@ const meta = {
 		docs: {
 			description: {
 				component:
-					'Stories demonstrating the optional filter dropdown feature, which allows schemas to be filtered by metadata properties and displays tag pills on accordion headers.',
+					'Stories demonstrating the optional filter dropdown feature, which allows schemas to be filtered by metadata properties.',
 			},
 			story: {
 				autoplay: false,
@@ -55,8 +61,6 @@ type Story = StoryObj<typeof meta>;
 
 /**
  * Default view with two filter categories configured.
- * Tag pills are visible on each accordion header showing metadata values,
- * with no filters active.
  */
 export const Default: Story = {
 	decorators: [withFilterDictionary],
@@ -80,11 +84,11 @@ export const SingleFilter: Story = {
 };
 
 /**
- * Opens the filter dropdown and selects Submitter: "Clinician".
- * Only schemas with submitter "Clinician" are shown.
+ * Selects Submitter: "Clinician" to show only matching schemas.
+ * Navigate to the canvas tab to see a live demo.
  */
 export const FilterSelected: Story = {
-	decorators: [withFilterDictionary],
+	decorators: [withFixedHeight, withFilterDictionary],
 	args: {
 		filterDropdowns: [
 			{ label: 'Submitter', filterProperty: 'meta.submitter' },
@@ -109,12 +113,11 @@ export const FilterSelected: Story = {
 };
 
 /**
- * Opens the filter dropdown and selects Submitter: "Researcher" and
- * Domain: "Health". No schemas match both filters, so the empty state
- * is displayed.
+ * Selects Submitter: "Researcher" and Domain: "Health" and shows the empty state,
+ * navigate to the canvas tab to see a live demo.
  */
 export const EmptyState: Story = {
-	decorators: [withFilterDictionary],
+	decorators: [withFixedHeight, withFilterDictionary],
 	args: {
 		filterDropdowns: [
 			{ label: 'Submitter', filterProperty: 'meta.submitter' },
@@ -141,8 +144,8 @@ export const EmptyState: Story = {
 };
 
 /**
- * No filterDropdowns configured — the component renders without any
- * filter controls or tag pills, confirming no regressions to existing behaviour.
+ * No filterDropdowns configured, the component renders without any
+ * filter controls.
  */
 export const NoConfig: Story = {
 	decorators: [withMultipleDictionaries],
