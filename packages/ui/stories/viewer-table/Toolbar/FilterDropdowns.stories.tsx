@@ -29,11 +29,16 @@ import { DictionaryTableViewer } from '../../../src/viewer-table/DictionaryTable
 import { withFilterDictionary, withMultipleDictionaries } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
-const withFixedHeight: Decorator = (Story) => (
-	<div style={{ height: '600px', overflow: 'auto' }}>
-		<Story />
-	</div>
-);
+const withFixedHeight: Decorator = (Story, context) => {
+	if (context.viewMode === 'docs') {
+		return (
+			<div style={{ height: '600px', overflow: 'auto' }}>
+				<Story />
+			</div>
+		);
+	}
+	return <Story />;
+};
 
 const meta = {
 	component: DictionaryTableViewer,
