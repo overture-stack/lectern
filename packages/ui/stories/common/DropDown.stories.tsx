@@ -33,6 +33,13 @@ const meta = {
 	title: 'Common/Dropdown',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'Dropdown component with toggle button and collapsible menu.',
+			},
+		},
+	},
 } satisfies Meta<typeof Dropdown>;
 
 export default meta;

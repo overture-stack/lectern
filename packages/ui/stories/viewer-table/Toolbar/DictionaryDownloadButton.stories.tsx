@@ -32,6 +32,13 @@ const meta = {
 	title: 'Viewer - Table/Toolbar/DictionaryDownloadButton',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withDictionaryContext()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'A toolbar button that downloads the current dictionary as a JSON file.',
+			},
+		},
+	},
 } satisfies Meta<typeof DictionaryDownloadButton>;
 
 export default meta;

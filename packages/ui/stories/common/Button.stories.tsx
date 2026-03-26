@@ -33,6 +33,13 @@ const meta = {
 	title: 'Common/Button',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'A themed button component with support for icons, disabled state, and custom styling.',
+			},
+		},
+	},
 } satisfies Meta<typeof Button>;
 
 export default meta;
