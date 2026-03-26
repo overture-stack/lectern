@@ -19,4 +19,4 @@
  *
  */
 
-export { NoMarginParagraph } from './common';
+export { NoMarginParagraph, pillStyle } from './common';

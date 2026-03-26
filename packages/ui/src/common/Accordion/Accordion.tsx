@@ -26,12 +26,19 @@ import { type ReactNode, useEffect, useState } from 'react';
 
 import AccordionItem from './AccordionItem';
 
+export type TagPill = {
+	label: string;
+	value: string;
+};
+
 export type AccordionData = {
 	title: string;
 	description?: string;
 	content: ReactNode;
 	schemaName?: string;
+	tags?: TagPill[];
 };
+
 export type AccordionProps = {
 	accordionItems: Array<AccordionData>;
 	collapseAll: boolean;

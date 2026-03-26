@@ -29,7 +29,11 @@ import Accordion from '../common/Accordion/index';
 import type { FilterCategory } from '../common/Dropdown/index';
 import Modal from '../common/Modal';
 import { ErrorModal } from '../common/Error/ErrorModal';
-import { type ActiveFilter, useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
+import {
+	type ActiveFilter,
+	useDictionaryDataContext,
+	useDictionaryStateContext,
+} from '../dictionary-controller/DictionaryDataContext';
 import { type Theme, useThemeContext } from '../theme/index';
 import { isFieldRequired } from '../utils/isFieldRequired';
 import { DiagramViewProvider, useDiagramViewContext } from './DiagramViewContext';
@@ -342,6 +346,17 @@ const DictionaryTableViewerContent = ({ filterDropdowns }: DictionaryTableViewer
 				return [];
 			}
 
+			const pills = (filterDropdowns ?? []).flatMap((dropdown) => {
+				const value = getByDotPath(schema, dropdown.filterProperty);
+
+				if (value == null) {
+					return [];
+				}
+				
+				const values = Array.isArray(value) ? value.map(String) : [String(value)];
+				return values.map((value) => ({ label: dropdown.label, value }));
+			});
+
 			return [
 				{
 					title: schema.name,
@@ -353,6 +368,7 @@ const DictionaryTableViewerContent = ({ filterDropdowns }: DictionaryTableViewer
 						/>
 					),
 					schemaName: schema.name,
+					tags: pills,
 				},
 			];
 		});
