@@ -30,7 +30,7 @@ const barStyles = (theme: Theme) => css`
 	gap: 8px;
 	flex-wrap: wrap;
 	margin-top: 12px;
-	padding: 12px 0px;
+	padding: 12px 6px;
 	background-color: ${theme.colors.accent_1};
 	border-block: 1px solid ${theme.colors.border_light};
 `;
