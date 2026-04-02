@@ -35,6 +35,13 @@ const meta = {
 	component: VersionSwitcher,
 	title: 'Viewer - Table/DictionaryHeader/Dictionary Version Switcher',
 	tags: ['autodocs'],
+	parameters: {
+		docs: {
+			description: {
+				component: 'A dropdown that allows switching between available dictionary versions.',
+			},
+		},
+	},
 } satisfies Meta<typeof VersionSwitcher>;
 
 export default meta;

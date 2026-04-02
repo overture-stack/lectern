@@ -32,6 +32,13 @@ const meta = {
 	title: 'Viewer Table/Conditional Modal/ConditionalLogicModal',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'A modal dialog that displays the full conditional logic for a schema field, including if/then restriction rules.',
+			},
+		},
+	},
 } satisfies Meta<typeof ConditionalLogicModal>;
 
 export default meta;

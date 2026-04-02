@@ -31,6 +31,13 @@ const meta = {
 	title: 'Viewer - Table/Toolbar/DiagramViewButton',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withDictionaryContext(emptyDictionaryData)],
+	parameters: {
+		docs: {
+			description: {
+				component: 'A toolbar button that toggles between the table view and the entity relationship diagram view.',
+			},
+		},
+	},
 } satisfies Meta<typeof DiagramViewButton>;
 
 export default meta;

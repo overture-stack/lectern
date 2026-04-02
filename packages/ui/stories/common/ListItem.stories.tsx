@@ -31,6 +31,13 @@ const meta = {
 	title: 'Common/ListItem',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'A styled list item used to display individual values such as allowed values or enum entries.',
+			},
+		},
+	},
 } satisfies Meta<typeof ListItem>;
 
 export default meta;

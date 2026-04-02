@@ -28,27 +28,38 @@ import {
 	ActiveRelationshipProvider,
 	buildRelationshipMap,
 	RelationshipDiagramContent,
-} from '../../src/viewer-table/EntityRelationshipDiagram';
-import DictionarySample from '../fixtures/pcgl.json';
-import SimpleClinicalERDiagram from '../fixtures/simpleClinicalERDiagram.json';
-import SingleSchemaFixture from '../fixtures/singleSchema.json';
-import TwoIsolatedSchemasFixture from '../fixtures/twoIsolatedSchemas.json';
-import TwoSchemaLinearFixture from '../fixtures/twoSchemaLinear.json';
-import ThreeSchemaChainFixture from '../fixtures/threeSchemaChain.json';
-import MultiFkFixture from '../fixtures/multiFk.json';
-import FanOutFixture from '../fixtures/fanOut.json';
-import MixedRelationsFixture from '../fixtures/mixedRelations.json';
-import CompoundKeyFixture from '../fixtures/compoundKey.json';
-import CyclicalFixture from '../fixtures/cyclical.json';
-import InvalidUniqueKeyFixture from '../fixtures/invalid_uniquekey.json';
-import themeDecorator from '../themeDecorator';
+} from '../../../src/viewer-table/EntityRelationshipDiagram';
+import DictionarySample from '../../fixtures/pcgl.json';
+import SimpleClinicalERDiagram from '../../fixtures/simpleClinicalERDiagram.json';
+import SingleSchemaFixture from '../../fixtures/singleSchema.json';
+import TwoIsolatedSchemasFixture from '../../fixtures/twoIsolatedSchemas.json';
+import TwoSchemaLinearFixture from '../../fixtures/twoSchemaLinear.json';
+import ThreeSchemaChainFixture from '../../fixtures/threeSchemaChain.json';
+import MultiFkFixture from '../../fixtures/multiFk.json';
+import FanOutFixture from '../../fixtures/fanOut.json';
+import MixedRelationsFixture from '../../fixtures/mixedRelations.json';
+import CompoundKeyFixture from '../../fixtures/compoundKey.json';
+import CyclicalFixture from '../../fixtures/cyclical.json';
+import InvalidUniqueKeyFixture from '../../fixtures/invalid_uniquekey.json';
+import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: RelationshipDiagramContent,
-	title: 'Viewer - Table/Entity Relationship Diagram',
+	title: 'Viewer - Table/Entity Relationship Diagram/Entity Relationship Diagram',
+	tags: ['autodocs'],
 	decorators: [themeDecorator()],
 	parameters: {
 		layout: 'fullscreen',
+		docs: {
+			description: {
+				component:
+					'Interactive entity relationship diagram that visualizes foreign key relationships between schemas. Schemas are rendered as nodes with fields, and edges connect foreign key fields to their referenced unique key fields. Clicking a foreign key field highlights the full relationship chain across schemas.',
+			},
+			story: {
+				inline: false,
+				iframeHeight: 600,
+			},
+		},
 	},
 } satisfies Meta<typeof RelationshipDiagramContent>;
 
@@ -64,6 +75,9 @@ const StoryWrapper = ({ dictionary }: { dictionary: Dictionary }) => {
 	);
 };
 
+/**
+ * Full PCGL dictionary with 17 schemas and multiple foreign key relationships.
+ */
 export const Default: Story = {
 	args: {
 		dictionary: DictionarySample as Dictionary,
@@ -75,6 +89,9 @@ export const Default: Story = {
 	),
 };
 
+/**
+ * A simplified clinical data model with a handful of related schemas.
+ */
 export const SimpleClinicalExample: Story = {
 	args: {
 		dictionary: SimpleClinicalERDiagram as Dictionary,
@@ -86,6 +103,9 @@ export const SimpleClinicalExample: Story = {
 	),
 };
 
+/**
+ * A dictionary with only one schema and no relationships.
+ */
 export const SingleSchema: Story = {
 	args: {
 		dictionary: SingleSchemaFixture as Dictionary,
@@ -97,6 +117,9 @@ export const SingleSchema: Story = {
 	),
 };
 
+/**
+ * Two schemas with no foreign key relationships between them.
+ */
 export const TwoIsolatedSchemas: Story = {
 	args: {
 		dictionary: TwoIsolatedSchemasFixture as Dictionary,
@@ -108,6 +131,9 @@ export const TwoIsolatedSchemas: Story = {
 	),
 };
 
+/**
+ * Two schemas connected by a single foreign key.
+ */
 export const TwoSchemaLinear: Story = {
 	args: {
 		dictionary: TwoSchemaLinearFixture as Dictionary,
@@ -119,6 +145,9 @@ export const TwoSchemaLinear: Story = {
 	),
 };
 
+/**
+ * Three schemas linked in a chain: A → B → C.
+ */
 export const ThreeSchemaChain: Story = {
 	args: {
 		dictionary: ThreeSchemaChainFixture as Dictionary,
@@ -130,6 +159,9 @@ export const ThreeSchemaChain: Story = {
 	),
 };
 
+/**
+ * A schema with multiple foreign keys referencing different schemas.
+ */
 export const MultiFk: Story = {
 	args: {
 		dictionary: MultiFkFixture as Dictionary,
@@ -141,6 +173,9 @@ export const MultiFk: Story = {
 	),
 };
 
+/**
+ * One parent schema referenced by multiple child schemas (fan-out pattern).
+ */
 export const FanOut: Story = {
 	args: {
 		dictionary: FanOutFixture as Dictionary,
@@ -152,6 +187,9 @@ export const FanOut: Story = {
 	),
 };
 
+/**
+ * A mix of linear chains, fan-out, and isolated schemas.
+ */
 export const MixedRelations: Story = {
 	args: {
 		dictionary: MixedRelationsFixture as Dictionary,
@@ -163,6 +201,9 @@ export const MixedRelations: Story = {
 	),
 };
 
+/**
+ * A foreign key mapping that uses a compound (multi-field) key.
+ */
 export const CompoundKey: Story = {
 	args: {
 		dictionary: CompoundKeyFixture as Dictionary,
@@ -174,6 +215,9 @@ export const CompoundKey: Story = {
 	),
 };
 
+/**
+ * Schemas with cyclical foreign key references (A → B → A).
+ */
 export const Cyclical: Story = {
 	args: {
 		dictionary: CyclicalFixture as Dictionary,
@@ -185,6 +229,10 @@ export const Cyclical: Story = {
 	),
 };
 
+/**
+ * A foreign key that references a field which is not a unique key,
+ * testing graceful handling of invalid configurations.
+ */
 export const NonUniqueForeignKey: Story = {
 	args: {
 		dictionary: InvalidUniqueKeyFixture as Dictionary,
