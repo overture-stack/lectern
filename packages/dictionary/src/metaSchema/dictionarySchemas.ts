@@ -32,19 +32,26 @@ import {
 } from './restrictionsSchemas';
 
 /**
- * String rules for all name fields used in dictionary, including Dictionary, Schema, and Fields.
+ * String rules for all name fields used in dictionary Schema, and Fields.
  * This validates the format of the string since names are not allowed to have `.` characters.
  *
  * Example Values:
  * - `donors`
  * - `primary-site`
  * - `maximumVelocity`
- */
+ *
+ * Note: This is not used for dictionary names, to support legacy dictionary data.
+ * */
 export const NameValue = zod
 	.string()
 	.min(1, 'Name fields cannot be empty.')
 	.regex(/^[^.]+$/, 'Name fields cannot have `.` characters.');
 export type NameValue = zod.infer<typeof NameValue>;
+
+/**
+ * Common validation rules for `displayName` for all entities: Dictionary, Schema, and Field
+ */
+export const DisplayNameValue = zod.string().min(1).optional();
 
 // Meta accepts as values only strings, numbers, booleans, arrays of numbers or arrays of strings
 // Another Meta object can be nested inside a Meta property
@@ -180,9 +187,9 @@ export type AnyFieldRestrictions = zod.infer<typeof AnyFieldRestrictions>;
 export const SchemaFieldBase = zod
 	.object({
 		name: NameValue,
-		displayName: zod.string().optional(),
 		description: zod.string().optional(),
 		delimiter: zod.string().min(1).optional(),
+		displayName: DisplayNameValue,
 		isArray: zod.boolean().optional(),
 		meta: DictionaryMeta.optional(),
 		unique: zod.boolean().optional(),
@@ -249,8 +256,8 @@ export type ForeignKeyRestriction = zod.infer<typeof ForeignKeyRestriction>;
 export const Schema = zod
 	.object({
 		name: NameValue,
-		displayName: zod.string().optional(),
 		description: zod.string().optional(),
+		displayName: DisplayNameValue,
 		fields: zod.array(SchemaField).min(1),
 		meta: DictionaryMeta.optional(),
 		restrictions: zod
@@ -329,6 +336,7 @@ export const DictionaryBase = zod
 	.object({
 		name: zod.string().min(1),
 		description: zod.string().optional(),
+		displayName: DisplayNameValue,
 		meta: DictionaryMeta.optional(),
 		references: References.optional(),
 		schemas: zod.array(Schema).min(1),

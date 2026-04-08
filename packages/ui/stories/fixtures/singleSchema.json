@@ -1,0 +1,20 @@
+{
+	"name": "single_schema_dictionary",
+	"version": "1.0",
+	"description": "A dictionary with one schema and no relationships",
+	"schemas": [
+		{
+			"name": "sample",
+			"description": "Basic sample metadata",
+			"fields": [
+				{ "name": "sample_id", "valueType": "string", "unique": true },
+				{ "name": "sample_type", "valueType": "string" },
+				{ "name": "collection_date", "valueType": "string" },
+				{ "name": "volume_ml", "valueType": "number" }
+			],
+			"restrictions": {
+				"uniqueKey": ["sample_id"]
+			}
+		}
+	]
+}

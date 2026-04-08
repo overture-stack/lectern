@@ -21,7 +21,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import VersionSwitcher from '../../../src/viewer-table/Toolbar/DictionaryVersionSwitcher';
+import VersionSwitcher from '../../../src/viewer-table/DictionaryHeader/DictionaryVersionSwitcher';
 
 import {
 	withEmptyDictionaries,
@@ -33,8 +33,15 @@ import themeDecorator from '../../themeDecorator';
 
 const meta = {
 	component: VersionSwitcher,
-	title: 'Viewer - Table/Toolbar/Dictionary Version Switcher',
+	title: 'Viewer - Table/DictionaryHeader/Dictionary Version Switcher',
 	tags: ['autodocs'],
+	parameters: {
+		docs: {
+			description: {
+				component: 'A dropdown that allows switching between available dictionary versions.',
+			},
+		},
+	},
 } satisfies Meta<typeof VersionSwitcher>;
 
 export default meta;

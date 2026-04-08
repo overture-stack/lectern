@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -18,32 +18,33 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
 /** @jsxImportSource @emotion/react */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import { ReactFlowProvider } from 'reactflow';
+import { css } from '@emotion/react';
 
-import { SchemaDiagramNode } from '../../src/viewer-diagram/SchemaDiagramNode';
-import { buildSchemaNode } from '../../src/viewer-diagram/SchemaFlowNode';
+import IconProps from './IconProps';
 
-import websiteUserDictionary from '../fixtures/websiteUsersDataDictionary';
-
-const meta = {
-	component: SchemaDiagramNode,
-	title: 'Viewer - Diagram/Schema Diagram Node',
-	tags: ['autodocs'],
-
-	render: (args) => (
-		<ReactFlowProvider>
-			<SchemaDiagramNode {...args} />
-		</ReactFlowProvider>
-	),
-} satisfies Meta<typeof SchemaDiagramNode>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const BiosampleDonor: Story = {
-	// args: { name: sampleDictionary.name, version: sampleDictionary.name, description: sampleDictionary.description },
-	args: { data: buildSchemaNode(websiteUserDictionary.schemas[0]).data },
+const CircleSlash = ({ fill, width, height, style }: IconProps) => {
+	return (
+		<svg
+			css={css`
+				${style}
+			`}
+			width={width || 91}
+			height={height || 91}
+			fill="none"
+			viewBox="0 0 91 91"
+		>
+			<path
+				d="M34.1252 56.875L56.8752 34.125M83.4168 45.5C83.4168 66.4408 66.441 83.4167 45.5002 83.4167C24.5594 83.4167 7.5835 66.4408 7.5835 45.5C7.5835 24.5592 24.5594 7.58334 45.5002 7.58334C66.441 7.58334 83.4168 24.5592 83.4168 45.5Z"
+				stroke={fill || '#9A9191'}
+				strokeWidth="2"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+		</svg>
+	);
 };
+
+export default CircleSlash;

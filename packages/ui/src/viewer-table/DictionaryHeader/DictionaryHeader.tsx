@@ -23,11 +23,12 @@
 
 import { css } from '@emotion/react';
 
-import ReadMoreText from '../common/ReadMoreText';
-import { useDictionaryDataContext, useDictionaryStateContext } from '../dictionary-controller/DictionaryDataContext';
-import { type Theme, useThemeContext } from '../theme/index';
+import ReadMoreText from '../../common/ReadMoreText';
+import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
+import { type Theme, useThemeContext } from '../../theme/index';
 
-import HeaderSkeleton from './Loading/HeaderSkeleton';
+import HeaderSkeleton from '../Loading/HeaderSkeleton';
+import DictionaryVersionSwitcher from './DictionaryVersionSwitcher';
 
 const descriptionWrapperStyle = (theme: Theme) => css`
 	${theme.typography.body}
@@ -48,7 +49,7 @@ const descriptionWrapperStyle = (theme: Theme) => css`
 
 const containerStyle = css`
 	background-color: white;
-	padding: 2.5rem;
+	padding: 2.5rem 0;
 	margin: 0;
 	border-bottom: 1px solid #d1d8df;
 	display: flex;
@@ -72,11 +73,12 @@ const DictionaryHeader = () => {
 	const dataContext = useDictionaryDataContext();
 	const stateContext = useDictionaryStateContext();
 
-	const { loading } = dataContext;
+	const { loading, dictionaries } = dataContext;
 	const { selectedDictionary } = stateContext;
 
 	const version = selectedDictionary?.version;
 	const description = selectedDictionary?.description;
+	const hasMultipleVersions = dictionaries && dictionaries.length > 1;
 
 	if (loading) {
 		return <HeaderSkeleton />;
@@ -94,7 +96,9 @@ const DictionaryHeader = () => {
 					{description}
 				</ReadMoreText>
 			)}
-			{version && <span css={versionStyle(theme)}>Version: {version}</span>}
+			{hasMultipleVersions ?
+				<DictionaryVersionSwitcher />
+			:	version && <span css={versionStyle(theme)}>Version: {version}</span>}
 		</div>
 	);
 };

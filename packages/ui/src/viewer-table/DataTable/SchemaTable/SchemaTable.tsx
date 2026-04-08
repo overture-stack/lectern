@@ -25,15 +25,24 @@ import { getSchemaBaseColumns } from './SchemaTableInit';
 
 export type SchemaTableProps = {
 	schema: Schema;
+	highlightedFieldName?: string | null;
 };
 
 /**
  * Schema table component that displays dictionary schema fields in a table format.
  * @param {Schema} schema - Dictionary schema containing fields and restrictions
+ * @param {string | null} highlightedFieldName - Name of field to highlight (for anchor navigation)
  * @returns {JSX.Element} Table displaying schema fields with columns for Fields, Attribute, Data Type, and Allowed Values
  */
-const SchemaTable = ({ schema }: SchemaTableProps) => {
-	return <Table data={schema.fields} columns={getSchemaBaseColumns(schema)} />;
+const SchemaTable = ({ schema, highlightedFieldName }: SchemaTableProps) => {
+	return (
+		<Table
+			data={schema.fields}
+			columns={getSchemaBaseColumns(schema)}
+			schemaName={schema.name}
+			highlightedFieldName={highlightedFieldName}
+		/>
+	);
 };
 
 export default SchemaTable;

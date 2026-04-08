@@ -33,6 +33,13 @@ const meta = {
 	title: 'Viewer - Table/Toolbar/ExpandAllButton',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withMultipleDictionaries],
+	parameters: {
+		docs: {
+			description: {
+				component: 'A toolbar button that expands all collapsed accordion sections.',
+			},
+		},
+	},
 } satisfies Meta<typeof ExpandAllButton>;
 
 export default meta;

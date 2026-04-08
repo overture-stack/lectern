@@ -1,0 +1,52 @@
+{
+	"name": "multi_fk",
+	"version": "1.0",
+	"description": "One schema with FKs pointing to two separate parent schemas",
+	"schemas": [
+		{
+			"name": "participant",
+			"description": "Study participants",
+			"fields": [
+				{ "name": "participant_id", "valueType": "string", "unique": true },
+				{ "name": "age", "valueType": "integer" }
+			],
+			"restrictions": {
+				"uniqueKey": ["participant_id"]
+			}
+		},
+		{
+			"name": "study",
+			"description": "Research studies",
+			"fields": [
+				{ "name": "study_id", "valueType": "string", "unique": true },
+				{ "name": "study_name", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["study_id"]
+			}
+		},
+		{
+			"name": "enrollment",
+			"description": "Participant enrollment in a study — links both parent schemas",
+			"fields": [
+				{ "name": "enrollment_id", "valueType": "string", "unique": true },
+				{ "name": "participant_id", "valueType": "string" },
+				{ "name": "study_id", "valueType": "string" },
+				{ "name": "enrollment_date", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["enrollment_id"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [{ "local": "participant_id", "foreign": "participant_id" }]
+					},
+					{
+						"schema": "study",
+						"mappings": [{ "local": "study_id", "foreign": "study_id" }]
+					}
+				]
+			}
+		}
+	]
+}

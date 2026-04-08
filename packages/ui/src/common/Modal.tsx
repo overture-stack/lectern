@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -36,6 +36,7 @@ export type ModalProps = {
 	onAfterOpen?: () => void;
 	children?: ReactNode;
 	title: string;
+	subtitle?: ReactNode;
 };
 
 // Using react-modal's built-in styling system instead of emotion css for modal configuration
@@ -72,6 +73,8 @@ const headerStyle = (theme: Theme) => css`
 	border-bottom: 1px solid ${theme.colors.border_subtle};
 	background: ${theme.colors.white};
 	box-shadow: 0px 1px 6px 0px #00000026;
+	position: relative;
+	z-index: 1;
 `;
 
 const bodyStyle = css`
@@ -85,8 +88,16 @@ const titleStyle = (theme: Theme) => css`
 	${theme.typography.subtitleBold};
 	color: ${theme.colors.accent};
 `;
+
+const subtitleStyle = (theme: Theme) => css`
+	${theme.typography.data};
+	color: ${theme.colors.black};
+	margin-top: 8px;
+	margin-bottom: 0;
+`;
+
 Modal.setAppElement('body');
-const ModalComponent = ({ children, setIsOpen, isOpen, onAfterOpen, title }: ModalProps) => {
+const ModalComponent = ({ children, setIsOpen, isOpen, onAfterOpen, title, subtitle }: ModalProps) => {
 	const theme: Theme = useThemeContext();
 	return (
 		<>
@@ -106,7 +117,10 @@ const ModalComponent = ({ children, setIsOpen, isOpen, onAfterOpen, title }: Mod
 				bodyOpenClassName="modal-open"
 			>
 				<div css={headerStyle(theme)}>
-					<span css={titleStyle(theme)}>{title}</span>
+					<div>
+						<span css={titleStyle(theme)}>{title}</span>
+						{subtitle && <div css={subtitleStyle(theme)}>{subtitle}</div>}
+					</div>
 					<Button iconOnly onClick={() => setIsOpen(false)} icon={<Cancel />} />
 				</div>
 				<div css={bodyStyle}>{children}</div>

@@ -41,7 +41,7 @@ export const getSchemaBaseColumns = (schema: Schema) => [
 		header: 'Fields',
 		cell: (field: CellContext<SchemaField, string>) => {
 			const fieldRow: Row<SchemaField> = field.row;
-			return <FieldsColumn fieldRow={fieldRow} />;
+			return <FieldsColumn fieldRow={fieldRow} schemaName={schema.name} />;
 		},
 	}),
 
@@ -50,7 +50,7 @@ export const getSchemaBaseColumns = (schema: Schema) => [
 		cell: (attribute: CellContext<SchemaField, unknown>) => {
 			const schemaField: SchemaField = attribute.row.original;
 			const fieldLevelRestrictions: SchemaFieldRestrictions = schemaField.restrictions;
-			return renderAttributesColumn(fieldLevelRestrictions, schemaField);
+			return renderAttributesColumn(fieldLevelRestrictions, schemaField, schema);
 		},
 	}),
 
@@ -70,7 +70,7 @@ export const getSchemaBaseColumns = (schema: Schema) => [
 			const fieldLevelRestrictions = schemaField.restrictions;
 			const schemaLevelRestrictions = schema.restrictions;
 
-			return renderAllowedValuesColumn(fieldLevelRestrictions, schemaLevelRestrictions, schemaField);
+			return renderAllowedValuesColumn(fieldLevelRestrictions, schemaLevelRestrictions, schemaField, schema);
 		},
 	}),
 ];

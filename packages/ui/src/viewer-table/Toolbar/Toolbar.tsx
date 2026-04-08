@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -26,46 +26,53 @@ import { css } from '@emotion/react';
 import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import { type Theme, useThemeContext } from '../../theme/index';
 import { ToolbarSkeleton } from '../Loading';
-
-import AttributeFilterDropdown from './AttributeFilterDropdown';
+import Dropdown, { FilterRow, type FilterCategory } from '../../common/Dropdown/index';
+import AttributeFilterButton from './AttributeFilterButton';
 import CollapseAllButton from './CollapseAllButton';
+import DiagramViewButton from './DiagramViewButton';
 import DictionaryDownloadButton from './DictionaryDownloadButton';
-import DictionaryVersionSwitcher from './DictionaryVersionSwitcher';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
+import ActiveFilterBar from './ActiveFilterBar';
 
 export type ToolbarProps = {
 	onSelect: (schemaNameIndex: number) => void;
 	setIsCollapsed: (collapsed: boolean) => void;
 	isCollapsed: boolean;
+	filterCategories?: FilterCategory[];
 };
 
 const panelStyles = (theme: Theme) => css`
 	display: flex;
-	width: 100%
-	width: -webkit-fit-content;
-	align-items: center;
-	justify-content: space-between;
-	padding: 8px 16px;
-	border-top: 1px solid ${theme.colors.border_muted};
+	flex-direction: column;
+	width: 100%;
+	padding: 16px 0;
 	background-color: ${theme.colors.white};
 	flex-wrap: nowrap;
-	min-height: 80px;
 	position: sticky;
-	top: ${theme.dimensions.navbar.height}px;
 	z-index: 10;
+	top: 0px;
+`;
+
+const buttonRowStyles = css`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
 `;
 
 const sectionStyles = css`
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 	gap: 16px;
 `;
 
-const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed }: ToolbarProps) => {
+const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, filterCategories }: ToolbarProps) => {
 	const theme: Theme = useThemeContext();
-	const { loading } = useDictionaryDataContext();
-	const { selectedDictionary } = useDictionaryStateContext();
+	const { loading, errors } = useDictionaryDataContext();
+	const { selectedDictionary, filterSelections, toggleFilter } = useDictionaryStateContext();
+	const { ListFilter } = theme.icons;
 
 	if (!selectedDictionary && !loading) {
 		return null;
@@ -77,17 +84,38 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed }: ToolbarProps) => {
 
 	return (
 		<div css={panelStyles(theme)}>
-			<div css={sectionStyles}>
-				<TableOfContentsDropdown schemas={selectedDictionary?.schemas ?? []} onSelect={onSelect} />
-				<AttributeFilterDropdown />
-				{isCollapsed ?
-					<ExpandAllButton onClick={() => setIsCollapsed(false)} />
-				:	<CollapseAllButton onClick={() => setIsCollapsed(true)} />}
+			<div css={buttonRowStyles}>
+				<div css={sectionStyles}>
+					<TableOfContentsDropdown schemas={selectedDictionary?.schemas ?? []} onSelect={onSelect} />
+					<DiagramViewButton />
+					{isCollapsed ?
+						<ExpandAllButton onClick={() => setIsCollapsed(false)} />
+					:	<CollapseAllButton onClick={() => setIsCollapsed(true)} />}
+					<AttributeFilterButton />
+					{filterCategories && filterCategories.length > 0 && (
+						<Dropdown
+							leftIcon={<ListFilter />}
+							title={filterCategories.length === 1 ? filterCategories[0].label : 'Filters'}
+							disabled={loading || errors.length > 0}
+							closeOnSelect={false}
+						>
+							{filterCategories.map((category) => (
+								<FilterRow
+									key={category.filterProperty}
+									category={category}
+									showHeader={filterCategories.length > 1}
+									selections={filterSelections[category.filterProperty] ?? []}
+									onToggle={(option) => toggleFilter(category.filterProperty, option)}
+								/>
+							))}
+						</Dropdown>
+					)}
+				</div>
+				<div css={sectionStyles}>
+					<DictionaryDownloadButton fileType="tsv" />
+				</div>
 			</div>
-			<div css={sectionStyles}>
-				<DictionaryVersionSwitcher />
-				<DictionaryDownloadButton fileType="tsv" />
-			</div>
+			<ActiveFilterBar />
 		</div>
 	);
 };

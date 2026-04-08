@@ -18,6 +18,11 @@
 	"keywords": [],
 	"author": "Ontario Institute for Cancer Research",
 	"license": "AGPL-3.0",
+	"repository": {
+		"directory": "packages/ui",
+		"type": "git",
+		"url": "git+https://github.com/overture-stack/lectern.git"
+	},
 	"dependencies": {
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.0",
@@ -25,6 +30,7 @@
 		"@overture-stack/lectern-dictionary": "workspace:*",
 		"@overture-stack/lectern-validation": "workspace:*",
 		"@tanstack/react-table": "^8.21.3",
+		"d3-dag": "^1.1.0",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
 		"react-loading-skeleton": "^3.5.0",

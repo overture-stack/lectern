@@ -41,6 +41,13 @@ const meta = {
 	title: 'Viewer - Table/Conditional Modal/Rendering Condition Logic',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'Renders the condition details for a conditional restriction, showing field match criteria and match case logic.',
+			},
+		},
+	},
 } satisfies Meta<typeof RenderingConditionLogicContainer>;
 
 export default meta;

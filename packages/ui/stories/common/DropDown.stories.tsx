@@ -24,6 +24,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import Dropdown from '../../src/common/Dropdown/index';
+import DropDownItem from '../../src/common/Dropdown/DropdownItem';
 
 import themeDecorator from '../themeDecorator';
 
@@ -32,6 +33,13 @@ const meta = {
 	title: 'Common/Dropdown',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'Dropdown component with toggle button and collapsible menu.',
+			},
+		},
+	},
 } satisfies Meta<typeof Dropdown>;
 
 export default meta;
@@ -41,20 +49,12 @@ export const Default: Story = {
 	args: {
 		title: 'Juice',
 		leftIcon: '!',
-		menuItems: [
-			{
-				label: 'Apple',
-				action: () => {
-					alert('apple juice!');
-				},
-			},
-			{
-				label: 'Orange',
-				action: () => {
-					alert('orange juice :(');
-				},
-			},
-		],
+		children: (
+			<>
+				<DropDownItem action={() => alert('apple juice!')}>Apple</DropDownItem>
+				<DropDownItem action={() => alert('orange juice :(')}>Orange</DropDownItem>
+			</>
+		),
 	},
 };
 
@@ -63,20 +63,12 @@ export const Disabled: Story = {
 		title: 'Juice',
 		leftIcon: '!',
 		disabled: true,
-		menuItems: [
-			{
-				label: 'Apple',
-				action: () => {
-					alert('apple juice!');
-				},
-			},
-			{
-				label: 'Orange',
-				action: () => {
-					alert('orange juice :(');
-				},
-			},
-		],
+		children: (
+			<>
+				<DropDownItem action={() => alert('apple juice!')}>Apple</DropDownItem>
+				<DropDownItem action={() => alert('orange juice :(')}>Orange</DropDownItem>
+			</>
+		),
 	},
 };
 
