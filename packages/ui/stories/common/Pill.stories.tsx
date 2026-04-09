@@ -32,6 +32,13 @@ const meta = {
 	title: 'Common/Pill',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'A compact label used to display tags, metadata values, or status indicators.',
+			},
+		},
+	},
 	argTypes: {
 		size: {
 			control: { type: 'select' },

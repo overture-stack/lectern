@@ -21,21 +21,23 @@
 import { DictionaryLecternDataProvider, DictionaryStateProvider } from '../dictionary-controller/DictionaryDataContext';
 
 import DictionaryTableViewer from './DictionaryTableViewer';
+import type { FilterDropdown } from './DictionaryTableViewer';
 
 export type DictionaryTableProps = {
 	lecternUrl: string;
 	dictionaryName: string;
+	filterDropdowns?: FilterDropdown[];
 };
 
 /**
  * DictionaryViewerPage component.
  * @param {DictionaryTableProps} props
  */
-const DictionaryViewerPage = ({ lecternUrl, dictionaryName }: DictionaryTableProps) => {
+const DictionaryViewerPage = ({ lecternUrl, dictionaryName, filterDropdowns }: DictionaryTableProps) => {
 	return (
 		<DictionaryLecternDataProvider lecternUrl={lecternUrl} dictionaryName={dictionaryName}>
 			<DictionaryStateProvider>
-				<DictionaryTableViewer />
+				<DictionaryTableViewer filterDropdowns={filterDropdowns} />
 			</DictionaryStateProvider>
 		</DictionaryLecternDataProvider>
 	);

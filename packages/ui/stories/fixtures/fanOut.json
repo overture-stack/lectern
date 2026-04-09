@@ -1,0 +1,72 @@
+{
+	"name": "fan_out_dictionary",
+	"version": "1.0",
+	"description": "One parent schema referenced by multiple independent child schemas",
+	"schemas": [
+		{
+			"name": "participant",
+			"description": "Root participant record referenced by all other schemas",
+			"fields": [
+				{ "name": "participant_id", "valueType": "string", "unique": true },
+				{ "name": "age", "valueType": "integer" }
+			],
+			"restrictions": {
+				"uniqueKey": ["participant_id"]
+			}
+		},
+		{
+			"name": "diagnosis",
+			"description": "Diagnoses — FK to participant",
+			"fields": [
+				{ "name": "diagnosis_id", "valueType": "string", "unique": true },
+				{ "name": "participant_id", "valueType": "string" },
+				{ "name": "disease_code", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["diagnosis_id"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [{ "local": "participant_id", "foreign": "participant_id" }]
+					}
+				]
+			}
+		},
+		{
+			"name": "demographic",
+			"description": "Demographic data — FK to participant",
+			"fields": [
+				{ "name": "demographic_id", "valueType": "string", "unique": true },
+				{ "name": "participant_id", "valueType": "string" },
+				{ "name": "ethnicity", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["demographic_id"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [{ "local": "participant_id", "foreign": "participant_id" }]
+					}
+				]
+			}
+		},
+		{
+			"name": "follow_up",
+			"description": "Follow-up contacts — FK to participant",
+			"fields": [
+				{ "name": "follow_up_id", "valueType": "string", "unique": true },
+				{ "name": "participant_id", "valueType": "string" },
+				{ "name": "follow_up_date", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["follow_up_id"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [{ "local": "participant_id", "foreign": "participant_id" }]
+					}
+				]
+			}
+		}
+	]
+}

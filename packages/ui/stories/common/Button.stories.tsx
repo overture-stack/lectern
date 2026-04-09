@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -33,6 +33,13 @@ const meta = {
 	title: 'Common/Button',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'A themed button component with support for icons, disabled state, and custom styling.',
+			},
+		},
+	},
 } satisfies Meta<typeof Button>;
 
 export default meta;
@@ -57,4 +64,17 @@ export const IconOnly: Story = {
 };
 export const Empty: Story = {
 	args: {},
+};
+export const WithTooltip: Story = {
+	decorators: [
+		(Story) => (
+			<div style={{ paddingTop: '50px' }}>
+				<Story />
+			</div>
+		),
+	],
+	args: {
+		children: 'Hover Me',
+		tooltipText: 'This is a tooltip',
+	},
 };

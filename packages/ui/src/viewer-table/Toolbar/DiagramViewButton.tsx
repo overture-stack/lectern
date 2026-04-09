@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -18,36 +19,22 @@
  *
  */
 
-/** @jsxImportSource @emotion/react */
+import Button from '../../common/Button';
+import { useDictionaryDataContext } from '../../dictionary-controller/DictionaryDataContext';
+import { useThemeContext } from '../../theme/index';
+import { useDiagramViewContext } from '../DiagramViewContext';
 
-import type { Meta, StoryObj } from '@storybook/react';
+const DiagramViewButton = () => {
+	const theme = useThemeContext();
+	const { Eye } = theme.icons;
+	const { loading, errors } = useDictionaryDataContext();
+	const { openDiagram } = useDiagramViewContext();
 
-import AttributeFilter from '../../../src/viewer-table/Toolbar/AttributeFilterDropdown';
-
-import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
-import themeDecorator from '../../themeDecorator';
-
-const meta = {
-	component: AttributeFilter,
-	title: 'Viewer - Table/Toolbar/AttributeFilterDropdown',
-	tags: ['autodocs'],
-	decorators: [themeDecorator(), withMultipleDictionaries],
-	parameters: {
-		docs: {
-			description: {
-				component:
-					'A dropdown component that allows users to filter dictionary fields by attributes such as required fields or all fields.',
-			},
-		},
-	},
-} satisfies Meta<typeof AttributeFilter>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-export const Loading: Story = {
-	decorators: [themeDecorator(), withLoadingState()],
+	return (
+		<Button icon={<Eye />} onClick={() => openDiagram()} disabled={loading || errors.length > 0} isLoading={loading}>
+			Diagram View
+		</Button>
+	);
 };
+
+export default DiagramViewButton;

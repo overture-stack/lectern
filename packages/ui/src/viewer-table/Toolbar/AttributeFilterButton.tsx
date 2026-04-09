@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,15 +17,11 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Dropdown from '../../common/Dropdown/index';
-import {
-	FilterOptions,
-	useDictionaryDataContext,
-	useDictionaryStateContext,
-} from '../../dictionary-controller/DictionaryDataContext';
+import Button from '../../common/Button';
+import { useDictionaryDataContext, useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import { type Theme, useThemeContext } from '../../theme/index';
 
-const AttributeFilterDropdown = () => {
+const AttributeFilterButton = () => {
 	const theme: Theme = useThemeContext();
 
 	const { loading, errors } = useDictionaryDataContext();
@@ -33,33 +29,21 @@ const AttributeFilterDropdown = () => {
 
 	const { ListFilter } = theme.icons;
 
-	const handleFilterSelect = (selectedFilterName: FilterOptions) => {
-		if (filters?.includes(selectedFilterName)) {
-			setFilters([]);
-			return;
-		}
-		setFilters([selectedFilterName]);
+	const isRequired = filters.includes('Required');
+
+	const handleClick = () => {
+		setFilters(isRequired ? [] : ['Required']);
 	};
 
-	const menuItems = [
-		{
-			label: 'Required',
-			action: () => handleFilterSelect('Required'),
-		},
-		{
-			label: 'All Fields',
-			action: () => handleFilterSelect('All Fields'),
-		},
-	];
-
 	return (
-		<Dropdown
-			leftIcon={<ListFilter />}
-			title="Filter By"
-			menuItems={menuItems}
-			disabled={errors.length > 0 || loading}
-		/>
+		<Button
+			icon={<ListFilter fill={theme.colors.accent_dark} />}
+			onClick={handleClick}
+			disabled={loading || errors.length > 0}
+		>
+			{isRequired ? 'By Required' : 'Show Required'}
+		</Button>
 	);
 };
 
-export default AttributeFilterDropdown;
+export default AttributeFilterButton;

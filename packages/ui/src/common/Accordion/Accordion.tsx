@@ -26,12 +26,19 @@ import { type ReactNode, useEffect, useState } from 'react';
 
 import AccordionItem from './AccordionItem';
 
+export type TagPill = {
+	label: string;
+	value: string;
+};
+
 export type AccordionData = {
 	title: string;
 	description?: string;
 	content: ReactNode;
 	schemaName?: string;
+	tags?: TagPill[];
 };
+
 export type AccordionProps = {
 	accordionItems: Array<AccordionData>;
 	collapseAll: boolean;
@@ -50,7 +57,6 @@ const accordionStyle = css`
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
-	cursor: pointer;
 `;
 
 /**
@@ -68,7 +74,9 @@ const Accordion = ({ accordionItems, collapseAll, selectedIndex }: AccordionProp
 	}, [collapseAll]);
 
 	useEffect(() => {
-		setOpenStates((prev) => prev.map((isOpen, index) => (index === selectedIndex ? true : isOpen)));
+		if (selectedIndex !== undefined) {
+			setOpenStates((prev) => prev.map((isOpen, index) => (index === selectedIndex ? true : isOpen)));
+		}
 	}, [selectedIndex, accordionItems.length]);
 
 	const handleToggle = (index: number) => {

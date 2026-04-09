@@ -30,14 +30,22 @@ const thStyle = (theme: Theme, index: number) => css`
 	${theme.typography.tableHeader};
 	background: ${theme.colors.white};
 	text-align: ${index === 0 || index === 3 ? 'left' : 'center'};
-	padding: 12px;
-	border-bottom: 1px solid ${theme.colors.border_medium};
-	border: 2px solid ${theme.colors.border_light};
-	${index === 0 &&
-	`
+	padding: 20px 16px;
+	border-block: 2px solid ${theme.colors.border_medium};
+	border-right: 2px solid ${theme.colors.border_medium};
+	:first-child {
 		position: sticky;
 		left: 0;
-	`}
+		z-index: 2;
+		max-width: 15vw;
+		min-width: 325px;
+		border-right: none;
+		box-shadow: inset -2px 0 0 0 ${theme.colors.border_medium};
+	}
+
+	:last-child {
+		border-right: none;
+	}
 `;
 
 export type TableHeaderProps<T> = {

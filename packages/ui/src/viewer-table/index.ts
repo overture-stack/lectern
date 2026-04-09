@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -20,19 +20,18 @@
  */
 
 export { default as SchemaTable, type SchemaTableProps } from './DataTable/SchemaTable/index';
-export { default as DictionaryHeader } from './DictionaryHeader';
+export { default as DictionaryHeader, DictionaryVersionSwitcher } from './DictionaryHeader/index';
 export { default, type DictionaryTableProps } from './DictionaryViewerPage';
 export {
 	default as Toolbar,
 	type ToolbarProps,
 
 	// individual parts for integrators to build their own
-	AttributeFilterDropdown,
+	AttributeFilterButton,
 	CollapseAllButton,
 	type CollapseAllButtonProps,
 	DictionaryDownloadButton,
 	type DictionaryDownloadButtonProps,
-	DictionaryVersionSwitcher,
 	ExpandAllButton,
 	type ExpandAllButtonProps,
 	TableOfContentsDropdown,
@@ -41,4 +40,5 @@ export {
 
 // TODO: study which of the following are worth exporting at root, if any
 export * from './DictionaryTableViewer';
+export { type FilterCategory } from '../common/Dropdown/index';
 export * from './Loading';

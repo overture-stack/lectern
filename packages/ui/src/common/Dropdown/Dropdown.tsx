@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -21,19 +21,27 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
+import { css, type SerializedStyles } from '@emotion/react';
 import { type MouseEvent as ReactMouseEvent, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import { type Theme, useThemeContext } from '../../theme/index';
-
-import DropDownItem from './DropdownItem';
 
 const disabledButtonStyle = css`
 	cursor: not-allowed;
 	opacity: 0.7;
 `;
 
-const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?: string; disabled?: boolean }) => css`
+const dropdownButtonStyle = ({
+	theme,
+	width,
+	disabled,
+	styles,
+}: {
+	theme: Theme;
+	width?: string;
+	disabled?: boolean;
+	styles?: SerializedStyles;
+}) => css`
 	display: flex;
 	flex-wrap: nowrap;
 	white-space: nowrap;
@@ -42,12 +50,11 @@ const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?:
 	gap: 11px;
 	width: ${width || 'auto'};
 	min-width: fit-content;
-	padding: 8px 16px;
+	padding: 2px 12px;
 	background-color: ${theme.colors.background_light};
 	color: ${theme.colors.accent_dark};
 	border: 2px solid ${theme.colors.border_button};
 	border-radius: 9px;
-	height: 42px;
 	box-sizing: border-box;
 	cursor: pointer;
 	transition: all 0.2s ease;
@@ -58,6 +65,7 @@ const dropdownButtonStyle = ({ theme, width, disabled }: { theme: Theme; width?:
 	}
 
 	${disabled && disabledButtonStyle}
+	${styles}
 `;
 
 const parentStyle = css`
@@ -65,8 +73,9 @@ const parentStyle = css`
 	display: inline-block;
 `;
 
-const dropDownTitleStyle = (theme: Theme) => css`
-	${theme.typography?.buttonText};
+const dropDownTitleStyle = ({ theme, size }: { theme: Theme; size: number }) => css`
+	${theme.typography.buttonText};
+	font-size: ${size}px;
 	color: ${theme.colors.accent_dark};
 `;
 
@@ -81,33 +90,44 @@ const dropdownMenuStyle = (theme: Theme) => css`
 	border-radius: 9px;
 	box-sizing: border-box;
 	z-index: 100;
-	max-height: 150px;
+	max-height: 300px;
 	overflow-y: auto;
-	list-style: none;
 	margin: 0;
 	padding: 0;
 `;
 
-type MenuItem = {
-	label: string;
-	action: () => void;
-};
-
 export type DropDownProps = {
 	title?: string;
 	leftIcon?: ReactNode;
-	menuItems?: MenuItem[];
 	disabled?: boolean;
+	size?: number;
+	styles?: SerializedStyles;
+	children?: ReactNode;
+	closeOnSelect?: boolean;
 };
 
 /**
  * Dropdown component with toggle button and collapsible menu.
  *
  * @param {DropDownProps} props - Dropdown configuration
+ * @param {string} title - Text displayed on the dropdown button
+ * @param {ReactNode} leftIcon - Custom icon displayed on the left side
+ * @param {boolean} disabled - Whether the dropdown is disabled
+ * @param {number} size - Font size for title and icon dimensions in pixels
+ * @param {SerializedStyles} styles - Custom Emotion CSS styles applied to the button
+ * @param {ReactNode} children - Content rendered inside the dropdown panel
+ * @param {boolean} closeOnSelect - Whether clicking inside the panel closes the dropdown
  * @returns {JSX.Element} Dropdown component
  */
-
-const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDownProps) => {
+const Dropdown = ({
+	title,
+	leftIcon,
+	disabled = false,
+	size = 16,
+	styles,
+	children,
+	closeOnSelect = true,
+}: DropDownProps) => {
 	const [open, setOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const theme: Theme = useThemeContext();
@@ -138,31 +158,23 @@ const Dropdown = ({ menuItems = [], title, leftIcon, disabled = false }: DropDow
 		[disabled],
 	);
 
-	const renderMenuItems = () => {
-		return menuItems.map(({ label, action }) => (
-			<DropDownItem key={label} action={action} onItemClick={() => setOpen(false)}>
-				{label}
-			</DropDownItem>
-		));
-	};
-
 	return (
 		<div ref={dropdownRef} css={parentStyle}>
 			<button
-				css={dropdownButtonStyle({ theme, disabled })}
+				css={dropdownButtonStyle({ theme, disabled, styles })}
 				onClick={handleToggle}
 				aria-haspopup="menu"
 				aria-expanded={open}
 				disabled={disabled}
 			>
 				{leftIcon}
-				<span css={dropDownTitleStyle(theme)}>{title}</span>
-				<ChevronDown fill={theme.colors?.accent_dark} width={18} height={18} />
+				<span css={dropDownTitleStyle({ theme, size })}>{title}</span>
+				<ChevronDown fill={theme.colors?.accent_dark} width={size} height={size} />
 			</button>
 			{open && !disabled && (
-				<menu role="menu" css={dropdownMenuStyle(theme)}>
-					{renderMenuItems()}
-				</menu>
+				<div css={dropdownMenuStyle(theme)} onClick={closeOnSelect ? () => setOpen(false) : undefined}>
+					{children}
+				</div>
 			)}
 		</div>
 	);

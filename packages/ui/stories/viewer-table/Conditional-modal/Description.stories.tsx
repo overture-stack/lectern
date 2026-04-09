@@ -33,6 +33,13 @@ const meta = {
 	title: 'Viewer - Table/Conditional Modal/Description',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'Displays a human-readable description of a schema field, including its name, type, and restrictions.',
+			},
+		},
+	},
 } satisfies Meta<typeof Description>;
 
 export default meta;

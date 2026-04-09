@@ -21,50 +21,77 @@
 
 /** @jsxImportSource @emotion/react */
 
-import { css } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
 import { Row, flexRender } from '@tanstack/react-table';
 
 import { type Theme, useThemeContext } from '../../theme/index';
 
-const rowStyle = (index: number, theme: Theme) => css`
-	background-color: ${index % 2 === 0 ? theme.colors.white : theme.colors.background_alternate};
+const highlightPulse = (theme: Theme) => keyframes`
+	0% { background-color: ${theme.colors.accent_light}; }
+	100% { background-color: inherit; }
 `;
 
-const tdStyle = (theme: Theme, cellIndex: number, rowIndex: number) => css`
+const rowStyle = (theme: Theme) => css`
+	background-color: ${theme.colors.white};
+	scroll-margin-top: 100px;
+
+	&:nth-child(even) {
+		background-color: ${theme.colors.background_alternate};
+	}
+`;
+
+const highlightedCellStyle = (theme: Theme) => css`
+	animation: ${highlightPulse(theme)} 2s ease-out 0.5s;
+`;
+
+const tdStyle = (theme: Theme, cellIndex: number, total: number) => css`
 	${theme.typography.paragraphSmall}
-	padding: 12px;
-	max-width: 30vw;
+	border-block: 2px solid ${theme.colors.border_light};
+	border-right: 2px solid ${theme.colors.border_light};
 	text-align: ${cellIndex === 1 || cellIndex === 2 ? 'center' : 'left'};
+	padding: 16px;
 	vertical-align: middle;
+	min-width: 150px;
+
 	${cellIndex === 0 &&
 	`
 		position: sticky;
 		left: 0;
-		background-color: ${rowIndex % 2 === 0 ? theme.colors.white : theme.colors.background_alternate};
+		z-index: 2;
+		max-width: 15vw;
+		min-width: 325px;
+		background-color: inherit;
+		border-right: none;
+		box-shadow: inset -2px 0 0 0 ${theme.colors.border_light};
 	`}
-	border: 2px solid ${theme.colors.border_light};
+	${cellIndex === total - 1 && `border-right: none;`}
 `;
 
 export type TableRowProps<T> = {
 	row: Row<T>;
-	index: number;
+	fieldId?: string;
+	isHighlighted?: boolean;
 };
 
 /**
  * Generic table row component with alternating background colors.
  * @template T - Row data type
  * @param {Row<T>} row - TanStack table row object
- * @param {number} index - Row index for styling
+ * @param {string} fieldId - Optional field ID for anchor navigation (format: schemaName.fieldName)
+ * @param {boolean} isHighlighted - Whether to highlight this row with a pulse animation
  * @returns {JSX.Element} Table row element
  */
-const TableRow = <T,>({ row, index }: TableRowProps<T>) => {
+const TableRow = <T,>({ row, fieldId, isHighlighted }: TableRowProps<T>) => {
 	const theme: Theme = useThemeContext();
 
 	return (
-		<tr key={row.id} css={rowStyle(index, theme)}>
-			{row.getVisibleCells().map((cell, cellIndex) => {
+		<tr id={fieldId} css={rowStyle(theme)}>
+			{row.getVisibleCells().map((cell, cellIndex, cells) => {
 				return (
-					<td key={cell.id} css={tdStyle(theme, cellIndex, index)}>
+					<td
+						key={cell.id}
+						css={[tdStyle(theme, cellIndex, cells.length), isHighlighted && highlightedCellStyle(theme)]}
+					>
 						<div
 							css={css`
 								${theme.typography.data}
