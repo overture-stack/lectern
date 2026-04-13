@@ -49,7 +49,7 @@ const customStyles = (theme: Theme): Styles => ({
 		transform: 'translate(-50%, -50%)',
 		width: '95%',
 		maxWidth: '1200px',
-		maxHeight: '80vh',
+		maxHeight: '100vh',
 		padding: 0,
 		overflow: 'hidden',
 		borderRadius: '8px',
