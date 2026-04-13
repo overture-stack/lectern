@@ -233,7 +233,7 @@ const DiagramModal = () => {
 			}}
 		>
 			{selectedDictionary && (
-				<div style={{ width: '100%', height: '50vh' }}>
+				<div style={{ width: '100%', height: '65vh' }}>
 					<RelationshipDiagramContent dictionary={selectedDictionary} focusField={focusField} />
 				</div>
 			)}
