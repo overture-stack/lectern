@@ -37,8 +37,8 @@ const thStyle = (theme: Theme, index: number) => css`
 		position: sticky;
 		left: 0;
 		z-index: 2;
+		width: 325px;
 		max-width: 15vw;
-		min-width: 325px;
 		border-right: none;
 		box-shadow: inset -2px 0 0 0 ${theme.colors.border_medium};
 	}
