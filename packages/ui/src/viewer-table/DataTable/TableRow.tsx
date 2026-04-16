@@ -58,6 +58,7 @@ const tdStyle = (theme: Theme, cellIndex: number, total: number) => css`
 		position: sticky;
 		left: 0;
 		z-index: 2;
+		width: 325px;
 		max-width: 15vw;
 		min-width: 325px;
 		background-color: inherit;

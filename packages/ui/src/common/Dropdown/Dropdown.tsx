@@ -71,6 +71,9 @@ const dropdownButtonStyle = ({
 const parentStyle = css`
 	position: relative;
 	display: inline-block;
+	align-self: flex-start;
+	width: fit-content;
+	max-width: 100%;
 `;
 
 const dropDownTitleStyle = ({ theme, size }: { theme: Theme; size: number }) => css`
