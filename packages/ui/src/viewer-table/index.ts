@@ -39,6 +39,8 @@ export {
 } from './Toolbar/index';
 
 // TODO: study which of the following are worth exporting at root, if any
+export * from './customColumnTypes';
 export * from './DictionaryTableViewer';
+export { default as MetaValueRenderer, type MetaValueRendererProps } from './DataTable/SchemaTable/Columns/MetaValueRenderer';
 export { type FilterCategory } from '../common/Dropdown/index';
 export * from './Loading';
