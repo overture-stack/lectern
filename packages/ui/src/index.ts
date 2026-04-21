@@ -16,6 +16,7 @@ export {
 	type DictionaryStateProviderProps as DictionaryTableStateProviderProps,
 } from './dictionary-controller/DictionaryDataContext.js';
 
+export { getByDotPath } from './utils/getByDotPath.js';
 export { sortDictionariesByVersion } from './utils/sortDictionaries.js';
 
 // View Components
@@ -47,6 +48,12 @@ export {
 	type ExpandAllButtonProps,
 	TableOfContentsDropdown,
 	type TableOfContentsDropdownProps,
+
+	// Custom columns
+	type CustomColumnConfig,
+	type CustomColumnComponentProps,
+	MetaValueRenderer,
+	type MetaValueRendererProps,
 } from './viewer-table/index';
 
 export { default as Accordion, type AccordionProps } from './common/Accordion/index';
