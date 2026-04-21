@@ -48,10 +48,11 @@ const tdStyle = (theme: Theme, cellIndex: number, total: number) => css`
 	${theme.typography.paragraphSmall}
 	border-block: 2px solid ${theme.colors.border_light};
 	border-right: 2px solid ${theme.colors.border_light};
-	text-align: ${cellIndex === 1 || cellIndex === 2 ? 'center' : 'left'};
+	text-align: ${cellIndex === 0 || cellIndex === 3 ? 'left' : 'center'};
 	padding: 16px;
 	vertical-align: middle;
 	min-width: 150px;
+	max-width: 300px;
 
 	${cellIndex === 0 &&
 	`
