@@ -21,22 +21,28 @@
 
 /** @jsxImportSource @emotion/react */
 
+import type { DictionaryMeta, DictionaryMetaValue } from '@overture-stack/lectern-dictionary';
 import { Schema, SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext, createColumnHelper, Row } from '@tanstack/react-table';
 
+import { getByDotPath } from '../../../utils/getByDotPath.js';
+import type { CustomColumnConfig } from '../../customColumnTypes.js';
 import { renderAllowedValuesColumn } from './Columns/AllowedValuesColumn/RenderAllowedValues';
 import { renderAttributesColumn } from './Columns/Attribute';
 import { renderDataTypeColumn } from './Columns/DataType';
 import { FieldsColumn } from './Columns/Fields';
+import MetaValueRenderer from './Columns/MetaValueRenderer';
 
 const columnHelper = createColumnHelper<SchemaField>();
 
 /**
  * Creates base column definitions for schema table display.
  * @param {Schema} schema - Dictionary schema containing field definitions and restrictions
- * @returns {ColumnDef<SchemaField, any>[]} Array of TanStack table column definitions for Fields, Attribute, Data Type, and Allowed Values
+ * @param {CustomColumnConfig[]} customColumns - Optional custom column configurations
+ * @returns {ColumnDef<SchemaField, any>[]} Array of TanStack table column definitions for Fields, Attribute, Data Type, Allowed Values, and any custom columns
  */
-export const getSchemaBaseColumns = (schema: Schema) => [
+
+export const getSchemaBaseColumns = (schema: Schema, customColumns?: CustomColumnConfig[]) => [
 	columnHelper.accessor('name', {
 		header: 'Fields',
 		cell: (field: CellContext<SchemaField, string>) => {
@@ -73,4 +79,26 @@ export const getSchemaBaseColumns = (schema: Schema) => [
 			return renderAllowedValuesColumn(fieldLevelRestrictions, schemaLevelRestrictions, schemaField, schema);
 		},
 	}),
+
+	...(customColumns ?? []).map((config, index) =>
+		columnHelper.display({
+			id: `custom-${index}-${config.columnHeader}`,
+			header: config.columnHeader,
+			cell: (cellContext: CellContext<SchemaField, unknown>) => {
+				const field = cellContext.row.original;
+				const metaPath = config.metaPath;
+				const value =
+					metaPath !== undefined ?
+						(getByDotPath(field, metaPath) as DictionaryMetaValue | DictionaryMeta | undefined)
+					:	undefined;
+
+				if (config.columnComponent) {
+					const Component = config.columnComponent;
+					return <Component field={field} metaPath={metaPath} value={value} />;
+				}
+
+				return <MetaValueRenderer value={value} />;
+			},
+		}),
+	),
 ];
