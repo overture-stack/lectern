@@ -24,9 +24,15 @@
 import type { DictionaryMeta, DictionaryMetaValue } from '@overture-stack/lectern-dictionary';
 import { Schema, SchemaField, SchemaFieldRestrictions } from '@overture-stack/lectern-dictionary';
 import { CellContext, createColumnHelper, Row } from '@tanstack/react-table';
-
 import { getByDotPath } from '../../../utils/getByDotPath.js';
 import type { CustomColumnConfig } from '../../customColumnTypes.js';
+import { renderAllowedValuesColumn } from './Columns/AllowedValuesColumn/RenderAllowedValues';
+import { renderAttributesColumn } from './Columns/Attribute';
+import { renderDataTypeColumn } from './Columns/DataType';
+import { FieldsColumn } from './Columns/Fields';
+import MetaValueRenderer from './Columns/MetaValueRenderer';
+
+const columnHelper = createColumnHelper<SchemaField>();
 
 const isDictionaryMetaValueOrMeta = (value: unknown): value is DictionaryMetaValue | DictionaryMeta => {
 	if (value == null) {
@@ -47,13 +53,6 @@ const isDictionaryMetaValueOrMeta = (value: unknown): value is DictionaryMetaVal
 	
 	return false;
 };
-import { renderAllowedValuesColumn } from './Columns/AllowedValuesColumn/RenderAllowedValues';
-import { renderAttributesColumn } from './Columns/Attribute';
-import { renderDataTypeColumn } from './Columns/DataType';
-import { FieldsColumn } from './Columns/Fields';
-import MetaValueRenderer from './Columns/MetaValueRenderer';
-
-const columnHelper = createColumnHelper<SchemaField>();
 
 /**
  * Creates base column definitions for schema table display.
@@ -121,3 +120,5 @@ export const getSchemaBaseColumns = (schema: Schema, customColumns?: CustomColum
 		}),
 	),
 ];
+
+
