@@ -27,14 +27,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Accordion from '../common/Accordion/index';
 import type { FilterCategory } from '../common/Dropdown/index';
-import Modal from '../common/Modal';
 import { ErrorModal } from '../common/Error/ErrorModal';
+import Modal from '../common/Modal';
 import {
 	type ActiveFilter,
 	useDictionaryDataContext,
 	useDictionaryStateContext,
 } from '../dictionary-controller/DictionaryDataContext';
+import { NoMarginParagraph } from '../theme/emotion/index';
 import { type Theme, useThemeContext } from '../theme/index';
+import { getByDotPath } from '../utils/getByDotPath.js';
 import { isFieldRequired } from '../utils/isFieldRequired';
 import { DiagramViewProvider, useDiagramViewContext } from './DiagramViewContext';
 import {
@@ -43,8 +45,8 @@ import {
 	RelationshipDiagramContent,
 	useActiveRelationship,
 } from './EntityRelationshipDiagram';
-import { NoMarginParagraph } from '../theme/emotion/index';
 
+import type { CustomColumnConfig } from './customColumnTypes.js';
 import SchemaTable from './DataTable/SchemaTable/index';
 import DictionaryHeader from './DictionaryHeader/DictionaryHeader';
 import DictionaryViewerLoadingPage from './DictionaryViewer/DictionaryViewerLoadingPage';
@@ -58,15 +60,8 @@ export type FilterDropdown = {
 
 export type DictionaryTableViewerProps = {
 	filterDropdowns?: FilterDropdown[];
+	customColumns?: CustomColumnConfig[];
 };
-
-const getByDotPath = (obj: unknown, path: string): unknown =>
-	path
-		.split('.')
-		.reduce<unknown>(
-			(acc, key) => (acc != null && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined),
-			obj,
-		);
 
 type ParsedHashTarget = {
 	index: number;
@@ -244,7 +239,7 @@ const DiagramModal = () => {
 // TODO: produce a simplified version that accepts a dictionary and produces this same view,
 // so that there's no requirement for a Lectern server, etc. and without a Toolbar, or a simpler one.
 
-const DictionaryTableViewerContent = ({ filterDropdowns }: DictionaryTableViewerProps) => {
+const DictionaryTableViewerContent = ({ filterDropdowns, customColumns }: DictionaryTableViewerProps) => {
 	const theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
 	const { filters, selectedDictionary, filterSelections, resetFilters } = useDictionaryStateContext();
@@ -365,6 +360,7 @@ const DictionaryTableViewerContent = ({ filterDropdowns }: DictionaryTableViewer
 						<SchemaTable
 							schema={filtered}
 							highlightedFieldName={highlightedField?.schemaName === schema.name ? highlightedField.fieldName : null}
+							customColumns={customColumns}
 						/>
 					),
 					schemaName: schema.name,
@@ -443,9 +439,9 @@ const DictionaryTableViewerContent = ({ filterDropdowns }: DictionaryTableViewer
 	);
 };
 
-export const DictionaryTableViewer = ({ filterDropdowns }: DictionaryTableViewerProps) => (
+export const DictionaryTableViewer = ({ filterDropdowns, customColumns }: DictionaryTableViewerProps) => (
 	<DiagramViewProvider>
-		<DictionaryTableViewerContent filterDropdowns={filterDropdowns} />
+		<DictionaryTableViewerContent filterDropdowns={filterDropdowns} customColumns={customColumns} />
 	</DiagramViewProvider>
 );
 

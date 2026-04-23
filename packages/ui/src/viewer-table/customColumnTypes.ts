@@ -19,28 +19,18 @@
  *
  */
 
-export { default as SchemaTable, type SchemaTableProps } from './DataTable/SchemaTable/index';
-export { default as DictionaryHeader, DictionaryVersionSwitcher } from './DictionaryHeader/index';
-export { default, type DictionaryTableProps } from './DictionaryViewerPage';
-export {
-	default as Toolbar,
-	type ToolbarProps,
+import type { ComponentType } from 'react';
+import type { DictionaryMeta, DictionaryMetaValue, SchemaField } from '@overture-stack/lectern-dictionary';
 
-	// individual parts for integrators to build their own
-	AttributeFilterButton,
-	CollapseAllButton,
-	type CollapseAllButtonProps,
-	DictionaryDownloadButton,
-	type DictionaryDownloadButtonProps,
-	ExpandAllButton,
-	type ExpandAllButtonProps,
-	TableOfContentsDropdown,
-	type TableOfContentsDropdownProps,
-} from './Toolbar/index';
+export type CustomColumnComponentProps = {
+	field: SchemaField;
+	metaPath?: string;
+	value?: DictionaryMetaValue | DictionaryMeta;
+};
 
-// TODO: study which of the following are worth exporting at root, if any
-export * from './customColumnTypes';
-export * from './DictionaryTableViewer';
-export { default as MetaValueRenderer, type MetaValueRendererProps } from './DataTable/SchemaTable/Columns/MetaValueRenderer';
-export { type FilterCategory } from '../common/Dropdown/index';
-export * from './Loading';
+export type CustomColumnConfig = {
+	columnHeader: string;
+} & (
+	| { metaPath: string; columnComponent?: ComponentType<CustomColumnComponentProps> }
+	| { metaPath?: string; columnComponent: ComponentType<CustomColumnComponentProps> }
+);
