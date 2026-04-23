@@ -35,7 +35,7 @@ import MetaValueRenderer from './Columns/MetaValueRenderer';
 const columnHelper = createColumnHelper<SchemaField>();
 
 const isDictionaryMetaValueOrMeta = (value: unknown): value is DictionaryMetaValue | DictionaryMeta => {
-	if (value == null) {
+	if (value === null) {
 		return false;
 	}
 
@@ -48,9 +48,9 @@ const isDictionaryMetaValueOrMeta = (value: unknown): value is DictionaryMetaVal
 	}
 
 	if (typeof value === 'object') {
-		return true;
+		return Object.values(value).every((v) => isDictionaryMetaValueOrMeta(v));
 	}
-	
+
 	return false;
 };
 
@@ -120,5 +120,3 @@ export const getSchemaBaseColumns = (schema: Schema, customColumns?: CustomColum
 		}),
 	),
 ];
-
-
