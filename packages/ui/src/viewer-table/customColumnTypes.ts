@@ -24,8 +24,8 @@ import type { DictionaryMeta, DictionaryMetaValue, SchemaField } from '@overture
 
 export type CustomColumnComponentProps = {
 	field: SchemaField;
-	metaPath: string | undefined;
-	value: DictionaryMetaValue | DictionaryMeta | undefined;
+	metaPath?: string;
+	value?: DictionaryMetaValue | DictionaryMeta;
 };
 
 export type CustomColumnConfig = {
