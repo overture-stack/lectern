@@ -30,6 +30,7 @@ export type CustomColumnComponentProps = {
 
 export type CustomColumnConfig = {
 	columnHeader: string;
+	defaultVisible?: boolean;
 } & (
 	| { metaPath: string; columnComponent?: ComponentType<CustomColumnComponentProps> }
 	| { metaPath?: string; columnComponent: ComponentType<CustomColumnComponentProps> }
