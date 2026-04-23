@@ -27,6 +27,26 @@ import { CellContext, createColumnHelper, Row } from '@tanstack/react-table';
 
 import { getByDotPath } from '../../../utils/getByDotPath.js';
 import type { CustomColumnConfig } from '../../customColumnTypes.js';
+
+const isDictionaryMetaValueOrMeta = (value: unknown): value is DictionaryMetaValue | DictionaryMeta => {
+	if (value == null) {
+		return false;
+	}
+
+	if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+		return true;
+	}
+
+	if (Array.isArray(value)) {
+		return value.every((item) => typeof item === 'string' || typeof item === 'number');
+	}
+
+	if (typeof value === 'object') {
+		return true;
+	}
+	
+	return false;
+};
 import { renderAllowedValuesColumn } from './Columns/AllowedValuesColumn/RenderAllowedValues';
 import { renderAttributesColumn } from './Columns/Attribute';
 import { renderDataTypeColumn } from './Columns/DataType';
@@ -87,17 +107,16 @@ export const getSchemaBaseColumns = (schema: Schema, customColumns?: CustomColum
 			cell: (cellContext: CellContext<SchemaField, unknown>) => {
 				const field = cellContext.row.original;
 				const metaPath = config.metaPath;
-				const value =
-					metaPath !== undefined ?
-						(getByDotPath(field, metaPath) as DictionaryMetaValue | DictionaryMeta | undefined)
-					:	undefined;
+				const Component = config.columnComponent;
+				const value = metaPath !== undefined ? getByDotPath(field, metaPath) : undefined;
 
-				if (config.columnComponent) {
-					const Component = config.columnComponent;
-					return <Component field={field} metaPath={metaPath} value={value} />;
+				if (!Component) {
+					return <MetaValueRenderer value={value} />;
 				}
 
-				return <MetaValueRenderer value={value} />;
+				return (
+					<Component field={field} metaPath={metaPath} value={isDictionaryMetaValueOrMeta(value) ? value : undefined} />
+				);
 			},
 		}),
 	),
