@@ -92,11 +92,11 @@ const renderValue = (value: unknown, theme: Theme): React.ReactNode => {
 				</a>
 			);
 		}
-		return <>{value}</>;
+		return <label>{value}</label>;
 	}
 
 	if (typeof value === 'number' || typeof value === 'boolean') {
-		return <>{String(value)}</>;
+		return <label>{String(value)}</label>;
 	}
 
 	if (Array.isArray(value)) {
