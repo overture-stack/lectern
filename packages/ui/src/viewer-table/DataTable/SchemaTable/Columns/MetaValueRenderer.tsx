@@ -66,10 +66,8 @@ const objectEntryStyle = css`
 	margin: 0;
 `;
 
-const inheritTypographyStyle = css`
-	font-size: inherit;
-	font-weight: inherit;
-	line-height: inherit;
+const wrapperTypographyStyle = css`
+	font-weight: 700;
 `;
 
 export type MetaValueRendererProps = {
@@ -135,7 +133,7 @@ const MetaValueRenderer = ({ value }: MetaValueRendererProps) => {
 	}
 
 	return (
-		<ReadMoreText maxLines={3} wrapperStyle={inheritTypographyStyle}>
+		<ReadMoreText maxLines={3} wrapperStyle={wrapperTypographyStyle}>
 			{renderValue(value, theme)}
 		</ReadMoreText>
 	);
