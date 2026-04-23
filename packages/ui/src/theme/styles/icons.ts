@@ -20,6 +20,7 @@
 
 import Cancel from '../icons/Cancel';
 import ChevronDown from '../icons/ChevronDown';
+import Columns from '../icons/Columns';
 import CircleSlash from '../icons/CircleSlash';
 import Collapse from '../icons/Collapse';
 import Eye from '../icons/Eye';
@@ -38,6 +39,7 @@ import Tags from '../icons/Tags';
 export default {
 	ChevronDown,
 	CircleSlash,
+	Columns,
 	Spinner,
 	Collapse,
 	Eye,
