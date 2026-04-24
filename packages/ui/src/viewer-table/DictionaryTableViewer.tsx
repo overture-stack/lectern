@@ -249,6 +249,18 @@ const DictionaryTableViewerContent = ({ filterDropdowns, customColumns }: Dictio
 	const [highlightedField, setHighlightedField] = useState<{ schemaName: string; fieldName: string } | null>(null);
 	const { CircleSlash, Refresh } = theme.icons;
 
+	const columns = customColumns ?? [];
+
+	const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(() =>
+		Object.fromEntries(columns.map((col) => [col.columnHeader, col.defaultVisible !== false])),
+	);
+
+	const toggleColumnVisibility = useCallback((columnHeader: string) => {
+		setColumnVisibility((prev) => ({ ...prev, [columnHeader]: !prev[columnHeader] }));
+	}, []);
+
+	const visibleCustomColumns = columns.filter((col) => columnVisibility[col.columnHeader]);
+
 	const relationshipMap = useMemo(
 		() => (selectedDictionary ? buildRelationshipMap(selectedDictionary) : null),
 		[selectedDictionary],
@@ -360,7 +372,7 @@ const DictionaryTableViewerContent = ({ filterDropdowns, customColumns }: Dictio
 						<SchemaTable
 							schema={filtered}
 							highlightedFieldName={highlightedField?.schemaName === schema.name ? highlightedField.fieldName : null}
-							customColumns={customColumns}
+							customColumns={visibleCustomColumns}
 						/>
 					),
 					schemaName: schema.name,
@@ -368,7 +380,7 @@ const DictionaryTableViewerContent = ({ filterDropdowns, customColumns }: Dictio
 				},
 			];
 		});
-	}, [selectedDictionary?.schemas, filters, activeFilters, highlightedField]);
+	}, [selectedDictionary?.schemas, filters, activeFilters, highlightedField, visibleCustomColumns]);
 
 	const handleAccordionSelect = (accordionIndex: number) => {
 		const schemaName = accordionItems[accordionIndex]?.schemaName;
@@ -417,6 +429,15 @@ const DictionaryTableViewerContent = ({ filterDropdowns, customColumns }: Dictio
 					setIsCollapsed={setIsCollapsed}
 					isCollapsed={isCollapsed}
 					filterCategories={filterCategories}
+					columnVisibility={
+						columns.length > 0 ?
+							{
+								columnHeaders: columns.map((col) => col.columnHeader),
+								columnVisibility,
+								onToggle: toggleColumnVisibility,
+							}
+						:	undefined
+					}
 				/>
 				{accordionItems.length === 0 && activeFilters.length > 0 ?
 					<div css={emptyFilterContainerStyle}>

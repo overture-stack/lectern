@@ -34,12 +34,14 @@ import DictionaryDownloadButton from './DictionaryDownloadButton';
 import ExpandAllButton from './ExpandAllButton';
 import TableOfContentsDropdown from './TableOfContentsDropdown';
 import ActiveFilterBar from './ActiveFilterBar';
+import ColumnVisibilityDropdown, { type ColumnVisibilityDropdownProps } from './ColumnVisibilityDropdown';
 
 export type ToolbarProps = {
 	onSelect: (schemaNameIndex: number) => void;
 	setIsCollapsed: (collapsed: boolean) => void;
 	isCollapsed: boolean;
 	filterCategories?: FilterCategory[];
+	columnVisibility?: ColumnVisibilityDropdownProps;
 };
 
 const panelStyles = (theme: Theme) => css`
@@ -68,7 +70,7 @@ const sectionStyles = css`
 	gap: 16px;
 `;
 
-const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, filterCategories }: ToolbarProps) => {
+const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, filterCategories, columnVisibility }: ToolbarProps) => {
 	const theme: Theme = useThemeContext();
 	const { loading, errors } = useDictionaryDataContext();
 	const { selectedDictionary, filterSelections, toggleFilter } = useDictionaryStateContext();
@@ -109,6 +111,13 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, filterCategories }: To
 								/>
 							))}
 						</Dropdown>
+					)}
+					{columnVisibility && columnVisibility.columnHeaders.length > 0 && (
+						<ColumnVisibilityDropdown
+							columnHeaders={columnVisibility.columnHeaders}
+							columnVisibility={columnVisibility.columnVisibility}
+							onToggle={columnVisibility.onToggle}
+						/>
 					)}
 				</div>
 				<div css={sectionStyles}>

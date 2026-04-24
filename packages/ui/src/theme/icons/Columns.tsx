@@ -19,19 +19,32 @@
  *
  */
 
-import type { ComponentType } from 'react';
-import type { DictionaryMeta, DictionaryMetaValue, SchemaField } from '@overture-stack/lectern-dictionary';
+/** @jsxImportSource @emotion/react */
 
-export type CustomColumnComponentProps = {
-	field: SchemaField;
-	metaPath?: string;
-	value?: DictionaryMetaValue | DictionaryMeta;
+import { css } from '@emotion/react';
+
+import IconProps from './IconProps';
+
+const Columns = ({ fill, width, height, style }: IconProps) => {
+	return (
+		<svg
+			css={css`
+				${style}
+			`}
+			width={width || '24'}
+			height={height || '24'}
+			fill={fill || 'none'}
+			viewBox="0 0 24 24"
+			stroke="currentColor"
+			strokeWidth="1.5"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		>
+			<rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+			<path d="M9 3v18" />
+			<path d="M15 3v18" />
+		</svg>
+	);
 };
 
-export type CustomColumnConfig = {
-	columnHeader: string;
-	defaultVisible?: boolean;
-} & (
-	| { metaPath: string; columnComponent?: ComponentType<CustomColumnComponentProps> }
-	| { metaPath?: string; columnComponent: ComponentType<CustomColumnComponentProps> }
-);
+export default Columns;
