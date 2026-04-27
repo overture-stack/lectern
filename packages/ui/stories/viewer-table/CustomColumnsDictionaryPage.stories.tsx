@@ -117,3 +117,39 @@ export const WithMixedColumns: Story = {
 		],
 	},
 };
+
+/**
+ * Dictionary page with a FHIR Spec URL column. Fields with a `mappings.FHIRSpec`
+ * value render as clickable hyperlinks via MetaValueRenderer.
+ */
+export const WithFhirSpecColumn: Story = {
+	decorators: [withSingleDictionary],
+	args: {
+		customColumns: [{ columnHeader: 'FHIR Spec', metaPath: 'meta.mappings.FHIRSpec' }],
+	},
+};
+
+/**
+ * Dictionary page with an Ontology Reference URL column. Fields with an `ontologyRef`
+ * value render as clickable hyperlinks via MetaValueRenderer.
+ */
+export const WithOntologyRefColumn: Story = {
+	decorators: [withSingleDictionary],
+	args: {
+		customColumns: [{ columnHeader: 'Ontology Ref', metaPath: 'meta.ontologyRef' }],
+	},
+};
+
+/**
+ * Dictionary page combining both URL-valued columns to demonstrate hyperlink
+ * rendering across multiple custom columns.
+ */
+export const WithUrlColumns: Story = {
+	decorators: [withSingleDictionary],
+	args: {
+		customColumns: [
+			{ columnHeader: 'FHIR Spec', metaPath: 'meta.mappings.FHIRSpec' },
+			{ columnHeader: 'Ontology Ref', metaPath: 'meta.ontologyRef' },
+		],
+	},
+};
