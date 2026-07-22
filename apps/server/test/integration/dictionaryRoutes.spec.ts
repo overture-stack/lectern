@@ -27,6 +27,7 @@ import { StartedTestContainer } from 'testcontainers/dist/test-container';
 import App from '../../src/app';
 import { AppConfig } from '../../src/config/appConfig';
 import { constructTestUri } from '../../src/utils/mongo';
+import envConfig from './envConfig';
 import createDictionaryFixture from './fixtures/createDictionary.json';
 
 const CORS_ALLOWED_DOMAINS = [`http://localhost:5173`, `https://example.com`];
@@ -79,7 +80,7 @@ describe('Dictionary Routes', () => {
 	before(async () => {
 		container = await new GenericContainer('mongo', 'xenial').withExposedPorts(27017).start();
 		mongoose
-			.connect(constructTestUri(container.getContainerIpAddress(), container.getMappedPort(27017).toString()))
+			.connect(constructTestUri(container.getContainerIpAddress(), container.getMappedPort(27017).toString()), { tls: envConfig.testContainers.tls })
 			.then(() => {
 				/** ready to use. The `mongoose.connect()` promise resolves to undefined. */
 			})
