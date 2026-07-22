@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
 interface TestContainersConfig {
-	tls: boolean;
+	startupTimeoutMs: number;
 }
 
 interface IntegrationTestConfig {
@@ -10,7 +10,8 @@ interface IntegrationTestConfig {
 
 const envConfig: IntegrationTestConfig = {
 	testContainers: {
-		tls: process.env.TEST_CONTAINER_ENABLE_TLS === 'true',
+		startupTimeoutMs:
+			process.env.TEST_CONTAINER_STARTUP_TIMEOUT_MS ? parseInt(process.env.TEST_CONTAINER_STARTUP_TIMEOUT_MS) : 35_000,
 	},
 };
 

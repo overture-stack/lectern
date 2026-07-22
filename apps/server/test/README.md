@@ -10,5 +10,5 @@ You only need to enable these settings if required for the environment these are
 
 | Variable | Values | Default | Description |
 |---|---|---|---|
-| `TEST_CONTAINER_ENABLE_TLS` | `true` / `false` | `false` | When `true`, connects to MongoDB with TLS enabled. Useful when running tests against an external TLS-secured MongoDB instead of the testcontainer. |
+| `TEST_CONTAINER_STARTUP_TIMEOUT_MS` | number | `35000` | Milliseconds to wait for a test container to start before timing out. Increase this on slower CI environments where container startup takes longer than the default. |
 

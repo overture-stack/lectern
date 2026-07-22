@@ -76,11 +76,12 @@ chai.use(require('chai-http'));
 
 describe('Dictionary Routes', () => {
 	before(async () => {
-		container = await new GenericContainer('mongo:xenial').withExposedPorts(27017).start();
+		container = await new GenericContainer('mongo:xenial')
+			.withExposedPorts(27017)
+			.withStartupTimeout(envConfig.testContainers.startupTimeoutMs)
+			.start();
 		mongoose
-			.connect(constructTestUri(container.getHost(), container.getMappedPort(27017).toString()), {
-				tls: envConfig.testContainers.tls,
-			})
+			.connect(constructTestUri(container.getHost(), container.getMappedPort(27017).toString()))
 			.then(() => {
 				/** ready to use. The `mongoose.connect()` promise resolves to undefined. */
 			})
