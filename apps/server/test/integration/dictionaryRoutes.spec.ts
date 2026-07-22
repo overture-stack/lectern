@@ -22,8 +22,7 @@ import 'chai-http';
 import 'mocha';
 import mongoose from 'mongoose';
 import { Response } from 'superagent';
-import { GenericContainer } from 'testcontainers';
-import { StartedTestContainer } from 'testcontainers/dist/test-container';
+import { GenericContainer, StartedTestContainer } from 'testcontainers';
 import App from '../../src/app';
 import { AppConfig } from '../../src/config/appConfig';
 import { constructTestUri } from '../../src/utils/mongo';
@@ -31,7 +30,6 @@ import envConfig from './envConfig';
 import createDictionaryFixture from './fixtures/createDictionary.json';
 
 const CORS_ALLOWED_DOMAINS = [`http://localhost:5173`, `https://example.com`];
-
 
 const testConfig: AppConfig = {
 	serverPort(): string {
@@ -78,9 +76,11 @@ chai.use(require('chai-http'));
 
 describe('Dictionary Routes', () => {
 	before(async () => {
-		container = await new GenericContainer('mongo', 'xenial').withExposedPorts(27017).start();
+		container = await new GenericContainer('mongo:xenial').withExposedPorts(27017).start();
 		mongoose
-			.connect(constructTestUri(container.getContainerIpAddress(), container.getMappedPort(27017).toString()), { tls: envConfig.testContainers.tls })
+			.connect(constructTestUri(container.getHost(), container.getMappedPort(27017).toString()), {
+				tls: envConfig.testContainers.tls,
+			})
 			.then(() => {
 				/** ready to use. The `mongoose.connect()` promise resolves to undefined. */
 			})
