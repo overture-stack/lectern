@@ -38,7 +38,7 @@ The `DictionaryEntityRelationshipView` component draws the dictionary as an inte
 The Viewer is the presentation layer of the submission workflow. It is typically used alongside:
 
 - **[Lectern Server](./01-overview.md):** the REST API that stores, versions, and serves the dictionary schemas the Viewer renders.
-- **[Lyric](https://docs.overture.bio/build/core-software/Lyric/overview):** Overture's tabular data submission service, which validates submissions against those same Lectern schemas.
+- **[Lyric](/develop/Lyric/overview):** Overture's tabular data submission service, which validates submissions against those same Lectern schemas.
 
 The Viewer is being developed initially for the [Pan-Canadian Genome Library (PCGL)](https://genomelibrary.ca/), which will use it to communicate data requirements to researchers. That implementation is intended as a reference for how other platforms integrate the components.
 
