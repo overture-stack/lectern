@@ -157,7 +157,7 @@ At the field-level the following properties can also be included:
 
 The `displayName` property allows for more user-friendly names in UIs while maintaining technical compatibility with the restricted `name` property:
 
-````json
+```json
 {
   "name": "patient_schema",
   "displayName": "Patient Information",
@@ -179,6 +179,7 @@ The `displayName` property allows for more user-friendly names in UIs while main
     }
   ]
 }
+```
 
 ## Field Restrictions
 
@@ -196,7 +197,7 @@ Field restrictions define the rules that field values must satisfy to be conside
     }
   }
 }
-````
+```
 
 :::note What this means:
 Age must be provided and must be between 0-150 years old.
