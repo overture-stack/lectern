@@ -1,7 +1,7 @@
 # Lectern - Data Dictionary Management and Validation
 
 [<img hspace="5" src="https://img.shields.io/badge/chat--with--developers-overture--slack-blue?style=for-the-badge">](http://slack.overture.bio)
-[<img hspace="5" src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge">](https://github.com/overture-stack/lectern/blob/develop/LICENSE)
+[<img hspace="5" src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge">](https://github.com/overture-stack/lectern/blob/main/LICENSE)
 [<img hspace="5" src="https://img.shields.io/badge/Code%20of%20Conduct-blue?style=for-the-badge">](CODE_OF_CONDUCT.md)
 
 Lectern is Overture's Data Dictionary Schema Manager, providing a system for defining Schemas that will validate the structured data collected by an application. The core of Lectern is a web-server application that handles storage and version management of data dictionaries. Lectern data dictionaries are collections of schemas that define the structure of tabular data files (like TSV). This application provides functionality to validate the structure of data dictionaries, maintain a list of dictionary versions, and to compute the difference between dictionary versions.
@@ -98,7 +98,7 @@ pnpm build:client
 
 ## Documentation
 
-Technical resources for those working with or contributing to the project are being updated to our [official documentation site](https://docs.overture.bio/docs/core-software/Lectern/overview), this content can also be updated and read within the `/docs` folder of this repository.
+Technical resources for those working with or contributing to the project are being updated to our [official documentation site](https://docs.overture.bio/develop/Lectern/overview), this content can also be updated and read within the `/docs` folder of this repository.
 
 ### Meta-Schema
 
@@ -112,7 +112,7 @@ Lectern provides a meta-schema definition that describes the structure of Lecter
 
 - For support, feature requests, and bug reports, please see our [Support Guide](https://docs.overture.bio/community/support).
 
-- For detailed information on how to contribute to this project, please see our [Contributing Guide](https://docs.overture.bio/docs/contribution).
+- For detailed information on how to contribute to this project, please see our [Contributing Guide](https://docs.overture.bio/develop/contributing).
 
 ## Related Software 
 
@@ -130,7 +130,7 @@ The Overture Platform includes the following Overture Components:
 |[Lyric](https://github.com/overture-stack/lyric)| A model-agnostic, tabular data submission system |
 |[Lectern](https://github.com/overture-stack/lectern)| Schema Manager, designed to validate, store, and manage collections of data dictionaries.  |
 
-If you'd like to get started using our platform [check out our quickstart guides](https://docs.overture.bio/guides/getting-started)
+If you'd like to get started using our platform [check out our quickstart guides](https://docs.overture.bio/deploy)
 
 ## Funding Acknowledgement
 

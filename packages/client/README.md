@@ -2,7 +2,7 @@
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 [<img hspace="5" src="https://img.shields.io/badge/chat--with--developers-overture--slack-blue?style=for-the-badge">](http://slack.overture.bio)
-[<img hspace="5" src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge">](https://github.com/overture-stack/lectern/blob/develop/LICENSE)
+[<img hspace="5" src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge">](https://github.com/overture-stack/lectern/blob/main/LICENSE)
 
 The Lectern Client provides developers TypeScript code tools to interact with Lectern servers and [Lectern Dictionaries](https://github.com/overture-stack/lectern). This package provides data processing functions that will parse and validate submitted data, ensuring that it adheres to the structure defined by the Dictionary. It also provides a REST client to fetch Lectern Dictionary data from a Lectern Server.
 

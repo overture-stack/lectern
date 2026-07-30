@@ -2,7 +2,7 @@
 
 [<img alt="Container Registry Badge" src="https://img.shields.io/badge/Docker--Image-ghcr.io-blue?style=for-the-badge&color=blue&cacheSeconds=0" />](https://github.com/overture-stack/lectern/pkgs/container/lectern)
 [<img hspace="5" src="https://img.shields.io/badge/chat--with--developers-overture--slack-blue?style=for-the-badge">](http://slack.overture.bio)
-[<img hspace="5" src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge">](https://github.com/overture-stack/lectern/blob/develop/LICENSE)
+[<img hspace="5" src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge">](https://github.com/overture-stack/lectern/blob/main/LICENSE)
 
 Lectern Server is a standalone web service that provides a REST API to manage and share Data Dictionary schemas.
 
