@@ -83,6 +83,10 @@ Selections combine as **OR within a dropdown and AND across dropdowns**: picking
 
 Configuring filters also changes the surrounding view: active selections appear as removable pills below the toolbar with a "Reset all" control, schemas carry their metadata values as tags on the accordion header, and a combination that matches nothing renders an explanation with a button to clear the filters.
 
+![The Filters control open, with one value selected, the selection as a removable pill in the active-filter bar, and the matching schemas carrying their metadata as tags](../assets/viewer-metadata-filters.png)
+
+However many dropdowns are declared, the toolbar grows a single **Filters** control; the menu it opens holds one section per dropdown, headed by that dropdown's label.
+
 ## Add custom columns
 
 `customColumns` appends columns to every schema table. Each entry names the column and points at a value on the field with a dot path:
@@ -99,6 +103,10 @@ Configuring filters also changes the surrounding view: active selections appear 
 ```
 
 Without a `columnComponent`, cells use the default renderer, which handles strings, numbers, booleans, arrays, and nested objects, and turns URL values into links. Readers can show and hide these columns from the toolbar's **Columns** dropdown; `defaultVisible: false` starts a column hidden.
+
+![A custom column appended to the right of the four base columns, with the toolbar's Columns control open showing the declared columns and which are visible](../assets/viewer-custom-columns.png)
+
+The screenshot is the configuration above: `FHIR` is visible and `Ontology Ref`, declared with `defaultVisible: false`, is not.
 
 To control rendering, pass a component instead. It receives the whole `field` alongside the resolved `value`, so a cell can fall back to other field properties:
 

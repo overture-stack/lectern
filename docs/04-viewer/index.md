@@ -23,7 +23,7 @@ The Viewer is being developed initially for the [Pan-Canadian Genome Library (PC
 
 The dictionary table view is the Viewer's main surface. It renders a dictionary header, a toolbar, and one collapsible accordion section per schema. Each section contains that schema's fields in a table.
 
-![Dictionary table view](../assets/lecternviewer.png)
+![The dictionary table view: header, toolbar, one schema expanded to its field table and the next collapsed to its name and description](../assets/viewer-field-table.png)
 
 ### Table columns
 
@@ -51,7 +51,7 @@ Two of the Attribute column's states are interactive:
 
 Conditional validation rules (if-then-else dependencies between fields) are shown in a modal. The modal breaks the logic into a structured display so the dependencies and requirements are clear.
 
-![Conditional logic modal](../assets/clm.png)
+![The conditional logic modal, rendering an if-then-else restriction in plain language over the table it was opened from](../assets/viewer-conditional-logic.png)
 
 ### Toolbar
 
@@ -91,14 +91,16 @@ Hovering a field name reveals a hash icon that sets the URL to that field's anch
 
 The diagram view draws the dictionary as an interactive entity relationship diagram, showing how schemas connect through primary and foreign keys. It opens in a modal over the table view, either from the toolbar's **Diagram View** button or from a foreign-key field's Attribute cell.
 
-![Entity relationship diagram](../assets/erdviewer.png)
+![Entity relationship diagram: six schemas laid out automatically, each link joining the specific primary-key and foreign-key fields that carry it](../assets/viewer-diagram.png)
+
+The screenshot above shows six schemas of a seventeen-schema dictionary, which is what fits on a documentation page. The view renders a whole dictionary at once, and supports pan, zoom, and fit-to-view.
 
 The two entry points produce different views:
 
 - **From the toolbar:** the whole dictionary, auto-laid-out. Clicking an edge highlights that relationship and dims the others; clicking the background clears the highlight.
 - **From a foreign-key field:** only the schemas in that field's relationship chain, with the relevant edges highlighted. This keeps large dictionaries readable when the question is "where does this one field point?"
 
-The diagram supports pan, zoom, and fit-to-view.
+![The diagram in its focused mode, showing one relationship with its primary-key and foreign-key fields highlighted](../assets/viewer-diagram-focused.png)
 
 ## Next steps
 
