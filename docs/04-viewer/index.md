@@ -15,7 +15,7 @@ This page describes what the Viewer shows a reader. To embed it in a platform, s
 The Viewer is the presentation layer of the submission workflow. It is typically used alongside:
 
 - **[Lectern Server](../01-overview.md):** the REST API that stores, versions, and serves the dictionary schemas the Viewer renders, and that generates the submission templates the Viewer offers for download.
-- **[Lyric](/develop/Lyric/overview):** Overture's tabular data submission service, which validates submissions against those same Lectern schemas.
+- **[Lyric](https://docs.overture.bio/develop/Lyric/overview):** Overture's tabular data submission service, which validates submissions against those same Lectern schemas.
 
 The Viewer is being developed initially for the [Pan-Canadian Genome Library (PCGL)](https://genomelibrary.ca/), which will use it to communicate data requirements to researchers. That implementation is intended as a reference for how other platforms integrate the components.
 

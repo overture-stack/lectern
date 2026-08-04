@@ -1,6 +1,6 @@
 # Overview
 
-Data dictionaries are organized collections of schemas that define the structure, constraints, and relationships of data models. Overture's Data Dictionary Manager, Lectern, is designed to manage collections of data dictionaries and can be integrated into any data platform. Lectern typically works with Overture's tabular data submission service, [Lyric](/develop/Lyric/overview), to ensure data quality and consistency throughout the submission workflow.
+Data dictionaries are organized collections of schemas that define the structure, constraints, and relationships of data models. Overture's Data Dictionary Manager, Lectern, is designed to manage collections of data dictionaries and can be integrated into any data platform. Lectern typically works with Overture's tabular data submission service, [Lyric](https://docs.overture.bio/develop/Lyric/overview), to ensure data quality and consistency throughout the submission workflow.
 
 ## Key Features
 
@@ -12,7 +12,7 @@ Data dictionaries are organized collections of schemas that define the structure
 
 ## System Architecture
 
-Lectern operates as a central Dictionary Schema repository, providing dictionary management and validation services through its RESTful API. The service maintains schemas in a database (mongoDb), tracking versions and relationships between different schema elements. In the Overture platform Lectern's schemas are consumed by [Lyric](/develop/Lyric/overview), which stores and uses them to validate incoming tabular data submissions.
+Lectern operates as a central Dictionary Schema repository, providing dictionary management and validation services through its RESTful API. The service maintains schemas in a database (mongoDb), tracking versions and relationships between different schema elements. In the Overture platform Lectern's schemas are consumed by [Lyric](https://docs.overture.bio/develop/Lyric/overview), which stores and uses them to validate incoming tabular data submissions.
 
 ![Submission System Architecture](./assets/submission-system.svg "Updated Overture Submission System")
 

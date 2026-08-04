@@ -991,5 +991,5 @@ The `references` section is a **dictionary-level** property that allows you to d
 ```
 
 :::info **Need Help?**
-If you encounter any issues or have questions, please don't hesitate to reach out through our [**support page**](/community/support) or our [**discussion forum**](https://github.com/overture-stack/docs/discussions?discussions_q=).
+If you encounter any issues or have questions, please don't hesitate to reach out through our [**support page**](https://docs.overture.bio/community/support) or our [**discussion forum**](https://github.com/overture-stack/docs/discussions?discussions_q=).
 :::
