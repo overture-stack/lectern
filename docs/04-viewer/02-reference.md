@@ -170,7 +170,7 @@ The loading skeletons (`LoadingSpinnerPage`, `HeaderSkeleton`, and `ToolbarSkele
 
 ### Theme structure
 
-`Theme` is inferred from `defaultTheme`, so the groups below are the complete set of what a `PartialTheme` can override. Each links to its definition, which is the authoritative list of tokens and their values.
+`Theme` is inferred from [`defaultTheme`](https://github.com/overture-stack/lectern/blob/main/packages/ui/src/theme/defaultTheme.ts), so the groups below are the complete set of what a `PartialTheme` can override. Each links to its definition, which is the authoritative list of tokens and their values.
 
 | Group | Controls | Source |
 | --- | --- | --- |
