@@ -8,18 +8,15 @@ Lectern is Overture's Data Dictionary Schema Manager, providing a system for def
 
 </br>
 
->
 > <div>
 > <img align="left" src="ov-logo.png" height="50"/>
 > </div>
-> 
-> *Lectern is part of [Overture](https://www.overture.bio/), a collection of open-source software microservices used to create platforms for researchers to organize and share genomics data.*
-> 
-> 
+>
+> _Lectern is part of [Overture](https://www.overture.bio/), a collection of open-source software microservices used to create platforms for researchers to organize and share genomics data._
 
 ## Repository Structure
 
-This repository is organized as a monorepo using [`pnpm-workspace`](https://pnpm.io/workspaces) and [`nx`](https://nx.dev/). 
+This repository is organized as a monorepo using [`pnpm-workspace`](https://pnpm.io/workspaces) and [`nx`](https://nx.dev/).
 
 > **Note:**
 > You will need to use [`pnpm`](https://pnpm.io/installation) instead of `npm` to manage dependencies in this code base. PNPM will take care of linking all modules together correctly.
@@ -31,7 +28,7 @@ The repository is organized with the following directory structure:
 ```
 .
 ├── apps/
-│   └── server 
+│   └── server
 └── packages/
     ├── client
     ├── common
@@ -41,18 +38,18 @@ The repository is organized with the following directory structure:
 
 The modules in the monorepo are organized into two categories:
 
-   * __apps/__ - Standalone processes meant to be run. These are published to [ghcr.io](https://ghcr.io) as container images.
-   * __packages/__ - Reusable packages shared between applications and other packages. Packages are published to [NPM](https://npmjs.com).
-   * __scripts__ - Utility scripts for use within this repo.
+- **apps/** - Standalone processes meant to be run. These are published to [ghcr.io](https://ghcr.io) as container images.
+- **packages/** - Reusable packages shared between applications and other packages. Packages are published to [NPM](https://npmjs.com).
+- **scripts** - Utility scripts for use within this repo.
 
 ## Component Overview
 
-| Component | Package Name | Path | Published Location | Description |
-|-----------|--------------|------|-------------------|-------------|
-| [Lectern Server](apps/server/README.md) | @overture-stack/lectern-server | apps/server/ | [![Lectern GHCR Packages](https://img.shields.io/badge/GHCR-lectern-brightgreen?style=for-the-badge&logo=github)](https://github.com/overture-stack/lectern/pkgs/container/lectern) | Lectern Server web application. |
-| [Lectern Client](packages/client/README.md) | @overture-stack/lectern-client | packages/client | [![Lectern Client NPM Package](https://img.shields.io/npm/v/@overture-stack/lectern-client?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-client) | TypeScript Client to interact with Lectern Server and Lectern data dictionaries. |
-| [Lectern Dictionary](packages/dictionary/README.md) | @overture-stack/lectern-dictionary | packages/dictionary | [![Lectern Client NPM Package](https://img.shields.io/npm/v/@overture-stack/lectern-dictionary?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-dictionary) | Dictionary meta-schema definition, includes TS types, and Zod schemas. |
-| [Lectern Validation](packages/validation/README.md) | @overture-stack/lectern-validation | packages/validation/ | [![Lectern Validation NPM Package](https://img.shields.io/npm/v/@overture-stack/lectern-validation?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-client) | Validate data using Lectern Dictionaries. |
+| Component                                           | Package Name                       | Path                 | Published Location                                                                                                                                                                                              | Description                                                                      |
+| --------------------------------------------------- | ---------------------------------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| [Lectern Server](apps/server/README.md)             | @overture-stack/lectern-server     | apps/server/         | [![Lectern GHCR Packages](https://img.shields.io/badge/GHCR-lectern-brightgreen?style=for-the-badge&logo=github)](https://github.com/overture-stack/lectern/pkgs/container/lectern)                             | Lectern Server web application.                                                  |
+| [Lectern Client](packages/client/README.md)         | @overture-stack/lectern-client     | packages/client      | [![Lectern Client NPM Package](https://img.shields.io/npm/v/@overture-stack/lectern-client?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-client)         | TypeScript Client to interact with Lectern Server and Lectern data dictionaries. |
+| [Lectern Dictionary](packages/dictionary/README.md) | @overture-stack/lectern-dictionary | packages/dictionary  | [![Lectern Client NPM Package](https://img.shields.io/npm/v/@overture-stack/lectern-dictionary?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-dictionary) | Dictionary meta-schema definition, includes TS types, and Zod schemas.           |
+| [Lectern Validation](packages/validation/README.md) | @overture-stack/lectern-validation | packages/validation/ | [![Lectern Validation NPM Package](https://img.shields.io/npm/v/@overture-stack/lectern-validation?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-client) | Validate data using Lectern Dictionaries.                                        |
 
 ## Development Environment
 
@@ -75,11 +72,13 @@ pnpm install
 Run these from the root directory, or if you are in a sub directory then use `pnpm -w`:
 
 #### Build Everything
+
 ```bash
 pnpm build:all
 ```
 
 #### Test Everything
+
 ```bash
 pnpm test:all
 ```
@@ -92,6 +91,7 @@ pnpm nx build @overture-stack/lectern-client
 ```
 
 For convenience, use short aliases:
+
 ```bash
 pnpm build:client
 ```
@@ -114,23 +114,21 @@ Lectern provides a meta-schema definition that describes the structure of Lecter
 
 - For detailed information on how to contribute to this project, please see our [Contributing Guide](https://docs.overture.bio/develop/contributing).
 
-## Related Software 
+## Related Software
 
 The Overture Platform includes the following Overture Components:
 
 </br>
 
-|Software|Description|
-|---|---|
-|[Score](https://github.com/overture-stack/score/)| Transfer data to and from any cloud-based storage system |
-|[Song](https://github.com/overture-stack/song/)| Catalog and manage metadata associated to file data spread across cloud storage systems |
-|[Maestro](https://github.com/overture-stack/maestro/)| Organizing your distributed data into a centralized Elasticsearch index |
-|[Arranger](https://github.com/overture-stack/arranger/)| A search API with reusable search UI components |
-|[Stage](https://github.com/overture-stack/stage)| A React-based web portal scaffolding |
-|[Lyric](https://github.com/overture-stack/lyric)| A model-agnostic, tabular data submission system |
-|[Lectern](https://github.com/overture-stack/lectern)| Schema Manager, designed to validate, store, and manage collections of data dictionaries.  |
-
-If you'd like to get started using our platform [check out our quickstart guides](https://docs.overture.bio/deploy)
+| Software                                                | Description                                                                               |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [Score](https://github.com/overture-stack/score/)       | Transfer data to and from any cloud-based storage system                                  |
+| [Song](https://github.com/overture-stack/song/)         | Catalog and manage metadata associated to file data spread across cloud storage systems   |
+| [Maestro](https://github.com/overture-stack/maestro/)   | Organizing your distributed data into a centralized Elasticsearch index                   |
+| [Arranger](https://github.com/overture-stack/arranger/) | A search API with reusable search UI components                                           |
+| [Stage](https://github.com/overture-stack/stage)        | A React-based web portal scaffolding                                                      |
+| [Lyric](https://github.com/overture-stack/lyric)        | A model-agnostic, tabular data submission system                                          |
+| [Lectern](https://github.com/overture-stack/lectern)    | Schema Manager, designed to validate, store, and manage collections of data dictionaries. |
 
 ## Funding Acknowledgement
 
