@@ -12,7 +12,7 @@ Data dictionaries are organized collections of schemas that define the structure
 
 ## System Architecture
 
-Lectern operates as a central Dictionary Schema repository, providing dictionary management and validation services through its RESTful API. The service maintains schemas in a database (mongoDb), tracking versions and relationships between different schema elements. In the Overture platform Lectern's schemas are consumed by [Lyric](https://docs.overture.bio/develop/Lyric/overview), which stores and uses them to validate incoming tabular data submissions.
+In the Overture platform, Lectern operates as a central Dictionary Schema repository, providing dictionary management and validation services through its RESTful API. The service maintains schemas in a database (mongoDb), tracking versions and relationships between different schema elements. [Lyric](https://docs.overture.bio/develop/Lyric/overview) references schemas hosted in Lectern and uses them to validate incoming tabular data submissions.
 
 ![Submission System Architecture](./assets/submission-system.svg "Updated Overture Submission System")
 
