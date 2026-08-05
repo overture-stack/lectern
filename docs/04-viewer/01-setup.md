@@ -2,11 +2,34 @@
 
 This guide covers embedding the Lectern Viewer in a React application: installing the package, pointing it at a dictionary source, and configuring filters, columns, and theming. For what the resulting views show a reader, see the [Viewer overview](./index.md); for the complete export listing, see the [Reference](./02-reference.md).
 
+## Run Storybook
+
+The library is developed with [Storybook](https://storybook.js.org/), which renders each component in isolation. It is the fastest way to see what the library offers before wiring anything into an application, and every component has stories covering its states, including loading, error, and empty-dictionary cases.
+
+1. Clone the [Lectern repository](https://github.com/overture-stack/lectern) and install dependencies from the repository root:
+
+   ```sh
+   pnpm install
+   ```
+
+2. Start Storybook:
+
+   ```sh
+   pnpm --filter @overture-stack/lectern-ui storybook
+   ```
+
+Storybook runs on port `6006` by default: [http://localhost:6006/](http://localhost:6006/).
+
+Stories render under a `themeDecorator`, and a theme selector in the Storybook toolbar applies an alternate theme to every story that uses it, which is useful for checking that a component reads the theme rather than hard-coding values.
+
+![Storybook theme selector in the toolbar](../assets/global-theme-selector.png)
+
+For the full walkthrough, covering adding themes to the selector, wiring the decorator, and editing stories, see the [Lectern UI developer docs](https://github.com/overture-stack/lectern/blob/main/packages/ui/docs/README.md) in the repository.
+
 ## Prerequisites
 
 - **React 19.** The package declares `react` and `react-dom` `^19.1.0`.
 - **A dictionary source.** Either a running [Lectern server](../02-Setup.md), a dictionary JSON file served over HTTP, or dictionary objects already in your application.
-- **Emotion.** Components style themselves with `@emotion/react`, which ships as a dependency. Applications using a different CSS-in-JS library can still mount the components, but theming goes through Emotion.
 
 ## Install
 
@@ -58,7 +81,7 @@ const HostedDictionaryPage = () => (
 );
 ```
 
-The split is deliberate: the data provider owns fetching, validation, and error state, while `DictionaryTableStateProvider` owns which version is selected and which filters are active. Both expose their state through hooks — `useLecternData` and `useDictionaryTableState` — so a platform can build its own chrome around the table.
+The split is deliberate: the data provider owns fetching, validation, and error state, while `DictionaryTableStateProvider` owns which version is selected and which filters are active. Both expose their state through hooks, `useLecternData` and `useDictionaryTableState`, so a platform can build its own chrome around the table.
 
 :::note
 The **Submission Templates** button reads from a Lectern server and is hidden for the hosted and static providers. `HostedDictionaryDataProvider` also validates the fetched JSON and surfaces a parse failure as an error, so a malformed dictionary reports the problem rather than rendering an empty table.
@@ -123,7 +146,9 @@ See [`CustomColumnConfig`](./02-reference.md#customcolumnconfig) for the full ty
 
 ## Apply a theme
 
-Every Lectern component reads its styling from a `ThemeProvider`. When no provider is present, components fall back to `defaultTheme`. A provider can override any part of the theme — colours, typography, dimensions, icons — and overrides are deep-merged into the default rather than replacing it, so partial themes are valid:
+Components style themselves with [`@emotion/react`](https://emotion.sh/), which ships as a dependency of the package. An application built on a different CSS-in-JS library can still mount the components, but theming goes through Emotion.
+
+Every Lectern component reads its styling from a `ThemeProvider`. When no provider is present, components fall back to `defaultTheme`. A provider can override any part of the theme (colours, typography, dimensions, icons), and overrides are deep-merged into the default rather than replacing it, so partial themes are valid:
 
 ```tsx
 import { DictionaryTable, ThemeProvider } from '@overture-stack/lectern-ui';
@@ -136,27 +161,3 @@ const ThemedDictionaryPage = () => (
 ```
 
 Components read the active theme with the `useThemeContext` hook, which is exported so integrators can build their own components against the same theme.
-
-## Run Storybook
-
-The library is developed with [Storybook](https://storybook.js.org/), which renders each component in isolation. It is the fastest way to explore the components before wiring them into an application — every component has stories covering its states, including loading, error, and empty-dictionary cases.
-
-1. Clone the [Lectern repository](https://github.com/overture-stack/lectern) and install dependencies from the repository root:
-
-   ```sh
-   pnpm install
-   ```
-
-2. Start Storybook:
-
-   ```sh
-   pnpm --filter @overture-stack/lectern-ui storybook
-   ```
-
-Storybook runs on port `6006` by default: [http://localhost:6006/](http://localhost:6006/).
-
-Stories render under a `themeDecorator`, and a theme selector in the Storybook toolbar applies an alternate theme to every story that uses it — useful for checking that a component reads the theme rather than hard-coding values.
-
-![Storybook theme selector in the toolbar](../assets/global-theme-selector.png)
-
-For the full walkthrough — adding themes to the selector, wiring the decorator, and editing stories — see the [Lectern UI developer docs](https://github.com/overture-stack/lectern/blob/main/packages/ui/docs/README.md) in the repository.

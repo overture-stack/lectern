@@ -33,12 +33,12 @@ Every schema table has four base columns:
 | --- | --- |
 | **Fields** | Field name, description, and any `meta.examples` values. |
 | **Attribute** | Whether the field is `Required`, `Optional`, or `Required When` (conditionally required). Unique-key and foreign-key fields are marked with a key icon. |
-| **Data Type** | The field's `valueType` — `String`, `Integer`, `Number`, or `Boolean` — or `Array` for fields that accept multiple values. |
-| **Allowed Values** | Value restrictions — code lists, ranges, regular expressions — including restrictions inherited from the schema, and unique-key and foreign-key relationships. |
+| **Data Type** | The field's `valueType` (`String`, `Integer`, `Number`, or `Boolean`), or `Array` for fields that accept multiple values. |
+| **Allowed Values** | Value restrictions such as code lists, ranges, and regular expressions, including those inherited from the schema, and unique-key and foreign-key relationships. |
 
 Long descriptions, example lists, and allowed-value lists are truncated with a "Show more" control rather than stretching the row.
 
-A platform can append its own columns to every schema table — see [custom columns](./01-setup.md#add-custom-columns).
+A platform can append its own columns to every schema table; see [custom columns](./01-setup.md#add-custom-columns).
 
 ### Attribute column interactions
 
@@ -76,7 +76,7 @@ Two toolbar behaviours are worth calling out:
 
 The header shows the dictionary name and description, with a "Show more" control for long descriptions. When more than one version of the dictionary is available, a version switcher lists each version with its creation date; selecting one re-renders the view against that version.
 
-The switcher changes which version you are looking at. It does not diff two versions — comparing versions is a [Lectern Server](../01-overview.md) capability, not a Viewer one.
+The switcher changes which version you are looking at. It does not diff two versions; comparing versions is a [Lectern Server](../01-overview.md) capability, not a Viewer one.
 
 ### Linking to a schema or field
 

@@ -4,6 +4,10 @@ Every component, provider, hook, and type exported by [`@overture-stack/lectern-
 
 This page documents the library as it stands on `main`. Exports not yet in the published release are marked, and listed together under [Release status](#release-status).
 
+:::note What this page is, and is not
+This is an export listing: what the package exposes, the props and fields of each export, and which are released. For how a component *behaves*, and to see it rendered in every state, use [Storybook](./01-setup.md#run-storybook), which runs against the source and cannot drift from it.
+:::
+
 ## Entry points
 
 The package has two entry points:
@@ -11,7 +15,7 @@ The package has two entry points:
 | Import path | Contents |
 | --- | --- |
 | `@overture-stack/lectern-ui` | Everything below: the composed views, data providers, hooks, theme, and types. |
-| `@overture-stack/lectern-ui/dictionary-table` | The table view's internals — `SchemaTable`, `Toolbar`, the individual toolbar buttons, and the loading skeletons. |
+| `@overture-stack/lectern-ui/dictionary-table` | The table view's internals: `SchemaTable`, `Toolbar`, the individual toolbar buttons, and the loading skeletons. |
 
 :::note
 Import `SchemaTable` and `Toolbar` from the `/dictionary-table` entry point. The root entry point currently re-exports both names from the same default binding as `DictionaryTable`, so all three resolve to the composed page rather than the individual components.
@@ -36,7 +40,7 @@ The prop type is exported as `DictionaryTableProps`.
 
 The same view without the data and state providers, for platforms supplying their own [data source](#data-providers). Takes `filterDropdowns` and `customColumns` with the same meanings as above, and must be rendered inside a data provider and `DictionaryTableStateProvider`.
 
-Requires no `lecternUrl` or `dictionaryName` of its own — it reads whatever the surrounding data provider loaded. The prop type is exported as `DictionaryTableViewerProps`.
+Requires no `lecternUrl` or `dictionaryName` of its own; it reads whatever the surrounding data provider loaded. The prop type is exported as `DictionaryTableViewerProps`.
 
 ## Data providers
 
@@ -53,15 +57,17 @@ Their prop types are exported as `LecternDataProviderProps`, `UrlDictionaryProvi
 
 ### `DictionaryTableStateProvider`
 
-Holds view state — the selected version, the required-fields filter, and active metadata filter selections — and must wrap the view inside whichever data provider is used. Takes only `children`. Its prop type is exported as `DictionaryTableStateProviderProps`.
+Holds view state (the selected version, the required-fields filter, and active metadata filter selections) and must wrap the view inside whichever data provider is used. Takes only `children`. Its prop type is exported as `DictionaryTableStateProviderProps`.
 
 Changing the selected version clears any active metadata filter selections, since a new version may not carry the same metadata values.
 
 ## Hooks
 
-Both hooks throw when called outside their provider.
-
 ### `useLecternData`
+
+:::warning Important
+Throws when called outside a data provider.
+:::
 
 Returns what the active data provider loaded:
 
@@ -74,6 +80,10 @@ Returns what the active data provider loaded:
 | `errors` | `string[]` | Fetch and validation failures. Empty on success. |
 
 ### `useDictionaryTableState`
+
+:::warning Important
+Throws when called outside `DictionaryTableStateProvider`.
+:::
 
 Returns the current view state and the setters that change it:
 
@@ -126,7 +136,7 @@ What a `columnComponent` receives. Not in `1.0.0`.
 
 ### `FilterCategory`
 
-A resolved filter dropdown — a `FilterDropdown` plus the `options: string[]` discovered in the dictionary. Built internally from `filterDropdowns`; needed only when driving `Toolbar` directly.
+A resolved filter dropdown: a `FilterDropdown` plus the `options: string[]` discovered in the dictionary. Built internally from `filterDropdowns`; needed only when driving `Toolbar` directly.
 
 ## Individual components
 
@@ -146,7 +156,7 @@ Available from `@overture-stack/lectern-ui/dictionary-table` for platforms assem
 | `MetaValueRenderer` | `value` | The default custom-column cell renderer. Handles strings, numbers, booleans, arrays, and nested objects, and renders URL strings as links. Not in `1.0.0`. |
 | `Accordion` | `accordionItems`, `collapseAll`, `selectedIndex?` | The collapsible section list the table view is built from. Also exported from the root entry point. |
 
-The loading skeletons — `LoadingSpinnerPage`, `HeaderSkeleton`, `ToolbarSkeleton` — are exported from the same entry point.
+The loading skeletons (`LoadingSpinnerPage`, `HeaderSkeleton`, and `ToolbarSkeleton`) are exported from the same entry point.
 
 ## Theming
 
@@ -157,6 +167,18 @@ The loading skeletons — `LoadingSpinnerPage`, `HeaderSkeleton`, `ToolbarSkelet
 | `useThemeContext` | `(overrides?: PartialTheme) => Theme` | Reads the active theme, optionally merging per-call overrides. |
 | `Theme` | Type | The full theme: `colors`, `typography`, `dimensions`, `shadow`, and `icons`. |
 | `PartialTheme` | Type | A recursively partial `Theme`, for passing to `ThemeProvider`. |
+
+### Theme structure
+
+`Theme` is inferred from `defaultTheme`, so the groups below are the complete set of what a `PartialTheme` can override. Each links to its definition, which is the authoritative list of tokens and their values.
+
+| Group | Controls | Source |
+| --- | --- | --- |
+| `colors` | Surface, text, border, and accent colours, including the palettes the table, toolbar, and filter pills draw from. | [`colors.ts`](https://github.com/overture-stack/lectern/blob/main/packages/ui/src/theme/styles/colors.ts) |
+| `typography` | Font family, and the size, weight, and line height of each text role used by the components. | [`typography.ts`](https://github.com/overture-stack/lectern/blob/main/packages/ui/src/theme/styles/typography.ts) |
+| `dimensions` | Fixed measurements such as navbar height and the spacing the layout is built on. | [`dimensions.ts`](https://github.com/overture-stack/lectern/blob/main/packages/ui/src/theme/styles/dimensions.ts) |
+| `shadow` | Elevation presets applied to raised surfaces such as dropdown menus. | [`shadow.ts`](https://github.com/overture-stack/lectern/blob/main/packages/ui/src/theme/styles/shadow.ts) |
+| `icons` | The built-in icon components, each overridable individually. | [`icons/`](https://github.com/overture-stack/lectern/tree/main/packages/ui/src/theme/icons) |
 
 ## Utilities
 
