@@ -157,7 +157,7 @@ At the field-level the following properties can also be included:
 
 The `displayName` property allows for more user-friendly names in UIs while maintaining technical compatibility with the restricted `name` property:
 
-````json
+```json
 {
   "name": "patient_schema",
   "displayName": "Patient Information",
@@ -179,6 +179,7 @@ The `displayName` property allows for more user-friendly names in UIs while main
     }
   ]
 }
+```
 
 ## Field Restrictions
 
@@ -196,7 +197,7 @@ Field restrictions define the rules that field values must satisfy to be conside
     }
   }
 }
-````
+```
 
 :::note What this means:
 Age must be provided and must be between 0-150 years old.
@@ -990,5 +991,5 @@ The `references` section is a **dictionary-level** property that allows you to d
 ```
 
 :::info **Need Help?**
-If you encounter any issues or have questions, please don't hesitate to reach out through our relevant [**community support channels**](https://docs.overture.bio/community/support).
+If you encounter any issues or have questions, please don't hesitate to reach out through our [**support page**](https://docs.overture.bio/community/support) or our [**discussion forum**](https://github.com/overture-stack/docs/discussions?discussions_q=).
 :::
