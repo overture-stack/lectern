@@ -159,25 +159,25 @@ The `displayName` property allows for more user-friendly names in UIs while main
 
 ```json
 {
-  "name": "patient_schema",
-  "displayName": "Patient Information",
-  "fields": [
-    {
-      "name": "patient_id",
-      "displayName": "Patient ID Number",
-      "valueType": "string"
-    },
-    {
-      "name": "dob",
-      "displayName": "Date of Birth",
-      "valueType": "string"
-    },
-    {
-      "name": "disease_stage",
-      "displayName": "Disease Stage (I-IV)",
-      "valueType": "string"
-    }
-  ]
+	"name": "patient_schema",
+	"displayName": "Patient Information",
+	"fields": [
+		{
+			"name": "patient_id",
+			"displayName": "Patient ID Number",
+			"valueType": "string"
+		},
+		{
+			"name": "dob",
+			"displayName": "Date of Birth",
+			"valueType": "string"
+		},
+		{
+			"name": "disease_stage",
+			"displayName": "Disease Stage (I-IV)",
+			"valueType": "string"
+		}
+	]
 }
 ```
 
@@ -187,15 +187,15 @@ Field restrictions define the rules that field values must satisfy to be conside
 
 ```json
 {
-  "name": "patient_age",
-  "valueType": "integer",
-  "restrictions": {
-    "required": true,
-    "range": {
-      "min": 0,
-      "max": 150
-    }
-  }
+	"name": "patient_age",
+	"valueType": "integer",
+	"restrictions": {
+		"required": true,
+		"range": {
+			"min": 0,
+			"max": 150
+		}
+	}
 }
 ```
 
@@ -208,6 +208,20 @@ Each restrictions object can contain:
 - **Standard Restrictions** (detailed in the sections below)
 - **Conditional restrictions** that apply validation logic based on specific [`conditions`](#conditions)
 
+Which standard restrictions are available depends on the field's `valueType`:
+
+| Restriction | `string` | `integer` | `number` | `boolean` |
+| ----------- | -------- | --------- | -------- | --------- |
+| `required`  | ✓        | ✓         | ✓        | ✓         |
+| `empty`     | ✓        | ✓         | ✓        | ✓         |
+| `codeList`  | ✓        | ✓         | ✓        | ✗         |
+| `range`     | ✗        | ✓         | ✓        | ✗         |
+| `regex`     | ✓        | ✗         | ✗        | ✗         |
+
+:::warning
+This table is the complete set. Any other property inside a `restrictions` object, or a restriction used with a `valueType` it does not apply to, is rejected when the dictionary itself is validated.
+:::
+
 ### `required`
 
 Ensures a field has a value.
@@ -219,6 +233,25 @@ Ensures a field has a value.
 	"restrictions": { "required": true }
 }
 ```
+
+For an array field, `required: true` means the array must contain at least one value:
+
+```json showLineNumbers {4,5}
+{
+	"name": "medications",
+	"valueType": "string",
+	"isArray": true,
+	"restrictions": { "required": true }
+}
+```
+
+:::note **What this means:**
+The medications array must contain at least one entry. An empty array is rejected, and so is an array holding an empty value such as `["aspirin", ""]`.
+:::
+
+:::info Array lengths
+`required` is the only way to constrain how many elements an array holds, so an upper bound on array length cannot be expressed. A `count` rule does exist, but only as [match criteria](#match-criteria) inside a [conditional restriction](#conditions), where it tests the length of another field's array to decide whether a restriction applies.
+:::
 
 ### `codeList`
 
@@ -306,27 +339,6 @@ For human readability we recommend using the `description` property and creating
 Email address must be provided and follow standard email format with a username, @ symbol, domain name, and valid extension. The examples show acceptable formats while the pattern description explains what characters are allowed.
 :::
 
-### `count`
-
-Count is an **array specific** condition that controls the number of elements allowed in array fields.
-
-```json showLineNumbers {4,6}
-{
-	"name": "medications",
-	"valueType": "string",
-	"isArray": true,
-	"restrictions": {
-		"count": { "min": 1, "max": 10 }
-	}
-}
-```
-
-Uses the same boundary options as `range`: `min`, `max`, `exclusiveMin`, `exclusiveMax`.
-
-:::note **What this means:**
-The medications array must contain between 1 and 10 medication entries. Empty arrays or arrays with more than 10 items will be rejected.
-:::
-
 ### `empty`
 
 Requires a field to have no value.
@@ -394,7 +406,7 @@ Think of conditional restrictions as "if-then-else" logic for your data validati
 }
 ```
 
-**Match Criteria**
+#### Match Criteria
 
 The `match` object defines what you're looking for:
 
@@ -414,9 +426,14 @@ The `match` object defines what you're looking for:
 // Field has any value
 { "match": { "exists": true } }
 
-// Array length
+// Array length, as a boundary
 { "match": { "count": { "min": 1 } } }
+
+// Array length, exact
+{ "match": { "count": 3 } }
 ```
+
+The `count` criteria takes either a range object using the same boundary options as [`range`](#range) (`min`, `max`, `exclusiveMin`, `exclusiveMax`), or a plain number for an exact length. It only matches array fields.
 
 #### Simple Example
 
