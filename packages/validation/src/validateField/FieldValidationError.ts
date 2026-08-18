@@ -41,3 +41,5 @@ export type FieldValidationErrorValueType = {
 };
 
 export type FieldValidationError = FieldValidationErrorRestrictions | FieldValidationErrorValueType;
+
+export type FieldValidationErrorReason = FieldValidationError['reason'];

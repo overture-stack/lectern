@@ -42,3 +42,5 @@ export type SchemaRecordError<ErrorDetails> = {
 };
 
 export type SchemaValidationError = SchemaRecordError<SchemaValidationRecordErrorDetails>;
+
+export type SchemaValidationErrorReason = SchemaValidationRecordErrorDetails['reason'];
