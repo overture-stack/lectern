@@ -38,3 +38,5 @@ export type RecordValidationError =
 	| RecordValidationErrorInvalidValue
 	| RecordValidationErrorRestrictions
 	| RecordValidationErrorUnrecognizedField;
+
+export type RecordValidationErrorReason = RecordValidationError['reason'];
