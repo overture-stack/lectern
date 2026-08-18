@@ -48,3 +48,5 @@ export type DictionaryValidationErrorInvalidRecords = DictionaryValidationErrorB
 export type DictionaryValidationError =
 	| DictionaryValidationErrorUnrecognizedSchema
 	| DictionaryValidationErrorInvalidRecords;
+
+export type DictionaryValidationErrorReason = DictionaryValidationError['reason'];
