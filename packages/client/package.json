@@ -39,7 +39,7 @@
 	"dependencies": {
 		"@overture-stack/lectern-dictionary": "workspace:^",
 		"@overture-stack/lectern-validation": "workspace:^",
-		"axios": "^1.7.2",
+		"axios": "^1.13.5",
 		"cd": "^0.3.3",
 		"lodash": "^4.17.21",
 		"zod": "^3.23.8"
