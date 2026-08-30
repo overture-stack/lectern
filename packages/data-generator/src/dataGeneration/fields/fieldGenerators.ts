@@ -88,12 +88,18 @@ export type FieldGeneratorResult<TValue extends DataRecordValue = DataRecordValu
  * `emptyRate` is the probability (0–1) that a non-required field returns `undefined` instead of a
  * generated value. Values outside [0, 1] are clamped. Defaults to `0.25`. Has no effect when the
  * field's active restrictions include `required: true`.
+ *
+ * `excludeValues` is an optional set of values that the generator must not produce. When provided,
+ * the underlying `fast-check` arbitrary is filtered with `fc.filter` to reject excluded values
+ * before sampling. If the arbitrary cannot find a non-excluded value within its retry limit, a
+ * best-effort fallback value is returned (same failure path as a restriction conflict).
  */
 export type FieldGeneratorOptions = {
 	seed?: number;
 	record?: DataRecord;
 	arrayLength?: number | RestrictionRange;
 	emptyRate?: number;
+	excludeValues?: Set<DataRecordValue>;
 };
 
 /**
@@ -131,9 +137,18 @@ const randomSeed = (): number => Math.floor(Math.random() * 2 ** 32);
  * Wraps `fc.sample` with `numRuns: 1` and unwraps the result. Throws if `fast-check` produces no
  * value, which should not occur for well-formed arbitraries but is guarded against explicitly
  * because the return type of `fc.sample` does not exclude empty arrays.
+ *
+ * When `excludeValues` is provided, the arbitrary is filtered with `fc.filter` before sampling.
+ * fast-check retries internally up to its default max-tries limit; if all retries are exhausted
+ * the sample still returns the first candidate (which may be in the exclusion set). This is
+ * intentional: the generator falls back gracefully rather than throwing.
  */
-const sampleFCGenerator = <T>(arbitrary: fc.Arbitrary<T>, seed: number): T => {
-	const [value] = fc.sample(arbitrary, { seed, numRuns: 1 });
+const sampleFCGenerator = <T>(arbitrary: fc.Arbitrary<T>, seed: number, excludeValues?: Set<DataRecordValue>): T => {
+	const filtered =
+		excludeValues !== undefined && excludeValues.size > 0 ?
+			arbitrary.filter((value) => !excludeValues.has(value as DataRecordValue))
+		:	arbitrary;
+	const [value] = fc.sample(filtered, { seed, numRuns: 1 });
 	if (value === undefined) {
 		throw new Error('fast-check sample produced no value');
 	}
@@ -331,8 +346,6 @@ const wrapArrayIfNeeded = <TElement extends SingleDataValue>(
  * Boolean Generator          *
  * ************************** */
 
-const generateBooleanSingleValue = (seed: number): boolean => sampleFCGenerator(fc.boolean(), seed);
-
 /**
  * Generates a valid value for a `SchemaBooleanField`.
  *
@@ -348,7 +361,7 @@ export const generateBooleanValue: FieldGenerator<SchemaBooleanField> = (
 	field,
 	options = {},
 ): FieldGeneratorResult<DataRecordValue> => {
-	const { seed = randomSeed(), record = {}, arrayLength, emptyRate } = options;
+	const { seed = randomSeed(), record = {}, arrayLength, emptyRate, excludeValues } = options;
 	const collected = collectRestrictions(field.restrictions, record);
 	const required = reduceRequired(collected.required);
 	const empty = reduceEmpty(collected.empty);
@@ -362,7 +375,7 @@ export const generateBooleanValue: FieldGenerator<SchemaBooleanField> = (
 
 	// Generates one value for a scalar field or one element of an array field; called by wrapArrayIfNeeded.
 	const generateSingle = (elementSeed: number): FieldGeneratorResult<boolean> => {
-		const value = generateBooleanSingleValue(elementSeed);
+		const value = sampleFCGenerator(fc.boolean(), elementSeed, excludeValues);
 		if (requiredEmptyConflict !== undefined) {
 			return failWith('Field has conflicting required:true and empty:true restrictions.', {
 				value,
@@ -404,7 +417,7 @@ const generateNumericValue = (
 	options: FieldGeneratorOptions,
 	fromRange: (range: RestrictionRange | undefined, seed: number) => number,
 ): FieldGeneratorResult<DataRecordValue> => {
-	const { seed = randomSeed(), record = {}, arrayLength, emptyRate } = options;
+	const { seed = randomSeed(), record = {}, arrayLength, emptyRate, excludeValues } = options;
 	const collected = collectRestrictions(field.restrictions, record);
 	const required = reduceRequired(collected.required);
 	const empty = reduceEmpty(collected.empty);
@@ -429,7 +442,7 @@ const generateNumericValue = (
 	// Generates one value for a scalar field or one element of an array field; called by wrapArrayIfNeeded.
 	const generateSingle = (elementSeed: number): FieldGeneratorResult<number> => {
 		if (codeList !== undefined && codeList.length > 0) {
-			const value = sampleFCGenerator(fc.constantFrom(...codeList), elementSeed);
+			const value = sampleFCGenerator(fc.constantFrom(...codeList), elementSeed, excludeValues);
 			return conflicts.length > 0 ?
 					failWith('Conflicting restrictions; value generated from merged codeList.', {
 						value,
@@ -511,7 +524,7 @@ export const generateStringValue: FieldGenerator<SchemaStringField> = (
 	field,
 	options = {},
 ): FieldGeneratorResult<DataRecordValue> => {
-	const { seed = randomSeed(), record = {}, arrayLength, emptyRate } = options;
+	const { seed = randomSeed(), record = {}, arrayLength, emptyRate, excludeValues } = options;
 	const collected = collectRestrictions(field.restrictions, record);
 	const required = reduceRequired(collected.required);
 	const empty = reduceEmpty(collected.empty);
@@ -536,7 +549,7 @@ export const generateStringValue: FieldGenerator<SchemaStringField> = (
 	// Generates one value for a scalar field or one element of an array field; called by wrapArrayIfNeeded.
 	const generateSingle = (elementSeed: number): FieldGeneratorResult<string> => {
 		if (codeList !== undefined && codeList.length > 0) {
-			const value = sampleFCGenerator(fc.constantFrom(...codeList), elementSeed);
+			const value = sampleFCGenerator(fc.constantFrom(...codeList), elementSeed, excludeValues);
 			return conflicts.length > 0 ?
 					failWith('Conflicting restrictions; value generated from merged codeList.', {
 						value,
@@ -546,7 +559,7 @@ export const generateStringValue: FieldGenerator<SchemaStringField> = (
 		}
 
 		if (regexPattern !== undefined) {
-			const value = sampleFCGenerator(fc.stringMatching(new RegExp(regexPattern)), elementSeed);
+			const value = sampleFCGenerator(fc.stringMatching(new RegExp(regexPattern)), elementSeed, excludeValues);
 			return conflicts.length > 0 ?
 					failWith('Conflicting restrictions; value generated from regex.', {
 						value,
@@ -555,7 +568,7 @@ export const generateStringValue: FieldGenerator<SchemaStringField> = (
 				:	success(value);
 		}
 
-		const value = sampleFCGenerator(fc.string({ minLength: 1, maxLength: 20 }), elementSeed);
+		const value = sampleFCGenerator(fc.string({ minLength: 1, maxLength: 20 }), elementSeed, excludeValues);
 		return conflicts.length > 0 ?
 				failWith('Conflicting restrictions; value generated without restrictions.', {
 					value,
