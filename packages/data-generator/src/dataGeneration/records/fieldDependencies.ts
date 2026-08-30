@@ -35,7 +35,7 @@ export type FieldGenerationOrder = string[][];
 /**
  * Recursively walks a restriction tree and adds all field names referenced in conditional `if`
  * clauses to `accumulator`. Both `then` and `else` branches are traversed regardless of runtime
- * evaluation — this is a static analysis pass.
+ * evaluation - this is a static analysis pass.
  */
 const collectDependencyFieldNames = <TRestrictions extends object>(
 	restriction:
@@ -74,14 +74,11 @@ export const extractFieldDependencies = (schema: Schema): FieldDependencyMap => 
 	const dependencyMap: FieldDependencyMap = new Map();
 
 	for (const field of schema.fields) {
-		const dependencies = new Set<string>();
-		collectDependencyFieldNames(field.restrictions, dependencies);
-		dependencies.delete(field.name);
-		for (const dependency of dependencies) {
-			if (!schemaFieldNames.has(dependency)) {
-				dependencies.delete(dependency);
-			}
-		}
+		const rawDependencies = new Set<string>();
+		collectDependencyFieldNames(field.restrictions, rawDependencies);
+		const dependencies = new Set(
+			[...rawDependencies].filter((dependency) => dependency !== field.name && schemaFieldNames.has(dependency)),
+		);
 		dependencyMap.set(field.name, dependencies);
 	}
 
@@ -119,27 +116,33 @@ export const resolveGenerationOrder = (schema: Schema): FieldGenerationOrder => 
 		}
 	}
 
+	// Seed the ready queue with all zero-in-degree fields, preserving schema definition order.
+	const readyQueue: string[] = schemaFieldNames.filter((fieldName) => (inDegree.get(fieldName) ?? 0) === 0);
 	const processed = new Set<string>();
 	const order: FieldGenerationOrder = [];
 
 	while (processed.size < schemaFieldNames.length) {
-		const currentTier = schemaFieldNames.filter(
-			(fieldName) => !processed.has(fieldName) && (inDegree.get(fieldName) ?? 0) === 0,
-		);
-
-		if (currentTier.length === 0) {
-			// Cycle detected — emit all remaining fields as a single tier.
-			const remaining = schemaFieldNames.filter((fieldName) => !processed.has(fieldName));
-			order.push(remaining);
+		if (readyQueue.length === 0) {
+			// Cycle detected - only the fields still in the graph (inDegree > 0) are cyclic.
+			// Independent fields with inDegree === 0 were already drained into readyQueue before
+			// this branch, so any field remaining here genuinely participates in a cycle.
+			const cyclic = schemaFieldNames.filter((fieldName) => !processed.has(fieldName));
+			order.push(cyclic);
 			break;
 		}
 
+		// Drain the full ready queue into one tier (all have inDegree 0, no ordering constraint).
+		const currentTier = readyQueue.splice(0);
 		order.push(currentTier);
 
 		for (const fieldName of currentTier) {
 			processed.add(fieldName);
 			for (const dependent of dependents.get(fieldName) ?? new Set()) {
-				inDegree.set(dependent, (inDegree.get(dependent) ?? 0) - 1);
+				const newDegree = (inDegree.get(dependent) ?? 1) - 1;
+				inDegree.set(dependent, newDegree);
+				if (newDegree === 0) {
+					readyQueue.push(dependent);
+				}
 			}
 		}
 	}

@@ -44,33 +44,33 @@ await generateTsvFile(mySchema, {
 ### Table of Contents
 
 - [Data Generator](#data-generator)
-  - [Usage](#usage)
-  - [API Documentation](#api-documentation)
-    - [Table of Contents](#table-of-contents)
-  - [Generator Behaviour](#generator-behaviour)
-    - [Seeded generation](#seeded-generation)
-    - [Field Generation](#field-generation)
-      - [Conditional restrictions](#conditional-restrictions)
-      - [Empty fields](#empty-fields)
-      - [Generator failures](#generator-failures)
-      - [Reference tags in restrictions](#reference-tags-in-restrictions)
-    - [Record Generation](#record-generation)
-      - [Field dependency ordering](#field-dependency-ordering)
-      - [Foreign key constraints](#foreign-key-constraints)
-    - [API — Functions](#api--functions)
-      - [`generateStringValue`](#generatestringvalue)
-      - [`generateIntegerValue`](#generateintegervalue)
-      - [`generateNumberValue`](#generatenumbervalue)
-      - [`generateBooleanValue`](#generatebooleanvalue)
-      - [`generateRecord`](#generaterecord)
-      - [`generateTsvFile`](#generatetsvfile)
-    - [API — Types](#api--types)
-      - [`FieldGenerator`](#fieldgenerator)
-      - [`FieldGeneratorOptions`](#fieldgeneratoroptions)
-      - [`FieldGeneratorResult`](#fieldgeneratorresult)
-      - [`ForeignKeyPool`](#foreignkeypool)
-      - [`RecordGeneratorOptions`](#recordgeneratoroptions)
-      - [`TsvGeneratorOptions`](#tsvgeneratoroptions)
+	- [Usage](#usage)
+	- [API Documentation](#api-documentation)
+		- [Table of Contents](#table-of-contents)
+	- [Generator Behaviour](#generator-behaviour)
+		- [Seeded generation](#seeded-generation)
+		- [Field Generation](#field-generation)
+			- [Conditional restrictions](#conditional-restrictions)
+			- [Empty fields](#empty-fields)
+			- [Generator failures](#generator-failures)
+			- [Reference tags in restrictions](#reference-tags-in-restrictions)
+		- [Record Generation](#record-generation)
+			- [Field dependency ordering](#field-dependency-ordering)
+			- [Foreign key constraints](#foreign-key-constraints)
+		- [API - Functions](#api---functions)
+			- [`generateStringValue`](#generatestringvalue)
+			- [`generateIntegerValue`](#generateintegervalue)
+			- [`generateNumberValue`](#generatenumbervalue)
+			- [`generateBooleanValue`](#generatebooleanvalue)
+			- [`generateRecord`](#generaterecord)
+			- [`generateTsvFile`](#generatetsvfile)
+		- [API - Types](#api---types)
+			- [`FieldGenerator`](#fieldgenerator)
+			- [`FieldGeneratorOptions`](#fieldgeneratoroptions)
+			- [`FieldGeneratorResult`](#fieldgeneratorresult)
+			- [`ForeignKeyPool`](#foreignkeypool)
+			- [`RecordGeneratorOptions`](#recordgeneratoroptions)
+			- [`TsvGeneratorOptions`](#tsvgeneratoroptions)
 
 ---
 
@@ -78,7 +78,7 @@ await generateTsvFile(mySchema, {
 
 ### Seeded generation
 
-All generators accept an optional `seed` number. When provided, the same seed and the same schema always produce the same output — useful for snapshot tests and repeatable performance benchmarks.
+All generators accept an optional `seed` number. When provided, the same seed and the same schema always produce the same output - useful for snapshot tests and repeatable performance benchmarks.
 
 **Important:** reproducibility depends on the schema remaining unchanged. Modifying a field's restrictions (adding a `codeList`, tightening a `range`, etc.) will produce different values even with the same seed.
 
@@ -88,7 +88,7 @@ When no seed is provided, a random seed is chosen at runtime and output is non-d
 
 #### Conditional restrictions
 
-Field definitions in Lectern schemas can include conditional restrictions (`if/then/else` blocks) that activate different restrictions depending on the values of other fields in the same record. Each field generator accepts an optional `record` parameter — a partial copy of the record being built — so that the correct restriction branch can be resolved before generating the value.
+Field definitions in Lectern schemas can include conditional restrictions (`if/then/else` blocks) that activate different restrictions depending on the values of other fields in the same record. Each field generator accepts an optional `record` parameter - a partial copy of the record being built - so that the correct restriction branch can be resolved before generating the value.
 
 When `record` is omitted or a referenced field is absent from the provided record, the missing field is treated as `undefined`.
 
@@ -98,9 +98,9 @@ By default, each generator has a 25% chance of returning `undefined` instead of 
 
 The rate is controlled by the `emptyRate` option on `FieldGeneratorOptions` and `RecordGeneratorOptions`:
 
-- `emptyRate: 0` — never produce empty fields; always generate a value.
-- `emptyRate: 1` — always produce empty fields for non-required fields.
-- `emptyRate: 0.25` — default; approximately one field in four is left empty.
+- `emptyRate: 0` - never produce empty fields; always generate a value.
+- `emptyRate: 1` - always produce empty fields for non-required fields.
+- `emptyRate: 0.25` - default; approximately one field in four is left empty.
 
 The empty check is seeded alongside the value draw, so the same seed always produces the same empty/non-empty outcome.
 
@@ -113,10 +113,10 @@ Dictionaries can specify restrictions that are contradictory, making it impossib
 
 Restriction combinations that can produce a failure:
 
-- **Multiple `codeList` restrictions with no common values** — the intersection of two or more code lists is empty.
-- **Multiple `range` restrictions that do not overlap** — the merged lower bound exceeds the merged upper bound, or both bounds are equal and at least one is exclusive.
-- **`codeList` and `range` together with no intersection** — none of the code list values fall within the specified range.
-- **`codeList` and `regex` together with no intersection** — none of the code list values match the specified regex pattern.
+- **Multiple `codeList` restrictions with no common values** - the intersection of two or more code lists is empty.
+- **Multiple `range` restrictions that do not overlap** - the merged lower bound exceeds the merged upper bound, or both bounds are equal and at least one is exclusive.
+- **`codeList` and `range` together with no intersection** - none of the code list values fall within the specified range.
+- **`codeList` and `regex` together with no intersection** - none of the code list values match the specified regex pattern.
 
 Callers should check `result.success` before using the value in a context that requires a valid record.
 
@@ -152,7 +152,7 @@ See the `ForeignKeyPool` type documentation below for the expected pool structur
 
 ---
 
-### API — Functions
+### API - Functions
 
 #### `generateStringValue`
 
@@ -174,7 +174,7 @@ The generator reads the field's restrictions (including conditional branches, re
 | `field`   | `SchemaStringField`                | The field definition to generate a value for.       |
 | `options` | `FieldGeneratorOptions` (optional) | Seed, record context, array length, and empty rate. |
 
-**Returns:** `FieldGeneratorResult` — success wrapping `string | string[] | undefined`, or failure with conflict details.
+**Returns:** `FieldGeneratorResult` - success wrapping `string | string[] | undefined`, or failure with conflict details.
 
 ---
 
@@ -197,7 +197,7 @@ Generates a value for a `SchemaIntegerField`. Returns a single `number` (integer
 | `field`   | `SchemaIntegerField`               | The field definition to generate a value for.       |
 | `options` | `FieldGeneratorOptions` (optional) | Seed, record context, array length, and empty rate. |
 
-**Returns:** `FieldGeneratorResult` — success wrapping `number | number[] | undefined`, or failure with conflict details.
+**Returns:** `FieldGeneratorResult` - success wrapping `number | number[] | undefined`, or failure with conflict details.
 
 ---
 
@@ -222,7 +222,7 @@ Behaviour mirrors `generateIntegerValue`. The difference is that when no `codeLi
 | `field`   | `SchemaNumberField`                | The field definition to generate a value for.       |
 | `options` | `FieldGeneratorOptions` (optional) | Seed, record context, array length, and empty rate. |
 
-**Returns:** `FieldGeneratorResult` — success wrapping `number | number[] | undefined`, or failure with conflict details.
+**Returns:** `FieldGeneratorResult` - success wrapping `number | number[] | undefined`, or failure with conflict details.
 
 ---
 
@@ -241,7 +241,7 @@ Returns `true` or `false` at random. If the field is not `required` and the empt
 | `field`   | `SchemaBooleanField`               | The field definition to generate a value for.       |
 | `options` | `FieldGeneratorOptions` (optional) | Seed, record context, array length, and empty rate. |
 
-**Returns:** `FieldGeneratorResult` — success wrapping `boolean | boolean[] | undefined`, or failure if `required` and `empty` conflict.
+**Returns:** `FieldGeneratorResult` - success wrapping `boolean | boolean[] | undefined`, or failure if `required` and `empty` conflict.
 
 ---
 
@@ -260,15 +260,15 @@ If `seed` is provided, the same seed and schema always produce the same `DataRec
 | Parameter | Type                                  | Description                          |
 | --------- | ------------------------------------- | ------------------------------------ |
 | `schema`  | `Schema`                              | The schema to generate a record for. |
-| `options` | `RecordGeneratorOptions` _(optional)_ | Generation options — see type below. |
+| `options` | `RecordGeneratorOptions` _(optional)_ | Generation options - see type below. |
 
-**Returns:** `DataRecord` — a record with a value (or `undefined`) for every field in the schema.
+**Returns:** `DataRecord` - a record with a value (or `undefined`) for every field in the schema.
 
 ---
 
 #### `generateTsvFile`
 
-Writes a TSV (tab-separated values) file to `options.outputPath` containing `options.count` generated records for the given schema. Records are written incrementally to the file stream — the full dataset is never held in memory.
+Writes a TSV (tab-separated values) file to `options.outputPath` containing `options.count` generated records for the given schema. Records are written incrementally to the file stream - the full dataset is never held in memory.
 
 The header row (field names in `schema.fields` order, joined by `\t`) is written first unless `includeHeader` is explicitly `false`.
 
@@ -281,13 +281,13 @@ If `seed` is provided, the RNG is seeded before the first record is generated. E
 | Parameter | Type                  | Description                          |
 | --------- | --------------------- | ------------------------------------ |
 | `schema`  | `Schema`              | The schema to generate records for.  |
-| `options` | `TsvGeneratorOptions` | Generation options — see type below. |
+| `options` | `TsvGeneratorOptions` | Generation options - see type below. |
 
-**Returns:** `Promise<void>` — resolves when the file has been fully written and the stream is closed.
+**Returns:** `Promise<void>` - resolves when the file has been fully written and the stream is closed.
 
 ---
 
-### API — Types
+### API - Types
 
 #### `FieldGenerator`
 
@@ -362,7 +362,7 @@ type ForeignKeyPool = Map<string, DataRecord[]>;
 
 Supplies the set of valid parent rows for each FK relationship when generating child records.
 
-The map is keyed by the **parent schema name** (matching `ForeignKeyRestriction.schema`). Each value is an array of partial `DataRecord` objects — one entry per available parent row.
+The map is keyed by the **parent schema name** (matching `ForeignKeyRestriction.schema`). Each value is an array of partial `DataRecord` objects - one entry per available parent row.
 
 Each partial record need only contain the fields named in the FK mappings' `foreign` side for the relevant FK rule. It does not need to be a complete record from the parent schema; any fields not referenced by FK mappings on the child schema are ignored.
 
@@ -370,7 +370,7 @@ Each partial record need only contain the fields named in the FK mappings' `fore
 
 For composite FK rules (multiple mappings in a single `ForeignKeyRestriction`), all mapped local fields are assigned from the **same** selected parent row, preserving relational consistency.
 
-When a parent schema name has no entry in the map, FK fields referencing that schema are generated normally — field-level restrictions apply and no FK constraint is enforced.
+When a parent schema name has no entry in the map, FK fields referencing that schema are generated normally - field-level restrictions apply and no FK constraint is enforced.
 
 ---
 

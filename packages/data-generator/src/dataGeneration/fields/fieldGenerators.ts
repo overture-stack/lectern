@@ -50,7 +50,7 @@ import {
 
 /**
  * Payload carried in the failure case of a `FieldGeneratorResult`. The generated value is still
- * present — it was produced using the non-conflicting subset of restrictions and will not satisfy
+ * present - it was produced using the non-conflicting subset of restrictions and will not satisfy
  * all restrictions. The `conflicts` array describes each pair of restrictions that could not be
  * reconciled.
  */
@@ -75,7 +75,7 @@ export type FieldGeneratorResult<TValue extends DataRecordValue = DataRecordValu
 /**
  * Options accepted by all field generator functions.
  *
- * `seed` controls the RNG — the same field, seed, and record always produce the same output.
+ * `seed` controls the RNG - the same field, seed, and record always produce the same output.
  * If omitted, a random seed is used.
  *
  * `record` provides already-generated sibling field values used to evaluate conditional
@@ -170,15 +170,33 @@ const resolveArrayLength = (arrayLength: number | RestrictionRange | undefined, 
 	const max =
 		arrayLength.max ??
 		(arrayLength.exclusiveMax !== undefined ? Math.ceil(arrayLength.exclusiveMax) - 1 : DEFAULT_ARRAY_MAX);
+	if (min > max) {
+		return DEFAULT_ARRAY_MIN;
+	}
 	return sampleFCGenerator(fc.integer({ min, max }), seed);
 };
 
 const extractConflicts = (results: Array<Result<unknown, RestrictionConflict>>): RestrictionConflict[] =>
 	results.flatMap((result) => (result.success ? [] : [result.data]));
 
+/**
+ * Returns a `RestrictionConflict` when `required: true` and `empty: true` are both active, or
+ * `undefined` when the combination is valid. The same conflict applies to all field value types.
+ */
+const buildRequiredEmptyConflict = (required: boolean, empty: boolean): RestrictionConflict | undefined => {
+	if (required && empty) {
+		return {
+			type: 'required-empty' as const,
+			values: [required, empty],
+			reason: 'required:true and empty:true cannot both be satisfied',
+		};
+	}
+	return undefined;
+};
+
 type ResolvedNumericConstraints = {
 	codeList: number[] | undefined;
-	effectiveRange: RestrictionRange | undefined;
+	fallbackRange: RestrictionRange | undefined;
 	conflicts: RestrictionConflict[];
 };
 
@@ -200,28 +218,28 @@ type ResolvedStringConstraints = {
 const resolveNumericConstraints = (codeLists: number[][], ranges: RestrictionRange[]): ResolvedNumericConstraints => {
 	// ---- Ranges
 	const rangeResult = reduceRanges(ranges);
-	const mergedRange = rangeResult.success ? rangeResult.data : undefined;
-	const effectiveRange = (rangeResult.success ? rangeResult.data : ranges[0]) ?? undefined;
+	const validatedRange = rangeResult.success ? rangeResult.data : undefined;
+	const fallbackRange = (rangeResult.success ? rangeResult.data : ranges[0]) ?? undefined;
 
 	// ---- Code lists
 	const codeListResult = reduceCodeLists(codeLists);
 	const unrefinedCodeList = (codeListResult.success ? codeListResult.data : codeLists[0]) ?? undefined;
 	const rangeFilteredList =
-		unrefinedCodeList !== undefined ? filterCodeListByRange(unrefinedCodeList, mergedRange) : undefined;
+		unrefinedCodeList !== undefined ? filterCodeListByRange(unrefinedCodeList, validatedRange) : undefined;
 
 	const crossTypeConflict = rangeFilteredList !== undefined && rangeFilteredList.length === 0;
 	const conflicts = extractConflicts([codeListResult, rangeResult]);
 	if (crossTypeConflict) {
 		conflicts.push({
 			type: 'codeList',
-			values: [unrefinedCodeList, mergedRange],
+			values: [unrefinedCodeList, validatedRange],
 			reason: 'No value in codeList satisfies the range restriction.',
 		});
 	}
 
 	return {
 		codeList: crossTypeConflict ? unrefinedCodeList : (rangeFilteredList ?? unrefinedCodeList),
-		effectiveRange,
+		fallbackRange,
 		conflicts,
 	};
 };
@@ -243,12 +261,7 @@ const resolveStringConstraints = (
 	const concreteRegex = regex.filter((entry) => (typeof entry === 'string' ? !isReferenceTag(entry) : true));
 	const regexResult = reduceRegex(concreteRegex);
 	const mergedRegex = regexResult.success ? regexResult.data : undefined;
-	const regexPattern =
-		mergedRegex !== undefined ?
-			Array.isArray(mergedRegex) ?
-				mergedRegex.join('')
-			:	mergedRegex
-		:	undefined;
+	const regexPattern = mergedRegex;
 
 	// ---- Code lists
 	const codeListResult = reduceCodeLists(codeLists);
@@ -345,19 +358,15 @@ export const generateBooleanValue: FieldGenerator<SchemaBooleanField> = (
 		return success(undefined);
 	}
 
+	const requiredEmptyConflict = buildRequiredEmptyConflict(required, empty);
+
 	// Generates one value for a scalar field or one element of an array field; called by wrapArrayIfNeeded.
 	const generateSingle = (elementSeed: number): FieldGeneratorResult<boolean> => {
 		const value = generateBooleanSingleValue(elementSeed);
-		if (required && empty) {
-			return failWith('Boolean field has conflicting required:true and empty:true restrictions.', {
+		if (requiredEmptyConflict !== undefined) {
+			return failWith('Field has conflicting required:true and empty:true restrictions.', {
 				value,
-				conflicts: [
-					{
-						type: 'required-empty' as const,
-						values: [required, empty],
-						reason: 'required:true and empty:true cannot both be satisfied',
-					},
-				],
+				conflicts: [requiredEmptyConflict],
 			});
 		}
 		return success(value);
@@ -398,6 +407,7 @@ const generateNumericValue = (
 	const { seed = randomSeed(), record = {}, arrayLength, emptyRate } = options;
 	const collected = collectRestrictions(field.restrictions, record);
 	const required = reduceRequired(collected.required);
+	const empty = reduceEmpty(collected.empty);
 
 	const resolvedEmptyRate = Math.min(1, Math.max(0, emptyRate ?? DEFAULT_EMPTY_RATE));
 	if (!required && shouldGenerateEmpty(seed, resolvedEmptyRate)) {
@@ -407,7 +417,14 @@ const generateNumericValue = (
 	const numericCodeLists = collected.codeList
 		.map((list) => list.filter((entry): entry is number => typeof entry === 'number'))
 		.filter((list) => list.length > 0);
-	const { codeList, effectiveRange, conflicts } = resolveNumericConstraints(numericCodeLists, collected.range);
+	const {
+		codeList,
+		fallbackRange,
+		conflicts: constraintConflicts,
+	} = resolveNumericConstraints(numericCodeLists, collected.range);
+	const requiredEmptyConflict = buildRequiredEmptyConflict(required, empty);
+	const conflicts =
+		requiredEmptyConflict !== undefined ? [...constraintConflicts, requiredEmptyConflict] : constraintConflicts;
 
 	// Generates one value for a scalar field or one element of an array field; called by wrapArrayIfNeeded.
 	const generateSingle = (elementSeed: number): FieldGeneratorResult<number> => {
@@ -421,7 +438,7 @@ const generateNumericValue = (
 				:	success(value);
 		}
 
-		const value = fromRange(effectiveRange, elementSeed);
+		const value = fromRange(fallbackRange, elementSeed);
 		return conflicts.length > 0 ?
 				failWith('Conflicting restrictions; value generated from fallback range.', {
 					value,
@@ -497,6 +514,7 @@ export const generateStringValue: FieldGenerator<SchemaStringField> = (
 	const { seed = randomSeed(), record = {}, arrayLength, emptyRate } = options;
 	const collected = collectRestrictions(field.restrictions, record);
 	const required = reduceRequired(collected.required);
+	const empty = reduceEmpty(collected.empty);
 
 	const resolvedEmptyRate = Math.min(1, Math.max(0, emptyRate ?? DEFAULT_EMPTY_RATE));
 	if (!required && shouldGenerateEmpty(seed, resolvedEmptyRate)) {
@@ -506,7 +524,14 @@ export const generateStringValue: FieldGenerator<SchemaStringField> = (
 	const stringCodeLists = collected.codeList
 		.map((list) => list.filter((entry): entry is string => typeof entry === 'string' && !isReferenceTag(entry)))
 		.filter((list) => list.length > 0);
-	const { codeList, regexPattern, conflicts } = resolveStringConstraints(stringCodeLists, collected.regex);
+	const {
+		codeList,
+		regexPattern,
+		conflicts: constraintConflicts,
+	} = resolveStringConstraints(stringCodeLists, collected.regex);
+	const requiredEmptyConflict = buildRequiredEmptyConflict(required, empty);
+	const conflicts =
+		requiredEmptyConflict !== undefined ? [...constraintConflicts, requiredEmptyConflict] : constraintConflicts;
 
 	// Generates one value for a scalar field or one element of an array field; called by wrapArrayIfNeeded.
 	const generateSingle = (elementSeed: number): FieldGeneratorResult<string> => {

@@ -115,6 +115,20 @@ describe('generateIntegerValue', () => {
 		}
 	});
 
+	it('returns a single-element array when exclusive integer bounds leave no valid length', () => {
+		// exclusiveMin: 1, exclusiveMax: 2 → min=2, max=1 after arithmetic — impossible integer range.
+		// The guard should return DEFAULT_ARRAY_MIN (1) instead of throwing.
+		for (let seed = 0; seed < 10; seed++) {
+			const result = generateIntegerValue(
+				{ ...baseField, isArray: true },
+				{ seed, ...NO_EMPTY, arrayLength: { exclusiveMin: 1, exclusiveMax: 2 } },
+			);
+			assert.ok(result.success);
+			assert.ok(Array.isArray(result.data));
+			assert.strictEqual((result.data as number[]).length, 1);
+		}
+	});
+
 	it('returns a value from codeList when codeList restriction is present', () => {
 		const codeList = [10, 20, 30];
 		const field = { ...baseField, restrictions: { codeList } };

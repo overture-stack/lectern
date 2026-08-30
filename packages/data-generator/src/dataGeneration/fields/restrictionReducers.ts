@@ -47,7 +47,7 @@ export type RestrictionReducerResult<T> = Result<T, RestrictionConflict>;
 
 /**
  * Reduces a list of `required` restriction values to a single boolean. Multiple `true` values are
- * treated as equivalent — `required: true` if any entry is true, `false` otherwise.
+ * treated as equivalent - `required: true` if any entry is true, `false` otherwise.
  * An empty list returns `false`.
  *
  * This reducer cannot produce a conflict on its own; the `required`/`empty` conflict is detected
@@ -58,7 +58,7 @@ export const reduceRequired = (values: boolean[]): boolean =>
 
 /**
  * Reduces a list of `empty` restriction values to a single boolean. Multiple `true` values are
- * treated as equivalent — `empty: true` if any entry is true, `false` otherwise.
+ * treated as equivalent - `empty: true` if any entry is true, `false` otherwise.
  * An empty list returns `false`.
  *
  * This reducer cannot produce a conflict on its own; the `required`/`empty` conflict is detected
@@ -73,12 +73,12 @@ export const reduceEmpty = (values: boolean[]): boolean => (values.length > 0 ? 
 /**
  * Reduces a list of codeLists to the single intersection of all lists.
  *
- * - Zero lists: returns `success(undefined)` — no restriction applies.
+ * - Zero lists: returns `success(undefined)` - no restriction applies.
  * - One list: returns `success(list)` unchanged.
  * - Multiple lists: returns `success(intersection)` when the intersection is non-empty.
  *   Returns a failure with `type: 'codeList'` when the intersection is empty, meaning no value
  *   can satisfy all lists simultaneously. The failure carries a `data` field (the conflict) but no
- *   fallback value — the caller is responsible for choosing a fallback from the input lists.
+ *   fallback value - the caller is responsible for choosing a fallback from the input lists.
  */
 export const reduceCodeLists = <T extends string | number>(lists: T[][]): RestrictionReducerResult<T[] | undefined> => {
 	if (lists.length === 0) {
@@ -110,7 +110,7 @@ export const reduceCodeLists = <T extends string | number>(lists: T[][]): Restri
 /**
  * Reduces a list of range restrictions to the tightest overlapping subrange.
  *
- * - Zero ranges: returns `success(undefined)` — no restriction applies.
+ * - Zero ranges: returns `success(undefined)` - no restriction applies.
  * - One range: returns `success(range)` unchanged.
  * - Multiple ranges: returns `success(merged)` where `merged` is the intersection of all ranges.
  *   The lower bound is the highest lower bound across all ranges, and the upper bound is the lowest
@@ -208,7 +208,7 @@ export const satisfiesRange = (value: number, range: RestrictionRange): boolean 
 
 /**
  * Filters a numeric code list to values that satisfy `range`. Returns the full list unchanged when
- * `range` is `undefined`. Returns an empty array when no values satisfy the range — the caller is
+ * `range` is `undefined`. Returns an empty array when no values satisfy the range - the caller is
  * responsible for treating this as a conflict.
  */
 export const filterCodeListByRange = (codeList: number[], range: RestrictionRange | undefined): number[] => {
@@ -220,15 +220,14 @@ export const filterCodeListByRange = (codeList: number[], range: RestrictionRang
 
 /**
  * Filters a string code list to values that match `regex`. Returns the full list unchanged when
- * `regex` is `undefined`. Returns an empty array when no values match — the caller is responsible
+ * `regex` is `undefined`. Returns an empty array when no values match - the caller is responsible
  * for treating this as a conflict.
  */
-export const filterCodeListByRegex = (codeList: string[], regex: RestrictionRegex | undefined): string[] => {
+export const filterCodeListByRegex = (codeList: string[], regex: string | undefined): string[] => {
 	if (regex === undefined) {
 		return codeList;
 	}
-	const pattern = Array.isArray(regex) ? regex.join('') : regex;
-	const compiled = new RegExp(pattern);
+	const compiled = new RegExp(regex);
 	return codeList.filter((entry) => compiled.test(entry));
 };
 
@@ -239,12 +238,12 @@ export const filterCodeListByRegex = (codeList: string[], regex: RestrictionRege
 /**
  * Reduces a list of regex restrictions to a single combined pattern using lookahead conjunction.
  *
- * - Zero patterns: returns `success(undefined)` — no restriction applies.
+ * - Zero patterns: returns `success(undefined)` - no restriction applies.
  * - One pattern: returns `success(pattern)` unchanged.
  * - Multiple patterns: wraps each in a non-capturing lookahead `(?=pattern)` and concatenates them
  *   into a single string. The result matches strings that satisfy all patterns simultaneously.
  *
- * This reducer always succeeds — syntactic combination is always possible. However, the combined
+ * This reducer always succeeds - syntactic combination is always possible. However, the combined
  * pattern may be semantically impossible to satisfy (e.g. `/^a/` AND `/^b/`). Detection of such
  * impossibility is deferred to generation time, where fast-check will throw if it cannot produce
  * a conforming string.
@@ -252,7 +251,7 @@ export const filterCodeListByRegex = (codeList: string[], regex: RestrictionRege
  * Each input may be a single pattern string or an array of pattern strings. Arrays are flattened
  * before combination.
  */
-export const reduceRegex = (patterns: RestrictionRegex[]): RestrictionReducerResult<RestrictionRegex | undefined> => {
+export const reduceRegex = (patterns: RestrictionRegex[]): RestrictionReducerResult<string | undefined> => {
 	const allPatterns = patterns.flatMap((entry) => (Array.isArray(entry) ? entry : [entry]));
 
 	if (allPatterns.length === 0) {

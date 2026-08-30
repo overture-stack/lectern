@@ -310,6 +310,47 @@ describe('resolveGenerationOrder', () => {
 		assert.deepStrictEqual(new Set(order[0]), new Set(['alpha', 'beta', 'gamma']));
 	});
 
+	it('places only cyclic fields in the cycle tier, leaving independent fields in their own tier', () => {
+		// alpha and beta form a cycle. gamma has no dependencies and must appear in its own tier
+		// before the cycle tier - it must not be lumped together with the cyclic fields.
+		const schema: Schema = {
+			name: 'test',
+			fields: [
+				{
+					name: 'alpha',
+					valueType: 'string',
+					restrictions: [
+						{
+							if: { conditions: [{ fields: ['beta'], match: { value: 'b' } }] },
+							then: { codeList: ['a'] },
+						},
+					],
+				},
+				{
+					name: 'beta',
+					valueType: 'string',
+					restrictions: [
+						{
+							if: { conditions: [{ fields: ['alpha'], match: { value: 'a' } }] },
+							then: { codeList: ['b'] },
+						},
+					],
+				},
+				{ name: 'gamma', valueType: 'string', restrictions: undefined },
+			],
+		};
+
+		const order = resolveGenerationOrder(schema);
+		// gamma has no dependencies - it must be in an earlier tier than the cyclic alpha+beta pair.
+		const gammaPosition = order.findIndex((tier) => tier.includes('gamma'));
+		const alphaPosition = order.findIndex((tier) => tier.includes('alpha'));
+		const betaPosition = order.findIndex((tier) => tier.includes('beta'));
+		assert.ok(gammaPosition < alphaPosition, 'gamma must be in an earlier tier than alpha');
+		assert.strictEqual(alphaPosition, betaPosition, 'alpha and beta must be in the same (cycle) tier');
+		// gamma must be alone in its tier - not lumped with the cyclic fields.
+		assert.ok(order[gammaPosition]?.length === 1, 'gamma tier should contain only gamma');
+	});
+
 	it('correctly orders fields when the dependent appears before its dependency in schema.fields', () => {
 		// beta (index 0) depends on alpha (index 1). Generation order must be alpha before beta
 		// even though beta comes first in schema.fields.

@@ -17,7 +17,6 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import * as fc from 'fast-check';
 import type { DataRecord, DataRecordValue, Schema, SchemaField } from '@overture-stack/lectern-dictionary';
 import {
 	generateBooleanValue,
@@ -31,7 +30,7 @@ import { resolveGenerationOrder } from './fieldDependencies';
  * Supplies the set of valid parent rows for each FK relationship when generating child records.
  *
  * The map is keyed by the **parent schema name** (matching `ForeignKeyRestriction.schema`).
- * Each value is an array of partial `DataRecord` objects — one entry per available parent row.
+ * Each value is an array of partial `DataRecord` objects - one entry per available parent row.
  *
  * Each partial record need only contain the fields named in the FK mappings' `foreign` side for
  * the relevant FK rule. It does not need to be a complete record from the parent schema; any fields
@@ -44,7 +43,7 @@ import { resolveGenerationOrder } from './fieldDependencies';
  * fields are assigned from the **same** selected parent row, preserving relational consistency.
  *
  * When a parent schema name has no entry in this map, FK fields referencing that schema are
- * generated normally — field-level restrictions apply and no FK constraint is enforced.
+ * generated normally - field-level restrictions apply and no FK constraint is enforced.
  */
 export type ForeignKeyPool = Map<string, DataRecord[]>;
 
@@ -65,6 +64,19 @@ export type RecordGeneratorOptions = {
 };
 
 /**
+ * Returns a deterministic index in [0, length) derived from `seed` using a Knuth multiplicative
+ * hash followed by one round of xorshift32. Consistent with the approach in `shouldGenerateEmpty`
+ * in fieldGenerators.ts - avoids the startup overhead of a fast-check arbitrary for a single draw.
+ */
+const seededIndexInRange = (seed: number, length: number): number => {
+	let hash = (seed * 2654435761 + 1) >>> 0;
+	hash ^= hash << 13;
+	hash ^= hash >>> 17;
+	hash ^= hash << 5;
+	return (hash >>> 0) % length;
+};
+
+/**
  * Resolves FK-derived field values from `foreignKeyPool` for all FK rules on `schema`.
  *
  * For each `ForeignKeyRestriction`, a single parent row is selected at random from the pool.
@@ -73,7 +85,7 @@ export type RecordGeneratorOptions = {
  * (`seed + schema.fields.length + fkIndex`) so they never collide with field generation seeds.
  *
  * Returns a partial `DataRecord` containing only the FK-derived field values. Fields whose parent
- * schema has no pool entry are omitted — they will be generated normally.
+ * schema has no pool entry are omitted - they will be generated normally.
  */
 const resolveForeignKeyOverrides = (schema: Schema, pool: ForeignKeyPool, seed: number | undefined): DataRecord => {
 	const fkOverrides: DataRecord = {};
@@ -88,7 +100,7 @@ const resolveForeignKeyOverrides = (schema: Schema, pool: ForeignKeyPool, seed: 
 		const rowSeed = seed !== undefined ? seed + schema.fields.length + fkIndex + 1 : undefined;
 		const rowIndex =
 			rowSeed !== undefined ?
-				(fc.sample(fc.integer({ min: 0, max: parentRows.length - 1 }), { seed: rowSeed, numRuns: 1 })[0] ?? 0)
+				seededIndexInRange(rowSeed, parentRows.length)
 			:	Math.floor(Math.random() * parentRows.length);
 
 		const selectedRow = parentRows[rowIndex] ?? parentRows[0];

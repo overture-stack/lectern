@@ -2,7 +2,7 @@
 
 Field generators attempt to generate a value that will be valid given the restrictions defined for the field in the schema. To accomplish this, the generators act in two phases: first collecting all active restrictions from the field definition, then merging each restriction type down to a set of effective constraints used for generation.
 
-## Phase 1 — Collecting active restrictions
+## Phase 1 - Collecting active restrictions
 
 A field's restrictions may be a single restriction object, an array of restriction objects, or a mix of plain and conditional objects.
 
@@ -10,7 +10,7 @@ Conditional restrictions (`if/then/else` blocks) are evaluated against the `reco
 
 All active (non-conditional) restriction values are collected by type before generation begins.
 
-## Phase 2 — Merging restrictions
+## Phase 2 - Merging restrictions
 
 Each restriction type is merged independently.
 
@@ -48,7 +48,7 @@ When both are present, the code list is filtered to values that match the merged
 
 ### `required` and `empty`
 
-These restrictions do not constrain the generated value itself. However, `required: true` combined with `empty: true` across the active restrictions is a conflict — it is impossible for a field to be both required and empty. The generator returns a failure result but still produces a value.
+These restrictions do not constrain the generated value itself. However, `required: true` combined with `empty: true` across the active restrictions is a conflict - it is impossible for a field to be both required and empty. The generator returns a failure result but still produces a value.
 
 ## Failure results
 
