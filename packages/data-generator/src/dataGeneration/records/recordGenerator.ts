@@ -18,6 +18,7 @@
  */
 
 import type { DataRecord, DataRecordValue, Schema, SchemaField } from '@overture-stack/lectern-dictionary';
+import { knuthHash } from '../../common/hash';
 import {
 	generateBooleanValue,
 	generateIntegerValue,
@@ -69,18 +70,7 @@ export type RecordGeneratorOptions = {
 	fieldExclusions?: Record<string, Set<DataRecordValue>>;
 };
 
-/**
- * Returns a deterministic index in [0, length) derived from `seed` using a Knuth multiplicative
- * hash followed by one round of xorshift32. Consistent with the approach in `shouldGenerateEmpty`
- * in fieldGenerators.ts - avoids the startup overhead of a fast-check arbitrary for a single draw.
- */
-const seededIndexInRange = (seed: number, length: number): number => {
-	let hash = (seed * 2654435761 + 1) >>> 0;
-	hash ^= hash << 13;
-	hash ^= hash >>> 17;
-	hash ^= hash << 5;
-	return (hash >>> 0) % length;
-};
+const seededIndexInRange = (seed: number, length: number): number => knuthHash(seed) % length;
 
 /**
  * Resolves FK-derived field values from `foreignKeyPool` for all FK rules on `schema`.

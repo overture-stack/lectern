@@ -18,7 +18,6 @@
  */
 
 export {
-	type DataFileFormat,
 	type DataFileHandle,
 	type WriteRecordError,
 	openDataFile,
@@ -27,6 +26,7 @@ export {
 	writeRecord,
 	closeDataFile,
 } from './dataFile/dataFileWriter';
+export { generateSchemaFile, generateDictionaryFiles, type GenerateFileError } from './dataFile/dataFileGenerator';
 export {
 	FieldGenerator,
 	FieldGeneratorFailureData,
@@ -56,4 +56,3 @@ export {
 	type DictionarySchemaCount,
 } from './dataGeneration/dictionary/dictionaryGenerator';
 export { collectRestrictions, CollectedRestrictions } from './dataGeneration/fields/resolveRestrictions';
-export { generateTsvFile, TsvGeneratorOptions } from './dataGeneration/tsvGenerator';

@@ -17,15 +17,20 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { Schema } from '@overture-stack/lectern-dictionary';
+// Knuth multiplicative hash constant (2^32 / golden ratio, nearest odd integer).
+const KNUTH_MULTIPLIER = 2654435761;
 
-export type TsvGeneratorOptions = {
-	count: number;
-	outputPath: string;
-	includeHeader?: boolean;
-	seed?: number;
-};
-
-export const generateTsvFile = async (_schema: Schema, _options: TsvGeneratorOptions): Promise<void> => {
-	throw new Error('Not implemented');
+/**
+ * Maps `seed` to a well-distributed 32-bit unsigned integer using a Knuth multiplicative hash
+ * followed by one round of xorshift32. Produces independent draws without fast-check overhead.
+ *
+ * Used as the shared primitive for `shouldGenerateEmpty`, `seededIndexInRange`, and
+ * `deriveRetrySeed` — all of which need a single cheap, seeded, non-colliding hash draw.
+ */
+export const knuthHash = (seed: number): number => {
+	let hash = (seed * KNUTH_MULTIPLIER + 1) >>> 0;
+	hash ^= hash << 13;
+	hash ^= hash >>> 17;
+	hash ^= hash << 5;
+	return hash >>> 0;
 };

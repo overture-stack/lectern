@@ -106,6 +106,9 @@ const extractFkPool = (parentSchemaName: string, records: DataRecord[], childSch
 			if (Object.hasOwn(record, fieldName)) {
 				projected[fieldName] = record[fieldName];
 			}
+			// If the field is absent from the record (e.g. generated as undefined and not set),
+			// it is omitted from the pool entry. Child records that draw from this pool will find
+			// no value for that mapping and fall back to unconstrained generation for that field.
 		}
 		return projected;
 	});
@@ -145,14 +148,21 @@ export function* generateDictionaryRecords(
 
 	const foreignKeyPool: ForeignKeyPool = new Map();
 
-	for (const tier of generationOrder) {
-		// Within each tier, determine which schemas have child schemas depending on them so we know
-		// which ones need to be collected into the FK pool before yielding.
-		const hasChildren = (schemaName: string): boolean =>
-			dictionary.schemas.some((schema) =>
-				(schema.restrictions?.foreignKey ?? []).some((fkRule) => fkRule.schema === schemaName),
-			);
+	// Pre-compute which included schemas have at least one included child schema depending on them.
+	// Only schemas with included dependents need their records collected into the FK pool.
+	const schemasWithDependents = new Set<string>();
+	for (const schema of dictionary.schemas) {
+		if (!includedNames.has(schema.name)) {
+			continue;
+		}
+		for (const fkRule of schema.restrictions?.foreignKey ?? []) {
+			if (includedNames.has(fkRule.schema)) {
+				schemasWithDependents.add(fkRule.schema);
+			}
+		}
+	}
 
+	for (const tier of generationOrder) {
 		for (const schemaName of tier) {
 			const schema = schemaByName.get(schemaName);
 			if (schema === undefined) {
@@ -164,7 +174,7 @@ export function* generateDictionaryRecords(
 			const schemaSeed = seed !== undefined ? seed + schemaIndex : undefined;
 			const schemaGenerator = generateSchemaRecords(schema, { count, seed: schemaSeed, foreignKeyPool, emptyRate });
 
-			if (hasChildren(schemaName)) {
+			if (schemasWithDependents.has(schemaName)) {
 				// Collect fully into the FK pool before yielding, so child schemas can reference these records.
 				const records = [...schemaGenerator];
 				const poolEntry = extractFkPool(schemaName, records, dictionary.schemas);

@@ -18,6 +18,7 @@
  */
 
 import type { DataRecord, DataRecordValue, Schema } from '@overture-stack/lectern-dictionary';
+import { knuthHash } from '../../common/hash';
 import { type ForeignKeyPool, generateRecord } from './recordGenerator';
 
 type UniqueFieldTracker = Map<string, Set<DataRecordValue>>;
@@ -48,16 +49,11 @@ export type SchemaGeneratorOptions = {
 
 const MAX_UNIQUE_KEY_RETRIES = 10;
 
-// Derives a unique retry seed for a given record seed and retry attempt number using a Knuth
-// multiplicative hash + xorshift32. Each (recordSeed, retryCount) pair produces a distinct,
-// well-distributed seed that is independent of the main record seed sequence.
-const deriveRetrySeed = (recordSeed: number, retryCount: number): number => {
-	let hash = ((recordSeed ^ (retryCount * 2246822519)) * 2654435761 + 1) >>> 0;
-	hash ^= hash << 13;
-	hash ^= hash >>> 17;
-	hash ^= hash << 5;
-	return hash >>> 0;
-};
+// Each (recordSeed, retryCount) pair produces a distinct seed independent of the main sequence.
+// XOR with a large odd constant multiple of retryCount before hashing so each retry count maps to
+// a different pre-hash value. 2246822519 is a large odd 32-bit prime chosen for bit dispersion.
+const deriveRetrySeed = (recordSeed: number, retryCount: number): number =>
+	knuthHash((recordSeed ^ (retryCount * 2246822519)) >>> 0);
 
 /**
  * Synchronous generator that yields `options.count` `DataRecord` values for `schema`.

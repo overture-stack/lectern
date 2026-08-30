@@ -20,19 +20,12 @@
 import fs from 'node:fs';
 import type { DataRecord, DataRecordValue, Result, Schema, SchemaField } from '@overture-stack/lectern-dictionary';
 import { DEFAULT_DELIMITER, failWith, success } from '@overture-stack/lectern-dictionary';
+import { COLUMN_DELIMITER, type DataFileFormat } from '../common/fileTypes';
 
 const STREAM_CLOSED = 'STREAM_CLOSED' as const;
 
 /** Failure data returned by `writeRecord` when the file handle has already been closed. */
 export type WriteRecordError = { error: typeof STREAM_CLOSED };
-
-/** Column delimiter format for data files. `'tsv'` uses tab; `'csv'` uses comma. */
-export type DataFileFormat = 'tsv' | 'csv';
-
-const COLUMN_DELIMITER = {
-	tsv: '\t',
-	csv: ',',
-} as const satisfies Record<DataFileFormat, string>;
 
 /**
  * An open handle to a data file being written. Created by `openDataFile`, `openTsvFile`, or
@@ -65,16 +58,22 @@ const serializeRecord = (record: DataRecord, schema: Schema, columnDelimiter: st
 
 const writeToStream = (stream: fs.WriteStream, data: string): Promise<void> =>
 	new Promise((resolve, reject) => {
-		const canContinue = stream.write(data, (error) => {
-			if (error !== undefined && error !== null) {
-				reject(error);
+		// Attach the error listener before calling write so that errors emitted synchronously
+		// or before the write callback fires are not missed.
+		stream.once('error', reject);
+		const canContinue = stream.write(data, (writeError) => {
+			if (writeError !== undefined && writeError !== null) {
+				reject(writeError);
 			}
 		});
 		if (canContinue) {
+			stream.off('error', reject);
 			resolve();
 		} else {
-			stream.once('drain', resolve);
-			stream.once('error', reject);
+			stream.once('drain', () => {
+				stream.off('error', reject);
+				resolve();
+			});
 		}
 	});
 

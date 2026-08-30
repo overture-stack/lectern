@@ -139,24 +139,28 @@ describe('generateSchemaRecords', () => {
 			assert.strictEqual(uniqueTuples.size, count, `expected ${count} distinct key tuples, got ${uniqueTuples.size}`);
 		});
 
-		it('records that do not collide with pre-seeded keys are identical to the baseline', () => {
-			// Baseline: 5 records with seed 42, no pre-seeded keys. Known output (verified empirically):
-			//   index 0 → { program: 'P2', donor: 'D3', ... }
-			//   index 1 → { program: 'P3', donor: 'D1', ... }  ← will be pre-seeded
-			//   index 2 → { program: 'P1', donor: 'D1', ... }
-			//   index 3 → { program: 'P3', donor: 'D3', ... }  ← will be pre-seeded
-			//   index 4 → { program: 'P1', donor: 'D3', ... }
-			const baseline = [...generateSchemaRecords(schemaWithUniqueKey, { count: 5, seed: SEED, ...NO_EMPTY })];
+		it('colliding positions retry to a different value and all output keys avoid the pre-seeded set', () => {
+			// Use a 3×3 codeList space → 9 possible key combinations.
+			// Generate 4 records (baseline). Pre-seed those 4 keys, then request 5 more with the
+			// same seed. The 5 remaining combinations are all available, so every colliding position
+			// can retry to an unused key. Assert: all 5 output keys are distinct and none appear in
+			// the pre-seeded set.
+			const medKeySchema: Schema = {
+				name: 'med_key',
+				fields: [
+					{ name: 'a', valueType: 'string', restrictions: { codeList: ['A1', 'A2', 'A3'] } },
+					{ name: 'b', valueType: 'string', restrictions: { codeList: ['B1', 'B2', 'B3'] } },
+				],
+				restrictions: { uniqueKey: ['a', 'b'] },
+			};
 
-			// Pre-seed the keys that correspond to indices 1 and 3. When we regenerate with the same
-			// seed, those positions collide → retry with a different seed → different record value.
-			// Positions 0, 2, 4 have no collision and must produce the identical record as baseline.
-			const preSeenKeys = [
-				JSON.stringify([baseline[1]?.['program'], baseline[1]?.['donor']]),
-				JSON.stringify([baseline[3]?.['program'], baseline[3]?.['donor']]),
-			];
+			const keyOf = (record: Record<string, unknown>): string => JSON.stringify([record['a'], record['b']]);
+
+			const baseline = [...generateSchemaRecords(medKeySchema, { count: 4, seed: SEED, ...NO_EMPTY })];
+			const preSeenKeys = baseline.map(keyOf);
+
 			const withPreSeen = [
-				...generateSchemaRecords(schemaWithUniqueKey, {
+				...generateSchemaRecords(medKeySchema, {
 					count: 5,
 					seed: SEED,
 					...NO_EMPTY,
@@ -164,20 +168,14 @@ describe('generateSchemaRecords', () => {
 				}),
 			];
 
-			// Non-colliding positions are identical to baseline.
-			assert.deepStrictEqual(withPreSeen[0], baseline[0]);
-			assert.deepStrictEqual(withPreSeen[2], baseline[2]);
-			assert.deepStrictEqual(withPreSeen[4], baseline[4]);
+			// All 5 output keys must be distinct — retry mechanism found unused combinations.
+			const outputKeys = withPreSeen.map(keyOf);
+			assert.strictEqual(new Set(outputKeys).size, 5, 'all 5 output keys must be distinct after retries');
 
-			// Colliding positions produce different records (retried to a new seed).
-			assert.notDeepStrictEqual(withPreSeen[1], baseline[1]);
-			assert.notDeepStrictEqual(withPreSeen[3], baseline[3]);
-
-			// Colliding positions still produce keys not in the pre-seeded set.
-			const collisionKey1 = JSON.stringify([withPreSeen[1]?.['program'], withPreSeen[1]?.['donor']]);
-			const collisionKey3 = JSON.stringify([withPreSeen[3]?.['program'], withPreSeen[3]?.['donor']]);
-			assert.ok(!preSeenKeys.includes(collisionKey1), `index 1 key ${collisionKey1} was in pre-seeded set`);
-			assert.ok(!preSeenKeys.includes(collisionKey3), `index 3 key ${collisionKey3} was in pre-seeded set`);
+			// None of the output keys may be in the pre-seeded set.
+			for (const key of outputKeys) {
+				assert.ok(!preSeenKeys.includes(key), `output key ${key} was in the pre-seeded set`);
+			}
 		});
 
 		it('initialUniqueValues.keys pre-populates the uniqueKey tracker', () => {

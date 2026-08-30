@@ -32,6 +32,7 @@ import {
 	type SingleDataValue,
 } from '@overture-stack/lectern-dictionary';
 import fc from 'fast-check';
+import { knuthHash } from '../../common/hash';
 import { collectRestrictions, type CollectedRestrictions } from './resolveRestrictions';
 import {
 	filterCodeListByRange,
@@ -155,22 +156,8 @@ const sampleFCGenerator = <T>(arbitrary: fc.Arbitrary<T>, seed: number, excludeV
 	return value;
 };
 
-/**
- * Returns `true` if the field should be left empty (return `undefined`) for this generation call.
- *
- * Derives a uniform [0, 1) value from `seed` using a Knuth multiplicative hash followed by one
- * round of xorshift32. This produces a well-distributed independent draw without a second fast-check
- * call, avoiding bias in the `fc.float` arbitrary for small seeds. The threshold comparison
- * (`sample < emptyRate`) maps the draw to the requested probability.
- */
-const shouldGenerateEmpty = (seed: number, emptyRate: number): boolean => {
-	let hash = (seed * 2654435761 + 1) >>> 0;
-	hash ^= hash << 13;
-	hash ^= hash >>> 17;
-	hash ^= hash << 5;
-	const sample = (hash >>> 0) / 4294967296;
-	return sample < emptyRate;
-};
+// Maps the hash to [0, 1) and compares against the threshold to decide whether to emit undefined.
+const shouldGenerateEmpty = (seed: number, emptyRate: number): boolean => knuthHash(seed) / 4294967296 < emptyRate;
 
 const resolveArrayLength = (arrayLength: number | RestrictionRange | undefined, seed: number): number => {
 	if (arrayLength === undefined) {

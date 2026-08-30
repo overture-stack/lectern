@@ -136,6 +136,126 @@ describe('generateDictionaryRecords', () => {
 		}
 	});
 
+	describe('multi-level hierarchy', () => {
+		// grandparent → parent → child: 3-tier FK chain.
+		// child.parent_id must reference a parent record, and parent.grandparent_id must reference grandparent.
+		const grandparentSchema = {
+			name: 'grandparent',
+			fields: [{ name: 'gp_id', valueType: 'string' as const, unique: true, restrictions: undefined }],
+		};
+
+		const parentSchema = {
+			name: 'parent',
+			fields: [
+				{ name: 'p_id', valueType: 'string' as const, unique: true, restrictions: undefined },
+				{ name: 'grandparent_id', valueType: 'string' as const, restrictions: undefined },
+			],
+			restrictions: {
+				foreignKey: [{ schema: 'grandparent', mappings: [{ local: 'grandparent_id', foreign: 'gp_id' }] }],
+			},
+		};
+
+		const childSchema = {
+			name: 'child',
+			fields: [
+				{ name: 'c_id', valueType: 'string' as const, unique: true, restrictions: undefined },
+				{ name: 'parent_id', valueType: 'string' as const, restrictions: undefined },
+			],
+			restrictions: {
+				foreignKey: [{ schema: 'parent', mappings: [{ local: 'parent_id', foreign: 'p_id' }] }],
+			},
+		};
+
+		const threeLayerDictionary: Dictionary = {
+			name: 'three-layer',
+			version: '1.0',
+			schemas: [grandparentSchema, parentSchema, childSchema],
+		};
+
+		it('grandparent records are yielded before parent and child', () => {
+			const yielded: string[] = [];
+			for (const { schemaName } of generateDictionaryRecords(threeLayerDictionary, {
+				counts: { grandparent: 2, parent: 4, child: 8 },
+				seed: SEED,
+				...NO_EMPTY,
+			})) {
+				yielded.push(schemaName);
+			}
+			const lastGrandparent = yielded.lastIndexOf('grandparent');
+			const firstParent = yielded.indexOf('parent');
+			const lastParent = yielded.lastIndexOf('parent');
+			const firstChild = yielded.indexOf('child');
+			assert.ok(lastGrandparent < firstParent, 'all grandparent records must come before any parent records');
+			assert.ok(lastParent < firstChild, 'all parent records must come before any child records');
+		});
+
+		it('FK integrity holds across all three levels', () => {
+			const records = collectBySchema(
+				generateDictionaryRecords(threeLayerDictionary, {
+					counts: { grandparent: 2, parent: 4, child: 8 },
+					seed: SEED,
+					...NO_EMPTY,
+				}),
+			);
+			const gpIds = new Set(records['grandparent']?.map((record) => record['gp_id']));
+			const parentIds = new Set(records['parent']?.map((record) => record['p_id']));
+			for (const record of records['parent'] ?? []) {
+				assert.ok(
+					gpIds.has(record['grandparent_id']),
+					`parent.grandparent_id '${String(record['grandparent_id'])}' not in grandparent ids`,
+				);
+			}
+			for (const record of records['child'] ?? []) {
+				assert.ok(
+					parentIds.has(record['parent_id']),
+					`child.parent_id '${String(record['parent_id'])}' not in parent ids`,
+				);
+			}
+		});
+	});
+
+	describe('cyclic FK dependencies', () => {
+		// Schema A has a FK to B, and B has a FK to A — a cycle.
+		// The generator must not hang or throw; it should place both schemas in one tier
+		// and generate records for both (FK constraints in the cycle will not be enforced
+		// since neither can be a parent to the other).
+		const schemaA = {
+			name: 'cycle_a',
+			fields: [
+				{ name: 'a_id', valueType: 'string' as const, unique: true, restrictions: undefined },
+				{ name: 'b_ref', valueType: 'string' as const, restrictions: undefined },
+			],
+			restrictions: {
+				foreignKey: [{ schema: 'cycle_b', mappings: [{ local: 'b_ref', foreign: 'b_id' }] }],
+			},
+		};
+
+		const schemaB = {
+			name: 'cycle_b',
+			fields: [
+				{ name: 'b_id', valueType: 'string' as const, unique: true, restrictions: undefined },
+				{ name: 'a_ref', valueType: 'string' as const, restrictions: undefined },
+			],
+			restrictions: {
+				foreignKey: [{ schema: 'cycle_a', mappings: [{ local: 'a_ref', foreign: 'a_id' }] }],
+			},
+		};
+
+		const cyclicDictionary: Dictionary = {
+			name: 'cyclic',
+			version: '1.0',
+			schemas: [schemaA, schemaB],
+		};
+
+		it('generates the requested number of records for both schemas without hanging', () => {
+			const records = collectBySchema(
+				generateDictionaryRecords(cyclicDictionary, { counts: { cycle_a: 3, cycle_b: 3 }, seed: SEED, ...NO_EMPTY }),
+			);
+			assert.strictEqual(records['cycle_a']?.length, 3, 'expected 3 cycle_a records');
+			assert.strictEqual(records['cycle_b']?.length, 3, 'expected 3 cycle_b records');
+		});
+	});
+
 	it('produces identical output for the same seed', () => {
 		const options = { counts: { donor: 3, sample: 5 }, seed: SEED, ...NO_EMPTY };
 		const first = [...generateDictionaryRecords(dictionary, options)];
