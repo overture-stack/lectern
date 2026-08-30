@@ -33,23 +33,71 @@ await generateTsvFile(mySchema, {
 ---
 
 ## API Documentation
+
 ### Table of Contents
 
 - [Data Generator](#data-generator)
-	- [Usage](#usage)
-	- [API Documentation](#api-documentation)
-		- [Table of Contents](#table-of-contents)
-		- [API — Functions](#api--functions)
-			- [`generateStringValue`](#generatestringvalue)
-			- [`generateIntegerValue`](#generateintegervalue)
-			- [`generateNumberValue`](#generatenumbervalue)
-			- [`generateBooleanValue`](#generatebooleanvalue)
-			- [`generateRecord`](#generaterecord)
-			- [`generateTsvFile`](#generatetsvfile)
-		- [API — Types](#api--types)
-			- [`FieldGenerator`](#fieldgenerator)
-			- [`RecordGeneratorOptions`](#recordgeneratoroptions)
-			- [`TsvGeneratorOptions`](#tsvgeneratoroptions)
+  - [Usage](#usage)
+  - [API Documentation](#api-documentation)
+    - [Table of Contents](#table-of-contents)
+  - [Generator Behaviour](#generator-behaviour)
+    - [Seeded generation](#seeded-generation)
+    - [Conditional restrictions](#conditional-restrictions)
+    - [Generator failures](#generator-failures)
+    - [Reference tags in restrictions](#reference-tags-in-restrictions)
+    - [API — Functions](#api--functions)
+      - [`generateStringValue`](#generatestringvalue)
+      - [`generateIntegerValue`](#generateintegervalue)
+      - [`generateNumberValue`](#generatenumbervalue)
+      - [`generateBooleanValue`](#generatebooleanvalue)
+      - [`generateRecord`](#generaterecord)
+      - [`generateTsvFile`](#generatetsvfile)
+    - [API — Types](#api--types)
+      - [`FieldGenerator`](#fieldgenerator)
+      - [`FieldGeneratorOptions`](#fieldgeneratoroptions)
+      - [`FieldGeneratorResult`](#fieldgeneratorresult)
+      - [`RecordGeneratorOptions`](#recordgeneratoroptions)
+      - [`TsvGeneratorOptions`](#tsvgeneratoroptions)
+
+---
+
+## Generator Behaviour
+
+### Seeded generation
+
+All generators accept an optional `seed` number. When provided, the same seed and the same schema always produce the same output — useful for snapshot tests and repeatable performance benchmarks.
+
+**Important:** reproducibility depends on the schema remaining unchanged. Modifying a field's restrictions (adding a `codeList`, tightening a `range`, etc.) will produce different values even with the same seed.
+
+When no seed is provided, a random seed is chosen at runtime and output is non-deterministic.
+
+### Conditional restrictions
+
+Field definitions in Lectern schemas can include conditional restrictions (`if/then/else` blocks) that activate different restrictions depending on the values of other fields in the same record. Each field generator accepts an optional `record` parameter — a partial copy of the record being built — so that the correct restriction branch can be resolved before generating the value.
+
+When `record` is omitted or a referenced field is absent from the provided record, the missing field is treated as `undefined`.
+
+### Generator failures
+
+Dictionaries can specify restrictions that are contradictory, making it impossible to generate a valid value. In these cases the generator returns a failure result rather than throwing. The returned object contains:
+
+- A fallback value (best-effort, may not satisfy all restrictions).
+- A list of conflicts describing which restrictions could not be reconciled.
+
+Restriction combinations that can produce a failure:
+
+- **Multiple `codeList` restrictions with no common values** — the intersection of two or more code lists is empty.
+- **Multiple `range` restrictions that do not overlap** — the merged lower bound exceeds the merged upper bound, or both bounds are equal and at least one is exclusive.
+- **`codeList` and `range` together with no intersection** — none of the code list values fall within the specified range.
+- **`codeList` and `regex` together with no intersection** — none of the code list values match the specified regex pattern.
+
+Callers should check `result.success` before using the value in a context that requires a valid record.
+
+### Reference tags in restrictions
+
+A resolved Lectern dictionary replaces all references with their concrete values before use. If a dictionary is passed to the generators with unresolved references still present (strings starting with `#/`), those entries are silently skipped. The generator continues with whichever concrete values remain.
+
+If all entries in a `codeList` are reference tags, the generator falls back to producing an arbitrary value of the appropriate type, as though no `codeList` restriction were present.
 
 ---
 
@@ -57,92 +105,99 @@ await generateTsvFile(mySchema, {
 
 #### `generateStringValue`
 
-Generates a single valid `string` value (or `string[]` for array fields) for a `SchemaStringField`.
+Generates a value for a `SchemaStringField`. Returns a single `string`, or `string[]` when the field has `isArray: true`.
 
-The generator reads the field's non-conditional restrictions and produces a value that satisfies all of them:
+The generator reads the field's restrictions (including conditional branches, resolved against the provided `record`) and produces a value satisfying all active restrictions:
 
-- If `codeList` is present, returns a randomly selected element from the list.
-- If `regex` is present, returns a string that matches the pattern.
+- If `codeList` is present, picks a random element from the list.
+- If `regex` is present, generates a string matching the pattern.
+- If both `codeList` and `regex` are active, filters the code list to values that also satisfy the regex; returns a failure if the intersection is empty.
 - Otherwise, returns an arbitrary human-readable string.
-- If `field.isArray` is `true`, returns an array of 1–3 generated values.
-
-Conditional restrictions (`if/then/else` blocks) are ignored in this implementation — only the top-level restriction object is read.
+- If `field.isArray` is `true`, returns an array of generated values. Array length is controlled by `options.arrayLength` (default 1–3).
 
 **Parameters**
 
-| Parameter | Type                | Description                                   |
-| --------- | ------------------- | --------------------------------------------- |
-| `field`   | `SchemaStringField` | The field definition to generate a value for. |
+| Parameter | Type                               | Description                                   |
+| --------- | ---------------------------------- | --------------------------------------------- |
+| `field`   | `SchemaStringField`                | The field definition to generate a value for. |
+| `options` | `FieldGeneratorOptions` (optional) | Seed, record context, and array length.       |
 
-**Returns:** `string \| string[]` — A value or array of values valid for the given field.
+**Returns:** `FieldGeneratorResult` — success wrapping `string | string[]`, or failure with conflict details.
 
+---
 
 #### `generateIntegerValue`
 
-Generates a single valid `number` value (or `number[]` for array fields) representing an integer for a `SchemaIntegerField`.
+Generates a value for a `SchemaIntegerField`. Returns a single `number` (integer), or `number[]` when `isArray: true`.
 
-- If `codeList` is present, returns a randomly selected element.
-- If `range` is present, returns an integer within the specified bounds (`min`/`max`/`exclusiveMin`/`exclusiveMax`).
+- If `codeList` is present, picks a random element from the list.
+- If `range` is present, generates an integer within the bounds (`min`/`max`/`exclusiveMin`/`exclusiveMax`).
+- If both `codeList` and `range` are active, filters the code list to values within the range; returns a failure if none qualify.
+- If multiple `range` restrictions are active, they are intersected; returns a failure if the intersection is empty.
 - Otherwise, returns an arbitrary integer.
-- If `field.isArray` is `true`, returns an array of 1–3 generated values.
-
-Conditional restrictions are ignored.
+- If `field.isArray` is `true`, returns an array. Length is controlled by `options.arrayLength` (default 1–3).
 
 **Parameters**
 
-| Parameter | Type                 | Description                                   |
-| --------- | -------------------- | --------------------------------------------- |
-| `field`   | `SchemaIntegerField` | The field definition to generate a value for. |
+| Parameter | Type                               | Description                                   |
+| --------- | ---------------------------------- | --------------------------------------------- |
+| `field`   | `SchemaIntegerField`               | The field definition to generate a value for. |
+| `options` | `FieldGeneratorOptions` (optional) | Seed, record context, and array length.       |
 
-**Returns:** `number \| number[]` — A value or array of values valid for the given field.
+**Returns:** `FieldGeneratorResult` — success wrapping `number | number[]`, or failure with conflict details.
 
+---
 
 #### `generateNumberValue`
 
-Generates a single valid `number` value (or `number[]` for array fields) for a `SchemaNumberField`.
+Generates a value for a `SchemaNumberField`. Returns a single `number` (may be floating-point), or `number[]` when `isArray: true`.
 
-Behaviour mirrors `generateIntegerValue` but the value may be a floating-point number when no `codeList` or `range` constrains it to integers.
+Behaviour mirrors `generateIntegerValue`. The difference is that when no `codeList` or `range` constrains the output, the generated value may be a floating-point number rather than an integer.
 
-- If `codeList` is present, returns a randomly selected element.
-- If `range` is present, returns a number within the specified bounds.
+- If `codeList` is present, picks a random element from the list.
+- If `range` is present, generates a float within the bounds.
+- If both `codeList` and `range` are active, filters the code list to values within the range; returns a failure if none qualify.
+- If multiple `range` restrictions are active, they are intersected; returns a failure if the intersection is empty.
 - Otherwise, returns an arbitrary floating-point number.
-- If `field.isArray` is `true`, returns an array of 1–3 generated values.
-
-Conditional restrictions are ignored.
+- If `field.isArray` is `true`, returns an array. Length is controlled by `options.arrayLength` (default 1–3).
 
 **Parameters**
 
-| Parameter | Type                | Description                                   |
-| --------- | ------------------- | --------------------------------------------- |
-| `field`   | `SchemaNumberField` | The field definition to generate a value for. |
+| Parameter | Type                               | Description                                   |
+| --------- | ---------------------------------- | --------------------------------------------- |
+| `field`   | `SchemaNumberField`                | The field definition to generate a value for. |
+| `options` | `FieldGeneratorOptions` (optional) | Seed, record context, and array length.       |
 
-**Returns:** `number \| number[]` — A value or array of values valid for the given field.
+**Returns:** `FieldGeneratorResult` — success wrapping `number | number[]`, or failure with conflict details.
 
+---
 
 #### `generateBooleanValue`
 
-Generates a single valid `boolean` value (or `boolean[]` for array fields) for a `SchemaBooleanField`.
+Generates a value for a `SchemaBooleanField`. Returns a single `boolean`, or `boolean[]` when `isArray: true`.
 
-Returns `true` or `false` randomly. If `field.isArray` is `true`, returns an array of 1–3 boolean values.
+Returns `true` or `false` at random. If `field.isArray` is `true`, returns an array. Length is controlled by `options.arrayLength` (default 1–3).
+
+`required: true` combined with `empty: true` across the active restrictions is a conflict and produces a failure result, though a value is still generated.
 
 **Parameters**
 
-| Parameter | Type                 | Description                                   |
-| --------- | -------------------- | --------------------------------------------- |
-| `field`   | `SchemaBooleanField` | The field definition to generate a value for. |
+| Parameter | Type                               | Description                                   |
+| --------- | ---------------------------------- | --------------------------------------------- |
+| `field`   | `SchemaBooleanField`               | The field definition to generate a value for. |
+| `options` | `FieldGeneratorOptions` (optional) | Seed, record context, and array length.       |
 
-**Returns:** `boolean \| boolean[]` — A value or array of values valid for the given field.
+**Returns:** `FieldGeneratorResult` — success wrapping `boolean | boolean[]`, or failure if `required` and `empty` conflict.
 
+---
 
 #### `generateRecord`
 
 Assembles a complete `DataRecord` for a given `Schema` by calling the appropriate field generator for each field.
 
-Fields are generated in `schema.fields` order. After generation, any `overrides` values replace the generated values for the matching field names — this is the primary mechanism for injecting invalid or controlled values in tests.
+Fields are generated in `schema.fields` order. Each field is generated independently. If `options.overrides` is provided, fields with a matching key use the override value directly and are not generated.
 
 If `seed` is provided, the RNG is seeded once before the first field is generated. The same seed always produces the same `DataRecord` for the same schema.
-
-Conditional restrictions on individual fields are ignored during generation (the naïve first-pass implementation).
 
 **Parameters**
 
@@ -151,8 +206,9 @@ Conditional restrictions on individual fields are ignored during generation (the
 | `schema`  | `Schema`                              | The schema to generate a record for. |
 | `options` | `RecordGeneratorOptions` _(optional)_ | Generation options — see type below. |
 
-**Returns:** `DataRecord` — A record with a value for every field in the schema.
+**Returns:** `DataRecord` — a record with a value for every field in the schema.
 
+---
 
 #### `generateTsvFile`
 
@@ -171,7 +227,7 @@ If `seed` is provided, the RNG is seeded before the first record is generated. E
 | `schema`  | `Schema`              | The schema to generate records for.  |
 | `options` | `TsvGeneratorOptions` | Generation options — see type below. |
 
-**Returns:** `Promise<void>` — Resolves when the file has been fully written and the stream is closed.
+**Returns:** `Promise<void>` — resolves when the file has been fully written and the stream is closed.
 
 ---
 
@@ -182,14 +238,63 @@ If `seed` is provided, the RNG is seeded before the first record is generated. E
 Function type for a field value generator.
 
 ```ts
-type FieldGenerator<F, V extends DataRecordValue> = (field: F) => V;
+type FieldGenerator<TField extends SchemaField> = (
+	field: TField,
+	options?: FieldGeneratorOptions,
+) => FieldGeneratorResult;
 ```
 
-| Type parameter | Constraint                | Description                                                |
-| -------------- | ------------------------- | ---------------------------------------------------------- |
-| `F`            | —                         | The specific `SchemaField` subtype this generator handles. |
-| `V`            | `extends DataRecordValue` | The value type produced.                                   |
+| Type parameter | Description                                                |
+| -------------- | ---------------------------------------------------------- |
+| `TField`       | The specific `SchemaField` subtype this generator handles. |
 
+---
+
+#### `FieldGeneratorOptions`
+
+Options accepted by all field generator functions.
+
+```ts
+type FieldGeneratorOptions = {
+	seed?: number;
+	record?: DataRecord;
+	arrayLength?: number | RestrictionRange;
+};
+```
+
+| Property      | Type                         | Default     | Description                                                                                                                                                                                                                          |
+| ------------- | ---------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `seed`        | `number`                     | random      | RNG seed for deterministic output. When omitted, a random seed is chosen.                                                                                                                                                            |
+| `record`      | `DataRecord`                 | `{}`        | Partial record context used to resolve conditional restrictions. Fields absent from this record are treated as `undefined` during evaluation.                                                                                        |
+| `arrayLength` | `number \| RestrictionRange` | `undefined` | Controls array length for `isArray` fields. A number specifies the exact length; a `RestrictionRange` provides integer bounds to sample from. When omitted, length is chosen randomly between 1 and 3. Ignored for non-array fields. |
+
+---
+
+#### `FieldGeneratorResult`
+
+Return type of all field generator functions.
+
+```ts
+type FieldGeneratorResult = Result<DataRecordValue, FieldGeneratorFailureData>;
+```
+
+On success, `.data` holds the generated `DataRecordValue`. On failure, `.data` contains a `FieldGeneratorFailureData` object:
+
+```ts
+type FieldGeneratorFailureData = {
+	value: DataRecordValue;
+	conflicts: RestrictionConflict[];
+};
+```
+
+| Property    | Type                    | Description                                                              |
+| ----------- | ----------------------- | ------------------------------------------------------------------------ |
+| `value`     | `DataRecordValue`       | Best-effort fallback value; may not satisfy all restrictions.            |
+| `conflicts` | `RestrictionConflict[]` | List of restriction pairs that could not be reconciled during reduction. |
+
+Check `result.success` to narrow the type before accessing `.data`.
+
+---
 
 #### `RecordGeneratorOptions`
 
@@ -197,16 +302,17 @@ Options accepted by `generateRecord`.
 
 ```ts
 type RecordGeneratorOptions = {
-	overrides?: Partial<DataRecord>;
+	overrides?: DataRecord;
 	seed?: number;
 };
 ```
 
-| Property    | Type                  | Default     | Description                                                                              |
-| ----------- | --------------------- | ----------- | ---------------------------------------------------------------------------------------- |
-| `overrides` | `Partial<DataRecord>` | `undefined` | Field values to force after generation. Keys not present in `schema.fields` are ignored. |
-| `seed`      | `number`              | `undefined` | RNG seed for deterministic output. When omitted, output is non-deterministic.            |
+| Property    | Type         | Default     | Description                                                                                  |
+| ----------- | ------------ | ----------- | -------------------------------------------------------------------------------------------- |
+| `overrides` | `DataRecord` | `undefined` | Field values to use directly, bypassing generation. Keys not in `schema.fields` are ignored. |
+| `seed`      | `number`     | `undefined` | RNG seed for deterministic output. When omitted, output is non-deterministic.                |
 
+---
 
 #### `TsvGeneratorOptions`
 

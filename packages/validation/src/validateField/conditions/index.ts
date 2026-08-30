@@ -23,3 +23,4 @@ export * from './testMatchExists';
 export * from './testMatchRange';
 export * from './testMatchRegex';
 export * from './testMatchValue';
+export * from './testConditionalRestriction';

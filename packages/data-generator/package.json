@@ -14,7 +14,10 @@
 	"author": "Ontario Institute for Cancer Research",
 	"license": "AGPL-3.0",
 	"dependencies": {
-		"@overture-stack/lectern-dictionary": "workspace:^"
+		"@overture-stack/lectern-dictionary": "workspace:^",
+		"@overture-stack/lectern-validation": "workspace:^"
 	},
-	"devDependencies": {}
+	"devDependencies": {
+		"fast-check": "^4.9.0"
+	}
 }

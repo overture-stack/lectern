@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,28 +17,486 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type {
-	DataRecordValue,
-	SchemaBooleanField,
-	SchemaIntegerField,
-	SchemaNumberField,
-	SchemaStringField,
+import {
+	failWith,
+	success,
+	type DataRecord,
+	type DataRecordValue,
+	type RestrictionRange,
+	type Result,
+	type SchemaBooleanField,
+	type SchemaField,
+	type SchemaIntegerField,
+	type SchemaNumberField,
+	type SchemaStringField,
+	type SingleDataValue,
 } from '@overture-stack/lectern-dictionary';
+import fc from 'fast-check';
+import { collectRestrictions, type CollectedRestrictions } from './resolveRestrictions';
+import {
+	filterCodeListByRange,
+	filterCodeListByRegex,
+	reduceCodeLists,
+	reduceEmpty,
+	reduceRanges,
+	reduceRegex,
+	reduceRequired,
+	type RestrictionConflict,
+} from './restrictionReducers';
 
-export type FieldGenerator<F, V extends DataRecordValue> = (field: F) => V;
+/* ************************** *
+ * Result Types               *
+ * ************************** */
 
-export const generateStringValue: FieldGenerator<SchemaStringField, string | string[]> = (_field) => {
-	throw new Error('Not implemented');
+/**
+ * Payload carried in the failure case of a `FieldGeneratorResult`. The generated value is still
+ * present — it was produced using the non-conflicting subset of restrictions and will not satisfy
+ * all restrictions. The `conflicts` array describes each pair of restrictions that could not be
+ * reconciled.
+ */
+export type FieldGeneratorFailureData<TValue extends DataRecordValue = DataRecordValue> = {
+	value: TValue;
+	conflicts: RestrictionConflict[];
 };
 
-export const generateIntegerValue: FieldGenerator<SchemaIntegerField, number | number[]> = (_field) => {
-	throw new Error('Not implemented');
+/**
+ * Return type of all field generator functions.
+ *
+ * - Success: the generated value satisfies all active restrictions.
+ * - Failure: one or more restrictions are in conflict and cannot be satisfied simultaneously.
+ *   The failure `.data.value` is still a usable value generated from the non-conflicting subset,
+ *   but it will not pass validation. The failure `.data.conflicts` describes what conflicted.
+ */
+export type FieldGeneratorResult<TValue extends DataRecordValue = DataRecordValue> = Result<
+	TValue,
+	FieldGeneratorFailureData<TValue>
+>;
+
+/**
+ * Options accepted by all field generator functions.
+ *
+ * `seed` controls the RNG — the same field, seed, and record always produce the same output.
+ * If omitted, a random seed is used.
+ *
+ * `record` provides already-generated sibling field values used to evaluate conditional
+ * restrictions. Fields absent from `record` are treated as undefined. Defaults to an empty record.
+ *
+ * `arrayLength` controls the number of elements generated for array fields (`field.isArray === true`).
+ * Ignored for non-array fields. May be a fixed number or a `RestrictionRange` used to generate
+ * the length as an integer within those bounds. If omitted, the length is 1–3.
+ */
+export type FieldGeneratorOptions = {
+	seed?: number;
+	record?: DataRecord;
+	arrayLength?: number | RestrictionRange;
 };
 
-export const generateNumberValue: FieldGenerator<SchemaNumberField, number | number[]> = (_field) => {
-	throw new Error('Not implemented');
+/**
+ * Function signature for a field value generator. Accepts a schema field definition and an optional
+ * `FieldGeneratorOptions` object. Returns a `FieldGeneratorResult`.
+ *
+ * On success, `result.data` is the generated value. On failure (conflicting restrictions),
+ * `result.data.value` is a best-effort value and `result.data.conflicts` lists the conflicts.
+ */
+export type FieldGenerator<TField extends SchemaField> = (
+	field: TField,
+	options?: FieldGeneratorOptions,
+) => FieldGeneratorResult<DataRecordValue>;
+
+/* ************************** *
+ * Internal Helpers           *
+ * ************************** */
+
+const DEFAULT_ARRAY_MIN = 1;
+const DEFAULT_ARRAY_MAX = 3;
+
+/*
+ * A ReferenceTag is a string starting with `#/`. When a codeList or regex contains one it means the
+ * dictionary still has unresolved references. Generators skip these entries and use only concrete values.
+ */
+const isReferenceTag = (value: string): boolean => value.startsWith('#/');
+
+const randomSeed = (): number => Math.floor(Math.random() * 2 ** 32);
+
+/**
+ * Draws a single value from a `fast-check` arbitrary using a deterministic seed.
+ *
+ * Wraps `fc.sample` with `numRuns: 1` and unwraps the result. Throws if `fast-check` produces no
+ * value, which should not occur for well-formed arbitraries but is guarded against explicitly
+ * because the return type of `fc.sample` does not exclude empty arrays.
+ */
+const sampleFCGenerator = <T>(arbitrary: fc.Arbitrary<T>, seed: number): T => {
+	const [value] = fc.sample(arbitrary, { seed, numRuns: 1 });
+	if (value === undefined) {
+		throw new Error('fast-check sample produced no value');
+	}
+	return value;
 };
 
-export const generateBooleanValue: FieldGenerator<SchemaBooleanField, boolean | boolean[]> = (_field) => {
-	throw new Error('Not implemented');
+const resolveArrayLength = (arrayLength: number | RestrictionRange | undefined, seed: number): number => {
+	if (arrayLength === undefined) {
+		return sampleFCGenerator(fc.integer({ min: DEFAULT_ARRAY_MIN, max: DEFAULT_ARRAY_MAX }), seed);
+	}
+	if (typeof arrayLength === 'number') {
+		return arrayLength;
+	}
+	const min =
+		arrayLength.min ??
+		(arrayLength.exclusiveMin !== undefined ? Math.floor(arrayLength.exclusiveMin) + 1 : DEFAULT_ARRAY_MIN);
+	const max =
+		arrayLength.max ??
+		(arrayLength.exclusiveMax !== undefined ? Math.ceil(arrayLength.exclusiveMax) - 1 : DEFAULT_ARRAY_MAX);
+	return sampleFCGenerator(fc.integer({ min, max }), seed);
+};
+
+const extractConflicts = (results: Array<Result<unknown, RestrictionConflict>>): RestrictionConflict[] =>
+	results.flatMap((result) => (result.success ? [] : [result.data]));
+
+type ResolvedNumericConstraints = {
+	codeList: number[] | undefined;
+	effectiveRange: RestrictionRange | undefined;
+	conflicts: RestrictionConflict[];
+};
+
+type ResolvedStringConstraints = {
+	codeList: string[] | undefined;
+	regexPattern: string | undefined;
+	conflicts: RestrictionConflict[];
+};
+
+/**
+ * Resolves numeric field constraints from `collected` restrictions into the values needed by
+ * `generateSingle`. Strips reference tags from codeLists, reduces multiple codeLists to their
+ * intersection and multiple ranges to their tightest overlap, then cross-filters the codeList
+ * against the merged range. Returns `undefined` for each output that has no active restriction.
+ * `conflicts` includes reducer failures and any cross-type conflict where no codeList value
+ * satisfies the range. When the cross-type conflict fires, `codeList` falls back to the
+ * unfiltered list so generation can still produce a best-effort value.
+ */
+const resolveNumericConstraints = (codeLists: number[][], ranges: RestrictionRange[]): ResolvedNumericConstraints => {
+	// ---- Ranges
+	const rangeResult = reduceRanges(ranges);
+	const mergedRange = rangeResult.success ? rangeResult.data : undefined;
+	const effectiveRange = (rangeResult.success ? rangeResult.data : ranges[0]) ?? undefined;
+
+	// ---- Code lists
+	const codeListResult = reduceCodeLists(codeLists);
+	const unrefinedCodeList = (codeListResult.success ? codeListResult.data : codeLists[0]) ?? undefined;
+	const rangeFilteredList =
+		unrefinedCodeList !== undefined ? filterCodeListByRange(unrefinedCodeList, mergedRange) : undefined;
+
+	const crossTypeConflict = rangeFilteredList !== undefined && rangeFilteredList.length === 0;
+	const conflicts = extractConflicts([codeListResult, rangeResult]);
+	if (crossTypeConflict) {
+		conflicts.push({
+			type: 'codeList',
+			values: [unrefinedCodeList, mergedRange],
+			reason: 'No value in codeList satisfies the range restriction.',
+		});
+	}
+
+	return {
+		codeList: crossTypeConflict ? unrefinedCodeList : (rangeFilteredList ?? unrefinedCodeList),
+		effectiveRange,
+		conflicts,
+	};
+};
+
+/**
+ * Resolves string field constraints from `collected` restrictions into the values needed by
+ * `generateSingle`. Strips reference tags from codeLists and regex entries, reduces multiple
+ * codeLists to their intersection and multiple regex patterns to a lookahead conjunction, then
+ * cross-filters the codeList against the merged regex. Returns `undefined` for each output that
+ * has no active restriction. `conflicts` includes reducer failures and any cross-type conflict
+ * where no codeList value satisfies the regex. When the cross-type conflict fires, `codeList`
+ * falls back to the unfiltered list so generation can still produce a best-effort value.
+ */
+const resolveStringConstraints = (
+	codeLists: string[][],
+	regex: CollectedRestrictions['regex'],
+): ResolvedStringConstraints => {
+	// ---- Regex
+	const concreteRegex = regex.filter((entry) => (typeof entry === 'string' ? !isReferenceTag(entry) : true));
+	const regexResult = reduceRegex(concreteRegex);
+	const mergedRegex = regexResult.success ? regexResult.data : undefined;
+	const regexPattern =
+		mergedRegex !== undefined ?
+			Array.isArray(mergedRegex) ?
+				mergedRegex.join('')
+			:	mergedRegex
+		:	undefined;
+
+	// ---- Code lists
+	const codeListResult = reduceCodeLists(codeLists);
+	const unrefinedCodeList = (codeListResult.success ? codeListResult.data : codeLists[0]) ?? undefined;
+	const regexFilteredList =
+		unrefinedCodeList !== undefined ? filterCodeListByRegex(unrefinedCodeList, mergedRegex) : undefined;
+
+	const crossTypeConflict = regexFilteredList !== undefined && regexFilteredList.length === 0;
+	const conflicts = extractConflicts([codeListResult, regexResult]);
+	if (crossTypeConflict) {
+		conflicts.push({
+			type: 'codeList',
+			values: [unrefinedCodeList, mergedRegex],
+			reason: 'No value in codeList satisfies the regex restriction.',
+		});
+	}
+
+	return {
+		codeList: crossTypeConflict ? unrefinedCodeList : (regexFilteredList ?? unrefinedCodeList),
+		regexPattern,
+		conflicts,
+	};
+};
+
+/**
+ * Dispatches to `generateSingle` once for scalar fields, or multiple times for array fields.
+ *
+ * When `isArray` is `true`, the array length is resolved from `arrayLength` (exact count, range
+ * bounds, or default 1–3). Each element is generated with a unique derived seed (`seed + index + 1`)
+ * so that elements within the same array are distinct while the full array remains reproducible.
+ *
+ * If any element generation returns a failure, all element conflicts are collected and the function
+ * returns a single failure result whose value is the array of best-effort element values.
+ */
+const wrapArrayIfNeeded = <TElement extends SingleDataValue>(
+	generateSingle: (elementSeed: number) => FieldGeneratorResult<TElement>,
+	isArray: boolean | undefined,
+	seed: number,
+	arrayLength: number | RestrictionRange | undefined,
+): FieldGeneratorResult<DataRecordValue> => {
+	if (!isArray) {
+		return generateSingle(seed);
+	}
+
+	const count = resolveArrayLength(arrayLength, seed);
+	const results = Array.from({ length: count }, (_, index) => generateSingle(seed + index + 1));
+
+	const allConflicts = results.flatMap((result) => (result.success ? [] : result.data.conflicts));
+
+	// Type Assertion Justification:
+	// Each element is TElement (boolean | number | string). The array is homogeneous at runtime
+	// because each generator passes a concrete type (e.g. boolean, number, string), making the
+	// resulting TElement[] a valid boolean[] | number[] | string[]. TypeScript cannot prove this
+	// from the generic bound alone, so we assert to DataRecordValue here.
+	const values = results.map((result) => (result.success ? result.data : result.data.value)) as DataRecordValue;
+
+	if (allConflicts.length > 0) {
+		return failWith('Array element generation encountered conflicting restrictions.', {
+			value: values,
+			conflicts: allConflicts,
+		});
+	}
+	return success(values);
+};
+
+/* ************************** *
+ * Boolean Generator          *
+ * ************************** */
+
+const generateBooleanSingleValue = (seed: number): boolean => sampleFCGenerator(fc.boolean(), seed);
+
+/**
+ * Generates a valid value for a `SchemaBooleanField`.
+ *
+ * Returns `FieldGeneratorResult`. On success, `result.data` is a `boolean`, or a `boolean[]` when
+ * `field.isArray` is `true`. Array length is controlled by `options.arrayLength`; defaults to 1–3.
+ *
+ * Active restrictions are resolved from `field.restrictions` using the provided `record` to evaluate
+ * any conditional branches. `required` and `empty` restrictions do not constrain the generated value,
+ * but `required: true` combined with `empty: true` is a conflict that produces a failure result.
+ * See `docs/resolving-restrictions.md` for full details.
+ */
+export const generateBooleanValue: FieldGenerator<SchemaBooleanField> = (
+	field,
+	options = {},
+): FieldGeneratorResult<DataRecordValue> => {
+	const { seed = randomSeed(), record = {}, arrayLength } = options;
+	const collected = collectRestrictions(field.restrictions, record);
+	const required = reduceRequired(collected.required);
+	const empty = reduceEmpty(collected.empty);
+
+	// Generates one value for a scalar field or one element of an array field; called by wrapArrayIfNeeded.
+	const generateSingle = (elementSeed: number): FieldGeneratorResult<boolean> => {
+		const value = generateBooleanSingleValue(elementSeed);
+		if (required && empty) {
+			return failWith('Boolean field has conflicting required:true and empty:true restrictions.', {
+				value,
+				conflicts: [
+					{
+						type: 'required-empty' as const,
+						values: [required, empty],
+						reason: 'required:true and empty:true cannot both be satisfied',
+					},
+				],
+			});
+		}
+		return success(value);
+	};
+
+	return wrapArrayIfNeeded(generateSingle, field.isArray, seed, arrayLength);
+};
+
+/* ************************** *
+ * Numeric Generator (shared) *
+ * ************************** */
+
+const INTEGER_FALLBACK_MIN = Number.MIN_SAFE_INTEGER;
+const INTEGER_FALLBACK_MAX = Number.MAX_SAFE_INTEGER;
+
+const NUMBER_FALLBACK_MIN = -1_000_000;
+const NUMBER_FALLBACK_MAX = 1_000_000;
+
+const integerFromRange = (range: RestrictionRange | undefined, seed: number): number => {
+	const min = range?.min ?? (range?.exclusiveMin !== undefined ? range.exclusiveMin + 1 : INTEGER_FALLBACK_MIN);
+	const max = range?.max ?? (range?.exclusiveMax !== undefined ? range.exclusiveMax - 1 : INTEGER_FALLBACK_MAX);
+	return sampleFCGenerator(fc.integer({ min, max }), seed);
+};
+
+const numberFromRange = (range: RestrictionRange | undefined, seed: number): number => {
+	const min = Math.fround(range?.min ?? range?.exclusiveMin ?? NUMBER_FALLBACK_MIN);
+	const max = Math.fround(range?.max ?? range?.exclusiveMax ?? NUMBER_FALLBACK_MAX);
+	const minExcluded = range?.exclusiveMin !== undefined;
+	const maxExcluded = range?.exclusiveMax !== undefined;
+	return sampleFCGenerator(fc.float({ min, max, minExcluded, maxExcluded, noNaN: true }), seed);
+};
+
+const generateNumericValue = (
+	field: SchemaIntegerField | SchemaNumberField,
+	options: FieldGeneratorOptions,
+	fromRange: (range: RestrictionRange | undefined, seed: number) => number,
+): FieldGeneratorResult<DataRecordValue> => {
+	const { seed = randomSeed(), record = {}, arrayLength } = options;
+	const collected = collectRestrictions(field.restrictions, record);
+	// Filter each code list to only numeric values. We expect it to only contain reference tags and numbers, so this will clear unused reference tags.
+	const numericCodeLists = collected.codeList
+		.map((list) => list.filter((entry): entry is number => typeof entry === 'number'))
+		.filter((list) => list.length > 0);
+	const { codeList, effectiveRange, conflicts } = resolveNumericConstraints(numericCodeLists, collected.range);
+
+	// Generates one value for a scalar field or one element of an array field; called by wrapArrayIfNeeded.
+	const generateSingle = (elementSeed: number): FieldGeneratorResult<number> => {
+		if (codeList !== undefined && codeList.length > 0) {
+			const value = sampleFCGenerator(fc.constantFrom(...codeList), elementSeed);
+			return conflicts.length > 0 ?
+					failWith('Conflicting restrictions; value generated from merged codeList.', {
+						value,
+						conflicts,
+					})
+				:	success(value);
+		}
+
+		const value = fromRange(effectiveRange, elementSeed);
+		return conflicts.length > 0 ?
+				failWith('Conflicting restrictions; value generated from fallback range.', {
+					value,
+					conflicts,
+				})
+			:	success(value);
+	};
+
+	return wrapArrayIfNeeded(generateSingle, field.isArray, seed, arrayLength);
+};
+
+/* ************************** *
+ * Integer Generator          *
+ * ************************** */
+
+/**
+ * Generates a valid value for a `SchemaIntegerField`.
+ *
+ * Returns `FieldGeneratorResult`. On success, `result.data` is an integer `number`, or a `number[]`
+ * of integers when `field.isArray` is `true`. Array length is controlled by `options.arrayLength`;
+ * defaults to 1–3.
+ *
+ * Active restrictions are resolved from `field.restrictions` using the provided `record` to evaluate
+ * any conditional branches, then merged across all active `codeList` and `range` entries before
+ * generation. Contradictory restrictions produce a failure result with a best-effort fallback value.
+ * See `docs/resolving-restrictions.md` for full details.
+ */
+export const generateIntegerValue: FieldGenerator<SchemaIntegerField> = (
+	field,
+	options = {},
+): FieldGeneratorResult<DataRecordValue> => generateNumericValue(field, options, integerFromRange);
+
+/* ************************** *
+ * Number Generator           *
+ * ************************** */
+
+/**
+ * Generates a valid value for a `SchemaNumberField`.
+ *
+ * Returns `FieldGeneratorResult`. On success, `result.data` is a `number` (may be floating-point),
+ * or a `number[]` when `field.isArray` is `true`. Array length is controlled by `options.arrayLength`;
+ * defaults to 1–3.
+ *
+ * Active restrictions are resolved from `field.restrictions` using the provided `record` to evaluate
+ * any conditional branches, then merged across all active `codeList` and `range` entries before
+ * generation. Contradictory restrictions produce a failure result with a best-effort fallback value.
+ * See `docs/resolving-restrictions.md` for full details.
+ */
+export const generateNumberValue: FieldGenerator<SchemaNumberField> = (
+	field,
+	options = {},
+): FieldGeneratorResult<DataRecordValue> => generateNumericValue(field, options, numberFromRange);
+
+/* ************************** *
+ * String Generator           *
+ * ************************** */
+
+/**
+ * Generates a valid value for a `SchemaStringField`.
+ *
+ * Returns `FieldGeneratorResult`. On success, `result.data` is a `string`, or a `string[]` when
+ * `field.isArray` is `true`. Array length is controlled by `options.arrayLength`; defaults to 1–3.
+ *
+ * Active restrictions are resolved from `field.restrictions` using the provided `record` to evaluate
+ * any conditional branches, then merged across all active `codeList` and `regex` entries before
+ * generation. Contradictory restrictions produce a failure result with a best-effort fallback value.
+ * See `docs/resolving-restrictions.md` for full details.
+ */
+export const generateStringValue: FieldGenerator<SchemaStringField> = (
+	field,
+	options = {},
+): FieldGeneratorResult<DataRecordValue> => {
+	const { seed = randomSeed(), record = {}, arrayLength } = options;
+	const collected = collectRestrictions(field.restrictions, record);
+	// Filter string lists to only include string values, and remove reference tags. We only expect string values but the types are permissive to support numeric code lists, this filters out that edge case.
+	const stringCodeLists = collected.codeList
+		.map((list) => list.filter((entry): entry is string => typeof entry === 'string' && !isReferenceTag(entry)))
+		.filter((list) => list.length > 0);
+	const { codeList, regexPattern, conflicts } = resolveStringConstraints(stringCodeLists, collected.regex);
+
+	// Generates one value for a scalar field or one element of an array field; called by wrapArrayIfNeeded.
+	const generateSingle = (elementSeed: number): FieldGeneratorResult<string> => {
+		if (codeList !== undefined && codeList.length > 0) {
+			const value = sampleFCGenerator(fc.constantFrom(...codeList), elementSeed);
+			return conflicts.length > 0 ?
+					failWith('Conflicting restrictions; value generated from merged codeList.', {
+						value,
+						conflicts,
+					})
+				:	success(value);
+		}
+
+		if (regexPattern !== undefined) {
+			const value = sampleFCGenerator(fc.stringMatching(new RegExp(regexPattern)), elementSeed);
+			return conflicts.length > 0 ?
+					failWith('Conflicting restrictions; value generated from regex.', {
+						value,
+						conflicts,
+					})
+				:	success(value);
+		}
+
+		const value = sampleFCGenerator(fc.string({ minLength: 1, maxLength: 20 }), elementSeed);
+		return conflicts.length > 0 ?
+				failWith('Conflicting restrictions; value generated without restrictions.', {
+					value,
+					conflicts,
+				})
+			:	success(value);
+	};
+
+	return wrapArrayIfNeeded(generateSingle, field.isArray, seed, arrayLength);
 };

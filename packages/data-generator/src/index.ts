@@ -19,10 +19,26 @@
 
 export {
 	FieldGenerator,
+	FieldGeneratorFailureData,
+	FieldGeneratorOptions,
+	FieldGeneratorResult,
 	generateBooleanValue,
 	generateIntegerValue,
 	generateNumberValue,
 	generateStringValue,
 } from './dataGeneration/fieldGenerators';
 export { generateRecord, RecordGeneratorOptions } from './dataGeneration/recordGenerator';
+export { collectRestrictions, CollectedRestrictions } from './dataGeneration/resolveRestrictions';
+export {
+	RestrictionConflict,
+	RestrictionReducerResult,
+	filterCodeListByRange,
+	filterCodeListByRegex,
+	reduceCodeLists,
+	reduceEmpty,
+	reduceRanges,
+	reduceRegex,
+	reduceRequired,
+	satisfiesRange,
+} from './dataGeneration/restrictionReducers';
 export { generateTsvFile, TsvGeneratorOptions } from './dataGeneration/tsvGenerator';
