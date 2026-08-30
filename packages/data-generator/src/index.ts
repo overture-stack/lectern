@@ -26,19 +26,17 @@ export {
 	generateIntegerValue,
 	generateNumberValue,
 	generateStringValue,
-} from './dataGeneration/fieldGenerators';
-export { generateRecord, RecordGeneratorOptions } from './dataGeneration/recordGenerator';
-export { collectRestrictions, CollectedRestrictions } from './dataGeneration/resolveRestrictions';
+} from './dataGeneration/fields/fieldGenerators';
 export {
-	RestrictionConflict,
-	RestrictionReducerResult,
-	filterCodeListByRange,
-	filterCodeListByRegex,
-	reduceCodeLists,
-	reduceEmpty,
-	reduceRanges,
-	reduceRegex,
-	reduceRequired,
-	satisfiesRange,
-} from './dataGeneration/restrictionReducers';
+	extractFieldDependencies,
+	resolveGenerationOrder,
+	type FieldDependencyMap,
+	type FieldGenerationOrder,
+} from './dataGeneration/records/fieldDependencies';
+export {
+	generateRecord,
+	type ForeignKeyPool,
+	type RecordGeneratorOptions,
+} from './dataGeneration/records/recordGenerator';
+export { collectRestrictions, CollectedRestrictions } from './dataGeneration/fields/resolveRestrictions';
 export { generateTsvFile, TsvGeneratorOptions } from './dataGeneration/tsvGenerator';

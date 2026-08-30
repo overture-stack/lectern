@@ -14,8 +14,8 @@
 		"sourceMap": true,
 		"inlineSources": true,
 		"outDir": "dist/",
-		"downlevelIteration": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"types": ["node"]
 	},
 	"include": ["./src/**/*.ts", "./test/**/*.ts"]
 }

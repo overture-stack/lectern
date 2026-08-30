@@ -80,9 +80,7 @@ export const reduceEmpty = (values: boolean[]): boolean => (values.length > 0 ? 
  *   can satisfy all lists simultaneously. The failure carries a `data` field (the conflict) but no
  *   fallback value — the caller is responsible for choosing a fallback from the input lists.
  */
-export const reduceCodeLists = <T extends string | number>(
-	lists: T[][],
-): RestrictionReducerResult<T[] | undefined> => {
+export const reduceCodeLists = <T extends string | number>(lists: T[][]): RestrictionReducerResult<T[] | undefined> => {
 	if (lists.length === 0) {
 		return success(undefined);
 	}
