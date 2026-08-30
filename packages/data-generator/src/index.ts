@@ -48,5 +48,6 @@ export {
 	type ForeignKeyPool,
 	type RecordGeneratorOptions,
 } from './dataGeneration/records/recordGenerator';
+export { generateSchemaRecords, type SchemaGeneratorOptions } from './dataGeneration/records/schemaGenerator';
 export { collectRestrictions, CollectedRestrictions } from './dataGeneration/fields/resolveRestrictions';
 export { generateTsvFile, TsvGeneratorOptions } from './dataGeneration/tsvGenerator';
