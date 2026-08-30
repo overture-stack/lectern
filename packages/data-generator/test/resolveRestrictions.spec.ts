@@ -18,7 +18,7 @@
  */
 
 import assert from 'node:assert';
-import { collectRestrictions } from '../src/dataGeneration/resolveRestrictions';
+import { collectRestrictions } from '../src/dataGeneration/fields/resolveRestrictions';
 
 type StringRestrictions = {
 	codeList?: (string | number)[];

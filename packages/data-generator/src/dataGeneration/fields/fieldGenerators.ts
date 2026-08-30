@@ -84,11 +84,16 @@ export type FieldGeneratorResult<TValue extends DataRecordValue = DataRecordValu
  * `arrayLength` controls the number of elements generated for array fields (`field.isArray === true`).
  * Ignored for non-array fields. May be a fixed number or a `RestrictionRange` used to generate
  * the length as an integer within those bounds. If omitted, the length is 1–3.
+ *
+ * `emptyRate` is the probability (0–1) that a non-required field returns `undefined` instead of a
+ * generated value. Values outside [0, 1] are clamped. Defaults to `0.25`. Has no effect when the
+ * field's active restrictions include `required: true`.
  */
 export type FieldGeneratorOptions = {
 	seed?: number;
 	record?: DataRecord;
 	arrayLength?: number | RestrictionRange;
+	emptyRate?: number;
 };
 
 /**
@@ -109,6 +114,8 @@ export type FieldGenerator<TField extends SchemaField> = (
 
 const DEFAULT_ARRAY_MIN = 1;
 const DEFAULT_ARRAY_MAX = 3;
+
+const DEFAULT_EMPTY_RATE = 0.25;
 
 /*
  * A ReferenceTag is a string starting with `#/`. When a codeList or regex contains one it means the
@@ -131,6 +138,23 @@ const sampleFCGenerator = <T>(arbitrary: fc.Arbitrary<T>, seed: number): T => {
 		throw new Error('fast-check sample produced no value');
 	}
 	return value;
+};
+
+/**
+ * Returns `true` if the field should be left empty (return `undefined`) for this generation call.
+ *
+ * Derives a uniform [0, 1) value from `seed` using a Knuth multiplicative hash followed by one
+ * round of xorshift32. This produces a well-distributed independent draw without a second fast-check
+ * call, avoiding bias in the `fc.float` arbitrary for small seeds. The threshold comparison
+ * (`sample < emptyRate`) maps the draw to the requested probability.
+ */
+const shouldGenerateEmpty = (seed: number, emptyRate: number): boolean => {
+	let hash = (seed * 2654435761 + 1) >>> 0;
+	hash ^= hash << 13;
+	hash ^= hash >>> 17;
+	hash ^= hash << 5;
+	const sample = (hash >>> 0) / 4294967296;
+	return sample < emptyRate;
 };
 
 const resolveArrayLength = (arrayLength: number | RestrictionRange | undefined, seed: number): number => {
@@ -311,10 +335,15 @@ export const generateBooleanValue: FieldGenerator<SchemaBooleanField> = (
 	field,
 	options = {},
 ): FieldGeneratorResult<DataRecordValue> => {
-	const { seed = randomSeed(), record = {}, arrayLength } = options;
+	const { seed = randomSeed(), record = {}, arrayLength, emptyRate } = options;
 	const collected = collectRestrictions(field.restrictions, record);
 	const required = reduceRequired(collected.required);
 	const empty = reduceEmpty(collected.empty);
+
+	const resolvedEmptyRate = Math.min(1, Math.max(0, emptyRate ?? DEFAULT_EMPTY_RATE));
+	if (!required && shouldGenerateEmpty(seed, resolvedEmptyRate)) {
+		return success(undefined);
+	}
 
 	// Generates one value for a scalar field or one element of an array field; called by wrapArrayIfNeeded.
 	const generateSingle = (elementSeed: number): FieldGeneratorResult<boolean> => {
@@ -366,8 +395,14 @@ const generateNumericValue = (
 	options: FieldGeneratorOptions,
 	fromRange: (range: RestrictionRange | undefined, seed: number) => number,
 ): FieldGeneratorResult<DataRecordValue> => {
-	const { seed = randomSeed(), record = {}, arrayLength } = options;
+	const { seed = randomSeed(), record = {}, arrayLength, emptyRate } = options;
 	const collected = collectRestrictions(field.restrictions, record);
+	const required = reduceRequired(collected.required);
+
+	const resolvedEmptyRate = Math.min(1, Math.max(0, emptyRate ?? DEFAULT_EMPTY_RATE));
+	if (!required && shouldGenerateEmpty(seed, resolvedEmptyRate)) {
+		return success(undefined);
+	}
 	// Filter each code list to only numeric values. We expect it to only contain reference tags and numbers, so this will clear unused reference tags.
 	const numericCodeLists = collected.codeList
 		.map((list) => list.filter((entry): entry is number => typeof entry === 'number'))
@@ -459,8 +494,14 @@ export const generateStringValue: FieldGenerator<SchemaStringField> = (
 	field,
 	options = {},
 ): FieldGeneratorResult<DataRecordValue> => {
-	const { seed = randomSeed(), record = {}, arrayLength } = options;
+	const { seed = randomSeed(), record = {}, arrayLength, emptyRate } = options;
 	const collected = collectRestrictions(field.restrictions, record);
+	const required = reduceRequired(collected.required);
+
+	const resolvedEmptyRate = Math.min(1, Math.max(0, emptyRate ?? DEFAULT_EMPTY_RATE));
+	if (!required && shouldGenerateEmpty(seed, resolvedEmptyRate)) {
+		return success(undefined);
+	}
 	// Filter string lists to only include string values, and remove reference tags. We only expect string values but the types are permissive to support numeric code lists, this filters out that edge case.
 	const stringCodeLists = collected.codeList
 		.map((list) => list.filter((entry): entry is string => typeof entry === 'string' && !isReferenceTag(entry)))

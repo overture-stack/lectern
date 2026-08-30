@@ -24,7 +24,7 @@ import {
 	generateIntegerValue,
 	generateNumberValue,
 	generateStringValue,
-} from './fieldGenerators';
+} from '../fields/fieldGenerators';
 import { resolveGenerationOrder } from './fieldDependencies';
 
 /**
@@ -54,11 +54,14 @@ export type ForeignKeyPool = Map<string, DataRecord[]>;
  * `overrides` provides values for specific fields by name; those fields are not generated.
  * `seed` controls the RNG so that the same schema and seed always produce the same record.
  * `foreignKeyPool` supplies available parent rows for FK-constrained fields.
+ * `emptyRate` is the probability (0–1) that any non-required field is left empty (`undefined`).
+ * Passed through to each field generator unchanged; see `FieldGeneratorOptions.emptyRate`.
  */
 export type RecordGeneratorOptions = {
 	overrides?: DataRecord;
 	seed?: number;
 	foreignKeyPool?: ForeignKeyPool;
+	emptyRate?: number;
 };
 
 /**
@@ -125,7 +128,7 @@ const resolveForeignKeyOverrides = (schema: Schema, pool: ForeignKeyPool, seed: 
  * reflects the correct values when evaluating conditional branches.
  */
 export const generateRecord = (schema: Schema, options?: RecordGeneratorOptions): DataRecord => {
-	const { seed, overrides = {}, foreignKeyPool } = options ?? {};
+	const { seed, overrides = {}, foreignKeyPool, emptyRate } = options ?? {};
 	const record: DataRecord = {};
 
 	const fkOverrides = foreignKeyPool !== undefined ? resolveForeignKeyOverrides(schema, foreignKeyPool, seed) : {};
@@ -150,7 +153,7 @@ export const generateRecord = (schema: Schema, options?: RecordGeneratorOptions)
 
 			const definitionIndex = fieldIndexByName.get(fieldName) ?? 0;
 			const fieldSeed = seed !== undefined ? seed + definitionIndex + 1 : undefined;
-			const fieldOptions = { seed: fieldSeed, record };
+			const fieldOptions = { seed: fieldSeed, record, emptyRate };
 
 			let result;
 			switch (field.valueType) {

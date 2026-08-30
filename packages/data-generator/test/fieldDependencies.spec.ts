@@ -20,7 +20,7 @@
 import assert from 'node:assert';
 import { describe, it } from 'mocha';
 import type { Schema } from '@overture-stack/lectern-dictionary';
-import { extractFieldDependencies, resolveGenerationOrder } from '../src/dataGeneration/fieldDependencies';
+import { extractFieldDependencies, resolveGenerationOrder } from '../src/dataGeneration/records/fieldDependencies';
 
 describe('extractFieldDependencies', () => {
 	it('returns empty sets for all fields when no conditional restrictions are present', () => {

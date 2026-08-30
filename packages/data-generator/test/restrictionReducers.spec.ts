@@ -24,7 +24,7 @@ import {
 	reduceRanges,
 	reduceRegex,
 	reduceRequired,
-} from '../src/dataGeneration/restrictionReducers';
+} from '../src/dataGeneration/fields/restrictionReducers';
 
 describe('reduceRequired', () => {
 	it('returns false for an empty list', () => {
