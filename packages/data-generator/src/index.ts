@@ -18,6 +18,16 @@
  */
 
 export {
+	type DataFileFormat,
+	type DataFileHandle,
+	type WriteRecordError,
+	openDataFile,
+	openTsvFile,
+	openCsvFile,
+	writeRecord,
+	closeDataFile,
+} from './dataFile/dataFileWriter';
+export {
 	FieldGenerator,
 	FieldGeneratorFailureData,
 	FieldGeneratorOptions,
