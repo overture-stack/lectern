@@ -19,10 +19,10 @@ The lectern `validation` package currently requires the entire dataset to be loa
 
 This proposal introduces four new stateful validator objects that accept records one at a time, maintain lightweight internal indices, and produce a complete error report once all records have been submitted:
 
-1. **CrossRecordValidator** — stateful; tracks `unique` and `uniqueKey` violations across submitted records. Does not validate individual records.
-2. **CrossSchemaValidator** — stateful; tracks `foreignKey` violations across schemas. Does not validate individual records or uniqueness.
-3. **SchemaValidator** — combines per-record validation (`validateRecord`) with cross-record validation (`CrossRecordValidator`).
-4. **DictionaryValidator** — combines per-record validation, cross-record validation, and cross-schema validation (`CrossSchemaValidator`).
+1. **CrossRecordValidator** - stateful; tracks `unique` and `uniqueKey` violations across submitted records. Does not validate individual records.
+2. **CrossSchemaValidator** - stateful; tracks `foreignKey` violations across schemas. Does not validate individual records or uniqueness.
+3. **SchemaValidator** - combines per-record validation (`validateRecord`) with cross-record validation (`CrossRecordValidator`).
+4. **DictionaryValidator** - combines per-record validation, cross-record validation, and cross-schema validation (`CrossSchemaValidator`).
 
 All four are exported so developers can use the lower-level components directly.
 
@@ -34,7 +34,7 @@ All four are exported so developers can use the lower-level components directly.
 
 The validation functions in `@overture-stack/lectern-validation` require the entire dataset to be provided as an argument at the time of the function call. For schema-level and dictionary-level validation, this means all records across all related schemas must be fully loaded into memory before any validation can begin.
 
-The consequence is that datasets above a certain size — determined by available application memory — cannot be validated at all. This is not a performance concern but a hard functional limit.
+The consequence is that datasets above a certain size - determined by available application memory - cannot be validated at all. This is not a performance concern but a hard functional limit.
 
 ### Evidence
 
@@ -58,10 +58,10 @@ Schema-level validation builds a hash map across all records to detect `unique` 
 - **DictionaryValidator**: orchestrates per-record validation, `CrossRecordValidator`, and `CrossSchemaValidator`; routes submitted records by schema name.
 - All four components exported from the package so consumers can compose them independently.
 - Clear lifecycle contract for all stateful objects: construction, record submission, error retrieval, and report retrieval.
-- Per-record validation errors are returned directly in the `Result` of `submit()` and are never stored internally — the caller handles or discards them.
+- Per-record validation errors are returned directly in the `Result` of `submit()` and are never stored internally - the caller handles or discards them.
 - Cross-record (`unique`/`uniqueKey`) and cross-schema (`foreignKey`) violations are stored in the internal index and exposed via `errors()`, a generator that yields detailed error objects one at a time so the caller can handle and discard each without accumulating them all in memory.
 - `report()` returns aggregate stats only: record counts, record-level error counts, and violation counts broken down by constraint type and field.
-- Internal memory is bounded to the size of the cross-record index (the `DataSetHashMap`) and the cross-schema reference sets — not to error volume or record count.
+- Internal memory is bounded to the size of the cross-record index (the `DataSetHashMap`) and the cross-schema reference sets - not to error volume or record count.
 
 ### Non-Goals
 
@@ -86,8 +86,8 @@ const crossRecordValidator = createCrossRecordValidator(schema);
 
 // submit() returns Result<void, { reason: 'DUPLICATE_ID' | 'LOCKED' }>
 // success: record was accepted and added to the index
-// failure DUPLICATE_ID: the id was already seen — record is ignored
-// failure LOCKED: errors() generator is active — record is ignored. No records are accepted until generator is exhausted
+// failure DUPLICATE_ID: the id was already seen - record is ignored
+// failure LOCKED: errors() generator is active - record is ignored. No records are accepted until generator is exhausted
 const result = crossRecordValidator.submit({ id, data });         // single record
 const result = crossRecordValidator.submit(entries);              // Array<{ id: string; data: DataRecord }>
 
@@ -101,15 +101,15 @@ const report = crossRecordValidator.report();
 // invalid({ details }) when any unique or uniqueKey violations occurred.
 
 // errors() returns a generator of detailed violation error objects.
-// Calling errors() locks the validator — submit() returns failure LOCKED until the generator is exhausted.
+// Calling errors() locks the validator - submit() returns failure LOCKED until the generator is exhausted.
 const errorGenerator = crossRecordValidator.errors();
 for (const error of errorGenerator) {
   handleError(error); // CrossRecordValidationError
 }
-// generator exhausted — validator is now unlocked, submit() accepts records again
+// generator exhausted - validator is now unlocked, submit() accepts records again
 ```
 
-Internally maintains a `DataSetHashMap` (`Map<string, string[]>`) per unique/uniqueKey rule — keys are field-value hashes, values are arrays of caller-supplied record IDs — built incrementally as records are submitted. Duplicate IDs are not processed and `submit()` returns `failure` with the duplicate ID. `report()` walks the completed map and counts violations per field (for `unique`) and total violations (for `uniqueKey`). Returns `valid()` when all counts are zero. `errors()` walks the same map and yields a detailed error object per violation; the validator is locked for the duration.
+Internally maintains a `DataSetHashMap` (`Map<string, string[]>`) per unique/uniqueKey rule - keys are field-value hashes, values are arrays of caller-supplied record IDs - built incrementally as records are submitted. Duplicate IDs are not processed and `submit()` returns `failure` with the duplicate ID. `report()` walks the completed map and counts violations per field (for `unique`) and total violations (for `uniqueKey`). Returns `valid()` when all counts are zero. `errors()` walks the same map and yields a detailed error object per violation; the validator is locked for the duration.
 
 #### CrossSchemaValidator
 
@@ -120,9 +120,9 @@ const crossSchemaValidator = createCrossSchemaValidator(dictionary);
 
 // submit() returns Result<void, { reason: 'DUPLICATE_ID' | 'UNKNOWN_SCHEMA' | 'LOCKED' }>
 // success: record was accepted and its FK-relevant field values added to the reference set
-// failure DUPLICATE_ID: the id was already seen for this schema — record is ignored
-// failure UNKNOWN_SCHEMA: schemaName is not in the dictionary — record is ignored
-// failure LOCKED: errors() generator is active — record is ignored. No records are accepted until generator is exhausted
+// failure DUPLICATE_ID: the id was already seen for this schema - record is ignored
+// failure UNKNOWN_SCHEMA: schemaName is not in the dictionary - record is ignored
+// failure LOCKED: errors() generator is active - record is ignored. No records are accepted until generator is exhausted
 const result = crossSchemaValidator.submit(schemaName, { id, data });   // single record
 const result = crossSchemaValidator.submit(schemaName, entries);        // Array<{ id: string; data: DataRecord }>
 
@@ -135,12 +135,12 @@ const report = crossSchemaValidator.report();
 // invalid({ details }) when any foreignKey violations occurred.
 
 // errors() returns a generator of detailed FK violation error objects.
-// Calling errors() locks the validator — submit() returns failure LOCKED until the generator is exhausted.
+// Calling errors() locks the validator - submit() returns failure LOCKED until the generator is exhausted.
 const errorGenerator = crossSchemaValidator.errors();
 for (const error of errorGenerator) {
   handleError(error); // CrossSchemaValidationError
 }
-// generator exhausted — validator is now unlocked, submit() accepts records again
+// generator exhausted - validator is now unlocked, submit() accepts records again
 ```
 
 Internally maintains a `Map<string, SchemaDataReference>` (`Map<schemaName, Map<fieldName, Set<DataRecordValue>>>`) built incrementally as records are submitted. Unknown schema names and duplicate IDs are both rejected at `submit()` time via `failure`. `report()` runs `testForeignKeyRestriction` for each submitted record against the completed reference map and accumulates violation counts per FK mapping, grouped by local schema. `errors()` yields a detailed error object per FK violation; the validator is locked for the duration.
@@ -155,9 +155,9 @@ Combines per-record validation with cross-record validation. The primary interfa
 const schemaValidator = createSchemaValidator(schema);
 
 // submit() returns Result<Array<{ id: string; errors: RecordValidationError[] }>, { reason: 'DUPLICATE_ID' | 'LOCKED' }>
-// success: record(s) accepted and validated — data is an array of per-record errors (empty if all records are valid)
-// failure DUPLICATE_ID: a submitted id was already seen — no records from this call are processed
-// failure LOCKED: errors() generator is active — record is ignored. No records are accepted until generator is exhausted
+// success: record(s) accepted and validated - data is an array of per-record errors (empty if all records are valid)
+// failure DUPLICATE_ID: a submitted id was already seen - no records from this call are processed
+// failure LOCKED: errors() generator is active - record is ignored. No records are accepted until generator is exhausted
 const result = schemaValidator.submit({ id, data });   // single record
 const result = schemaValidator.submit(entries);        // Array<{ id: string; data: DataRecord }>
 if (result.success) {
@@ -166,7 +166,7 @@ if (result.success) {
   }
 }
 
-// report() returns summary counts only — counts are maintained as running totals.
+// report() returns summary counts only - counts are maintained as running totals.
 const report = schemaValidator.report();
 // TestResult<{
 //   recordCount: number,
@@ -180,12 +180,12 @@ const report = schemaValidator.report();
 // invalid({ details }) when any record-level or cross-record violations occurred.
 
 // errors() returns a generator of detailed cross-record violation error objects.
-// Calling errors() locks the validator — submit() returns failure LOCKED until the generator is exhausted.
+// Calling errors() locks the validator - submit() returns failure LOCKED until the generator is exhausted.
 const errorGenerator = schemaValidator.errors();
 for (const error of errorGenerator) {
   handleError(error); // CrossRecordValidationError
 }
-// generator exhausted — validator is now unlocked, submit() accepts records again
+// generator exhausted - validator is now unlocked, submit() accepts records again
 ```
 
 Per-record errors are returned directly in the `submit()` result and never stored internally. Cross-record violations are stored in the internal index and exposed via `errors()`, which yields detailed error objects one at a time. `report()` returns a `TestResult` wrapping aggregate stats: `valid()` when no violations occurred at any level, `invalid({ details })` with counts otherwise.
@@ -198,10 +198,10 @@ Combines per-record validation, cross-record validation, and cross-schema valida
 const dictionaryValidator = createDictionaryValidator(dictionary);
 
 // submit() returns Result<Array<{ id: string; errors: RecordValidationError[] }>, { reason: 'DUPLICATE_ID' | 'UNKNOWN_SCHEMA' | 'LOCKED' }>
-// success: record(s) accepted and validated — data is an array of per-record errors (empty if all records are valid)
-// failure DUPLICATE_ID: a submitted id was already seen for this schema — no records from this call are processed
-// failure UNKNOWN_SCHEMA: schemaName is not in the dictionary — no records from this call are processed
-// failure LOCKED: errors() generator is active — record is ignored. No records are accepted until generator is exhausted
+// success: record(s) accepted and validated - data is an array of per-record errors (empty if all records are valid)
+// failure DUPLICATE_ID: a submitted id was already seen for this schema - no records from this call are processed
+// failure UNKNOWN_SCHEMA: schemaName is not in the dictionary - no records from this call are processed
+// failure LOCKED: errors() generator is active - record is ignored. No records are accepted until generator is exhausted
 const result = dictionaryValidator.submit(schemaName, { id, data });   // single record
 const result = dictionaryValidator.submit(schemaName, entries);        // Array<{ id: string; data: DataRecord }>
 if (result.success) {
@@ -210,7 +210,7 @@ if (result.success) {
   }
 }
 
-// report() returns summary counts only — counts are maintained as running totals.
+// report() returns summary counts only - counts are maintained as running totals.
 const report = dictionaryValidator.report();
 // TestResult<{
 //   unknownSchemaCount: number,             // count of submit() calls for unrecognized schema names
@@ -228,15 +228,15 @@ const report = dictionaryValidator.report();
 // invalid({ details }) when any violations or unknown schema submissions occurred.
 
 // errors() returns a generator of detailed cross-record and cross-schema violation error objects.
-// Calling errors() locks the validator — submit() returns failure LOCKED until the generator is exhausted.
+// Calling errors() locks the validator - submit() returns failure LOCKED until the generator is exhausted.
 const errorGenerator = dictionaryValidator.errors();
 for (const error of errorGenerator) {
   handleError(error); // CrossRecordValidationError | CrossSchemaValidationError
 }
-// generator exhausted — validator is now unlocked, submit() accepts records again
+// generator exhausted - validator is now unlocked, submit() accepts records again
 ```
 
-Internally holds one `CrossRecordValidator` per schema and one shared `CrossSchemaValidator`. On `submit()`, `validateRecord` runs immediately and errors are returned directly in the result — never stored. The record is also passed to the appropriate `CrossRecordValidator` and `CrossSchemaValidator`. `report()` returns aggregate counts only. `errors()` delegates to the internal `CrossRecordValidator` instances and `CrossSchemaValidator`, yielding their detailed error objects in sequence; the validator is locked for the duration.
+Internally holds one `CrossRecordValidator` per schema and one shared `CrossSchemaValidator`. On `submit()`, `validateRecord` runs immediately and errors are returned directly in the result - never stored. The record is also passed to the appropriate `CrossRecordValidator` and `CrossSchemaValidator`. `report()` returns aggregate counts only. `errors()` delegates to the internal `CrossRecordValidator` instances and `CrossSchemaValidator`, yielding their detailed error objects in sequence; the validator is locked for the duration.
 
 ---
 
@@ -255,13 +255,13 @@ All four validator objects have two states: **open** (accepting submissions) and
 
 #### Problem
 
-`SchemaValidationRecordErrorUnique` and `SchemaValidationRecordErrorUniqueKey` both include `matchingRecords: number[]` — an array of indices into the record array passed to the batch validator. In streaming mode there is no record array, so positional indices have no meaning.
+`SchemaValidationRecordErrorUnique` and `SchemaValidationRecordErrorUniqueKey` both include `matchingRecords: number[]` - an array of indices into the record array passed to the batch validator. In streaming mode there is no record array, so positional indices have no meaning.
 
 #### Solution: Caller-Provided Record IDs
 
-`submit()` accepts entries of the shape `{ id: string; data: DataRecord }`. The `id` is a caller-supplied string that uniquely identifies the record within the submission — typically a file row number, a line offset, or any stable external identifier the caller maintains.
+`submit()` accepts entries of the shape `{ id: string; data: DataRecord }`. The `id` is a caller-supplied string that uniquely identifies the record within the submission - typically a file row number, a line offset, or any stable external identifier the caller maintains.
 
-The `DataSetHashMap` value type changes from `number[]` to `string[]`, storing caller-supplied IDs instead of positional indices. `matchingRecords: number[]` becomes `matchingRecords: string[]` in the unique error types — a breaking change to the public types, handled in the Error Type Migration Guide.
+The `DataSetHashMap` value type changes from `number[]` to `string[]`, storing caller-supplied IDs instead of positional indices. `matchingRecords: number[]` becomes `matchingRecords: string[]` in the unique error types - a breaking change to the public types, handled in the Error Type Migration Guide.
 
 Per-record errors returned from `submit()` include the `id` so the caller can correlate errors back to the originating record.
 
@@ -283,7 +283,7 @@ On `report()`:
 
 On `errors()`:
 1. The validator transitions to the **locked** state.
-2. The `DataSetHashMap` is walked; for each violation, a detailed error object is constructed and yielded. Error objects are not stored — each is yielded and then eligible for garbage collection once the caller advances the generator.
+2. The `DataSetHashMap` is walked; for each violation, a detailed error object is constructed and yielded. Error objects are not stored - each is yielded and then eligible for garbage collection once the caller advances the generator.
 3. When the generator is exhausted, the validator transitions back to **open**.
 
 `DictionaryValidator` follows the same flow per schema, with the additional step that each submitted record's FK-referenced field values are added to the `CrossSchemaValidator`'s `SchemaDataReference` map before the record is discarded. FK violations are computed at `report()` and `errors()` time. `DictionaryValidator.errors()` yields cross-record violations (from each per-schema `CrossRecordValidator`) followed by cross-schema violations (from the shared `CrossSchemaValidator`).
@@ -318,7 +318,7 @@ This is an approach that a submission service like Lyric would be interested in,
 
 | # | Risk / Question | Owner | Resolution |
 |---|---|---|---|
-| 1 | **FK testing requires re-examining submitted records at `report()` time.** `testForeignKeyRestriction` tests a record against a reference map. But records and reference data arrive interleaved during streaming — a record in schema B may arrive before all schema A records have been submitted, so the reference map is incomplete at submission time. FK violations can only be tested once the full reference map is built (i.e. at `report()`). This means either: (a) the `CrossSchemaValidator` holds a copy of every submitted record to replay them at `report()` time, reintroducing memory pressure proportional to record count; or (b) the caller is required to submit records in dependency order (all foreign schema records before all referencing schema records), allowing FK testing at submit time. Option (b) shifts burden to the caller and makes the API fragile. Option (a) is correct but undermines the memory goal for FK-heavy workloads. A third option: store only the FK-relevant field values per record (not the full record), which reduces overhead to the size of the referenced fields only. | | |
+| 1 | **FK testing requires re-examining submitted records at `report()` time.** `testForeignKeyRestriction` tests a record against a reference map. But records and reference data arrive interleaved during streaming - a record in schema B may arrive before all schema A records have been submitted, so the reference map is incomplete at submission time. FK violations can only be tested once the full reference map is built (i.e. at `report()`). This means either: (a) the `CrossSchemaValidator` holds a copy of every submitted record to replay them at `report()` time, reintroducing memory pressure proportional to record count; or (b) the caller is required to submit records in dependency order (all foreign schema records before all referencing schema records), allowing FK testing at submit time. Option (b) shifts burden to the caller and makes the API fragile. Option (a) is correct but undermines the memory goal for FK-heavy workloads. A third option: store only the FK-relevant field values per record (not the full record), which reduces overhead to the size of the referenced fields only. | | |
 | 2 | **`matchingRecords` field semantics in streaming unique errors.** Resolved in section 4.3: `matchingRecords` becomes `string[]` of caller-supplied record IDs. Breaking change to public types; see Error Type Migration Guide. | | Resolved |
 
 ---
@@ -377,7 +377,7 @@ This is an approach that a submission service like Lyric would be interested in,
 
 ### Correctness Invariants
 
-<!-- Properties that must hold regardless of input ordering or size — the specification for what "correct" means for this feature. -->
+<!-- Properties that must hold regardless of input ordering or size - the specification for what "correct" means for this feature. -->
 
 ---
 

@@ -1,0 +1,23 @@
+{
+	"name": "@overture-stack/lectern-data-generator",
+	"version": "0.0.0",
+	"description": "Test data generation utilities for Lectern schemas",
+	"private": true,
+	"main": "dist/index.js",
+	"scripts": {
+		"build": "pnpm nuke:build && tsc -p ./tsconfig.build.json",
+		"format": "prettier --write .",
+		"nuke:build": "npx rimraf dist",
+		"test": "nyc mocha"
+	},
+	"keywords": [],
+	"author": "Ontario Institute for Cancer Research",
+	"license": "AGPL-3.0",
+	"dependencies": {
+		"@overture-stack/lectern-dictionary": "workspace:^",
+		"@overture-stack/lectern-validation": "workspace:^"
+	},
+	"devDependencies": {
+		"fast-check": "^4.9.0"
+	}
+}

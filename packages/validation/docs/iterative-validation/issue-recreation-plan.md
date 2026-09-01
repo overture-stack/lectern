@@ -6,8 +6,8 @@
 
 Two things must be shown clearly:
 
-1. **The failure exists** — validation crashes or becomes inoperable at some record count
-2. **Memory scales with input** — memory usage grows proportionally to record count, not arbitrarily
+1. **The failure exists** - validation crashes or becomes inoperable at some record count
+2. **Memory scales with input** - memory usage grows proportionally to record count, not arbitrarily
 
 ---
 
@@ -15,8 +15,8 @@ Two things must be shown clearly:
 
 The test application runs inside a Docker container. Node.js runs inside the container; the host machine's total RAM is not a controlled variable. Memory limits are enforced at two levels:
 
-- **Container memory limit** — set via `docker run --memory=<N>` (or the equivalent in a Compose file). This is the hard ceiling enforced by the container runtime. If the process exceeds this, the container is OOM-killed by the OS.
-- **Node.js heap limit** — set via `--max-old-space-size=<N>` passed to the node process inside the container. This causes Node to throw a JavaScript heap out of memory error before hitting the container limit, producing a more informative error than a hard kill. The Node heap limit should be set below the container memory limit to ensure a clean, observable failure.
+- **Container memory limit** - set via `docker run --memory=<N>` (or the equivalent in a Compose file). This is the hard ceiling enforced by the container runtime. If the process exceeds this, the container is OOM-killed by the OS.
+- **Node.js heap limit** - set via `--max-old-space-size=<N>` passed to the node process inside the container. This causes Node to throw a JavaScript heap out of memory error before hitting the container limit, producing a more informative error than a hard kill. The Node heap limit should be set below the container memory limit to ensure a clean, observable failure.
 
 **Controlled variables to document:**
 - Docker image and Node.js version
@@ -33,14 +33,14 @@ The test application runs inside a Docker container. Node.js runs inside the con
 **1. Test Dictionaries**
 
 Three dictionaries are needed, one per performance test case (see Test Cases below). Each dictionary should have:
-- A wide field count per schema (20–30 fields) — this maximises per-record object overhead
+- A wide field count per schema (20–30 fields) - this maximises per-record object overhead
 - A mix of field types (string, integer, boolean, arrays)
 
 **2. Record Generator**
 
 A TypeScript generator function (async generator) that produces `DataRecord` objects one at a time and yields them directly. It does not write to disk. The generator:
 - Accepts a record count and the target schema as arguments
-- Produces valid records that pass all constraints — the goal is to stress memory, not trigger early exits on validation errors
+- Produces valid records that pass all constraints - the goal is to stress memory, not trigger early exits on validation errors
 - Manages unique field values internally (incrementing counter, etc.) when the schema has a `unique` constraint
 - Manages foreign key values internally (drawing from the parent schema's emitted key set) when the schema has a `foreignKey` constraint
 
@@ -66,7 +66,7 @@ A `Dockerfile` and `docker-compose.yml` (or equivalent) that:
 Three performance test cases, each exercising a distinct memory path in the current batch validator:
 
 **Case 1: No unique or foreign key constraints**
-One schema with no `unique`, `uniqueKey`, or `foreignKey` restrictions. Field and record validation only. Establishes the memory baseline — this path holds no cross-record state and should scale with constant overhead per record.
+One schema with no `unique`, `uniqueKey`, or `foreignKey` restrictions. Field and record validation only. Establishes the memory baseline - this path holds no cross-record state and should scale with constant overhead per record.
 
 **Case 2: Schema with a unique constraint**
 One schema with at least one field marked `unique`. The current batch validator builds a `DataSetHashMap` (`Map<string, number[]>`) over the full record array before checking anything. This case demonstrates that the map grows linearly with record count and eventually exhausts heap.

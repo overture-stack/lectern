@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,10 +17,20 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from './testMatchCodeList';
-export * from './testMatchCount';
-export * from './testMatchExists';
-export * from './testMatchRange';
-export * from './testMatchRegex';
-export * from './testMatchValue';
-export * from './testConditionalRestriction';
+// Knuth multiplicative hash constant (2^32 / golden ratio, nearest odd integer).
+const KNUTH_MULTIPLIER = 2654435761;
+
+/**
+ * Maps `seed` to a well-distributed 32-bit unsigned integer using a Knuth multiplicative hash
+ * followed by one round of xorshift32. Produces independent draws without fast-check overhead.
+ *
+ * Used as the shared primitive for `shouldGenerateEmpty`, `seededIndexInRange`, and
+ * `deriveRetrySeed` — all of which need a single cheap, seeded, non-colliding hash draw.
+ */
+export const knuthHash = (seed: number): number => {
+	let hash = (seed * KNUTH_MULTIPLIER + 1) >>> 0;
+	hash ^= hash << 13;
+	hash ^= hash >>> 17;
+	hash ^= hash << 5;
+	return hash >>> 0;
+};
