@@ -228,7 +228,7 @@ const diffResponse = [
 			left: {
 				name: 'program_id',
 				valueType: 'string',
-				description: 'Unique identifier of the ARGO program.',
+				description: 'Unique identifier of the program.',
 				meta: {
 					validationDependency: true,
 					primaryId: true,
@@ -242,7 +242,7 @@ const diffResponse = [
 			right: {
 				name: 'program_id',
 				valueType: 'integer',
-				description: 'Unique identifier of the ARGO program.',
+				description: 'Unique identifier of the program.',
 				meta: {
 					validationDependency: true,
 					primaryId: true,

@@ -15,7 +15,7 @@
 			"dependsOn": ["^build"]
 		},
 		"publish": {
-			"dependsOn": ["^build"]
+			"dependsOn": ["^build", "^test"]
 		},
 		"test": {
 			"dependsOn": ["^build"]

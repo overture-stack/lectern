@@ -18,7 +18,7 @@
 		"test:unit:server": "pnpm nx test @overture-stack/lectern-server",
 		"test:unit:client": "pnpm nx test @overture-stack/lectern-client",
 		"test:integration:server": "pnpm nx test:integration @overture-stack/lectern-server",
-		"generate": "pnpm build:dictionary && pnpm -C scripts generate"
+		"generate": "pnpm nx run lectern-scripts:generate"
 	},
 	"keywords": [],
 	"author": "Ontario Institute for Cancer Research",

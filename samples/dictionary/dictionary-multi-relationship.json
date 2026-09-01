@@ -1,0 +1,90 @@
+{
+  "name": "dictionary-multi-relationship",
+  "version": "1.0",
+  "displayName": "Multi-Entity Relationships",
+  "description": "An example dictionary for testing and demonstrating foreign key relationships across multiple schemas.",
+  "schemas": [
+    {
+      "name": "entity-a",
+      "description": "Primary entity. id is unique. Other schemas may reference this schema via foreign key.",
+      "fields": [
+        {
+          "name": "id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "name",
+          "valueType": "string"
+        },
+        {
+          "name": "category",
+          "valueType": "string"
+        },
+        {
+          "name": "count",
+          "valueType": "integer"
+        },
+        {
+          "name": "score",
+          "valueType": "number"
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "entity-b",
+      "description": "Secondary entity. id is unique. entity_a_id is a foreign key to entity-a.",
+      "fields": [
+        {
+          "name": "id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "entity_a_id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "label",
+          "valueType": "string"
+        },
+        {
+          "name": "rank",
+          "valueType": "integer"
+        },
+        {
+          "name": "ratio",
+          "valueType": "number"
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "id"
+        ],
+        "foreignKey": [
+          {
+            "schema": "entity-a",
+            "mappings": [
+              {
+                "local": "entity_a_id",
+                "foreign": "id"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

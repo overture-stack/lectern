@@ -1,0 +1,30 @@
+{
+  "name": "dictionary-simple",
+  "version": "1.0",
+  "displayName": "Simple Example",
+  "description": "A minimal example dictionary for basic demonstration and testing.",
+  "schemas": [
+    {
+      "name": "all-types",
+      "description": "One field of each value type. No restrictions.",
+      "fields": [
+        {
+          "name": "string_field",
+          "valueType": "string"
+        },
+        {
+          "name": "integer_field",
+          "valueType": "integer"
+        },
+        {
+          "name": "number_field",
+          "valueType": "number"
+        },
+        {
+          "name": "boolean_field",
+          "valueType": "boolean"
+        }
+      ]
+    }
+  ]
+}
