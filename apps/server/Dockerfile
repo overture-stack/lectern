@@ -17,7 +17,7 @@ COPY . ./
 RUN chown -R ${APP_USER}:${APP_USER} /usr/src/app
 
 # install pnpm as root user, before updating node ownership
-RUN npm i -g pnpm
+RUN npm i -g pnpm@11.24.0
 
 # give our user ownership over node source directories
 RUN chown -R ${APP_USER}:${APP_USER} $(npm config get prefix)
