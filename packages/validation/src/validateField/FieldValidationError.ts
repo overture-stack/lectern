@@ -21,18 +21,26 @@ import type { SchemaFieldValueType } from '@overture-stack/lectern-dictionary';
 import type { FieldRestrictionRule } from '../validateField/FieldRestrictionRule';
 import type { RestrictionTestInvalidInfo } from '../validateField/FieldRestrictionTest';
 
+/**
+ * Information for an error validating a field against a restriction. Includes a restriction rule
+ * paired with the details of why it failed.
+ */
 export type FieldValidationErrorRestrictionInfo = RestrictionTestInvalidInfo & {
 	restriction: FieldRestrictionRule;
 };
 
+/**
+ * Error for a field value that fails one or more restriction rules (codeList, regex, range, etc.).
+ * `errors` lists each individual restriction that was violated.
+ */
 export type FieldValidationErrorRestrictions = {
 	reason: 'INVALID_BY_RESTRICTION';
 	errors: Array<FieldValidationErrorRestrictionInfo>;
 };
 
 /**
- * This is the result when the value does not match the value type defined in the field. The properties
- * `valueType` and `isArray` are the expected type values as defined in the field definition.
+ * Validation error for a field value that does not match the field's declared `valueType` or
+ * `isArray`.
  */
 export type FieldValidationErrorValueType = {
 	reason: 'INVALID_VALUE_TYPE';
@@ -40,6 +48,12 @@ export type FieldValidationErrorValueType = {
 	isArray: boolean;
 };
 
+/**
+ * A field-level validation error. Narrow on `reason` to access the specific error properties.
+ */
 export type FieldValidationError = FieldValidationErrorRestrictions | FieldValidationErrorValueType;
 
+/**
+ * All `reason` values for a `FieldValidationError`.
+ */
 export type FieldValidationErrorReason = FieldValidationError['reason'];

@@ -20,27 +20,48 @@
 import type { DataRecord } from '@overture-stack/lectern-dictionary';
 import type { RecordValidationError, FieldDetails } from '../validateRecord';
 
+/**
+ * Error for a record that violates a `uniqueKey` constraint. `uniqueKey` holds the conflicting
+ * composite key values; `matchingRecords` lists indices of records sharing that key.
+ */
 export type SchemaValidationRecordErrorUniqueKey = {
 	reason: 'INVALID_BY_UNIQUE_KEY';
 	uniqueKey: DataRecord;
 	matchingRecords: number[];
 };
 
+/**
+ * Error for a Record where a field value that violates a `unique` constraint.
+ * `matchingRecords` lists the indices of records with the same value in the specified field.
+ */
 export type SchemaValidationRecordErrorUnique = FieldDetails & {
 	reason: 'INVALID_BY_UNIQUE';
 	matchingRecords: number[];
 };
 
+/**
+ * All error detail types that can appear on a record when validating against a schema.
+ */
 export type SchemaValidationRecordErrorDetails =
 	| RecordValidationError
 	| SchemaValidationRecordErrorUnique
 	| SchemaValidationRecordErrorUniqueKey;
 
+/**
+ * Pairing of a record's position in the submitted data alongside the validation errors it produced.
+ */
 export type SchemaRecordError<ErrorDetails> = {
 	recordIndex: number;
 	recordErrors: ErrorDetails[];
 };
 
+/**
+ * Error produced when validating a set of records against a schema. Groups per-record errors by
+ * their index in the submitted data.
+ */
 export type SchemaValidationError = SchemaRecordError<SchemaValidationRecordErrorDetails>;
 
+/**
+ * All `reason` values across schema-level record errors.
+ */
 export type SchemaValidationErrorReason = SchemaValidationRecordErrorDetails['reason'];
