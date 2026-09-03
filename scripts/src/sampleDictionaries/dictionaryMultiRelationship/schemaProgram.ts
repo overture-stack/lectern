@@ -1,9 +1,9 @@
 import { Schema } from '@overture-stack/lectern-dictionary';
 import { assertSchema } from '../assertSchema';
 
-export const schemaEntityA = {
-	name: 'entity-a',
-	description: 'Primary entity. id is unique. Other schemas may reference this schema via foreign key.',
+export const schemaProgram = {
+	name: 'program',
+	description: 'Root research program. id is unique. Other schemas may reference this schema via foreign key.',
 	fields: [
 		{ name: 'id', valueType: 'string', restrictions: { required: true } },
 		{ name: 'name', valueType: 'string' },
@@ -16,4 +16,4 @@ export const schemaEntityA = {
 	},
 } as const satisfies Schema;
 
-assertSchema(schemaEntityA, Schema, 'schemaEntityA is not a valid Schema');
+assertSchema(schemaProgram, Schema, 'schemaProgram is not a valid Schema');
