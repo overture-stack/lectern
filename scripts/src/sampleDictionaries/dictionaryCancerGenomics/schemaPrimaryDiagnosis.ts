@@ -9,17 +9,6 @@ const nCategoriesRestriction: StringFieldRestrictions = { codeList: '#/enum/nCat
 const mCategoriesRestriction: StringFieldRestrictions = { codeList: '#/enum/mCategories' };
 const stageGroupsRestriction: StringFieldRestrictions = { codeList: '#/enum/stageGroups' };
 
-const ajccEditions = [
-	'AJCC 8th edition',
-	'AJCC 7th edition',
-	'AJCC 6th edition',
-	'AJCC 5th edition',
-	'AJCC 4th edition',
-	'AJCC 3rd edition',
-	'AJCC 2nd edition',
-	'AJCC 1st edition',
-];
-
 export const schemaPrimaryDiagnosis = {
 	name: 'primary_diagnosis',
 	description: 'Cancer diagnosis details and clinical TNM staging.',
@@ -161,7 +150,8 @@ export const schemaPrimaryDiagnosis = {
 			name: 'clinical_tumour_staging_system',
 			valueType: 'string',
 			displayName: 'Clinical Tumour Staging System',
-			description: 'Tumour staging system used to stage the cancer at the time of primary diagnosis, prior to treatment.',
+			description:
+				'Tumour staging system used to stage the cancer at the time of primary diagnosis, prior to treatment.',
 			restrictions: {
 				codeList: '#/enum/tumorStagingSystem',
 			},
@@ -180,7 +170,7 @@ export const schemaPrimaryDiagnosis = {
 				tCategoriesRestriction,
 				{
 					if: {
-						conditions: [{ fields: ['clinical_tumour_staging_system'], match: { codeList: ajccEditions } }],
+						conditions: [{ fields: ['clinical_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
 					},
 					then: { required: true },
 					else: { empty: true },
@@ -201,7 +191,7 @@ export const schemaPrimaryDiagnosis = {
 				nCategoriesRestriction,
 				{
 					if: {
-						conditions: [{ fields: ['clinical_tumour_staging_system'], match: { codeList: ajccEditions } }],
+						conditions: [{ fields: ['clinical_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
 					},
 					then: { required: true },
 					else: { empty: true },
@@ -222,7 +212,7 @@ export const schemaPrimaryDiagnosis = {
 				mCategoriesRestriction,
 				{
 					if: {
-						conditions: [{ fields: ['clinical_tumour_staging_system'], match: { codeList: ajccEditions } }],
+						conditions: [{ fields: ['clinical_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
 					},
 					then: { required: true },
 					else: { empty: true },

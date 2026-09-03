@@ -4,17 +4,6 @@ import { schemaDonor } from './schemaDonor';
 import { schemaPrimaryDiagnosis } from './schemaPrimaryDiagnosis';
 import { schemaTreatment } from './schemaTreatment';
 
-const ajccEditions = [
-	'AJCC 8th edition',
-	'AJCC 7th edition',
-	'AJCC 6th edition',
-	'AJCC 5th edition',
-	'AJCC 4th edition',
-	'AJCC 3rd edition',
-	'AJCC 2nd edition',
-	'AJCC 1st edition',
-];
-
 // TypeScript cannot narrow a reference tag string as StringFieldRestrictions within a restrictions array union.
 // These typed constants guide inference without requiring per-element type assertions.
 const tCategoriesRestriction: StringFieldRestrictions = { codeList: '#/enum/tCategories' };
@@ -185,7 +174,7 @@ export const schemaFollowUp = {
 				tCategoriesRestriction,
 				{
 					if: {
-						conditions: [{ fields: ['recurrence_tumour_staging_system'], match: { codeList: ajccEditions } }],
+						conditions: [{ fields: ['recurrence_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
 					},
 					then: { required: true },
 					else: { empty: true },
@@ -205,7 +194,7 @@ export const schemaFollowUp = {
 				nCategoriesRestriction,
 				{
 					if: {
-						conditions: [{ fields: ['recurrence_tumour_staging_system'], match: { codeList: ajccEditions } }],
+						conditions: [{ fields: ['recurrence_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
 					},
 					then: { required: true },
 					else: { empty: true },
@@ -225,7 +214,7 @@ export const schemaFollowUp = {
 				mCategoriesRestriction,
 				{
 					if: {
-						conditions: [{ fields: ['recurrence_tumour_staging_system'], match: { codeList: ajccEditions } }],
+						conditions: [{ fields: ['recurrence_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
 					},
 					then: { required: true },
 					else: { empty: true },
@@ -270,7 +259,7 @@ export const schemaFollowUp = {
 				tCategoriesRestriction,
 				{
 					if: {
-						conditions: [{ fields: ['posttherapy_tumour_staging_system'], match: { codeList: ajccEditions } }],
+						conditions: [{ fields: ['posttherapy_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
 					},
 					then: { required: true },
 					else: { empty: true },
@@ -290,7 +279,7 @@ export const schemaFollowUp = {
 				nCategoriesRestriction,
 				{
 					if: {
-						conditions: [{ fields: ['posttherapy_tumour_staging_system'], match: { codeList: ajccEditions } }],
+						conditions: [{ fields: ['posttherapy_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
 					},
 					then: { required: true },
 					else: { empty: true },
@@ -310,7 +299,7 @@ export const schemaFollowUp = {
 				mCategoriesRestriction,
 				{
 					if: {
-						conditions: [{ fields: ['posttherapy_tumour_staging_system'], match: { codeList: ajccEditions } }],
+						conditions: [{ fields: ['posttherapy_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
 					},
 					then: { required: true },
 					else: { empty: true },

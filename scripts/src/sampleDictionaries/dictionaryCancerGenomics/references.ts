@@ -5,7 +5,7 @@ export const cancerGenomicsReferences = {
 		submitterId: '^[A-Za-z0-9\\-\\._]{1,64}$',
 	},
 	enum: {
-		tumorStagingSystem: [
+		ajccEditions: [
 			'AJCC 8th edition',
 			'AJCC 7th edition',
 			'AJCC 6th edition',
@@ -14,6 +14,9 @@ export const cancerGenomicsReferences = {
 			'AJCC 3rd edition',
 			'AJCC 2nd edition',
 			'AJCC 1st edition',
+		],
+		tumorStagingSystem: [
+			'#/enum/ajccEditions',
 			'Ann Arbor staging system',
 			'Binet staging system',
 			'Durie-Salmon staging system',
