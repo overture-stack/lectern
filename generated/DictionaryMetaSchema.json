@@ -7,13 +7,14 @@
         "name": {
           "$ref": "#/definitions/Name"
         },
-        "displayName": {
-          "type": "string"
-        },
         "description": {
           "type": "string"
         },
         "delimiter": {
+          "type": "string",
+          "minLength": 1
+        },
+        "displayName": {
           "type": "string",
           "minLength": 1
         },
@@ -126,14 +127,14 @@
         "name": {
           "$ref": "#/definitions/Name"
         },
-        "displayName": {
-          "$ref": "#/definitions/SchemaBooleanField/properties/displayName"
-        },
         "description": {
           "$ref": "#/definitions/SchemaBooleanField/properties/description"
         },
         "delimiter": {
           "$ref": "#/definitions/SchemaBooleanField/properties/delimiter"
+        },
+        "displayName": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/displayName"
         },
         "isArray": {
           "$ref": "#/definitions/SchemaBooleanField/properties/isArray"
@@ -244,14 +245,14 @@
         "name": {
           "$ref": "#/definitions/Name"
         },
-        "displayName": {
-          "$ref": "#/definitions/SchemaBooleanField/properties/displayName"
-        },
         "description": {
           "$ref": "#/definitions/SchemaBooleanField/properties/description"
         },
         "delimiter": {
           "$ref": "#/definitions/SchemaBooleanField/properties/delimiter"
+        },
+        "displayName": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/displayName"
         },
         "isArray": {
           "$ref": "#/definitions/SchemaBooleanField/properties/isArray"
@@ -362,14 +363,14 @@
         "name": {
           "$ref": "#/definitions/Name"
         },
-        "displayName": {
-          "$ref": "#/definitions/SchemaBooleanField/properties/displayName"
-        },
         "description": {
           "$ref": "#/definitions/SchemaBooleanField/properties/description"
         },
         "delimiter": {
           "$ref": "#/definitions/SchemaBooleanField/properties/delimiter"
+        },
+        "displayName": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/displayName"
         },
         "isArray": {
           "$ref": "#/definitions/SchemaBooleanField/properties/isArray"
@@ -824,11 +825,11 @@
         "name": {
           "$ref": "#/definitions/Name"
         },
-        "displayName": {
-          "type": "string"
-        },
         "description": {
           "type": "string"
+        },
+        "displayName": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/displayName"
         },
         "fields": {
           "type": "array",
@@ -921,6 +922,9 @@
         },
         "description": {
           "type": "string"
+        },
+        "displayName": {
+          "$ref": "#/definitions/SchemaBooleanField/properties/displayName"
         },
         "meta": {
           "$ref": "#/definitions/Meta"
