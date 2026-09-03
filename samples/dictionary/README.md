@@ -11,6 +11,7 @@ This directory contains sample Lectern dictionaries in JSON format. Each file is
 | `dictionary-wide-conditional.json` | `dictionary-wide-conditional` | One schema with 28 fields and `id` in a `uniqueKey`. Four fields carry conditional restrictions (`if/then/else`), including one nested conditional. Used for conditional restriction performance testing. |
 | `dictionary-multi-relationship.json` | `dictionary-multi-relationship` | Seven schemas illustrating different foreign key relationship patterns: a simple parent-child pair, an isolated network, a three-level chain, a schema with foreign keys to two different parents, and a multi-field foreign key. Not a realistic production dictionary - the schemas and fields exist solely to demonstrate relationship structures. |
 | `dictionary-cancer-genomics.json` | `dictionary-cancer-genomics` | Representative cancer genomics model with seven schemas (`donor`, `primary_diagnosis`, `specimen`, `treatment`, `follow_up`, `exposure`, `comorbidity`). Includes codeLists, regex restrictions, range restrictions, and conditional restrictions. Uses dictionary `references` to define shared values. |
+| `dictionary-cancer-genomics-resolved.json` | `dictionary-cancer-genomics` | Same as above with all reference tags replaced by their resolved values. Produced by running `replaceReferences` on the source dictionary. |
 
 ## Technical Notes
 

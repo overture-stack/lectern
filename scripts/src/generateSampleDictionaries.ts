@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import { replaceReferences } from '@overture-stack/lectern-dictionary';
+import { assertValidDictionary } from './sampleDictionaries/assertValidDictionary';
 import { dictionaryCancerGenomics } from './sampleDictionaries/dictionaryCancerGenomics';
 import { dictionaryMultiRelationship } from './sampleDictionaries/dictionaryMultiRelationship';
 import { dictionarySimple } from './sampleDictionaries/dictionarySimple';
@@ -16,13 +18,24 @@ const dictionaries = [
 	dictionaryCancerGenomics,
 ];
 
+const dictionariesWithResolvedVariant = [dictionaryCancerGenomics];
+
 console.log(`Writing sample dictionaries to '${OUTPUT_DIR}'...`);
 fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
 for (const dictionary of dictionaries) {
+	const originalJson = JSON.stringify(dictionary, null, 2);
+	assertValidDictionary(dictionary);
 	const outputPath = path.join(OUTPUT_DIR, `${dictionary.name}.json`);
-	fs.writeFileSync(outputPath, JSON.stringify(dictionary, null, 2));
+	fs.writeFileSync(outputPath, originalJson);
 	console.log(`  Wrote ${dictionary.name}.json`);
+}
+
+for (const dictionary of dictionariesWithResolvedVariant) {
+	const resolved = replaceReferences(dictionary);
+	const outputPath = path.join(OUTPUT_DIR, `${dictionary.name}-resolved.json`);
+	fs.writeFileSync(outputPath, JSON.stringify(resolved, null, 2));
+	console.log(`  Wrote ${dictionary.name}-resolved.json`);
 }
 
 console.log('Done.');
