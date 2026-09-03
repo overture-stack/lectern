@@ -1,15 +1,8 @@
-import { Schema, StringFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { Schema } from '@overture-stack/lectern-dictionary';
 import { assertSchema } from '../assertSchema';
 import { schemaDonor } from './schemaDonor';
 import { schemaPrimaryDiagnosis } from './schemaPrimaryDiagnosis';
 import { schemaTreatment } from './schemaTreatment';
-
-// TypeScript cannot narrow a reference tag string as StringFieldRestrictions within a restrictions array union.
-// These typed constants guide inference without requiring per-element type assertions.
-const tCategoriesRestriction: StringFieldRestrictions = { codeList: '#/enum/tCategories' };
-const nCategoriesRestriction: StringFieldRestrictions = { codeList: '#/enum/nCategories' };
-const mCategoriesRestriction: StringFieldRestrictions = { codeList: '#/enum/mCategories' };
-const stageGroupsRestriction: StringFieldRestrictions = { codeList: '#/enum/stageGroups' };
 
 export const schemaFollowUp = {
 	name: 'follow_up',
@@ -171,7 +164,7 @@ export const schemaFollowUp = {
 					'This field is required only if the selected recurrence_tumour_staging_system is any edition of the AJCC cancer staging system.',
 			},
 			restrictions: [
-				tCategoriesRestriction,
+				{ codeList: '#/enum/tCategories' },
 				{
 					if: {
 						conditions: [{ fields: ['recurrence_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
@@ -191,7 +184,7 @@ export const schemaFollowUp = {
 					'This field is required only if the selected recurrence_tumour_staging_system is any edition of the AJCC cancer staging system.',
 			},
 			restrictions: [
-				nCategoriesRestriction,
+				{ codeList: '#/enum/nCategories' },
 				{
 					if: {
 						conditions: [{ fields: ['recurrence_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
@@ -211,7 +204,7 @@ export const schemaFollowUp = {
 					'This field is required only if the selected recurrence_tumour_staging_system is any edition of the AJCC cancer staging system.',
 			},
 			restrictions: [
-				mCategoriesRestriction,
+				{ codeList: '#/enum/mCategories' },
 				{
 					if: {
 						conditions: [{ fields: ['recurrence_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
@@ -227,7 +220,7 @@ export const schemaFollowUp = {
 			displayName: 'Recurrence Stage Group',
 			description: 'Overall stage group assigned by the recurrence staging system.',
 			restrictions: [
-				stageGroupsRestriction,
+				{ codeList: '#/enum/stageGroups' },
 				{
 					if: {
 						conditions: [{ fields: ['recurrence_tumour_staging_system'], match: { exists: true } }],
@@ -256,7 +249,7 @@ export const schemaFollowUp = {
 					'This field is required only if the selected posttherapy_tumour_staging_system is any edition of the AJCC cancer staging system.',
 			},
 			restrictions: [
-				tCategoriesRestriction,
+				{ codeList: '#/enum/tCategories' },
 				{
 					if: {
 						conditions: [{ fields: ['posttherapy_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
@@ -276,7 +269,7 @@ export const schemaFollowUp = {
 					'This field is required only if the selected posttherapy_tumour_staging_system is any edition of the AJCC cancer staging system.',
 			},
 			restrictions: [
-				nCategoriesRestriction,
+				{ codeList: '#/enum/nCategories' },
 				{
 					if: {
 						conditions: [{ fields: ['posttherapy_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
@@ -296,7 +289,7 @@ export const schemaFollowUp = {
 					'This field is required only if the selected posttherapy_tumour_staging_system is any edition of the AJCC cancer staging system.',
 			},
 			restrictions: [
-				mCategoriesRestriction,
+				{ codeList: '#/enum/mCategories' },
 				{
 					if: {
 						conditions: [{ fields: ['posttherapy_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
@@ -312,7 +305,7 @@ export const schemaFollowUp = {
 			displayName: 'Post-therapy Stage Group',
 			description: 'Overall stage group assigned by the post-therapy staging system.',
 			restrictions: [
-				stageGroupsRestriction,
+				{ codeList: '#/enum/stageGroups' },
 				{
 					if: {
 						conditions: [{ fields: ['posttherapy_tumour_staging_system'], match: { exists: true } }],

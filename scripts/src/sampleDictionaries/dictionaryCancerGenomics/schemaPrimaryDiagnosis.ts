@@ -1,13 +1,6 @@
-import { Schema, StringFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { Schema } from '@overture-stack/lectern-dictionary';
 import { assertSchema } from '../assertSchema';
 import { schemaDonor } from './schemaDonor';
-
-// TypeScript cannot narrow a reference tag string as StringFieldRestrictions within a restrictions array union.
-// These typed constants guide inference without requiring per-element type assertions.
-const tCategoriesRestriction: StringFieldRestrictions = { codeList: '#/enum/tCategories' };
-const nCategoriesRestriction: StringFieldRestrictions = { codeList: '#/enum/nCategories' };
-const mCategoriesRestriction: StringFieldRestrictions = { codeList: '#/enum/mCategories' };
-const stageGroupsRestriction: StringFieldRestrictions = { codeList: '#/enum/stageGroups' };
 
 export const schemaPrimaryDiagnosis = {
 	name: 'primary_diagnosis',
@@ -167,7 +160,7 @@ export const schemaPrimaryDiagnosis = {
 					'This field is required only if the selected clinical_tumour_staging_system is any edition of the AJCC cancer staging system.',
 			},
 			restrictions: [
-				tCategoriesRestriction,
+				{ codeList: '#/enum/tCategories' },
 				{
 					if: {
 						conditions: [{ fields: ['clinical_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
@@ -188,7 +181,7 @@ export const schemaPrimaryDiagnosis = {
 					'This field is required only if the selected clinical_tumour_staging_system is any edition of the AJCC cancer staging system.',
 			},
 			restrictions: [
-				nCategoriesRestriction,
+				{ codeList: '#/enum/nCategories' },
 				{
 					if: {
 						conditions: [{ fields: ['clinical_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
@@ -209,7 +202,7 @@ export const schemaPrimaryDiagnosis = {
 					'This field is required only if the selected clinical_tumour_staging_system is any edition of the AJCC cancer staging system.',
 			},
 			restrictions: [
-				mCategoriesRestriction,
+				{ codeList: '#/enum/mCategories' },
 				{
 					if: {
 						conditions: [{ fields: ['clinical_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
@@ -226,7 +219,7 @@ export const schemaPrimaryDiagnosis = {
 			description: 'Overall clinical stage group assigned by the selected tumour staging system.',
 			meta: { examples: 'Stage I, Stage IIB' },
 			restrictions: [
-				stageGroupsRestriction,
+				{ codeList: '#/enum/stageGroups' },
 				{
 					if: {
 						conditions: [{ fields: ['clinical_tumour_staging_system'], match: { exists: true } }],

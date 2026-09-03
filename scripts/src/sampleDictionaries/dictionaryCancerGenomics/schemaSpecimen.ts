@@ -1,15 +1,7 @@
-import { Schema, StringFieldRestrictions } from '@overture-stack/lectern-dictionary';
+import { Schema } from '@overture-stack/lectern-dictionary';
 import { assertSchema } from '../assertSchema';
 import { schemaDonor } from './schemaDonor';
 import { schemaPrimaryDiagnosis } from './schemaPrimaryDiagnosis';
-
-
-// TypeScript cannot narrow a reference tag string as StringFieldRestrictions within a restrictions array union.
-// These typed constants guide inference without requiring per-element type assertions.
-const tCategoriesRestriction: StringFieldRestrictions = { codeList: '#/enum/tCategories' };
-const nCategoriesRestriction: StringFieldRestrictions = { codeList: '#/enum/nCategories' };
-const mCategoriesRestriction: StringFieldRestrictions = { codeList: '#/enum/mCategories' };
-const stageGroupsRestriction: StringFieldRestrictions = { codeList: '#/enum/stageGroups' };
 
 export const schemaSpecimen = {
 	name: 'specimen',
@@ -234,7 +226,7 @@ export const schemaSpecimen = {
 					'This field is required only if the selected pathological_tumour_staging_system is any edition of the AJCC cancer staging system.',
 			},
 			restrictions: [
-				tCategoriesRestriction,
+				{ codeList: '#/enum/tCategories' },
 				{
 					if: {
 						conditions: [{ fields: ['pathological_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
@@ -254,7 +246,7 @@ export const schemaSpecimen = {
 					'This field is required only if the selected pathological_tumour_staging_system is any edition of the AJCC cancer staging system.',
 			},
 			restrictions: [
-				nCategoriesRestriction,
+				{ codeList: '#/enum/nCategories' },
 				{
 					if: {
 						conditions: [{ fields: ['pathological_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
@@ -274,7 +266,7 @@ export const schemaSpecimen = {
 					'This field is required only if the selected pathological_tumour_staging_system is any edition of the AJCC cancer staging system.',
 			},
 			restrictions: [
-				mCategoriesRestriction,
+				{ codeList: '#/enum/mCategories' },
 				{
 					if: {
 						conditions: [{ fields: ['pathological_tumour_staging_system'], match: { codeList: ['#/enum/ajccEditions'] } }],
@@ -291,7 +283,7 @@ export const schemaSpecimen = {
 			description:
 				'Overall pathological stage group assigned by the selected tumour staging system at specimen resection.',
 			restrictions: [
-				stageGroupsRestriction,
+				{ codeList: '#/enum/stageGroups' },
 				{
 					if: {
 						conditions: [{ fields: ['pathological_tumour_staging_system'], match: { exists: true } }],
