@@ -3,7 +3,9 @@
 	"private": true,
 	"description": "Scripts for managing the Lectern monorepo.",
 	"scripts": {
-		"generate": "node -r ts-node/register ./src/generateMetaSchema.ts"
+		"generate": "pnpm run generate:meta && pnpm run generate:samples",
+		"generate:meta": "node -r ts-node/register ./src/generateMetaSchema.ts",
+		"generate:samples": "node -r ts-node/register ./src/generateSampleDictionaries.ts"
 	},
 	"keywords": [],
 	"license": "AGPL-3.0",

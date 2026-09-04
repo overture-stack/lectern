@@ -1,0 +1,2948 @@
+{
+  "name": "dictionary-cancer-genomics",
+  "version": "1.0",
+  "displayName": "Cancer Genomics",
+  "description": "A data dictionary for tracking participant data for a cancer research program.",
+  "references": {
+    "regex": {
+      "submitterId": "^[A-Za-z0-9\\-\\._]{1,64}$"
+    },
+    "enum": {
+      "ajccEditions": [
+        "AJCC 8th edition",
+        "AJCC 7th edition",
+        "AJCC 6th edition",
+        "AJCC 5th edition",
+        "AJCC 4th edition",
+        "AJCC 3rd edition",
+        "AJCC 2nd edition",
+        "AJCC 1st edition"
+      ],
+      "tumorStagingSystem": [
+        "#/enum/ajccEditions",
+        "Ann Arbor staging system",
+        "Binet staging system",
+        "Durie-Salmon staging system",
+        "FIGO staging system",
+        "International Neuroblastoma Risk Group Staging System",
+        "International Neuroblastoma Staging System",
+        "Lugano staging system",
+        "Rai staging system",
+        "Revised International staging system (R-ISS)",
+        "SEER staging system",
+        "St Jude staging system",
+        "Unknown"
+      ],
+      "tCategories": [
+        "T0",
+        "T1",
+        "T1a",
+        "T1a1",
+        "T1a2",
+        "T1a(s)",
+        "T1a(m)",
+        "T1b",
+        "T1b1",
+        "T1b2",
+        "T1b(s)",
+        "T1b(m)",
+        "T1c",
+        "T1d",
+        "T1mi",
+        "T2",
+        "T2(s)",
+        "T2(m)",
+        "T2a",
+        "T2a1",
+        "T2a2",
+        "T2b",
+        "T2c",
+        "T2d",
+        "T3",
+        "T3(s)",
+        "T3(m)",
+        "T3a",
+        "T3b",
+        "T3c",
+        "T3d",
+        "T3e",
+        "T4",
+        "T4a",
+        "T4a(s)",
+        "T4a(m)",
+        "T4b",
+        "T4b(s)",
+        "T4b(m)",
+        "T4c",
+        "T4d",
+        "T4e",
+        "Ta",
+        "Tis",
+        "Tis(DCIS)",
+        "Tis(LAMN)",
+        "Tis(LCIS)",
+        "Tis(Paget)",
+        "Tis(Paget's)",
+        "Tis pd",
+        "Tis pu",
+        "TX"
+      ],
+      "nCategories": [
+        "N0",
+        "N0a",
+        "N0a (biopsy)",
+        "N0b",
+        "N0b (no biopsy)",
+        "N0(i+)",
+        "N0(i-)",
+        "N0(mol+)",
+        "N0(mol-)",
+        "N1",
+        "N1a",
+        "N1a(sn)",
+        "N1b",
+        "N1c",
+        "N1mi",
+        "N2",
+        "N2a",
+        "N2b",
+        "N2c",
+        "N2mi",
+        "N3",
+        "N3a",
+        "N3b",
+        "N3c",
+        "N4",
+        "NX"
+      ],
+      "mCategories": [
+        "M0",
+        "M0(i+)",
+        "M1",
+        "M1a",
+        "M1a(0)",
+        "M1a(1)",
+        "M1b",
+        "M1b(0)",
+        "M1b(1)",
+        "M1c",
+        "M1c(0)",
+        "M1c(1)",
+        "M1d",
+        "M1d(0)",
+        "M1d(1)",
+        "M1e",
+        "MX",
+        "Not applicable"
+      ],
+      "stageGroups": [
+        "Occult Carcinoma",
+        "Stage 0",
+        "Stage 0a",
+        "Stage 0is",
+        "Stage 1",
+        "Stage 1A",
+        "Stage 1B",
+        "Stage A",
+        "Stage B",
+        "Stage C",
+        "Stage I",
+        "Stage IA",
+        "Stage IA1",
+        "Stage IA2",
+        "Stage IA3",
+        "Stage IAB",
+        "Stage IAE",
+        "Stage IAES",
+        "Stage IAS",
+        "Stage IB",
+        "Stage IB1",
+        "Stage IB2",
+        "Stage IBE",
+        "Stage IBES",
+        "Stage IBS",
+        "Stage IC",
+        "Stage IE",
+        "Stage IEA",
+        "Stage IEB",
+        "Stage IES",
+        "Stage II",
+        "Stage II bulky",
+        "Stage IIA",
+        "Stage IIA1",
+        "Stage IIA2",
+        "Stage IIAE",
+        "Stage IIAES",
+        "Stage IIAS",
+        "Stage IIB",
+        "Stage IIBE",
+        "Stage IIBES",
+        "Stage IIBS",
+        "Stage IIC",
+        "Stage IIE",
+        "Stage IIEA",
+        "Stage IIEB",
+        "Stage IIES",
+        "Stage III",
+        "Stage IIIA",
+        "Stage IIIA1",
+        "Stage IIIA2",
+        "Stage IIIAE",
+        "Stage IIIAES",
+        "Stage IIIAS",
+        "Stage IIIB",
+        "Stage IIIBE",
+        "Stage IIIBES",
+        "Stage IIIBS",
+        "Stage IIIC",
+        "Stage IIIC1",
+        "Stage IIIC2",
+        "Stage IIID",
+        "Stage IIIE",
+        "Stage IIIES",
+        "Stage IIIS",
+        "Stage IIS",
+        "Stage IS",
+        "Stage IV",
+        "Stage IVA",
+        "Stage IVA1",
+        "Stage IVA2",
+        "Stage IVAE",
+        "Stage IVAES",
+        "Stage IVAS",
+        "Stage IVB",
+        "Stage IVBE",
+        "Stage IVBES",
+        "Stage IVBS",
+        "Stage IVC",
+        "Stage IVE",
+        "Stage IVES",
+        "Stage IVS",
+        "Cannot be assessed"
+      ],
+      "geneticDisorders": [
+        "Alpha-1-antitrypsin Deficiency",
+        "Ataxia Telangiectasia Syndrome",
+        "BAP1-related Tumor Predisposition Syndrome",
+        "Beckwith-Wiedemann Syndrome",
+        "Birt-Hogg-Dub Syndrome",
+        "Bloom Syndrome",
+        "Carney Complex",
+        "Cowden Syndrome",
+        "Familial Adenomatous Polyposis Syndrome (FAP)",
+        "Familial Atypical Multiple Mole Melanoma Syndrome (FAMMM)",
+        "Familial Gastrointestinal Stromal Tumor",
+        "Fanconi Anemia",
+        "Gardner Syndrome",
+        "Glycogen Storage Disease",
+        "Gorlin Syndrome",
+        "Hereditary Breast and Ovarian Cancer Syndrome (HBOC)",
+        "Hereditary Diffuse Gastric Cancer",
+        "Hereditary Leiomyomatosis and Renal Cell Cancer (HLRCC)",
+        "Hereditary Pancreatitis",
+        "Hereditary Papillary Renal Cell Carcinoma",
+        "Hereditary Retinoblastoma",
+        "Juvenile Polyposis Syndrome",
+        "Li-Fraumeni Syndrome",
+        "Lynch Syndrome",
+        "Muir-Torre Syndrome",
+        "Multiple Endocrine Neoplasia Type 1 (MEN1)",
+        "Multiple Endocrine Neoplasia type 2 (MEN2)",
+        "MUTYH Polyposis Syndrome",
+        "Neurofibromatosis Type 1",
+        "Neurofibromatosis Type 2",
+        "None",
+        "Not applicable",
+        "Peutz-Jeghers Syndrome",
+        "PTEN hamartoma Tumor Syndrome",
+        "Rubinstein-Taybi Syndrome",
+        "Serrated Polyposis Syndrome",
+        "Sjogren Syndrome",
+        "Tuberous Sclerosis Complex",
+        "Turcot Syndrome",
+        "Tyrosinemia Type 1",
+        "Unknown",
+        "von Hippel-Lindau Syndrome",
+        "Werner Syndrome",
+        "Wiskott-Aldrich Syndrome",
+        "Xeroderma Pigmentosum"
+      ],
+      "exposureFrequency": [
+        "Never",
+        "Less than once a month",
+        "1-3 times a month",
+        "Not applicable",
+        "Once or twice a week",
+        "Most days but not every day",
+        "Every day",
+        "Unknown"
+      ],
+      "exposureUsage": [
+        "Never",
+        "Not applicable",
+        "Unknown",
+        "Yes, currently",
+        "Yes, only in the past"
+      ],
+      "yesNoUnknown": [
+        "Yes",
+        "No",
+        "Unknown"
+      ],
+      "yesNoNotApplicableUnknown": [
+        "Yes",
+        "No",
+        "Not applicable",
+        "Unknown"
+      ]
+    }
+  },
+  "schemas": [
+    {
+      "name": "donor",
+      "description": "Core donor demographics and vital status.",
+      "fields": [
+        {
+          "name": "program_id",
+          "valueType": "string",
+          "displayName": "Program ID",
+          "description": "Unique identifier of the program this donor belongs to.",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_donor_id",
+          "valueType": "string",
+          "displayName": "Submitter Donor ID",
+          "description": "Unique identifier for the donor within this program.",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "vital_status",
+          "valueType": "string",
+          "displayName": "Vital Status",
+          "description": "Donor's last known state of living or deceased.",
+          "restrictions": {
+            "required": true,
+            "codeList": [
+              "Alive",
+              "Deceased"
+            ]
+          }
+        },
+        {
+          "name": "cause_of_death",
+          "valueType": "string",
+          "displayName": "Cause of Death",
+          "description": "Cause of a donor death.",
+          "restrictions": [
+            {
+              "codeList": [
+                "Died of cancer",
+                "Died of other reasons",
+                "Unknown"
+              ]
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "vital_status"
+                    ],
+                    "match": {
+                      "value": "Deceased"
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "survival_time",
+          "valueType": "integer",
+          "displayName": "Survival Time",
+          "description": "Interval in days from primary diagnosis to death or last follow-up.",
+          "meta": {
+            "units": "days"
+          },
+          "restrictions": [
+            {
+              "range": {
+                "exclusiveMin": 0
+              }
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "vital_status"
+                    ],
+                    "match": {
+                      "value": "Deceased"
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "primary_site",
+          "valueType": "string",
+          "displayName": "Primary Site",
+          "isArray": true,
+          "description": "Organ or tissue where cancer is first diagnosed, per WHO ICD-O classification.",
+          "restrictions": {
+            "required": true,
+            "codeList": [
+              "Accessory sinuses",
+              "Adrenal gland",
+              "Anus and anal canal",
+              "Base of tongue",
+              "Bladder",
+              "Bones, joints and articular cartilage of limbs",
+              "Bones, joints and articular cartilage of other and unspecified sites",
+              "Brain",
+              "Breast",
+              "Bronchus and lung",
+              "Cervix uteri",
+              "Colon",
+              "Connective, subcutaneous and other soft tissues",
+              "Corpus uteri",
+              "Esophagus",
+              "Eye and adnexa",
+              "Floor of mouth",
+              "Gallbladder",
+              "Gum",
+              "Heart, mediastinum, and pleura",
+              "Hematopoietic and reticuloendothelial systems",
+              "Hypopharynx",
+              "Kidney",
+              "Larynx",
+              "Lip",
+              "Liver and intrahepatic bile ducts",
+              "Lymph nodes",
+              "Meninges",
+              "Nasal cavity and middle ear",
+              "Nasopharynx",
+              "Oropharynx",
+              "Other and ill-defined digestive organs",
+              "Other and ill-defined sites",
+              "Other and ill-defined sites in lip, oral cavity and pharynx",
+              "Other and ill-defined sites within respiratory system and intrathoracic organs",
+              "Other and unspecified female genital organs",
+              "Other and unspecified major salivary glands",
+              "Other and unspecified male genital organs",
+              "Other and unspecified parts of biliary tract",
+              "Other and unspecified parts of mouth",
+              "Other and unspecified parts of tongue",
+              "Other and unspecified urinary organs",
+              "Other endocrine glands and related structures",
+              "Ovary",
+              "Palate",
+              "Pancreas",
+              "Parotid gland",
+              "Penis",
+              "Peripheral nerves and autonomic nervous system",
+              "Placenta",
+              "Prostate gland",
+              "Pyriform sinus",
+              "Rectosigmoid junction",
+              "Rectum",
+              "Renal pelvis",
+              "Retroperitoneum and peritoneum",
+              "Skin",
+              "Small intestine",
+              "Spinal cord, cranial nerves, and other parts of central nervous system",
+              "Stomach",
+              "Testis",
+              "Thymus",
+              "Thyroid gland",
+              "Tonsil",
+              "Trachea",
+              "Unknown primary site",
+              "Ureter",
+              "Uterus, NOS",
+              "Vagina",
+              "Vulva"
+            ]
+          }
+        },
+        {
+          "name": "height",
+          "valueType": "number",
+          "displayName": "Height",
+          "description": "Donor height in centimeters.",
+          "meta": {
+            "units": "cm"
+          },
+          "restrictions": {
+            "range": {
+              "exclusiveMin": 0
+            }
+          }
+        },
+        {
+          "name": "weight",
+          "valueType": "number",
+          "displayName": "Weight",
+          "description": "Donor weight in kilograms.",
+          "meta": {
+            "units": "kg"
+          },
+          "restrictions": {
+            "range": {
+              "exclusiveMin": 0
+            }
+          }
+        },
+        {
+          "name": "bmi",
+          "valueType": "number",
+          "displayName": "BMI",
+          "description": "Body mass index in kg/m².",
+          "restrictions": {
+            "range": {
+              "exclusiveMin": 0
+            }
+          }
+        },
+        {
+          "name": "genetic_disorders",
+          "valueType": "string",
+          "displayName": "Genetic Disorders",
+          "isArray": true,
+          "description": "Hereditary genetic disorders present in the donor.",
+          "restrictions": {
+            "codeList": "#/enum/geneticDisorders"
+          }
+        },
+        {
+          "name": "menopause_status",
+          "valueType": "string",
+          "displayName": "Menopause Status",
+          "description": "Menopausal status at time of primary diagnosis.",
+          "restrictions": {
+            "codeList": [
+              "Not applicable",
+              "Perimenopausal",
+              "Postmenopausal",
+              "Premenopausal",
+              "Unknown"
+            ]
+          }
+        },
+        {
+          "name": "age_at_menarche",
+          "valueType": "integer",
+          "displayName": "Age at Menarche",
+          "description": "Age in years at which the donor first experienced menstruation.",
+          "meta": {
+            "units": "years"
+          },
+          "restrictions": {
+            "range": {
+              "exclusiveMin": 0
+            }
+          }
+        },
+        {
+          "name": "number_of_pregnancies",
+          "valueType": "integer",
+          "displayName": "Number of Pregnancies",
+          "description": "Total number of pregnancy events experienced by the donor.",
+          "restrictions": {
+            "range": {
+              "min": 0
+            }
+          }
+        },
+        {
+          "name": "number_of_children",
+          "valueType": "integer",
+          "displayName": "Number of Children",
+          "description": "Number of children the donor has birthed.",
+          "restrictions": {
+            "range": {
+              "min": 0
+            }
+          }
+        },
+        {
+          "name": "hrt_type",
+          "valueType": "string",
+          "displayName": "Hormone Replacement Therapy Type",
+          "description": "Type of hormone replacement therapy (HRT) the donor has taken or is currently taking.",
+          "restrictions": {
+            "codeList": [
+              "Combination HRT",
+              "Estrogen-only HRT",
+              "Injectable",
+              "Never taken HRT",
+              "Not applicable",
+              "Other",
+              "Patch",
+              "Pill",
+              "Unknown"
+            ]
+          }
+        },
+        {
+          "name": "hrt_duration",
+          "valueType": "integer",
+          "displayName": "Hormone Replacement Therapy Duration",
+          "description": "Duration in months the donor has been taking hormone replacement therapy.",
+          "meta": {
+            "units": "months"
+          },
+          "restrictions": {
+            "range": {
+              "exclusiveMin": 0
+            }
+          }
+        },
+        {
+          "name": "contraception_type",
+          "valueType": "string",
+          "displayName": "Contraception Type",
+          "description": "Type of hormonal contraception the donor has taken or is currently taking.",
+          "restrictions": {
+            "codeList": [
+              "Combination pill",
+              "Contraceptive implant",
+              "Contraceptive patch",
+              "Injectable",
+              "Intrauterine device",
+              "Never used hormonal contraception",
+              "Not applicable",
+              "Oral contraceptive pill",
+              "Other",
+              "Progestin-only pill",
+              "Unknown",
+              "Vaginal ring"
+            ]
+          }
+        },
+        {
+          "name": "contraception_duration",
+          "valueType": "integer",
+          "displayName": "Hormonal Contraception Duration",
+          "description": "Duration in months the donor has used hormonal contraception.",
+          "meta": {
+            "units": "months"
+          },
+          "restrictions": {
+            "range": {
+              "exclusiveMin": 0
+            }
+          }
+        },
+        {
+          "name": "lost_to_followup_after_clinical_event_id",
+          "valueType": "string",
+          "displayName": "Lost To Follow Up After Clinical Event",
+          "description": "Identifier of the clinical event after which the donor became lost to follow-up."
+        },
+        {
+          "name": "country_of_residence_at_enrollment",
+          "valueType": "string",
+          "displayName": "Country of Residence at Enrollment",
+          "description": "Donor's country of residence at the time of study enrollment."
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "program_id",
+          "submitter_donor_id"
+        ]
+      }
+    },
+    {
+      "name": "primary_diagnosis",
+      "description": "Cancer diagnosis details and clinical TNM staging.",
+      "fields": [
+        {
+          "name": "program_id",
+          "valueType": "string",
+          "displayName": "Program ID",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_donor_id",
+          "valueType": "string",
+          "displayName": "Submitter Donor ID",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_primary_diagnosis_id",
+          "valueType": "string",
+          "displayName": "Submitter Primary Diagnosis ID",
+          "description": "Unique identifier for this diagnosis within the program.",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "age_at_diagnosis",
+          "valueType": "integer",
+          "displayName": "Age at Diagnosis",
+          "description": "Age of the donor at the time of primary diagnosis (years).",
+          "meta": {
+            "units": "years"
+          },
+          "restrictions": {
+            "required": true,
+            "range": {
+              "exclusiveMin": 0,
+              "max": 90
+            }
+          }
+        },
+        {
+          "name": "cancer_type_code",
+          "valueType": "string",
+          "displayName": "Cancer Type Code",
+          "description": "ICD-10 code for the cancer type.",
+          "meta": {
+            "examples": "C41.1,C16.9,C00.5,D46.9"
+          },
+          "restrictions": {
+            "required": true,
+            "regex": "^[CD][0-9]{2}(\\.[0-9]{1,3}[A-Z]?)?$"
+          }
+        },
+        {
+          "name": "cancer_type_additional_information",
+          "valueType": "string",
+          "displayName": "Cancer Type Additional Information",
+          "description": "Additional details about the cancer type not captured by the ICD-10 code."
+        },
+        {
+          "name": "basis_of_diagnosis",
+          "valueType": "string",
+          "displayName": "Basis of Diagnosis",
+          "restrictions": {
+            "codeList": [
+              "Autopsy",
+              "Clinical",
+              "Clinical investigation",
+              "Cytology",
+              "Death certificate only",
+              "Histology of a metastasis",
+              "Histology of a primary tumour",
+              "Specific tumour markers",
+              "Unknown"
+            ]
+          }
+        },
+        {
+          "name": "laterality",
+          "valueType": "string",
+          "displayName": "Laterality",
+          "restrictions": {
+            "codeList": [
+              "Bilateral",
+              "Left",
+              "Midline",
+              "Not a paired site",
+              "Right",
+              "Unilateral, side not specified",
+              "Unknown"
+            ]
+          }
+        },
+        {
+          "name": "lymph_nodes_examined_status",
+          "valueType": "string",
+          "displayName": "Lymph Nodes Examined Status",
+          "restrictions": {
+            "required": true,
+            "codeList": [
+              "Cannot be determined",
+              "No",
+              "No lymph nodes found in resected specimen",
+              "Not applicable",
+              "Yes"
+            ]
+          }
+        },
+        {
+          "name": "lymph_nodes_examined_method",
+          "valueType": "string",
+          "displayName": "Method Used to Examine Lymph Nodes",
+          "restrictions": [
+            {
+              "codeList": [
+                "Imaging",
+                "Lymph node dissection/pathological exam",
+                "Physical palpation of patient"
+              ]
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "lymph_nodes_examined_status"
+                    ],
+                    "match": {
+                      "value": "Yes"
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "number_lymph_nodes_examined",
+          "valueType": "integer",
+          "displayName": "Number Of Lymph Nodes Examined",
+          "description": "Total number of lymph nodes tested for the presence of cancer.",
+          "restrictions": [
+            {
+              "range": {
+                "min": 0
+              }
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "lymph_nodes_examined_status"
+                    ],
+                    "match": {
+                      "value": "Yes"
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "number_lymph_nodes_positive",
+          "valueType": "integer",
+          "displayName": "Number Of Lymph Nodes Positive",
+          "description": "Number of regional lymph nodes positive for tumour metastases.",
+          "restrictions": [
+            {
+              "range": {
+                "min": 0
+              }
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "lymph_nodes_examined_status"
+                    ],
+                    "match": {
+                      "value": "Yes"
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "clinical_tumour_staging_system",
+          "valueType": "string",
+          "displayName": "Clinical Tumour Staging System",
+          "description": "Tumour staging system used to stage the cancer at the time of primary diagnosis, prior to treatment.",
+          "restrictions": {
+            "codeList": "#/enum/tumorStagingSystem"
+          }
+        },
+        {
+          "name": "clinical_t_category",
+          "valueType": "string",
+          "displayName": "Clinical T Category",
+          "description": "Extent of the primary tumour (T) based on clinical assessment at time of primary diagnosis and prior to treatment.",
+          "meta": {
+            "notes": "This field is required only if the selected clinical_tumour_staging_system is any edition of the AJCC cancer staging system."
+          },
+          "restrictions": [
+            {
+              "codeList": "#/enum/tCategories"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "clinical_tumour_staging_system"
+                    ],
+                    "match": {
+                      "codeList": [
+                        "#/enum/ajccEditions"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "clinical_n_category",
+          "valueType": "string",
+          "displayName": "Clinical N Category",
+          "description": "Regional lymph node involvement (N) based on clinical assessment at time of primary diagnosis and prior to treatment.",
+          "meta": {
+            "notes": "This field is required only if the selected clinical_tumour_staging_system is any edition of the AJCC cancer staging system."
+          },
+          "restrictions": [
+            {
+              "codeList": "#/enum/nCategories"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "clinical_tumour_staging_system"
+                    ],
+                    "match": {
+                      "codeList": [
+                        "#/enum/ajccEditions"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "clinical_m_category",
+          "valueType": "string",
+          "displayName": "Clinical M Category",
+          "description": "Extent of distant metastasis (M) based on clinical assessment at time of primary diagnosis and prior to treatment.",
+          "meta": {
+            "notes": "This field is required only if the selected clinical_tumour_staging_system is any edition of the AJCC cancer staging system."
+          },
+          "restrictions": [
+            {
+              "codeList": "#/enum/mCategories"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "clinical_tumour_staging_system"
+                    ],
+                    "match": {
+                      "codeList": [
+                        "#/enum/ajccEditions"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "clinical_stage_group",
+          "valueType": "string",
+          "displayName": "Clinical Stage Group",
+          "description": "Overall clinical stage group assigned by the selected tumour staging system.",
+          "meta": {
+            "examples": "Stage I, Stage IIB"
+          },
+          "restrictions": [
+            {
+              "codeList": "#/enum/stageGroups"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "clinical_tumour_staging_system"
+                    ],
+                    "match": {
+                      "exists": true
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "presenting_symptoms",
+          "valueType": "string",
+          "displayName": "Presenting Symptoms",
+          "isArray": true,
+          "restrictions": {
+            "codeList": [
+              "Abdominal Pain",
+              "Anemia",
+              "Back Pain",
+              "Bloating",
+              "Cholangitis",
+              "Constipation",
+              "Dark Urine",
+              "Decreased Appetite",
+              "Diabetes",
+              "Diarrhea",
+              "Fatigue",
+              "Fever",
+              "Hypoglycemia",
+              "Jaundice",
+              "Loss of Appetite",
+              "Nausea",
+              "None",
+              "Not Reported",
+              "Pale Stools",
+              "Pancreatitis",
+              "Pruritus/Itchiness",
+              "Steatorrhea",
+              "Swelling in the Neck",
+              "Unknown",
+              "Vomiting",
+              "Weight Loss"
+            ]
+          }
+        },
+        {
+          "name": "performance_status",
+          "valueType": "string",
+          "displayName": "Performance Status",
+          "description": "Donor's ECOG performance status grade at the time of primary diagnosis.",
+          "restrictions": {
+            "codeList": [
+              "Grade 0",
+              "Grade 1",
+              "Grade 2",
+              "Grade 3",
+              "Grade 4",
+              "Unknown"
+            ]
+          }
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "program_id",
+          "submitter_donor_id",
+          "submitter_primary_diagnosis_id"
+        ],
+        "foreignKey": [
+          {
+            "schema": "donor",
+            "mappings": [
+              {
+                "local": "program_id",
+                "foreign": "program_id"
+              },
+              {
+                "local": "submitter_donor_id",
+                "foreign": "submitter_donor_id"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "specimen",
+      "description": "Biospecimen details and pathological staging.",
+      "fields": [
+        {
+          "name": "program_id",
+          "valueType": "string",
+          "displayName": "Program ID",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_donor_id",
+          "valueType": "string",
+          "displayName": "Submitter Donor ID",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_specimen_id",
+          "valueType": "string",
+          "displayName": "Submitter Specimen ID",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_primary_diagnosis_id",
+          "valueType": "string",
+          "displayName": "Submitter Primary Diagnosis ID",
+          "description": "The primary diagnosis event this specimen acquisition is related to.",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "tumour_normal_designation",
+          "valueType": "string",
+          "displayName": "Tumour Normal Designation",
+          "restrictions": {
+            "required": true,
+            "codeList": [
+              "Normal",
+              "Tumour"
+            ]
+          }
+        },
+        {
+          "name": "specimen_type",
+          "valueType": "string",
+          "displayName": "Specimen Type",
+          "restrictions": {
+            "required": true,
+            "codeList": [
+              "Cell line - derived from normal",
+              "Cell line - derived from tumour",
+              "Cell line - derived from xenograft tumour",
+              "Metastatic tumour - additional metastatic",
+              "Metastatic tumour - metastasis local to lymph node",
+              "Metastatic tumour - metastasis to distant location",
+              "Metastatic tumour",
+              "Normal - tissue adjacent to primary tumour",
+              "Primary tumour - additional new primary",
+              "Primary tumour - adjacent to normal",
+              "Primary tumour",
+              "Recurrent tumour",
+              "Solid tissue - normal",
+              "Xenograft - derived from primary tumour",
+              "Xenograft - derived from tumour cell line"
+            ]
+          }
+        },
+        {
+          "name": "specimen_tissue_source",
+          "valueType": "string",
+          "displayName": "Specimen Tissue Source",
+          "restrictions": {
+            "required": true,
+            "codeList": [
+              "Abdominal fluid",
+              "Amniotic fluid",
+              "Arterial blood",
+              "Bile",
+              "Blood venous",
+              "Bone",
+              "Bone marrow",
+              "Buccal cell",
+              "Buffy coat",
+              "Cerebrospinal fluid",
+              "Cervical swab",
+              "Cord blood",
+              "Endometrial curettings",
+              "Esophageal brush",
+              "Fibroblasts from cultured cells",
+              "Fine needle aspiration",
+              "Granulocytes",
+              "Ileal fluid",
+              "Kidney cells from normal tissue",
+              "Lymphocytes",
+              "Lymphoblastoid cell lines",
+              "Metastatic tumour tissue",
+              "Normal kidney tissue",
+              "Normal liver tissue",
+              "Not applicable",
+              "Pleural fluid",
+              "PBMC",
+              "Plasma",
+              "Rectal swab",
+              "Saliva",
+              "Serum",
+              "Skin",
+              "Sputum",
+              "Stool",
+              "Synovial fluid",
+              "Tumour tissue - metastatic",
+              "Tumour tissue - primary",
+              "Urine",
+              "Venous blood",
+              "Whole blood",
+              "Unknown"
+            ]
+          }
+        },
+        {
+          "name": "specimen_acquisition_interval",
+          "valueType": "integer",
+          "displayName": "Specimen Acquisition Interval",
+          "description": "Interval in days between primary diagnosis and specimen acquisition.",
+          "meta": {
+            "units": "days"
+          },
+          "restrictions": {
+            "required": true,
+            "range": {
+              "min": 0
+            }
+          }
+        },
+        {
+          "name": "specimen_anatomic_location",
+          "valueType": "string",
+          "displayName": "Specimen Anatomic Location",
+          "description": "ICD-O-3 topography code for the anatomic location of the specimen.",
+          "meta": {
+            "examples": "C50.1,C18"
+          },
+          "restrictions": {
+            "required": true,
+            "regex": "^C[0-9]{2}(\\.[0-9])?$"
+          }
+        },
+        {
+          "name": "tumour_histological_type",
+          "valueType": "string",
+          "displayName": "Tumour Histological Type",
+          "description": "ICD-O-3 morphology code for tumour histological type. Required for tumour specimens.",
+          "meta": {
+            "examples": "8260/3,9691/36"
+          },
+          "restrictions": {
+            "if": {
+              "conditions": [
+                {
+                  "fields": [
+                    "tumour_normal_designation"
+                  ],
+                  "match": {
+                    "value": "Tumour"
+                  }
+                }
+              ]
+            },
+            "then": {
+              "required": true
+            },
+            "else": {
+              "empty": true
+            }
+          }
+        },
+        {
+          "name": "specimen_laterality",
+          "valueType": "string",
+          "displayName": "Specimen Laterality",
+          "description": "For cancer in a paired organ, the side on which the specimen was obtained.",
+          "restrictions": {
+            "codeList": [
+              "Left",
+              "Not applicable",
+              "Right",
+              "Unknown"
+            ]
+          }
+        },
+        {
+          "name": "specimen_processing",
+          "valueType": "string",
+          "displayName": "Specimen Processing",
+          "description": "Technique used to process the specimen.",
+          "restrictions": {
+            "codeList": [
+              "Cryopreservation in liquid nitrogen (dead tissue)",
+              "Cryopreservation in dry ice (dead tissue)",
+              "Cryopreservation of live cells in liquid nitrogen",
+              "Cryopreservation - other",
+              "Formalin fixed & paraffin embedded",
+              "Formalin fixed - buffered",
+              "Formalin fixed - unbuffered",
+              "Fresh",
+              "Other",
+              "Unknown"
+            ]
+          }
+        },
+        {
+          "name": "specimen_storage",
+          "valueType": "string",
+          "displayName": "Specimen Storage",
+          "description": "Method of specimen storage for specimens not extracted freshly or immediately cultured.",
+          "restrictions": {
+            "codeList": [
+              "Cut slide",
+              "Frozen in -70 freezer",
+              "Frozen in liquid nitrogen",
+              "Frozen in vapour phase",
+              "Not Applicable",
+              "Other",
+              "Paraffin block",
+              "RNA later frozen",
+              "Unknown"
+            ]
+          }
+        },
+        {
+          "name": "reference_pathology_confirmed",
+          "valueType": "string",
+          "displayName": "Reference Pathology Confirmed",
+          "description": "Whether the pathological diagnosis was confirmed by a reference pathologist.",
+          "restrictions": {
+            "codeList": "#/enum/yesNoUnknown"
+          }
+        },
+        {
+          "name": "pathological_tumour_staging_system",
+          "valueType": "string",
+          "displayName": "Pathological Tumour Staging System",
+          "description": "Tumour staging system used to assess the cancer at the time the tumour specimen was resected.",
+          "restrictions": {
+            "codeList": "#/enum/tumorStagingSystem"
+          }
+        },
+        {
+          "name": "pathological_t_category",
+          "valueType": "string",
+          "displayName": "Pathological T Category",
+          "description": "Size or contiguous extension of the primary tumour (T), per the pathological staging system.",
+          "meta": {
+            "notes": "This field is required only if the selected pathological_tumour_staging_system is any edition of the AJCC cancer staging system."
+          },
+          "restrictions": [
+            {
+              "codeList": "#/enum/tCategories"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "pathological_tumour_staging_system"
+                    ],
+                    "match": {
+                      "codeList": [
+                        "#/enum/ajccEditions"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "pathological_n_category",
+          "valueType": "string",
+          "displayName": "Pathological N Category",
+          "description": "Regional lymph node involvement (N), per the pathological staging system.",
+          "meta": {
+            "notes": "This field is required only if the selected pathological_tumour_staging_system is any edition of the AJCC cancer staging system."
+          },
+          "restrictions": [
+            {
+              "codeList": "#/enum/nCategories"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "pathological_tumour_staging_system"
+                    ],
+                    "match": {
+                      "codeList": [
+                        "#/enum/ajccEditions"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "pathological_m_category",
+          "valueType": "string",
+          "displayName": "Pathological M Category",
+          "description": "Extent of distant metastasis (M), per the pathological staging system.",
+          "meta": {
+            "notes": "This field is required only if the selected pathological_tumour_staging_system is any edition of the AJCC cancer staging system."
+          },
+          "restrictions": [
+            {
+              "codeList": "#/enum/mCategories"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "pathological_tumour_staging_system"
+                    ],
+                    "match": {
+                      "codeList": [
+                        "#/enum/ajccEditions"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "pathological_stage_group",
+          "valueType": "string",
+          "displayName": "Pathological Stage Group",
+          "description": "Overall pathological stage group assigned by the selected tumour staging system at specimen resection.",
+          "restrictions": [
+            {
+              "codeList": "#/enum/stageGroups"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "pathological_tumour_staging_system"
+                    ],
+                    "match": {
+                      "exists": true
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "tumour_grading_system",
+          "valueType": "string",
+          "displayName": "Tumour Grading System",
+          "description": "Tumour grading system used to describe the tumour based on how abnormal the cells look under a microscope.",
+          "restrictions": {
+            "codeList": [
+              "FNCLCC grading system",
+              "Four-tier grading system",
+              "Gleason grade group system",
+              "Grading system for GISTs",
+              "Grading system for GNETs",
+              "ISUP grading system",
+              "Nuclear grading system for DCIS",
+              "Scarff-Bloom-Richardson grading system",
+              "Three-tier grading system",
+              "Two-tier grading system",
+              "WHO grading system for CNS tumours"
+            ]
+          }
+        },
+        {
+          "name": "tumour_grade",
+          "valueType": "string",
+          "displayName": "Tumour Grade",
+          "description": "Grade of the tumour as assigned by the reporting tumour_grading_system.",
+          "restrictions": {
+            "codeList": [
+              "Low grade",
+              "High grade",
+              "GX",
+              "G1",
+              "G2",
+              "G3",
+              "G4",
+              "Low",
+              "High",
+              "Intermediate",
+              "Very low",
+              "Grade I",
+              "Grade II",
+              "Grade III",
+              "Grade IV",
+              "Grade Group 1",
+              "Grade Group 2",
+              "Grade Group 3",
+              "Grade Group 4",
+              "Grade Group 5"
+            ]
+          }
+        },
+        {
+          "name": "percent_tumour_cells",
+          "valueType": "number",
+          "displayName": "Percent Tumour Cells",
+          "description": "Proportion of tumour cells compared to total cells in the specimen (0.0–1.0).",
+          "restrictions": {
+            "range": {
+              "min": 0,
+              "max": 1
+            }
+          }
+        },
+        {
+          "name": "percent_tumour_cells_measurement_method",
+          "valueType": "string",
+          "displayName": "Percent Tumour Cells Measurement Method",
+          "description": "Method used to measure percent_tumour_cells.",
+          "restrictions": {
+            "codeList": [
+              "Genomics",
+              "Image analysis",
+              "Pathology estimate by percent nuclei"
+            ]
+          }
+        },
+        {
+          "name": "percent_proliferating_cells",
+          "valueType": "number",
+          "displayName": "Percent Proliferating Cells",
+          "description": "Proportion of proliferating cells determined during pathologic review of the specimen (0.0–1.0).",
+          "restrictions": {
+            "range": {
+              "min": 0,
+              "max": 1
+            }
+          }
+        },
+        {
+          "name": "percent_inflammatory_tissue",
+          "valueType": "number",
+          "displayName": "Percent Inflammatory Tissue",
+          "description": "Proportion of the specimen positive for inflammatory markers (0.0–1.0).",
+          "restrictions": {
+            "range": {
+              "min": 0,
+              "max": 1
+            }
+          }
+        },
+        {
+          "name": "percent_stromal_cells",
+          "valueType": "number",
+          "displayName": "Percent Stromal Cells",
+          "description": "Proportion of reactive non-malignant cells in the tumour specimen (0.0–1.0).",
+          "restrictions": {
+            "range": {
+              "min": 0,
+              "max": 1
+            }
+          }
+        },
+        {
+          "name": "percent_necrosis",
+          "valueType": "number",
+          "displayName": "Percent Necrosis",
+          "description": "Proportion of cells undergoing necrosis in the tumour specimen (0.0–1.0).",
+          "restrictions": {
+            "range": {
+              "min": 0,
+              "max": 1
+            }
+          }
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "program_id",
+          "submitter_donor_id",
+          "submitter_specimen_id"
+        ],
+        "foreignKey": [
+          {
+            "schema": "donor",
+            "mappings": [
+              {
+                "local": "program_id",
+                "foreign": "program_id"
+              },
+              {
+                "local": "submitter_donor_id",
+                "foreign": "submitter_donor_id"
+              }
+            ]
+          },
+          {
+            "schema": "primary_diagnosis",
+            "mappings": [
+              {
+                "local": "program_id",
+                "foreign": "program_id"
+              },
+              {
+                "local": "submitter_donor_id",
+                "foreign": "submitter_donor_id"
+              },
+              {
+                "local": "submitter_primary_diagnosis_id",
+                "foreign": "submitter_primary_diagnosis_id"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "treatment",
+      "description": "High-level treatment metadata.",
+      "fields": [
+        {
+          "name": "program_id",
+          "valueType": "string",
+          "displayName": "Program ID",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_donor_id",
+          "valueType": "string",
+          "displayName": "Submitter Donor ID",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_treatment_id",
+          "valueType": "string",
+          "displayName": "Submitter Treatment ID",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_primary_diagnosis_id",
+          "valueType": "string",
+          "displayName": "Submitter Primary Diagnosis ID",
+          "description": "The primary diagnosis event this treatment is related to.",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "treatment_type",
+          "valueType": "string",
+          "displayName": "Treatment Type",
+          "isArray": true,
+          "description": "Type(s) of treatment regimen the donor received.",
+          "restrictions": {
+            "required": true,
+            "codeList": [
+              "Ablation",
+              "Bone marrow transplant",
+              "Chemotherapy",
+              "Endoscopic therapy",
+              "End of life care",
+              "Hormonal therapy",
+              "Immunotherapy",
+              "No treatment",
+              "Other targeting molecular therapy",
+              "Photodynamic therapy",
+              "Radiation therapy",
+              "Stem cell transplant",
+              "Surgery"
+            ]
+          }
+        },
+        {
+          "name": "is_primary_treatment",
+          "valueType": "string",
+          "displayName": "Is Primary Treatment",
+          "description": "Whether the treatment was the primary treatment following the initial diagnosis.",
+          "restrictions": {
+            "codeList": [
+              "Yes",
+              "No"
+            ]
+          }
+        },
+        {
+          "name": "line_of_treatment",
+          "valueType": "integer",
+          "displayName": "Line Of Treatment",
+          "description": "Line of treatment if it is not the primary treatment.",
+          "restrictions": {
+            "range": {
+              "min": 1
+            }
+          }
+        },
+        {
+          "name": "treatment_start_interval",
+          "valueType": "integer",
+          "displayName": "Treatment Start Interval",
+          "description": "Interval in days from primary diagnosis to start of treatment.",
+          "meta": {
+            "units": "days"
+          },
+          "restrictions": {
+            "range": {
+              "min": 0
+            }
+          }
+        },
+        {
+          "name": "treatment_duration",
+          "valueType": "integer",
+          "displayName": "Treatment Duration",
+          "description": "Duration of treatment in days.",
+          "meta": {
+            "units": "days"
+          },
+          "restrictions": {
+            "range": {
+              "exclusiveMin": 0
+            }
+          }
+        },
+        {
+          "name": "days_per_cycle",
+          "valueType": "integer",
+          "displayName": "Days Per Cycle",
+          "description": "Number of days in a treatment cycle.",
+          "restrictions": {
+            "range": {
+              "exclusiveMin": 0
+            }
+          }
+        },
+        {
+          "name": "number_of_cycles",
+          "valueType": "integer",
+          "displayName": "Number Of Cycles",
+          "description": "Number of treatment cycles.",
+          "restrictions": {
+            "range": {
+              "exclusiveMin": 0
+            }
+          }
+        },
+        {
+          "name": "treatment_intent",
+          "valueType": "string",
+          "displayName": "Treatment Intent",
+          "description": "Purpose of the treatment, or the desired effect or outcome.",
+          "restrictions": {
+            "codeList": [
+              "Curative",
+              "Diagnostic",
+              "Forensic",
+              "Guidance",
+              "Palliative",
+              "Preventative",
+              "Screening",
+              "Supportive"
+            ]
+          }
+        },
+        {
+          "name": "treatment_setting",
+          "valueType": "string",
+          "displayName": "Treatment Setting",
+          "description": "Treatment's purpose in relation to the primary treatment.",
+          "restrictions": {
+            "codeList": [
+              "Adjuvant",
+              "Advanced/Metastatic",
+              "Conditioning",
+              "Induction",
+              "Maintenance",
+              "Mobilization",
+              "Neoadjuvant",
+              "Preventative",
+              "Radiosensitization",
+              "Salvage"
+            ]
+          }
+        },
+        {
+          "name": "response_to_treatment_criteria_method",
+          "valueType": "string",
+          "displayName": "Response To Treatment Criteria Method",
+          "description": "Criteria used to assess the donor's response to the applied treatment regimen.",
+          "restrictions": {
+            "codeList": [
+              "ELN Dohner AML 2017 Oncology Response Criteria",
+              "IWG Cheson AML 2003 Oncology Response Criteria",
+              "iRECIST",
+              "RECIST",
+              "RECIST 1.1",
+              "Response Assessment in Neuro-Oncology (RANO)",
+              "Physician Assessed Response Criteria"
+            ]
+          }
+        },
+        {
+          "name": "response_to_treatment",
+          "valueType": "string",
+          "displayName": "Response To Treatment",
+          "description": "Donor's response to the applied treatment regimen.",
+          "restrictions": {
+            "codeList": [
+              "Complete remission",
+              "Complete remission with incomplete hematologic recovery (CRi)",
+              "Complete remission without minimal residual disease (CRMRD-)",
+              "Complete response",
+              "Cytogenetic complete remission (CRc)",
+              "Hematologic relapse (after CRMRD-, CR, CRi)",
+              "Immune complete response (iCR)",
+              "Immune confirmed progressive disease (iCPD)",
+              "Immune partial response (iPR)",
+              "Immune stable disease (iSD)",
+              "Immune unconfirmed progressive disease (iUPD)",
+              "Minor response",
+              "Molecular complete remission (CRm)",
+              "Molecular relapse (after CRMRD-)",
+              "Morphologic complete remission",
+              "Morphologic complete remission with incomplete blood count recovery (CRi)",
+              "Morphologic leukemia-free state",
+              "No evidence of disease (NED)",
+              "Non-Complete response/Non-Progressive disease (Non-CR/Non-PD)",
+              "Not evaluable (NE)",
+              "Partial remission",
+              "Partial response",
+              "Physician assessed complete response",
+              "Physician assessed partial response",
+              "Physician assessed progressive disease",
+              "Physician assessed stable disease",
+              "Progressive disease",
+              "Stable disease"
+            ]
+          }
+        },
+        {
+          "name": "outcome_of_treatment",
+          "valueType": "string",
+          "displayName": "Outcome Of Treatment",
+          "description": "Donor's outcome of the prescribed treatment.",
+          "restrictions": {
+            "codeList": [
+              "Treatment completed as prescribed",
+              "Treatment incomplete due to technical or organizational problems",
+              "Treatment incomplete because patient died",
+              "Patient choice (stopped or interrupted treatment)",
+              "Physician decision (stopped or interrupted treatment)",
+              "Treatment stopped due to lack of efficacy (disease progression)",
+              "Treatment stopped due to acute toxicity",
+              "Other",
+              "Not applicable",
+              "Unknown"
+            ]
+          }
+        },
+        {
+          "name": "toxicity_type",
+          "valueType": "string",
+          "displayName": "Toxicity Type",
+          "description": "Whether early treatment termination due to acute toxicity was hematological or non-hematological.",
+          "restrictions": {
+            "codeList": [
+              "Hematological",
+              "Non-hematological",
+              "Not applicable",
+              "Unknown"
+            ]
+          }
+        },
+        {
+          "name": "hematological_toxicity",
+          "valueType": "string",
+          "displayName": "Hematological Toxicity",
+          "isArray": true,
+          "description": "Hematological toxicities which caused early termination of the treatment.",
+          "restrictions": [
+            {
+              "codeList": [
+                "Anemia - Grade 3",
+                "Anemia - Grade 4",
+                "Anemia - Grade 5",
+                "Neutropenia - Grade 3",
+                "Neutropenia - Grade 4",
+                "Neutropenia - Grade 5",
+                "Thrombocytopenia - Grade 3",
+                "Thrombocytopenia - Grade 4",
+                "Thrombocytopenia - Grade 5",
+                "Unknown"
+              ]
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "toxicity_type"
+                    ],
+                    "match": {
+                      "value": "Hematological"
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "non_hematological_toxicity",
+          "valueType": "string",
+          "displayName": "Non-hematological Toxicity",
+          "isArray": true,
+          "description": "Non-hematological toxicities which caused early termination of the treatment.",
+          "restrictions": {
+            "if": {
+              "conditions": [
+                {
+                  "fields": [
+                    "toxicity_type"
+                  ],
+                  "match": {
+                    "value": "Non-hematological"
+                  }
+                }
+              ]
+            },
+            "then": {
+              "required": true
+            },
+            "else": {
+              "empty": true
+            }
+          }
+        },
+        {
+          "name": "adverse_events",
+          "valueType": "string",
+          "displayName": "Adverse Events",
+          "isArray": true,
+          "description": "Treatment-related adverse events."
+        },
+        {
+          "name": "clinical_trials_database",
+          "valueType": "string",
+          "displayName": "Clinical Trials Database",
+          "description": "Clinical trial database where a clinical trial the donor participates in is registered.",
+          "restrictions": {
+            "codeList": [
+              "NCI Clinical Trials",
+              "EU Clinical Trials Register",
+              "Not applicable",
+              "Unknown"
+            ]
+          }
+        },
+        {
+          "name": "clinical_trial_number",
+          "valueType": "string",
+          "displayName": "Clinical Trial Number",
+          "description": "Unique NCT or EudraCT clinical trial identifier for the trial the donor participates in.",
+          "meta": {
+            "examples": "2016-002120-83,NCT02465060"
+          }
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "program_id",
+          "submitter_donor_id",
+          "submitter_treatment_id"
+        ],
+        "foreignKey": [
+          {
+            "schema": "donor",
+            "mappings": [
+              {
+                "local": "program_id",
+                "foreign": "program_id"
+              },
+              {
+                "local": "submitter_donor_id",
+                "foreign": "submitter_donor_id"
+              }
+            ]
+          },
+          {
+            "schema": "primary_diagnosis",
+            "mappings": [
+              {
+                "local": "program_id",
+                "foreign": "program_id"
+              },
+              {
+                "local": "submitter_donor_id",
+                "foreign": "submitter_donor_id"
+              },
+              {
+                "local": "submitter_primary_diagnosis_id",
+                "foreign": "submitter_primary_diagnosis_id"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "follow_up",
+      "description": "A follow-up visit or contact with a donor after primary diagnosis.",
+      "fields": [
+        {
+          "name": "program_id",
+          "valueType": "string",
+          "displayName": "Program ID",
+          "description": "Unique identifier of the program this follow-up record belongs to.",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_donor_id",
+          "valueType": "string",
+          "displayName": "Submitter Donor ID",
+          "description": "Unique identifier for the donor within this program.",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_follow_up_id",
+          "valueType": "string",
+          "displayName": "Submitter Follow-Up ID",
+          "description": "Unique identifier for this follow-up event within the donor record.",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "interval_of_followup",
+          "valueType": "integer",
+          "displayName": "Interval Of Follow-Up",
+          "description": "Interval in days from primary diagnosis to this follow-up.",
+          "meta": {
+            "units": "days"
+          },
+          "restrictions": {
+            "required": true,
+            "range": {
+              "min": 0
+            }
+          }
+        },
+        {
+          "name": "disease_status_at_followup",
+          "valueType": "string",
+          "displayName": "Disease Status at Follow-Up",
+          "description": "Donor's disease status at the time of this follow-up.",
+          "restrictions": {
+            "required": true,
+            "codeList": [
+              "Complete remission",
+              "Distant progression",
+              "Loco-regional progression",
+              "No evidence of disease",
+              "Partial remission",
+              "Progression NOS",
+              "Relapse or recurrence",
+              "Stable"
+            ]
+          }
+        },
+        {
+          "name": "submitter_primary_diagnosis_id",
+          "valueType": "string",
+          "displayName": "Submitter Primary Diagnosis ID",
+          "description": "The primary diagnosis event this follow-up is associated with.",
+          "restrictions": {
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_treatment_id",
+          "valueType": "string",
+          "displayName": "Submitter Treatment ID",
+          "description": "The treatment event this follow-up is associated with.",
+          "restrictions": {
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "weight_at_followup",
+          "valueType": "number",
+          "displayName": "Weight at Follow-Up",
+          "description": "Donor weight in kilograms at the time of this follow-up.",
+          "restrictions": {
+            "range": {
+              "exclusiveMin": 0
+            }
+          }
+        },
+        {
+          "name": "relapse_type",
+          "valueType": "string",
+          "displayName": "Relapse Type",
+          "description": "Type of relapse or recurrence, when applicable.",
+          "restrictions": {
+            "codeList": [
+              "Distant recurrence/metastasis",
+              "Local recurrence",
+              "Local recurrence and distant metastasis",
+              "Progression (liquid tumours)"
+            ]
+          }
+        },
+        {
+          "name": "relapse_interval",
+          "valueType": "integer",
+          "displayName": "Relapse Interval",
+          "description": "Days from primary diagnosis to relapse or recurrence.",
+          "meta": {
+            "units": "days"
+          }
+        },
+        {
+          "name": "method_of_progression_status",
+          "valueType": "string",
+          "displayName": "Method Of Progression Status",
+          "isArray": true,
+          "description": "Method(s) used to confirm disease progression, relapse, or recurrence.",
+          "restrictions": {
+            "codeList": [
+              "Biomarker in liquid biopsy (e.g. tumour marker in blood or urine)",
+              "Biopsy",
+              "Blood draw",
+              "Bone marrow aspirate",
+              "Core biopsy",
+              "Cystoscopy",
+              "Cytology",
+              "Debulking",
+              "Diagnostic imaging",
+              "Dilation and curettage procedure",
+              "Enucleation",
+              "Excisional biopsy",
+              "Fine needle aspiration",
+              "Imaging",
+              "Incisional biopsy",
+              "Laparoscopy",
+              "Laparotomy",
+              "Other",
+              "Pap Smear",
+              "Pathologic review",
+              "Physical exam",
+              "Surgical resection",
+              "Thoracentesis",
+              "Ultrasound guided biopsy"
+            ]
+          }
+        },
+        {
+          "name": "anatomic_site_progression_or_recurrence",
+          "valueType": "string",
+          "displayName": "Anatomic Site Progression or Recurrences",
+          "isArray": true,
+          "description": "ICD-O-3 topography code(s) for the anatomic site(s) of disease progression or recurrence.",
+          "meta": {
+            "examples": "C50.1|C18"
+          },
+          "restrictions": {
+            "regex": "^[C][0-9]{2}(.[0-9]{1})?$"
+          }
+        },
+        {
+          "name": "recurrence_tumour_staging_system",
+          "valueType": "string",
+          "displayName": "Recurrence Tumour Staging System",
+          "description": "Tumour staging system used to stage the cancer at time of retreatment for recurrence or progression.",
+          "restrictions": {
+            "codeList": "#/enum/tumorStagingSystem"
+          }
+        },
+        {
+          "name": "recurrence_t_category",
+          "valueType": "string",
+          "displayName": "Recurrence T Category",
+          "description": "Extent of the primary tumour (T) at time of retreatment, per the recurrence staging system.",
+          "meta": {
+            "notes": "This field is required only if the selected recurrence_tumour_staging_system is any edition of the AJCC cancer staging system."
+          },
+          "restrictions": [
+            {
+              "codeList": "#/enum/tCategories"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "recurrence_tumour_staging_system"
+                    ],
+                    "match": {
+                      "codeList": [
+                        "#/enum/ajccEditions"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "recurrence_n_category",
+          "valueType": "string",
+          "displayName": "Recurrence N Category",
+          "description": "Regional lymph node involvement (N) at time of retreatment, per the recurrence staging system.",
+          "meta": {
+            "notes": "This field is required only if the selected recurrence_tumour_staging_system is any edition of the AJCC cancer staging system."
+          },
+          "restrictions": [
+            {
+              "codeList": "#/enum/nCategories"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "recurrence_tumour_staging_system"
+                    ],
+                    "match": {
+                      "codeList": [
+                        "#/enum/ajccEditions"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "recurrence_m_category",
+          "valueType": "string",
+          "displayName": "Recurrence M Category",
+          "description": "Extent of distant metastasis (M) at time of retreatment, per the recurrence staging system.",
+          "meta": {
+            "notes": "This field is required only if the selected recurrence_tumour_staging_system is any edition of the AJCC cancer staging system."
+          },
+          "restrictions": [
+            {
+              "codeList": "#/enum/mCategories"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "recurrence_tumour_staging_system"
+                    ],
+                    "match": {
+                      "codeList": [
+                        "#/enum/ajccEditions"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "recurrence_stage_group",
+          "valueType": "string",
+          "displayName": "Recurrence Stage Group",
+          "description": "Overall stage group assigned by the recurrence staging system.",
+          "restrictions": [
+            {
+              "codeList": "#/enum/stageGroups"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "recurrence_tumour_staging_system"
+                    ],
+                    "match": {
+                      "exists": true
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "posttherapy_tumour_staging_system",
+          "valueType": "string",
+          "displayName": "Post-therapy Tumour Staging System",
+          "description": "Tumour staging system used to stage the cancer after systemic or radiation therapy, or neoadjuvant therapy.",
+          "restrictions": {
+            "codeList": "#/enum/tumorStagingSystem"
+          }
+        },
+        {
+          "name": "posttherapy_t_category",
+          "valueType": "string",
+          "displayName": "Post-therapy T Category",
+          "description": "Extent of the primary tumour (T) after therapy, per the post-therapy staging system.",
+          "meta": {
+            "notes": "This field is required only if the selected posttherapy_tumour_staging_system is any edition of the AJCC cancer staging system."
+          },
+          "restrictions": [
+            {
+              "codeList": "#/enum/tCategories"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "posttherapy_tumour_staging_system"
+                    ],
+                    "match": {
+                      "codeList": [
+                        "#/enum/ajccEditions"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "posttherapy_n_category",
+          "valueType": "string",
+          "displayName": "Post-therapy N Category",
+          "description": "Regional lymph node involvement (N) after therapy, per the post-therapy staging system.",
+          "meta": {
+            "notes": "This field is required only if the selected posttherapy_tumour_staging_system is any edition of the AJCC cancer staging system."
+          },
+          "restrictions": [
+            {
+              "codeList": "#/enum/nCategories"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "posttherapy_tumour_staging_system"
+                    ],
+                    "match": {
+                      "codeList": [
+                        "#/enum/ajccEditions"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "posttherapy_m_category",
+          "valueType": "string",
+          "displayName": "Post-therapy M Category",
+          "description": "Extent of distant metastasis (M) after therapy, per the post-therapy staging system.",
+          "meta": {
+            "notes": "This field is required only if the selected posttherapy_tumour_staging_system is any edition of the AJCC cancer staging system."
+          },
+          "restrictions": [
+            {
+              "codeList": "#/enum/mCategories"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "posttherapy_tumour_staging_system"
+                    ],
+                    "match": {
+                      "codeList": [
+                        "#/enum/ajccEditions"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "posttherapy_stage_group",
+          "valueType": "string",
+          "displayName": "Post-therapy Stage Group",
+          "description": "Overall stage group assigned by the post-therapy staging system.",
+          "restrictions": [
+            {
+              "codeList": "#/enum/stageGroups"
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "posttherapy_tumour_staging_system"
+                    ],
+                    "match": {
+                      "exists": true
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              }
+            }
+          ]
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "program_id",
+          "submitter_donor_id",
+          "submitter_follow_up_id"
+        ],
+        "foreignKey": [
+          {
+            "schema": "donor",
+            "mappings": [
+              {
+                "local": "program_id",
+                "foreign": "program_id"
+              },
+              {
+                "local": "submitter_donor_id",
+                "foreign": "submitter_donor_id"
+              }
+            ]
+          },
+          {
+            "schema": "primary_diagnosis",
+            "mappings": [
+              {
+                "local": "program_id",
+                "foreign": "program_id"
+              },
+              {
+                "local": "submitter_donor_id",
+                "foreign": "submitter_donor_id"
+              },
+              {
+                "local": "submitter_primary_diagnosis_id",
+                "foreign": "submitter_primary_diagnosis_id"
+              }
+            ]
+          },
+          {
+            "schema": "treatment",
+            "mappings": [
+              {
+                "local": "program_id",
+                "foreign": "program_id"
+              },
+              {
+                "local": "submitter_donor_id",
+                "foreign": "submitter_donor_id"
+              },
+              {
+                "local": "submitter_treatment_id",
+                "foreign": "submitter_treatment_id"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "exposure",
+      "description": "Lifestyle and environmental exposure factors for a donor.",
+      "fields": [
+        {
+          "name": "program_id",
+          "valueType": "string",
+          "displayName": "Program ID",
+          "description": "Unique identifier of the program this exposure record belongs to.",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_donor_id",
+          "valueType": "string",
+          "displayName": "Submitter Donor ID",
+          "description": "Unique identifier for the donor within this program.",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "tobacco_smoking_status",
+          "valueType": "string",
+          "displayName": "Tobacco Smoking Status",
+          "description": "Donor's self-reported tobacco smoking status and history.",
+          "restrictions": {
+            "codeList": [
+              "Current reformed smoker for <= 15 years",
+              "Current reformed smoker for > 15 years",
+              "Current reformed smoker, duration not specified",
+              "Current smoker",
+              "Lifelong non-smoker (<100 cigarettes smoked in lifetime)",
+              "Not applicable",
+              "Smoking history not documented"
+            ]
+          }
+        },
+        {
+          "name": "tobacco_type",
+          "valueType": "string",
+          "displayName": "Tobacco Type",
+          "isArray": true,
+          "description": "Type(s) of tobacco used by the donor.",
+          "restrictions": {
+            "codeList": [
+              "Chewing Tobacco",
+              "Cigar",
+              "Cigarettes",
+              "Electronic cigarettes",
+              "Not applicable",
+              "Pipe",
+              "Roll-ups",
+              "Snuff",
+              "Unknown",
+              "Waterpipe"
+            ]
+          }
+        },
+        {
+          "name": "pack_years_smoked",
+          "valueType": "number",
+          "displayName": "Pack Years Smoked",
+          "description": "Cigarette smoking intensity in pack years (cigarettes per day × years smoked ÷ 20).",
+          "restrictions": {
+            "range": {
+              "min": 0
+            }
+          }
+        },
+        {
+          "name": "alcohol_history",
+          "valueType": "string",
+          "displayName": "Alcohol History",
+          "description": "Whether the donor has consumed at least 12 alcoholic drinks in their lifetime.",
+          "restrictions": {
+            "codeList": "#/enum/yesNoNotApplicableUnknown"
+          }
+        },
+        {
+          "name": "alcohol_consumption_category",
+          "valueType": "string",
+          "displayName": "Alcohol Consumption Category",
+          "description": "Donor's current level of alcohol use.",
+          "restrictions": {
+            "codeList": [
+              "Daily Drinker",
+              "None",
+              "Not applicable",
+              "Occasional Drinker (< once a month)",
+              "Social Drinker (> once a month, < once a week)",
+              "Unknown",
+              "Weekly Drinker (>=1x a week)"
+            ]
+          }
+        },
+        {
+          "name": "alcohol_type",
+          "valueType": "string",
+          "displayName": "Alcohol Type",
+          "isArray": true,
+          "description": "Type(s) of alcohol consumed by the donor.",
+          "restrictions": {
+            "codeList": [
+              "Beer",
+              "Liquor",
+              "Not applicable",
+              "Other",
+              "Unknown",
+              "Wine"
+            ]
+          }
+        },
+        {
+          "name": "opiate_use",
+          "valueType": "string",
+          "displayName": "Opiate Use",
+          "description": "Whether the donor has regularly used opiates (at least weekly over a 6-month period).",
+          "restrictions": {
+            "codeList": "#/enum/exposureUsage"
+          }
+        },
+        {
+          "name": "hot_drinks_consumption",
+          "valueType": "string",
+          "displayName": "Hot Drink Consumption",
+          "description": "Whether the donor regularly drinks hot beverages such as tea or coffee.",
+          "restrictions": {
+            "codeList": "#/enum/exposureUsage"
+          }
+        },
+        {
+          "name": "red_meat_frequency",
+          "valueType": "string",
+          "displayName": "Red Meat Consumption Frequency",
+          "description": "Frequency of red meat consumption (e.g. beef, pork, lamb).",
+          "restrictions": {
+            "codeList": "#/enum/exposureFrequency"
+          }
+        },
+        {
+          "name": "processed_meat_frequency",
+          "valueType": "string",
+          "displayName": "Processed Meat Consumption Frequency",
+          "description": "Frequency of processed meat consumption (e.g. ham, salami, sausage).",
+          "restrictions": {
+            "codeList": "#/enum/exposureFrequency"
+          }
+        },
+        {
+          "name": "soft_drinks_frequency",
+          "valueType": "string",
+          "displayName": "Soft Drink Consumption Frequency",
+          "description": "Frequency of soft drink consumption.",
+          "restrictions": {
+            "codeList": "#/enum/exposureFrequency"
+          }
+        },
+        {
+          "name": "exercise_frequency",
+          "valueType": "string",
+          "displayName": "Exercise Frequency",
+          "description": "How many times per week the donor exercises for at least 30 minutes.",
+          "restrictions": {
+            "codeList": "#/enum/exposureFrequency"
+          }
+        },
+        {
+          "name": "exercise_intensity",
+          "valueType": "string",
+          "displayName": "Exercise Intensity",
+          "description": "Intensity of exercise sessions.",
+          "restrictions": {
+            "codeList": [
+              "Low: No increase in the heart beat, and no perspiration",
+              "Moderate: Increase in the heart beat slightly with some light perspiration",
+              "Not applicable",
+              "Vigorous: Increase in the heart beat substantially with heavy perspiration",
+              "Unknown"
+            ]
+          }
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "program_id",
+          "submitter_donor_id"
+        ],
+        "foreignKey": [
+          {
+            "schema": "donor",
+            "mappings": [
+              {
+                "local": "program_id",
+                "foreign": "program_id"
+              },
+              {
+                "local": "submitter_donor_id",
+                "foreign": "submitter_donor_id"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "comorbidity",
+      "description": "A medical condition present alongside or prior to the index disease for a donor.",
+      "fields": [
+        {
+          "name": "program_id",
+          "valueType": "string",
+          "displayName": "Program ID",
+          "description": "Unique identifier of the program this comorbidity record belongs to.",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "submitter_donor_id",
+          "valueType": "string",
+          "displayName": "Submitter Donor ID",
+          "description": "Unique identifier for the donor within this program.",
+          "restrictions": {
+            "required": true,
+            "regex": "#/regex/submitterId"
+          }
+        },
+        {
+          "name": "prior_malignancy",
+          "valueType": "string",
+          "displayName": "Prior Malignancy",
+          "description": "Whether the comorbidity is a prior malignancy.",
+          "restrictions": {
+            "codeList": "#/enum/yesNoUnknown"
+          }
+        },
+        {
+          "name": "laterality_of_prior_malignancy",
+          "valueType": "string",
+          "displayName": "Laterality at Prior Malignancy",
+          "description": "Laterality of the prior malignancy, when applicable.",
+          "restrictions": [
+            {
+              "codeList": [
+                "Bilateral",
+                "Left",
+                "Midline",
+                "Not applicable",
+                "Right",
+                "Unilateral, Side not specified",
+                "Unknown"
+              ]
+            },
+            {
+              "if": {
+                "conditions": [
+                  {
+                    "fields": [
+                      "prior_malignancy"
+                    ],
+                    "match": {
+                      "value": "Yes"
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": true
+              },
+              "else": {
+                "empty": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "age_at_comorbidity_diagnosis",
+          "valueType": "integer",
+          "displayName": "Age at Comorbidity Diagnosis",
+          "description": "Age of the donor in years at the time of comorbidity diagnosis.",
+          "meta": {
+            "units": "years"
+          },
+          "restrictions": {
+            "range": {
+              "exclusiveMin": 0
+            }
+          }
+        },
+        {
+          "name": "comorbidity_type_code",
+          "valueType": "string",
+          "displayName": "Comorbidity Type Code",
+          "description": "WHO ICD-10 code for the comorbidity.",
+          "meta": {
+            "examples": "E10, C50.1, I11, M06"
+          },
+          "restrictions": {
+            "required": true,
+            "regex": "^[A-Z][0-9]{2}(.[0-9]{1,3}[A-Z]{0,1})?$"
+          }
+        },
+        {
+          "name": "comorbidity_treatment_status",
+          "valueType": "string",
+          "displayName": "Comorbidity Treatment",
+          "description": "Whether the donor is currently receiving treatment for this comorbidity.",
+          "restrictions": {
+            "codeList": "#/enum/yesNoUnknown"
+          }
+        },
+        {
+          "name": "comorbidity_treatment",
+          "valueType": "string",
+          "displayName": "Comorbidity Treatment Type",
+          "description": "Description of treatment received for this comorbidity."
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "program_id",
+          "submitter_donor_id",
+          "comorbidity_type_code"
+        ],
+        "foreignKey": [
+          {
+            "schema": "donor",
+            "mappings": [
+              {
+                "local": "program_id",
+                "foreign": "program_id"
+              },
+              {
+                "local": "submitter_donor_id",
+                "foreign": "submitter_donor_id"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

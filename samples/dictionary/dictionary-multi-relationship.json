@@ -1,0 +1,311 @@
+{
+  "name": "dictionary-multi-relationship",
+  "version": "1.0",
+  "displayName": "Multi-Entity Relationships",
+  "description": "An illustrative example of foreign key relationship patterns across multiple schemas. Not intended for production use.",
+  "schemas": [
+    {
+      "name": "program",
+      "description": "Root research program. id is unique. Other schemas may reference this schema via foreign key.",
+      "fields": [
+        {
+          "name": "id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "name",
+          "valueType": "string"
+        },
+        {
+          "name": "category",
+          "valueType": "string"
+        },
+        {
+          "name": "count",
+          "valueType": "integer"
+        },
+        {
+          "name": "score",
+          "valueType": "number"
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "study",
+      "description": "Study within a program. id is unique. program_id is a foreign key to program.",
+      "fields": [
+        {
+          "name": "id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "program_id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "label",
+          "valueType": "string"
+        },
+        {
+          "name": "rank",
+          "valueType": "integer"
+        },
+        {
+          "name": "ratio",
+          "valueType": "number"
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "id"
+        ],
+        "foreignKey": [
+          {
+            "schema": "program",
+            "mappings": [
+              {
+                "local": "program_id",
+                "foreign": "id"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "institution",
+      "description": "Root of an isolated network. id is unique. Not connected to program or study.",
+      "fields": [
+        {
+          "name": "id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "name",
+          "valueType": "string"
+        },
+        {
+          "name": "type",
+          "valueType": "string"
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "lab",
+      "description": "Lab within an institution. id is unique. institution_id is a foreign key to institution.",
+      "fields": [
+        {
+          "name": "id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "institution_id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "value",
+          "valueType": "number"
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "id"
+        ],
+        "foreignKey": [
+          {
+            "schema": "institution",
+            "mappings": [
+              {
+                "local": "institution_id",
+                "foreign": "id"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "cohort",
+      "description": "Cohort within a study. (id, group) is a composite unique key, enabling multi-field foreign key references from observation. study_id is a foreign key to study.",
+      "fields": [
+        {
+          "name": "id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "group",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "study_id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "label",
+          "valueType": "string"
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "id",
+          "group"
+        ],
+        "foreignKey": [
+          {
+            "schema": "study",
+            "mappings": [
+              {
+                "local": "study_id",
+                "foreign": "id"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "enrollment",
+      "description": "Enrollment record linking a study and an institution. Foreign keys reference two different parent schemas: study and institution.",
+      "fields": [
+        {
+          "name": "id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "study_id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "institution_id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "note",
+          "valueType": "string"
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "id"
+        ],
+        "foreignKey": [
+          {
+            "schema": "study",
+            "mappings": [
+              {
+                "local": "study_id",
+                "foreign": "id"
+              }
+            ]
+          },
+          {
+            "schema": "institution",
+            "mappings": [
+              {
+                "local": "institution_id",
+                "foreign": "id"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "observation",
+      "description": "Observation within a cohort. Uses a multi-field foreign key to cohort, mapping (cohort_id, cohort_group) → (id, group).",
+      "fields": [
+        {
+          "name": "id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "cohort_id",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "cohort_group",
+          "valueType": "string",
+          "restrictions": {
+            "required": true
+          }
+        },
+        {
+          "name": "value",
+          "valueType": "number"
+        }
+      ],
+      "restrictions": {
+        "uniqueKey": [
+          "id"
+        ],
+        "foreignKey": [
+          {
+            "schema": "cohort",
+            "mappings": [
+              {
+                "local": "cohort_id",
+                "foreign": "id"
+              },
+              {
+                "local": "cohort_group",
+                "foreign": "group"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -29,27 +29,44 @@ The repository is organized with the following directory structure:
 .
 ├── apps/
 │   └── server
-└── packages/
-    ├── client
-    ├── common
-    ├── dictionary
-    └── validation
+├── packages/
+│   ├── client
+│   ├── data-generator
+│   ├── dictionary
+│   ├── ui
+│   └── validation
+├── samples/
+│   └── dictionary
+└── scripts/
 ```
 
-The modules in the monorepo are organized into two categories:
+The modules in the monorepo are organized into the following categories:
 
 - **apps/** - Standalone processes meant to be run. These are published to [ghcr.io](https://ghcr.io) as container images.
-- **packages/** - Reusable packages shared between applications and other packages. Packages are published to [NPM](https://npmjs.com).
-- **scripts** - Utility scripts for use within this repo.
+- **packages/** - Reusable packages shared between applications and other packages. Published packages are available on [NPM](https://npmjs.com).
+- **samples/** - Example dictionaries in JSON format demonstrating various dictionary features and structures.
+- **scripts/** - Utility scripts for managing the monorepo, including sample dictionary generation.
 
 ## Component Overview
 
-| Component                                           | Package Name                       | Path                 | Published Location                                                                                                                                                                                              | Description                                                                      |
-| --------------------------------------------------- | ---------------------------------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| [Lectern Server](apps/server/README.md)             | @overture-stack/lectern-server     | apps/server/         | [![Lectern GHCR Packages](https://img.shields.io/badge/GHCR-lectern-brightgreen?style=for-the-badge&logo=github)](https://github.com/overture-stack/lectern/pkgs/container/lectern)                             | Lectern Server web application.                                                  |
-| [Lectern Client](packages/client/README.md)         | @overture-stack/lectern-client     | packages/client      | [![Lectern Client NPM Package](https://img.shields.io/npm/v/@overture-stack/lectern-client?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-client)         | TypeScript Client to interact with Lectern Server and Lectern data dictionaries. |
-| [Lectern Dictionary](packages/dictionary/README.md) | @overture-stack/lectern-dictionary | packages/dictionary  | [![Lectern Client NPM Package](https://img.shields.io/npm/v/@overture-stack/lectern-dictionary?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-dictionary) | Dictionary meta-schema definition, includes TS types, and Zod schemas.           |
-| [Lectern Validation](packages/validation/README.md) | @overture-stack/lectern-validation | packages/validation/ | [![Lectern Validation NPM Package](https://img.shields.io/npm/v/@overture-stack/lectern-validation?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-client) | Validate data using Lectern Dictionaries.                                        |
+| Component                                               | Package Name                            | Path                  | Published Location                                                                                                                                                                                              | Description                                                                                  |
+| ------------------------------------------------------- | --------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| [Lectern Server](apps/server/README.md)                 | `@overture-stack/lectern-server`        | `apps/server/`        | [![Lectern GHCR Packages](https://img.shields.io/badge/GHCR-lectern-brightgreen?style=for-the-badge&logo=github)](https://github.com/overture-stack/lectern/pkgs/container/lectern)                             | Lectern's server application; hosts a REST API for storing and managing versioned data dictionaries.                        |
+| [Lectern Client](packages/client/README.md)             | `@overture-stack/lectern-client`        | `packages/client/`    | [![Lectern Client NPM Package](https://img.shields.io/npm/v/@overture-stack/lectern-client?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-client)         | TypeScript client for interacting with Lectern Server and validating data against dictionaries. |
+| [Lectern Dictionary](packages/dictionary/README.md)     | `@overture-stack/lectern-dictionary`    | `packages/dictionary/` | [![Lectern Dictionary NPM Package](https://img.shields.io/npm/v/@overture-stack/lectern-dictionary?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-dictionary) | Core dictionary meta-schema: TypeScript types, Zod schemas, and reference resolution.        |
+| [Lectern Validation](packages/validation/README.md)     | `@overture-stack/lectern-validation`    | `packages/validation/` | [![Lectern Validation NPM Package](https://img.shields.io/npm/v/@overture-stack/lectern-validation?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-validation) | Data parsing and validation against Lectern schemas and dictionaries.                        |
+| [Lectern UI](packages/ui/README.md)                     | `@overture-stack/lectern-ui`            | `packages/ui/`        | [![Lectern UI NPM Package](https://img.shields.io/npm/v/@overture-stack/lectern-ui?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@overture-stack/lectern-ui)                     | React component library for exploring and visualizing Lectern dictionaries.                  |
+| Data Generator _(internal)_                             | `@overture-stack/lectern-data-generator` | `packages/data-generator/` | —                                                                                                                                                                                                          | Internal utility for generating test data conforming to Lectern schemas. Not published to npm.      |
+
+## Sample Dictionaries
+
+The [`samples/dictionary/`](./samples/dictionary/) directory contains example Lectern dictionaries in JSON format. These are useful as references when building new dictionaries, for testing tooling that consumes dictionaries, and for exploring the range of features the dictionary meta-schema supports. See [`samples/dictionary/README.md`](./samples/dictionary/README.md) for a description of each file.
+
+The sample files are generated from TypeScript source definitions in [`scripts/src/sampleDictionaries/`](./scripts/src/sampleDictionaries/). To regenerate them after modifying the source:
+
+```bash
+pnpm nx run lectern-scripts:generate:samples
+```
 
 ## Development Environment
 
