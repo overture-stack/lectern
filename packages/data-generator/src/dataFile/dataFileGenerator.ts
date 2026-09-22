@@ -19,12 +19,15 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import type { Dictionary, Result, Schema } from '@overture-stack/lectern-dictionary';
+import type { DataRecord, Dictionary, Result, Schema } from '@overture-stack/lectern-dictionary';
 import { failWith, success } from '@overture-stack/lectern-dictionary';
 import {
 	type DictionaryGeneratorOptions,
-	generateDictionaryRecords,
+	extractFkFieldNames,
+	projectRecordToFkPool,
+	resolveSchemaGenerationOrder,
 } from '../dataGeneration/dictionary/dictionaryGenerator';
+import { type ForeignKeyPool } from '../dataGeneration/records/recordGenerator';
 import { type SchemaGeneratorOptions, generateSchemaRecords } from '../dataGeneration/records/schemaGenerator';
 import { closeDataFile, openDataFile, writeRecord } from './dataFileWriter';
 import { FILE_EXTENSION, type DataFileFormat } from '../common/fileTypes';
@@ -33,6 +36,18 @@ import { FILE_EXTENSION, type DataFileFormat } from '../common/fileTypes';
 export type GenerateFileError =
 	| { error: 'DIRECTORY_NOT_FOUND'; directory: string }
 	| { error: 'FILE_ALREADY_EXISTS'; filePath: string };
+
+/** Per-schema summary returned as part of `GenerationReport`. */
+export type SchemaGenerationReport = {
+	schemaName: string;
+	recordCount: number;
+	errorRecordCount: number;
+};
+
+/** Summary of a completed generation run, returned by `generateSchemaFile` and `generateDictionaryFiles`. */
+export type GenerationReport = {
+	schemas: SchemaGenerationReport[];
+};
 
 const resolveOutputPath = (outputDir: string, schemaName: string, format: DataFileFormat): string =>
 	path.join(outputDir, schemaName + FILE_EXTENSION[format]);
@@ -68,7 +83,7 @@ export const generateSchemaFile = async (
 	outputDir: string,
 	format: DataFileFormat,
 	options?: Omit<SchemaGeneratorOptions, 'count'> & { count: number },
-): Promise<Result<void, GenerateFileError>> => {
+): Promise<Result<GenerationReport, GenerateFileError>> => {
 	const directoryCheck = checkDirectory(outputDir);
 	if (!directoryCheck.success) {
 		return directoryCheck;
@@ -80,9 +95,17 @@ export const generateSchemaFile = async (
 		return fileCheck;
 	}
 
+	let recordCount = 0;
+	let errorRecordCount = 0;
+
 	const handle = await openDataFile(schema, filePath, format);
 	try {
-		for (const record of generateSchemaRecords(schema, options)) {
+		for (const generated of generateSchemaRecords(schema, options)) {
+			const record = generated.record;
+			recordCount++;
+			if (generated.fieldErrorCount > 0) {
+				errorRecordCount++;
+			}
 			const writeResult = await writeRecord(handle, record);
 			if (!writeResult.success) {
 				throw new Error(`Failed to write record: ${writeResult.data.error}`);
@@ -92,12 +115,17 @@ export const generateSchemaFile = async (
 		await closeDataFile(handle);
 	}
 
-	return success(undefined);
+	return success({ schemas: [{ schemaName: schema.name, recordCount, errorRecordCount }] });
 };
 
 /**
  * Generates records for all schemas in `dictionary` with a non-zero count and writes each to a
  * separate file in `outputDir`, named `<schema.name>.<format>`.
+ *
+ * Schemas are generated in FK dependency order. For schemas that have FK dependents, each record
+ * is written to disk and its FK-referenced fields are projected into the FK pool in the same pass —
+ * the full record set is never held in memory. Child schemas are then generated using that pool
+ * one record at a time.
  *
  * All output file paths are checked before any writing begins. Fails without writing any files
  * if the directory does not exist or if any expected output file already exists.
@@ -107,15 +135,21 @@ export const generateDictionaryFiles = async (
 	outputDir: string,
 	format: DataFileFormat,
 	options: DictionaryGeneratorOptions,
-): Promise<Result<void, GenerateFileError>> => {
+): Promise<Result<GenerationReport, GenerateFileError>> => {
 	const directoryCheck = checkDirectory(outputDir);
 	if (!directoryCheck.success) {
 		return directoryCheck;
 	}
 
-	const includedSchemaNames = Object.entries(options.counts)
-		.filter(([, count]) => count > 0)
-		.map(([name]) => name);
+	const { counts, seed, emptyRate, uniqueKeyRetries } = options;
+
+	const includedNames = new Set(
+		Object.entries(counts)
+			.filter(([, count]) => count > 0)
+			.map(([name]) => name),
+	);
+
+	const includedSchemaNames = [...includedNames];
 
 	for (const schemaName of includedSchemaNames) {
 		const filePath = resolveOutputPath(outputDir, schemaName, format);
@@ -137,14 +171,91 @@ export const generateDictionaryFiles = async (
 		handles.set(schemaName, await openDataFile(schema, filePath, format));
 	}
 
+	const generationOrder = resolveSchemaGenerationOrder(dictionary.schemas, includedNames);
+
+	// Assign a stable index to each schema in generation order for deterministic per-schema seeds.
+	const schemaGenerationIndex = new Map<string, number>();
+	let generationIndex = 0;
+	for (const tier of generationOrder) {
+		for (const schemaName of tier) {
+			schemaGenerationIndex.set(schemaName, generationIndex++);
+		}
+	}
+
+	// Determine which schemas have at least one included child depending on them via FK.
+	const schemasWithDependents = new Set<string>();
+	for (const schema of dictionary.schemas) {
+		if (!includedNames.has(schema.name)) {
+			continue;
+		}
+		for (const fkRule of schema.restrictions?.foreignKey ?? []) {
+			if (includedNames.has(fkRule.schema)) {
+				schemasWithDependents.add(fkRule.schema);
+			}
+		}
+	}
+
+	const foreignKeyPool: ForeignKeyPool = new Map();
+	const schemaReports: SchemaGenerationReport[] = [];
+
 	try {
-		for (const { schemaName, record } of generateDictionaryRecords(dictionary, options)) {
-			const handle = handles.get(schemaName);
-			if (handle !== undefined) {
-				const writeResult = await writeRecord(handle, record);
-				if (!writeResult.success) {
-					throw new Error(`Failed to write record for schema '${schemaName}': ${writeResult.data.error}`);
+		for (const tier of generationOrder) {
+			for (const schemaName of tier) {
+				const schema = schemaByName.get(schemaName);
+				const handle = handles.get(schemaName);
+				if (schema === undefined || handle === undefined) {
+					continue;
 				}
+
+				const count = counts[schemaName] ?? 0;
+				const schemaIndex = schemaGenerationIndex.get(schemaName) ?? 0;
+				const schemaSeed = seed !== undefined ? seed + schemaIndex : undefined;
+				const schemaGenerator = generateSchemaRecords(schema, {
+					count,
+					seed: schemaSeed,
+					foreignKeyPool,
+					emptyRate,
+					uniqueKeyRetries,
+				});
+
+				let recordCount = 0;
+				let errorRecordCount = 0;
+
+				if (schemasWithDependents.has(schemaName)) {
+					// Write each record to disk and accumulate only the FK-referenced fields into the
+					// pool — never hold the full record array in memory.
+					const fkFieldNames = extractFkFieldNames(schemaName, dictionary.schemas);
+					const poolEntries: DataRecord[] = [];
+
+					for (const generated of schemaGenerator) {
+						const record = generated.record;
+						recordCount++;
+						if (generated.fieldErrorCount > 0) {
+							errorRecordCount++;
+						}
+						const writeResult = await writeRecord(handle, record);
+						if (!writeResult.success) {
+							throw new Error(`Failed to write record for schema '${schemaName}': ${writeResult.data.error}`);
+						}
+						poolEntries.push(projectRecordToFkPool(record, fkFieldNames));
+					}
+
+					foreignKeyPool.set(schemaName, poolEntries);
+				} else {
+					for (const generated of schemaGenerator) {
+						const record = generated.record;
+						recordCount++;
+						if (generated.fieldErrorCount > 0) {
+							errorRecordCount++;
+						}
+						const writeResult = await writeRecord(handle, record);
+						if (!writeResult.success) {
+							throw new Error(`Failed to write record for schema '${schemaName}': ${writeResult.data.error}`);
+						}
+					}
+				}
+
+				schemaReports.push({ schemaName, recordCount, errorRecordCount });
 			}
 		}
 	} finally {
@@ -153,5 +264,5 @@ export const generateDictionaryFiles = async (
 		}
 	}
 
-	return success(undefined);
+	return success({ schemas: schemaReports });
 };

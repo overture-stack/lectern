@@ -19,9 +19,12 @@
 
 import assert from 'node:assert';
 import { describe, it } from 'mocha';
-import type { Schema } from '@overture-stack/lectern-dictionary';
-import { generateSchemaRecords } from '../src/dataGeneration/records/schemaGenerator';
+import type { DataRecord, Schema } from '@overture-stack/lectern-dictionary';
+import { type SchemaGeneratorOptions, generateSchemaRecords } from '../src/dataGeneration/records/schemaGenerator';
 import type { ForeignKeyPool } from '../src/dataGeneration/records/recordGenerator';
+
+const generateRecords = (schema: Schema, options?: SchemaGeneratorOptions): DataRecord[] =>
+	[...generateSchemaRecords(schema, options)].map((generated) => generated.record);
 
 const SEED = 42;
 const NO_EMPTY = { emptyRate: 0 } as const;
@@ -72,34 +75,34 @@ const schemaWithFk: Schema = {
 
 describe('generateSchemaRecords', () => {
 	it('yields exactly count records', () => {
-		const records = [...generateSchemaRecords(schema, { count: 5, seed: SEED, ...NO_EMPTY })];
+		const records = generateRecords(schema, { count: 5, seed: SEED, ...NO_EMPTY });
 		assert.strictEqual(records.length, 5);
 	});
 
 	it('yields zero records when count is 0', () => {
-		const records = [...generateSchemaRecords(schema, { count: 0, seed: SEED })];
+		const records = generateRecords(schema, { count: 0, seed: SEED });
 		assert.strictEqual(records.length, 0);
 	});
 
 	it('yields zero records when options are omitted', () => {
-		const records = [...generateSchemaRecords(schema)];
+		const records = generateRecords(schema);
 		assert.strictEqual(records.length, 0);
 	});
 
 	it('produces identical sequences for the same seed', () => {
-		const first = [...generateSchemaRecords(schema, { count: 5, seed: SEED, ...NO_EMPTY })];
-		const second = [...generateSchemaRecords(schema, { count: 5, seed: SEED, ...NO_EMPTY })];
+		const first = generateRecords(schema, { count: 5, seed: SEED, ...NO_EMPTY });
+		const second = generateRecords(schema, { count: 5, seed: SEED, ...NO_EMPTY });
 		assert.deepStrictEqual(first, second);
 	});
 
 	it('produces different sequences for different seeds', () => {
-		const first = [...generateSchemaRecords(schema, { count: 5, seed: 1, ...NO_EMPTY })];
-		const second = [...generateSchemaRecords(schema, { count: 5, seed: 99, ...NO_EMPTY })];
+		const first = generateRecords(schema, { count: 5, seed: 1, ...NO_EMPTY });
+		const second = generateRecords(schema, { count: 5, seed: 99, ...NO_EMPTY });
 		assert.notDeepStrictEqual(first, second);
 	});
 
 	it('each yielded record has all schema fields', () => {
-		const records = [...generateSchemaRecords(schema, { count: 3, seed: SEED, ...NO_EMPTY })];
+		const records = generateRecords(schema, { count: 3, seed: SEED, ...NO_EMPTY });
 		for (const record of records) {
 			for (const field of schema.fields) {
 				assert.ok(Object.hasOwn(record, field.name), `missing field: ${field.name}`);
@@ -110,7 +113,7 @@ describe('generateSchemaRecords', () => {
 	describe('unique field enforcement', () => {
 		it('unique field values are distinct across all yielded records', () => {
 			const count = 5;
-			const records = [...generateSchemaRecords(schemaWithUnique, { count, seed: SEED, ...NO_EMPTY })];
+			const records = generateRecords(schemaWithUnique, { count, seed: SEED, ...NO_EMPTY });
 			const codeValues = records.map((record) => record['code']);
 			const unique = new Set(codeValues);
 			assert.strictEqual(unique.size, count, `expected ${count} distinct code values, got ${unique.size}`);
@@ -118,14 +121,12 @@ describe('generateSchemaRecords', () => {
 
 		it('initialUniqueValues.fields pre-populates exclusion for unique fields', () => {
 			// Pre-seed 4 of the 5 codeList values, leaving only 'X5' available.
-			const records = [
-				...generateSchemaRecords(schemaWithUnique, {
-					count: 1,
-					seed: SEED,
-					...NO_EMPTY,
-					initialUniqueValues: { fields: { code: ['X1', 'X2', 'X3', 'X4'] } },
-				}),
-			];
+			const records = generateRecords(schemaWithUnique, {
+				count: 1,
+				seed: SEED,
+				...NO_EMPTY,
+				initialUniqueValues: { fields: { code: ['X1', 'X2', 'X3', 'X4'] } },
+			});
 			assert.strictEqual(records[0]?.['code'], 'X5');
 		});
 	});
@@ -133,7 +134,7 @@ describe('generateSchemaRecords', () => {
 	describe('uniqueKey enforcement', () => {
 		it('uniqueKey tuples are distinct across all yielded records', () => {
 			const count = 9; // 3 programs × 3 donors = 9 unique combinations
-			const records = [...generateSchemaRecords(schemaWithUniqueKey, { count, seed: SEED, ...NO_EMPTY })];
+			const records = generateRecords(schemaWithUniqueKey, { count, seed: SEED, ...NO_EMPTY });
 			const tuples = records.map((record) => JSON.stringify([record['program'], record['donor']]));
 			const uniqueTuples = new Set(tuples);
 			assert.strictEqual(uniqueTuples.size, count, `expected ${count} distinct key tuples, got ${uniqueTuples.size}`);
@@ -154,19 +155,22 @@ describe('generateSchemaRecords', () => {
 				restrictions: { uniqueKey: ['a', 'b'] },
 			};
 
-			const keyOf = (record: Record<string, unknown>): string => JSON.stringify([record['a'], record['b']]);
+			// Must match serializeKeyTuple in schemaGenerator.ts: entries sorted alphabetically by key name.
+			const keyOf = (record: Record<string, unknown>): string =>
+				JSON.stringify([
+					['a', record['a']],
+					['b', record['b']],
+				]);
 
-			const baseline = [...generateSchemaRecords(medKeySchema, { count: 4, seed: SEED, ...NO_EMPTY })];
+			const baseline = generateRecords(medKeySchema, { count: 4, seed: SEED, ...NO_EMPTY });
 			const preSeenKeys = baseline.map(keyOf);
 
-			const withPreSeen = [
-				...generateSchemaRecords(medKeySchema, {
-					count: 5,
-					seed: SEED,
-					...NO_EMPTY,
-					initialUniqueValues: { keys: preSeenKeys },
-				}),
-			];
+			const withPreSeen = generateRecords(medKeySchema, {
+				count: 5,
+				seed: SEED,
+				...NO_EMPTY,
+				initialUniqueValues: { keys: preSeenKeys },
+			});
 
 			// All 5 output keys must be distinct — retry mechanism found unused combinations.
 			const outputKeys = withPreSeen.map(keyOf);
@@ -181,20 +185,24 @@ describe('generateSchemaRecords', () => {
 		it('initialUniqueValues.keys pre-populates the uniqueKey tracker', () => {
 			// Generate without initial keys, then use those as pre-seen — the second run must
 			// avoid those exact tuples since it shares the same seed.
-			const firstRun = [...generateSchemaRecords(schemaWithUniqueKey, { count: 3, seed: SEED, ...NO_EMPTY })];
-			const preSeenKeys = firstRun.map((record) => JSON.stringify([record['program'], record['donor']]));
+			const firstRun = generateRecords(schemaWithUniqueKey, { count: 3, seed: SEED, ...NO_EMPTY });
+			// Must match serializeKeyTuple: entries sorted alphabetically — 'donor' < 'program'.
+			const serializeUniqueKey = (record: DataRecord): string =>
+				JSON.stringify([
+					['donor', record['donor']],
+					['program', record['program']],
+				]);
+			const preSeenKeys = firstRun.map(serializeUniqueKey);
 
-			const secondRun = [
-				...generateSchemaRecords(schemaWithUniqueKey, {
-					count: 3,
-					seed: SEED,
-					...NO_EMPTY,
-					initialUniqueValues: { keys: preSeenKeys },
-				}),
-			];
+			const secondRun = generateRecords(schemaWithUniqueKey, {
+				count: 3,
+				seed: SEED,
+				...NO_EMPTY,
+				initialUniqueValues: { keys: preSeenKeys },
+			});
 
 			for (const record of secondRun) {
-				const key = JSON.stringify([record['program'], record['donor']]);
+				const key = serializeUniqueKey(record);
 				assert.ok(!preSeenKeys.includes(key), `generated key ${key} was in the pre-seen set`);
 			}
 		});
@@ -203,9 +211,7 @@ describe('generateSchemaRecords', () => {
 	describe('foreignKeyPool', () => {
 		it('FK-constrained field values come from the pool', () => {
 			const pool: ForeignKeyPool = new Map([['donor', [{ id: 'D001' }, { id: 'D002' }]]]);
-			const records = [
-				...generateSchemaRecords(schemaWithFk, { count: 5, seed: SEED, ...NO_EMPTY, foreignKeyPool: pool }),
-			];
+			const records = generateRecords(schemaWithFk, { count: 5, seed: SEED, ...NO_EMPTY, foreignKeyPool: pool });
 			const validIds = new Set(['D001', 'D002']);
 			for (const record of records) {
 				assert.ok(validIds.has(record['donor_id'] as string), `unexpected donor_id: ${String(record['donor_id'])}`);

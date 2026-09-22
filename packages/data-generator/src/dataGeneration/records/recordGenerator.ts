@@ -115,6 +115,16 @@ const resolveForeignKeyOverrides = (schema: Schema, pool: ForeignKeyPool, seed: 
 };
 
 /**
+ * Return type of `generateRecord`. The `record` is always present.
+ * `fieldErrorCount` is `0` when all fields generated cleanly, or the count of fields that could
+ * not satisfy all their restrictions (best-effort values were used for those fields).
+ */
+export type GeneratedRecord = {
+	record: DataRecord;
+	fieldErrorCount: number;
+};
+
+/**
  * Generates a `DataRecord` with values for every field in `schema`. Each field's value is produced
  * by the appropriate field generator for its `valueType`, respecting all active restrictions.
  *
@@ -134,10 +144,14 @@ const resolveForeignKeyOverrides = (schema: Schema, pool: ForeignKeyPool, seed: 
  * Fields are generated in dependency order: a field whose conditional restrictions reference other
  * fields is always generated after those fields, so the partial record passed into later generators
  * reflects the correct values when evaluating conditional branches.
+ *
+ * Returns a `GeneratedRecord` with `fieldErrorCount === 0` when all fields generated cleanly, or
+ * `fieldErrorCount > 0` when any field could not satisfy its restrictions — the record is always present.
  */
-export const generateRecord = (schema: Schema, options?: RecordGeneratorOptions): DataRecord => {
+export const generateRecord = (schema: Schema, options?: RecordGeneratorOptions): GeneratedRecord => {
 	const { seed, overrides = {}, foreignKeyPool, emptyRate, fieldExclusions } = options ?? {};
 	const record: DataRecord = {};
+	let fieldErrorCount = 0;
 
 	const fkOverrides = foreignKeyPool !== undefined ? resolveForeignKeyOverrides(schema, foreignKeyPool, seed) : {};
 	const effectiveOverrides: DataRecord = { ...fkOverrides, ...overrides };
@@ -164,26 +178,28 @@ export const generateRecord = (schema: Schema, options?: RecordGeneratorOptions)
 			const excludeValues = fieldExclusions?.[fieldName];
 			const fieldOptions = { seed: fieldSeed, record, emptyRate, excludeValues };
 
-			let result;
+			let generated;
 			switch (field.valueType) {
 				case 'boolean':
-					result = generateBooleanValue(field, fieldOptions);
+					generated = generateBooleanValue(field, fieldOptions);
 					break;
 				case 'integer':
-					result = generateIntegerValue(field, fieldOptions);
+					generated = generateIntegerValue(field, fieldOptions);
 					break;
 				case 'number':
-					result = generateNumberValue(field, fieldOptions);
+					generated = generateNumberValue(field, fieldOptions);
 					break;
 				case 'string':
-					result = generateStringValue(field, fieldOptions);
+					generated = generateStringValue(field, fieldOptions);
 					break;
 			}
 
-			const value: DataRecordValue = result.success ? result.data : result.data.value;
-			record[fieldName] = value;
+			if (generated.conflicts.length > 0) {
+				fieldErrorCount++;
+			}
+			record[fieldName] = generated.value;
 		}
 	}
 
-	return record;
+	return { record, fieldErrorCount };
 };

@@ -41,18 +41,39 @@ export type DataFileHandle = {
 
 const streamRegistry = new Map<DataFileHandle, fs.WriteStream>();
 
-const serializeValue = (value: DataRecordValue, field: SchemaField): string => {
+/**
+ * Escapes a single string value for the given column delimiter.
+ *
+ * TSV: no quoting standard exists, so tabs, carriage returns, and newlines are replaced
+ * with a space to preserve column alignment.
+ *
+ * CSV (RFC 4180): if the value contains a comma, double-quote, carriage return, or newline,
+ * the entire field is wrapped in double-quotes and any embedded double-quotes are doubled.
+ */
+const escapeForDelimiter = (raw: string, columnDelimiter: string): string => {
+	if (columnDelimiter === '\t') {
+		return raw.replace(/[\t\r\n]/g, ' ');
+	}
+	if (raw.includes(columnDelimiter) || raw.includes('"') || raw.includes('\r') || raw.includes('\n')) {
+		return '"' + raw.replace(/"/g, '""') + '"';
+	}
+	return raw;
+};
+
+const serializeValue = (value: DataRecordValue, field: SchemaField, columnDelimiter: string): string => {
 	if (value === undefined) {
 		return '';
 	}
 	if (Array.isArray(value)) {
-		return value.map(String).join(field.delimiter ?? DEFAULT_DELIMITER);
+		const arrayDelimiter = field.delimiter ?? DEFAULT_DELIMITER;
+		const joined = value.map(String).join(arrayDelimiter);
+		return escapeForDelimiter(joined, columnDelimiter);
 	}
-	return String(value);
+	return escapeForDelimiter(String(value), columnDelimiter);
 };
 
 const serializeRecord = (record: DataRecord, schema: Schema, columnDelimiter: string): string => {
-	const values = schema.fields.map((field) => serializeValue(record[field.name], field));
+	const values = schema.fields.map((field) => serializeValue(record[field.name], field, columnDelimiter));
 	return values.join(columnDelimiter) + '\n';
 };
 

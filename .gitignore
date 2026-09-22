@@ -23,3 +23,7 @@ dist
 
 *.tsbuildinfo
 .DS_Store
+
+# Reproduction script test data and logs
+scripts/src/performance/reproduceValidationMemory-data/
+scripts/src/performance/reproduceValidationMemory-logs/

@@ -26,12 +26,18 @@ export {
 	writeRecord,
 	closeDataFile,
 } from './dataFile/dataFileWriter';
-export { generateSchemaFile, generateDictionaryFiles, type GenerateFileError } from './dataFile/dataFileGenerator';
 export {
-	FieldGenerator,
-	FieldGeneratorFailureData,
-	FieldGeneratorOptions,
-	FieldGeneratorResult,
+	generateSchemaFile,
+	generateDictionaryFiles,
+	type GenerateFileError,
+	type GenerationReport,
+	type SchemaGenerationReport,
+} from './dataFile/dataFileGenerator';
+export { type GeneratedRecord } from './dataGeneration/records/recordGenerator';
+export {
+	type FieldGenerator,
+	type GeneratedField,
+	type FieldGeneratorOptions,
 	generateBooleanValue,
 	generateIntegerValue,
 	generateNumberValue,

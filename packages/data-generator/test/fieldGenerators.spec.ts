@@ -34,15 +34,15 @@ describe('generateBooleanValue', () => {
 
 	it('returns a boolean', () => {
 		const result = generateBooleanValue(baseField, { seed: SEED, ...NO_EMPTY });
-		assert.ok(result.success);
-		assert.strictEqual(typeof result.data, 'boolean');
+		assert.strictEqual(result.conflicts.length, 0);
+		assert.strictEqual(typeof result.value, 'boolean');
 	});
 
 	it('returns an array of booleans when isArray is true', () => {
 		const result = generateBooleanValue({ ...baseField, isArray: true }, { seed: SEED, ...NO_EMPTY });
-		assert.ok(result.success);
-		assert.ok(Array.isArray(result.data));
-		for (const element of result.data as boolean[]) {
+		assert.strictEqual(result.conflicts.length, 0);
+		assert.ok(Array.isArray(result.value));
+		for (const element of result.value as boolean[]) {
 			assert.strictEqual(typeof element, 'boolean');
 		}
 	});
@@ -59,24 +59,24 @@ describe('generateIntegerValue', () => {
 
 	it('returns an integer', () => {
 		const result = generateIntegerValue(baseField, { seed: SEED, ...NO_EMPTY });
-		assert.ok(result.success);
-		assert.ok(typeof result.data === 'number' && Number.isInteger(result.data));
+		assert.strictEqual(result.conflicts.length, 0);
+		assert.ok(typeof result.value === 'number' && Number.isInteger(result.value));
 	});
 
 	it('returns an array of integers when isArray is true', () => {
 		const result = generateIntegerValue({ ...baseField, isArray: true }, { seed: SEED, ...NO_EMPTY });
-		assert.ok(result.success);
-		assert.ok(Array.isArray(result.data));
-		for (const element of result.data as number[]) {
+		assert.strictEqual(result.conflicts.length, 0);
+		assert.ok(Array.isArray(result.value));
+		for (const element of result.value as number[]) {
 			assert.ok(typeof element === 'number' && Number.isInteger(element));
 		}
 	});
 
 	it('returns an array of the specified length when arrayLength is a number', () => {
 		const result = generateIntegerValue({ ...baseField, isArray: true }, { seed: SEED, ...NO_EMPTY, arrayLength: 5 });
-		assert.ok(result.success);
-		assert.ok(Array.isArray(result.data));
-		assert.strictEqual((result.data as number[]).length, 5);
+		assert.strictEqual(result.conflicts.length, 0);
+		assert.ok(Array.isArray(result.value));
+		assert.strictEqual((result.value as number[]).length, 5);
 	});
 
 	it('returns an array whose length falls within a range when arrayLength is a RestrictionRange', () => {
@@ -85,8 +85,8 @@ describe('generateIntegerValue', () => {
 				{ ...baseField, isArray: true },
 				{ seed, ...NO_EMPTY, arrayLength: { min: 4, max: 6 } },
 			);
-			assert.ok(result.success);
-			const length = (result.data as number[]).length;
+			assert.strictEqual(result.conflicts.length, 0);
+			const length = (result.value as number[]).length;
 			assert.ok(length >= 4 && length <= 6, `array length ${length} outside [4, 6]`);
 		}
 	});
@@ -97,8 +97,8 @@ describe('generateIntegerValue', () => {
 				{ ...baseField, isArray: true },
 				{ seed, ...NO_EMPTY, arrayLength: { exclusiveMin: 2.5, max: 6 } },
 			);
-			assert.ok(result.success);
-			const length = (result.data as number[]).length;
+			assert.strictEqual(result.conflicts.length, 0);
+			const length = (result.value as number[]).length;
 			assert.ok(length >= 3 && length <= 6, `array length ${length} outside [3, 6]`);
 		}
 	});
@@ -109,8 +109,8 @@ describe('generateIntegerValue', () => {
 				{ ...baseField, isArray: true },
 				{ seed, ...NO_EMPTY, arrayLength: { min: 1, exclusiveMax: 4.7 } },
 			);
-			assert.ok(result.success);
-			const length = (result.data as number[]).length;
+			assert.strictEqual(result.conflicts.length, 0);
+			const length = (result.value as number[]).length;
 			assert.ok(length >= 1 && length <= 4, `array length ${length} outside [1, 4]`);
 		}
 	});
@@ -123,9 +123,8 @@ describe('generateIntegerValue', () => {
 				{ ...baseField, isArray: true },
 				{ seed, ...NO_EMPTY, arrayLength: { exclusiveMin: 1, exclusiveMax: 2 } },
 			);
-			assert.ok(result.success);
-			assert.ok(Array.isArray(result.data));
-			assert.strictEqual((result.data as number[]).length, 1);
+			assert.ok(Array.isArray(result.value));
+			assert.strictEqual((result.value as number[]).length, 1);
 		}
 	});
 
@@ -134,8 +133,8 @@ describe('generateIntegerValue', () => {
 		const field = { ...baseField, restrictions: { codeList } };
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateIntegerValue(field, { seed, ...NO_EMPTY });
-			assert.ok(result.success);
-			assert.ok(codeList.includes(result.data as number), `${result.data} not in codeList`);
+			assert.strictEqual(result.conflicts.length, 0);
+			assert.ok(codeList.includes(result.value as number), `${result.value} not in codeList`);
 		}
 	});
 
@@ -143,8 +142,8 @@ describe('generateIntegerValue', () => {
 		const field = { ...baseField, restrictions: { range: { min: 5, max: 10 } } };
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateIntegerValue(field, { seed, ...NO_EMPTY });
-			assert.ok(result.success);
-			const value = result.data as number;
+			assert.strictEqual(result.conflicts.length, 0);
+			const value = result.value as number;
 			assert.ok(value >= 5 && value <= 10, `${value} outside [5, 10]`);
 		}
 	});
@@ -153,8 +152,8 @@ describe('generateIntegerValue', () => {
 		const field = { ...baseField, restrictions: { range: { exclusiveMin: 0, exclusiveMax: 5 } } };
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateIntegerValue(field, { seed, ...NO_EMPTY });
-			assert.ok(result.success);
-			const value = result.data as number;
+			assert.strictEqual(result.conflicts.length, 0);
+			const value = result.value as number;
 			assert.ok(value >= 1 && value <= 4, `${value} outside (0, 5)`);
 		}
 	});
@@ -169,13 +168,13 @@ describe('generateIntegerValue', () => {
 			},
 		};
 		const activeResult = generateIntegerValue(field, { seed: SEED, ...NO_EMPTY, record: { status: 'active' } });
-		assert.ok(activeResult.success);
-		const valueWhenActive = activeResult.data as number;
+		assert.strictEqual(activeResult.conflicts.length, 0);
+		const valueWhenActive = activeResult.value as number;
 		assert.ok(valueWhenActive >= 100 && valueWhenActive <= 200, `${valueWhenActive} not in [100, 200]`);
 
 		const inactiveResult = generateIntegerValue(field, { seed: SEED, ...NO_EMPTY, record: { status: 'inactive' } });
-		assert.ok(inactiveResult.success);
-		const valueWhenInactive = inactiveResult.data as number;
+		assert.strictEqual(inactiveResult.conflicts.length, 0);
+		const valueWhenInactive = inactiveResult.value as number;
 		assert.ok(valueWhenInactive >= 0 && valueWhenInactive <= 10, `${valueWhenInactive} not in [0, 10]`);
 	});
 
@@ -189,8 +188,8 @@ describe('generateIntegerValue', () => {
 			},
 		};
 		const result = generateIntegerValue(field, { seed: SEED, ...NO_EMPTY, record: {} });
-		assert.ok(result.success);
-		const value = result.data as number;
+		assert.strictEqual(result.conflicts.length, 0);
+		const value = result.value as number;
 		assert.ok(value >= 0 && value <= 10, `${value} not in else range [0, 10]`);
 	});
 
@@ -210,8 +209,8 @@ describe('generateIntegerValue', () => {
 			},
 		};
 		const result = generateIntegerValue(field, { seed: SEED, ...NO_EMPTY, record: { a: 'no', b: 'yes' } });
-		assert.ok(result.success);
-		const value = result.data as number;
+		assert.strictEqual(result.conflicts.length, 0);
+		const value = result.value as number;
 		assert.ok(value >= 100 && value <= 200, `${value} not in then range [100, 200]`);
 	});
 
@@ -231,8 +230,8 @@ describe('generateIntegerValue', () => {
 			},
 		};
 		const result = generateIntegerValue(field, { seed: SEED, ...NO_EMPTY, record: { a: 'no', b: 'no' } });
-		assert.ok(result.success);
-		const value = result.data as number;
+		assert.strictEqual(result.conflicts.length, 0);
+		const value = result.value as number;
 		assert.ok(value >= 100 && value <= 200, `${value} not in then range [100, 200]`);
 	});
 
@@ -243,21 +242,21 @@ describe('generateIntegerValue', () => {
 		};
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateIntegerValue(field, { seed, ...NO_EMPTY });
-			assert.ok(result.success);
-			const value = result.data as number;
+			assert.strictEqual(result.conflicts.length, 0);
+			const value = result.value as number;
 			assert.ok(value >= 10 && value <= 20, `${value} outside intersection [10, 20]`);
 		}
 	});
 
-	it('returns success with a fallback value when multiple ranges conflict', () => {
+	it('returns a fallback value with conflicts when multiple ranges conflict', () => {
 		const field = {
 			...baseField,
 			restrictions: [{ range: { min: 0, max: 5 } }, { range: { min: 10, max: 20 } }],
 		};
 		const result = generateIntegerValue(field, { seed: SEED, ...NO_EMPTY });
-		assert.ok(!result.success, 'expected failure due to conflicting ranges');
-		assert.strictEqual(result.data.conflicts[0]?.type, 'range');
-		assert.ok(typeof result.data.value === 'number', 'fallback value should still be a number');
+		assert.ok(result.conflicts.length > 0, 'expected conflicts due to conflicting ranges');
+		assert.strictEqual(result.conflicts[0]?.type, 'range');
+		assert.ok(typeof result.value === 'number', 'fallback value should still be a number');
 	});
 
 	it('returns a value satisfying both codeList and range when they are compatible', () => {
@@ -267,21 +266,21 @@ describe('generateIntegerValue', () => {
 		};
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateIntegerValue(field, { seed, ...NO_EMPTY });
-			assert.ok(result.success);
-			const value = result.data as number;
+			assert.strictEqual(result.conflicts.length, 0);
+			const value = result.value as number;
 			assert.ok([5, 10].includes(value), `${value} not in intersection of codeList and range`);
 		}
 	});
 
-	it('returns failure when no codeList value satisfies the range', () => {
+	it('returns a fallback value with conflicts when no codeList value satisfies the range', () => {
 		const field = {
 			...baseField,
 			restrictions: [{ codeList: [1, 2, 3] }, { range: { min: 10, max: 20 } }],
 		};
 		const result = generateIntegerValue(field, { seed: SEED, ...NO_EMPTY });
-		assert.ok(!result.success, 'expected failure because no codeList value is in range');
-		assert.ok(typeof result.data.value === 'number', 'fallback value should still be a number');
-		assert.ok([1, 2, 3].includes(result.data.value as number), 'fallback value should come from the codeList');
+		assert.ok(result.conflicts.length > 0, 'expected conflicts because no codeList value is in range');
+		assert.ok(typeof result.value === 'number', 'fallback value should still be a number');
+		assert.ok([1, 2, 3].includes(result.value as number), 'fallback value should come from the codeList');
 	});
 
 	it('returns the same value for the same seed', () => {
@@ -296,23 +295,23 @@ describe('generateNumberValue', () => {
 
 	it('returns a number', () => {
 		const result = generateNumberValue(baseField, { seed: SEED, ...NO_EMPTY });
-		assert.ok(result.success);
-		assert.strictEqual(typeof result.data, 'number');
+		assert.strictEqual(result.conflicts.length, 0);
+		assert.strictEqual(typeof result.value, 'number');
 	});
 
 	it('returns an array of numbers when isArray is true', () => {
 		const result = generateNumberValue({ ...baseField, isArray: true }, { seed: SEED, ...NO_EMPTY });
-		assert.ok(result.success);
-		assert.ok(Array.isArray(result.data));
-		for (const element of result.data as number[]) {
+		assert.strictEqual(result.conflicts.length, 0);
+		assert.ok(Array.isArray(result.value));
+		for (const element of result.value as number[]) {
 			assert.strictEqual(typeof element, 'number');
 		}
 	});
 
 	it('returns an array of the specified length when arrayLength is a number', () => {
 		const result = generateNumberValue({ ...baseField, isArray: true }, { seed: SEED, ...NO_EMPTY, arrayLength: 7 });
-		assert.ok(result.success);
-		assert.strictEqual((result.data as number[]).length, 7);
+		assert.strictEqual(result.conflicts.length, 0);
+		assert.strictEqual((result.value as number[]).length, 7);
 	});
 
 	it('returns an array whose length falls within a range when arrayLength is a RestrictionRange', () => {
@@ -321,8 +320,8 @@ describe('generateNumberValue', () => {
 				{ ...baseField, isArray: true },
 				{ seed, ...NO_EMPTY, arrayLength: { min: 2, max: 4 } },
 			);
-			assert.ok(result.success);
-			const length = (result.data as number[]).length;
+			assert.strictEqual(result.conflicts.length, 0);
+			const length = (result.value as number[]).length;
 			assert.ok(length >= 2 && length <= 4, `array length ${length} outside [2, 4]`);
 		}
 	});
@@ -332,8 +331,8 @@ describe('generateNumberValue', () => {
 		const field = { ...baseField, restrictions: { codeList } };
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateNumberValue(field, { seed, ...NO_EMPTY });
-			assert.ok(result.success);
-			assert.ok(codeList.includes(result.data as number), `${result.data} not in codeList`);
+			assert.strictEqual(result.conflicts.length, 0);
+			assert.ok(codeList.includes(result.value as number), `${result.value} not in codeList`);
 		}
 	});
 
@@ -341,8 +340,8 @@ describe('generateNumberValue', () => {
 		const field = { ...baseField, restrictions: { range: { min: 0, max: 1 } } };
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateNumberValue(field, { seed, ...NO_EMPTY });
-			assert.ok(result.success);
-			const value = result.data as number;
+			assert.strictEqual(result.conflicts.length, 0);
+			const value = result.value as number;
 			assert.ok(value >= 0 && value <= 1, `${value} outside [0, 1]`);
 		}
 	});
@@ -351,8 +350,8 @@ describe('generateNumberValue', () => {
 		const field = { ...baseField, restrictions: { range: { exclusiveMin: 0, exclusiveMax: 1 } } };
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateNumberValue(field, { seed, ...NO_EMPTY });
-			assert.ok(result.success);
-			const value = result.data as number;
+			assert.strictEqual(result.conflicts.length, 0);
+			const value = result.value as number;
 			assert.ok(value > 0 && value < 1, `${value} outside (0, 1)`);
 		}
 	});
@@ -364,21 +363,21 @@ describe('generateNumberValue', () => {
 		};
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateNumberValue(field, { seed, ...NO_EMPTY });
-			assert.ok(result.success);
-			const value = result.data as number;
+			assert.strictEqual(result.conflicts.length, 0);
+			const value = result.value as number;
 			assert.ok(value >= 5 && value <= 10, `${value} outside intersection [5, 10]`);
 		}
 	});
 
-	it('returns failure with a fallback value when multiple ranges conflict', () => {
+	it('returns a fallback value with conflicts when multiple ranges conflict', () => {
 		const field = {
 			...baseField,
 			restrictions: [{ range: { min: 0, max: 5 } }, { range: { min: 10, max: 20 } }],
 		};
 		const result = generateNumberValue(field, { seed: SEED, ...NO_EMPTY });
-		assert.ok(!result.success, 'expected failure due to conflicting ranges');
-		assert.strictEqual(result.data.conflicts[0]?.type, 'range');
-		assert.ok(typeof result.data.value === 'number', 'fallback value should still be a number');
+		assert.ok(result.conflicts.length > 0, 'expected conflicts due to conflicting ranges');
+		assert.strictEqual(result.conflicts[0]?.type, 'range');
+		assert.ok(typeof result.value === 'number', 'fallback value should still be a number');
 	});
 
 	it('applies conditional restriction branch based on record', () => {
@@ -391,25 +390,25 @@ describe('generateNumberValue', () => {
 			},
 		};
 		const highResult = generateNumberValue(field, { seed: SEED, ...NO_EMPTY, record: { category: 'high' } });
-		assert.ok(highResult.success);
-		const high = highResult.data as number;
+		assert.strictEqual(highResult.conflicts.length, 0);
+		const high = highResult.value as number;
 		assert.ok(high >= 10 && high <= 20, `${high} not in [10, 20]`);
 
 		const lowResult = generateNumberValue(field, { seed: SEED, ...NO_EMPTY, record: { category: 'low' } });
-		assert.ok(lowResult.success);
-		const low = lowResult.data as number;
+		assert.strictEqual(lowResult.conflicts.length, 0);
+		const low = lowResult.value as number;
 		assert.ok(low >= 0 && low <= 5, `${low} not in [0, 5]`);
 	});
 
-	it('returns success with a fallback value when multiple codeLists conflict', () => {
+	it('returns a fallback value with conflicts when multiple codeLists conflict', () => {
 		const field = {
 			...baseField,
 			restrictions: [{ codeList: [1.1, 2.2] }, { codeList: [3.3, 4.4] }],
 		};
 		const result = generateNumberValue(field, { seed: SEED, ...NO_EMPTY });
-		assert.ok(!result.success, 'expected failure due to disjoint codeLists');
-		assert.strictEqual(result.data.conflicts[0]?.type, 'codeList');
-		assert.ok(typeof result.data.value === 'number', 'fallback value should still be a number');
+		assert.ok(result.conflicts.length > 0, 'expected conflicts due to disjoint codeLists');
+		assert.strictEqual(result.conflicts[0]?.type, 'codeList');
+		assert.ok(typeof result.value === 'number', 'fallback value should still be a number');
 	});
 
 	it('returns a value satisfying both codeList and range when they are compatible', () => {
@@ -420,21 +419,21 @@ describe('generateNumberValue', () => {
 		const validValues = [1.5, 5.0];
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateNumberValue(field, { seed, ...NO_EMPTY });
-			assert.ok(result.success);
-			const value = result.data as number;
+			assert.strictEqual(result.conflicts.length, 0);
+			const value = result.value as number;
 			assert.ok(validValues.includes(value), `${value} not in intersection of codeList and range`);
 		}
 	});
 
-	it('returns failure when no codeList value satisfies the range', () => {
+	it('returns a fallback value with conflicts when no codeList value satisfies the range', () => {
 		const field = {
 			...baseField,
 			restrictions: [{ codeList: [0.1, 0.5, 0.9] }, { range: { min: 5, max: 10 } }],
 		};
 		const result = generateNumberValue(field, { seed: SEED, ...NO_EMPTY });
-		assert.ok(!result.success, 'expected failure because no codeList value is in range');
-		assert.ok(typeof result.data.value === 'number', 'fallback value should still be a number');
-		assert.ok([0.1, 0.5, 0.9].includes(result.data.value as number), 'fallback value should come from the codeList');
+		assert.ok(result.conflicts.length > 0, 'expected conflicts because no codeList value is in range');
+		assert.ok(typeof result.value === 'number', 'fallback value should still be a number');
+		assert.ok([0.1, 0.5, 0.9].includes(result.value as number), 'fallback value should come from the codeList');
 	});
 
 	it('returns the same value for the same seed', () => {
@@ -449,23 +448,23 @@ describe('generateStringValue', () => {
 
 	it('returns a string', () => {
 		const result = generateStringValue(baseField, { seed: SEED, ...NO_EMPTY });
-		assert.ok(result.success);
-		assert.strictEqual(typeof result.data, 'string');
+		assert.strictEqual(result.conflicts.length, 0);
+		assert.strictEqual(typeof result.value, 'string');
 	});
 
 	it('returns an array of strings when isArray is true', () => {
 		const result = generateStringValue({ ...baseField, isArray: true }, { seed: SEED, ...NO_EMPTY });
-		assert.ok(result.success);
-		assert.ok(Array.isArray(result.data));
-		for (const element of result.data as string[]) {
+		assert.strictEqual(result.conflicts.length, 0);
+		assert.ok(Array.isArray(result.value));
+		for (const element of result.value as string[]) {
 			assert.strictEqual(typeof element, 'string');
 		}
 	});
 
 	it('returns an array of the specified length when arrayLength is a number', () => {
 		const result = generateStringValue({ ...baseField, isArray: true }, { seed: SEED, ...NO_EMPTY, arrayLength: 4 });
-		assert.ok(result.success);
-		assert.strictEqual((result.data as string[]).length, 4);
+		assert.strictEqual(result.conflicts.length, 0);
+		assert.strictEqual((result.value as string[]).length, 4);
 	});
 
 	it('returns an array whose length falls within a range when arrayLength is a RestrictionRange', () => {
@@ -474,8 +473,8 @@ describe('generateStringValue', () => {
 				{ ...baseField, isArray: true },
 				{ seed, ...NO_EMPTY, arrayLength: { min: 3, max: 5 } },
 			);
-			assert.ok(result.success);
-			const length = (result.data as string[]).length;
+			assert.strictEqual(result.conflicts.length, 0);
+			const length = (result.value as string[]).length;
 			assert.ok(length >= 3 && length <= 5, `array length ${length} outside [3, 5]`);
 		}
 	});
@@ -485,8 +484,8 @@ describe('generateStringValue', () => {
 		const field = { ...baseField, restrictions: { codeList } };
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateStringValue(field, { seed, ...NO_EMPTY });
-			assert.ok(result.success);
-			assert.ok(codeList.includes(result.data as string), `"${result.data}" not in codeList`);
+			assert.strictEqual(result.conflicts.length, 0);
+			assert.ok(codeList.includes(result.value as string), `"${result.value}" not in codeList`);
 		}
 	});
 
@@ -496,16 +495,16 @@ describe('generateStringValue', () => {
 		const regex = new RegExp(pattern);
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateStringValue(field, { seed, ...NO_EMPTY });
-			assert.ok(result.success);
-			assert.ok(regex.test(result.data as string), `"${result.data}" does not match ${pattern}`);
+			assert.strictEqual(result.conflicts.length, 0);
+			assert.ok(regex.test(result.value as string), `"${result.value}" does not match ${pattern}`);
 		}
 	});
 
 	it('skips ReferenceTag entries in codeList and falls back to arbitrary string', () => {
 		const field = { ...baseField, restrictions: { codeList: ['#/references/codes'] } };
 		const result = generateStringValue(field, { seed: SEED, ...NO_EMPTY });
-		assert.ok(result.success);
-		assert.strictEqual(typeof result.data, 'string');
+		assert.strictEqual(result.conflicts.length, 0);
+		assert.strictEqual(typeof result.value, 'string');
 	});
 
 	it('applies the then codeList when condition passes', () => {
@@ -521,12 +520,12 @@ describe('generateStringValue', () => {
 		};
 		for (let seed = 0; seed < 10; seed++) {
 			const enabledResult = generateStringValue(field, { seed, ...NO_EMPTY, record: { enabled: true } });
-			assert.ok(enabledResult.success);
-			assert.ok(thenList.includes(enabledResult.data as string), `"${enabledResult.data}" not in then codeList`);
+			assert.strictEqual(enabledResult.conflicts.length, 0);
+			assert.ok(thenList.includes(enabledResult.value as string), `"${enabledResult.value}" not in then codeList`);
 
 			const disabledResult = generateStringValue(field, { seed, ...NO_EMPTY, record: { enabled: false } });
-			assert.ok(disabledResult.success);
-			assert.ok(elseList.includes(disabledResult.data as string), `"${disabledResult.data}" not in else codeList`);
+			assert.strictEqual(disabledResult.conflicts.length, 0);
+			assert.ok(elseList.includes(disabledResult.value as string), `"${disabledResult.value}" not in else codeList`);
 		}
 	});
 
@@ -541,20 +540,20 @@ describe('generateStringValue', () => {
 		};
 		for (let seed = 0; seed < 10; seed++) {
 			const result = generateStringValue(field, { seed, ...NO_EMPTY, record: {} });
-			assert.ok(result.success);
-			assert.ok(['X', 'Y'].includes(result.data as string), `"${result.data}" not in else codeList`);
+			assert.strictEqual(result.conflicts.length, 0);
+			assert.ok(['X', 'Y'].includes(result.value as string), `"${result.value}" not in else codeList`);
 		}
 	});
 
-	it('returns success with a fallback value when codeLists from two conditional branches conflict', () => {
+	it('returns a fallback value with conflicts when codeLists from two restriction blocks conflict', () => {
 		const field = {
 			...baseField,
 			restrictions: [{ codeList: ['alpha', 'beta'] }, { codeList: ['gamma', 'delta'] }],
 		};
 		const result = generateStringValue(field, { seed: SEED, ...NO_EMPTY });
-		assert.ok(!result.success, 'expected failure due to disjoint codeLists');
-		assert.strictEqual(result.data.conflicts[0]?.type, 'codeList');
-		assert.ok(typeof result.data.value === 'string', 'fallback value should still be a string');
+		assert.ok(result.conflicts.length > 0, 'expected conflicts due to disjoint codeLists');
+		assert.strictEqual(result.conflicts[0]?.type, 'codeList');
+		assert.ok(typeof result.value === 'string', 'fallback value should still be a string');
 	});
 
 	it('returns a value satisfying both codeList and regex when they are compatible', () => {
@@ -565,23 +564,23 @@ describe('generateStringValue', () => {
 		const validValues = ['ABC', 'XYZ'];
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateStringValue(field, { seed, ...NO_EMPTY });
-			assert.ok(result.success);
+			assert.strictEqual(result.conflicts.length, 0);
 			assert.ok(
-				validValues.includes(result.data as string),
-				`"${result.data}" not in intersection of codeList and regex`,
+				validValues.includes(result.value as string),
+				`"${result.value}" not in intersection of codeList and regex`,
 			);
 		}
 	});
 
-	it('returns failure when no codeList value satisfies the regex', () => {
+	it('returns a fallback value with conflicts when no codeList value satisfies the regex', () => {
 		const field = {
 			...baseField,
 			restrictions: [{ codeList: ['abc', 'xyz'] }, { regex: '^[0-9]+$' }],
 		};
 		const result = generateStringValue(field, { seed: SEED, ...NO_EMPTY });
-		assert.ok(!result.success, 'expected failure because no codeList value matches the regex');
-		assert.ok(typeof result.data.value === 'string', 'fallback value should still be a string');
-		assert.ok(['abc', 'xyz'].includes(result.data.value as string), 'fallback value should come from the codeList');
+		assert.ok(result.conflicts.length > 0, 'expected conflicts because no codeList value matches the regex');
+		assert.ok(typeof result.value === 'string', 'fallback value should still be a string');
+		assert.ok(['abc', 'xyz'].includes(result.value as string), 'fallback value should come from the codeList');
 	});
 
 	it('returns the same value for the same seed', () => {
@@ -604,38 +603,38 @@ describe('emptyRate', () => {
 
 	it('returns undefined for every seed when emptyRate is 1', () => {
 		for (let seed = 0; seed < 20; seed++) {
-			assert.strictEqual(generateBooleanValue(boolField, { seed, emptyRate: 1 }).data, undefined);
-			assert.strictEqual(generateIntegerValue(intField, { seed, emptyRate: 1 }).data, undefined);
-			assert.strictEqual(generateNumberValue(numField, { seed, emptyRate: 1 }).data, undefined);
-			assert.strictEqual(generateStringValue(strField, { seed, emptyRate: 1 }).data, undefined);
+			assert.strictEqual(generateBooleanValue(boolField, { seed, emptyRate: 1 }).value, undefined);
+			assert.strictEqual(generateIntegerValue(intField, { seed, emptyRate: 1 }).value, undefined);
+			assert.strictEqual(generateNumberValue(numField, { seed, emptyRate: 1 }).value, undefined);
+			assert.strictEqual(generateStringValue(strField, { seed, emptyRate: 1 }).value, undefined);
 		}
 	});
 
 	it('never returns undefined when emptyRate is 0', () => {
 		for (let seed = 0; seed < 20; seed++) {
-			assert.notStrictEqual(generateBooleanValue(boolField, { seed, emptyRate: 0 }).data, undefined);
-			assert.notStrictEqual(generateIntegerValue(intField, { seed, emptyRate: 0 }).data, undefined);
-			assert.notStrictEqual(generateNumberValue(numField, { seed, emptyRate: 0 }).data, undefined);
-			assert.notStrictEqual(generateStringValue(strField, { seed, emptyRate: 0 }).data, undefined);
+			assert.notStrictEqual(generateBooleanValue(boolField, { seed, emptyRate: 0 }).value, undefined);
+			assert.notStrictEqual(generateIntegerValue(intField, { seed, emptyRate: 0 }).value, undefined);
+			assert.notStrictEqual(generateNumberValue(numField, { seed, emptyRate: 0 }).value, undefined);
+			assert.notStrictEqual(generateStringValue(strField, { seed, emptyRate: 0 }).value, undefined);
 		}
 	});
 
 	it('never returns undefined for a required field regardless of emptyRate', () => {
 		for (let seed = 0; seed < 20; seed++) {
 			const result = generateStringValue(requiredStrField, { seed, emptyRate: 1 });
-			assert.notStrictEqual(result.data, undefined);
+			assert.notStrictEqual(result.value, undefined);
 		}
 	});
 
 	it('clamps emptyRate values outside [0, 1]', () => {
 		for (let seed = 0; seed < 20; seed++) {
 			assert.strictEqual(
-				generateStringValue(strField, { seed, emptyRate: 999 }).data,
+				generateStringValue(strField, { seed, emptyRate: 999 }).value,
 				undefined,
 				'values > 1 should clamp to 1',
 			);
 			assert.notStrictEqual(
-				generateStringValue(strField, { seed, emptyRate: -999 }).data,
+				generateStringValue(strField, { seed, emptyRate: -999 }).value,
 				undefined,
 				'values < 0 should clamp to 0',
 			);
@@ -644,7 +643,7 @@ describe('emptyRate', () => {
 
 	it('produces undefined for approximately the expected fraction of seeds at the default rate', () => {
 		const results = Array.from({ length: 200 }, (_, seed) => generateStringValue(strField, { seed }));
-		const emptyCount = results.filter((result) => result.data === undefined).length;
+		const emptyCount = results.filter((result) => result.value === undefined).length;
 		// With default rate 0.25 and 200 samples, expect roughly 50 ± 30 empty values.
 		assert.ok(emptyCount > 20 && emptyCount < 80, `expected ~50 empty values, got ${emptyCount}`);
 	});

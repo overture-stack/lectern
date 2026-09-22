@@ -19,11 +19,18 @@
 
 import assert from 'node:assert';
 import { describe, it } from 'mocha';
-import type { Schema } from '@overture-stack/lectern-dictionary';
-import { generateRecord, type ForeignKeyPool } from '../src/dataGeneration/records/recordGenerator';
+import type { DataRecord, Schema } from '@overture-stack/lectern-dictionary';
+import {
+	generateRecord,
+	type ForeignKeyPool,
+	type RecordGeneratorOptions,
+} from '../src/dataGeneration/records/recordGenerator';
 
 const SEED = 42;
 const NO_EMPTY = { emptyRate: 0 } as const;
+
+const generateRecordData = (schema: Schema, options?: RecordGeneratorOptions): DataRecord =>
+	generateRecord(schema, options).record;
 
 const schema: Schema = {
 	name: 'test',
@@ -80,70 +87,70 @@ const schemaWithConditional: Schema = {
 
 describe('generateRecord', () => {
 	it('returns a record with a key for every field in the schema', () => {
-		const record = generateRecord(schema, { seed: SEED, ...NO_EMPTY });
+		const record = generateRecordData(schema, { seed: SEED, ...NO_EMPTY });
 		for (const field of schema.fields) {
 			assert.ok(Object.hasOwn(record, field.name), `missing field: ${field.name}`);
 		}
 	});
 
 	it('generates a boolean for boolean fields', () => {
-		const record = generateRecord(schema, { seed: SEED, ...NO_EMPTY });
+		const record = generateRecordData(schema, { seed: SEED, ...NO_EMPTY });
 		assert.strictEqual(typeof record['boolField'], 'boolean');
 	});
 
 	it('generates an integer number for integer fields', () => {
-		const record = generateRecord(schema, { seed: SEED, ...NO_EMPTY });
+		const record = generateRecordData(schema, { seed: SEED, ...NO_EMPTY });
 		const value = record['intField'];
 		assert.strictEqual(typeof value, 'number');
 		assert.ok(Number.isInteger(value));
 	});
 
 	it('generates a number for number fields', () => {
-		const record = generateRecord(schema, { seed: SEED, ...NO_EMPTY });
+		const record = generateRecordData(schema, { seed: SEED, ...NO_EMPTY });
 		assert.strictEqual(typeof record['numField'], 'number');
 	});
 
 	it('generates a string for string fields', () => {
-		const record = generateRecord(schema, { seed: SEED, ...NO_EMPTY });
+		const record = generateRecordData(schema, { seed: SEED, ...NO_EMPTY });
 		assert.strictEqual(typeof record['strField'], 'string');
 	});
 
 	it('respects codeList restrictions', () => {
-		const record = generateRecord(schemaWithRestrictions, { seed: SEED, ...NO_EMPTY });
+		const record = generateRecordData(schemaWithRestrictions, { seed: SEED, ...NO_EMPTY });
 		assert.ok(['active', 'inactive', 'pending'].includes(record['status'] as string));
 	});
 
 	it('respects range restrictions on integer fields', () => {
-		const record = generateRecord(schemaWithRestrictions, { seed: SEED, ...NO_EMPTY });
+		const record = generateRecordData(schemaWithRestrictions, { seed: SEED, ...NO_EMPTY });
 		const score = record['score'] as number;
 		assert.ok(score >= 0 && score <= 100);
 	});
 
 	it('respects range restrictions on number fields', () => {
-		const record = generateRecord(schemaWithRestrictions, { seed: SEED, ...NO_EMPTY });
+		const record = generateRecordData(schemaWithRestrictions, { seed: SEED, ...NO_EMPTY });
 		const rating = record['rating'] as number;
 		assert.ok(rating >= 0 && rating <= 5);
 	});
 
 	it('uses override values directly without generating', () => {
-		const record = generateRecord(schema, { seed: SEED, ...NO_EMPTY, overrides: { strField: 'forced' } });
+		const record = generateRecordData(schema, { seed: SEED, ...NO_EMPTY, overrides: { strField: 'forced' } });
 		assert.strictEqual(record['strField'], 'forced');
 	});
 
 	it('does not overwrite non-overridden fields', () => {
-		const record = generateRecord(schema, { seed: SEED, ...NO_EMPTY, overrides: { strField: 'forced' } });
+		const record = generateRecordData(schema, { seed: SEED, ...NO_EMPTY, overrides: { strField: 'forced' } });
 		assert.strictEqual(typeof record['boolField'], 'boolean');
 		assert.strictEqual(typeof record['intField'], 'number');
 	});
 
 	it('produces identical records for the same seed', () => {
-		const first = generateRecord(schema, { seed: SEED, ...NO_EMPTY });
-		const second = generateRecord(schema, { seed: SEED, ...NO_EMPTY });
+		const first = generateRecordData(schema, { seed: SEED, ...NO_EMPTY });
+		const second = generateRecordData(schema, { seed: SEED, ...NO_EMPTY });
 		assert.deepStrictEqual(first, second);
 	});
 
 	it('produces different records for different seeds', () => {
-		const records = Array.from({ length: 10 }, (_, index) => generateRecord(schema, { seed: index, ...NO_EMPTY }));
+		const records = Array.from({ length: 10 }, (_, index) => generateRecordData(schema, { seed: index, ...NO_EMPTY }));
 		const serialized = records.map((record) => JSON.stringify(record));
 		const unique = new Set(serialized);
 		assert.ok(unique.size > 1, 'expected at least some records to differ across seeds');
@@ -153,14 +160,14 @@ describe('generateRecord', () => {
 		// label's codeList depends on the value of type, which is generated first.
 		// With a fixed seed, the same type value is always generated, so the conditional
 		// always resolves the same way. We run both branches by fixing the override.
-		const recordWithTypeA = generateRecord(schemaWithConditional, {
+		const recordWithTypeA = generateRecordData(schemaWithConditional, {
 			seed: SEED,
 			...NO_EMPTY,
 			overrides: { type: 'A' },
 		});
 		assert.strictEqual(recordWithTypeA['label'], 'alpha');
 
-		const recordWithTypeB = generateRecord(schemaWithConditional, {
+		const recordWithTypeB = generateRecordData(schemaWithConditional, {
 			seed: SEED,
 			...NO_EMPTY,
 			overrides: { type: 'B' },
@@ -169,7 +176,7 @@ describe('generateRecord', () => {
 	});
 
 	it('works with a schema that has no restrictions', () => {
-		assert.doesNotThrow(() => generateRecord(schema));
+		assert.doesNotThrow(() => generateRecordData(schema));
 	});
 
 	describe('foreignKeyPool', () => {
@@ -211,7 +218,7 @@ describe('generateRecord', () => {
 
 		it('assigns the FK local field from the matching foreign field in the selected parent row', () => {
 			const pool: ForeignKeyPool = new Map([['donor', [{ id: 'D001' }]]]);
-			const record = generateRecord(childSchema, { seed: SEED, ...NO_EMPTY, foreignKeyPool: pool });
+			const record = generateRecordData(childSchema, { seed: SEED, ...NO_EMPTY, foreignKeyPool: pool });
 			assert.strictEqual(record['donor_id'], 'D001');
 		});
 
@@ -225,7 +232,7 @@ describe('generateRecord', () => {
 					],
 				],
 			]);
-			const record = generateRecord(compositeFkSchema, { seed: SEED, ...NO_EMPTY, foreignKeyPool: pool });
+			const record = generateRecordData(compositeFkSchema, { seed: SEED, ...NO_EMPTY, foreignKeyPool: pool });
 			const donorId = record['donor_id'];
 			const programId = record['program_id'];
 			// Both fields must come from the same row.
@@ -237,20 +244,20 @@ describe('generateRecord', () => {
 
 		it('generates the FK field normally when no pool entry exists for the parent schema', () => {
 			const pool: ForeignKeyPool = new Map();
-			const record = generateRecord(childSchema, { seed: SEED, ...NO_EMPTY, foreignKeyPool: pool });
+			const record = generateRecordData(childSchema, { seed: SEED, ...NO_EMPTY, foreignKeyPool: pool });
 			assert.strictEqual(typeof record['donor_id'], 'string');
 		});
 
 		it('produces identical records for the same seed when a pool is provided', () => {
 			const pool: ForeignKeyPool = new Map([['donor', [{ id: 'D001' }, { id: 'D002' }, { id: 'D003' }]]]);
-			const first = generateRecord(childSchema, { seed: SEED, ...NO_EMPTY, foreignKeyPool: pool });
-			const second = generateRecord(childSchema, { seed: SEED, ...NO_EMPTY, foreignKeyPool: pool });
+			const first = generateRecordData(childSchema, { seed: SEED, ...NO_EMPTY, foreignKeyPool: pool });
+			const second = generateRecordData(childSchema, { seed: SEED, ...NO_EMPTY, foreignKeyPool: pool });
 			assert.deepStrictEqual(first, second);
 		});
 
 		it('explicit overrides take priority over FK pool values', () => {
 			const pool: ForeignKeyPool = new Map([['donor', [{ id: 'D001' }]]]);
-			const record = generateRecord(childSchema, {
+			const record = generateRecordData(childSchema, {
 				seed: SEED,
 				foreignKeyPool: pool,
 				overrides: { donor_id: 'OVERRIDE' },
@@ -285,14 +292,14 @@ describe('generateRecord', () => {
 			],
 		};
 
-		const recordWithTypeA = generateRecord(schemaWithReversedOrder, {
+		const recordWithTypeA = generateRecordData(schemaWithReversedOrder, {
 			seed: SEED,
 			...NO_EMPTY,
 			overrides: { type: 'A' },
 		});
 		assert.strictEqual(recordWithTypeA['label'], 'alpha');
 
-		const recordWithTypeB = generateRecord(schemaWithReversedOrder, {
+		const recordWithTypeB = generateRecordData(schemaWithReversedOrder, {
 			seed: SEED,
 			...NO_EMPTY,
 			overrides: { type: 'B' },

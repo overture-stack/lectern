@@ -21,22 +21,22 @@ import {
 import { donorSchema, sampleSchema, myDictionary } from './fixtures';
 
 // Generate a single record conforming to a schema
-const record = generateRecord(donorSchema, { seed: 42 });
+const { record } = generateRecord(donorSchema, { seed: 42 });
 
 // Generate a record with a specific field value forced
-const recordWithOverride = generateRecord(donorSchema, {
+const { record: recordWithOverride } = generateRecord(donorSchema, {
 	overrides: { id: 'DUPLICATE-ID' },
 });
 
 // Generate a child record whose foreign key fields are drawn from an existing set of parent rows
 const parentRows = [{ id: 'P001' }, { id: 'P002' }];
-const childRecord = generateRecord(sampleSchema, {
+const { record: childRecord } = generateRecord(sampleSchema, {
 	seed: 42,
 	foreignKeyPool: new Map([['donor', parentRows]]),
 });
 
 // Lazily generate 10,000 records for a schema - one at a time, without buffering
-for (const record of generateSchemaRecords(donorSchema, { count: 10_000, seed: 42 })) {
+for (const { record } of generateSchemaRecords(donorSchema, { count: 10_000, seed: 42 })) {
 	process(record);
 }
 
@@ -85,46 +85,48 @@ if (!dictionaryResult.success) {
 ### Table of Contents
 
 - [Data Generator](#data-generator)
-	- [Usage](#usage)
-		- [Generating records in memory](#generating-records-in-memory)
-		- [Writing generated data to files](#writing-generated-data-to-files)
-	- [API Documentation](#api-documentation)
-		- [Table of Contents](#table-of-contents)
-	- [Generator Behaviour](#generator-behaviour)
-		- [Seeded generation](#seeded-generation)
-		- [Field Generation](#field-generation)
-			- [Conditional restrictions](#conditional-restrictions)
-			- [Empty fields](#empty-fields)
-			- [Generator failures](#generator-failures)
-			- [Reference tags in restrictions](#reference-tags-in-restrictions)
-		- [Record Generation](#record-generation)
-			- [Field dependency ordering](#field-dependency-ordering)
-			- [Foreign key constraints](#foreign-key-constraints)
-		- [Schema and Dictionary Generation](#schema-and-dictionary-generation)
-			- [Unique field constraints](#unique-field-constraints)
-			- [Unique key constraints](#unique-key-constraints)
-			- [Foreign key dependency ordering across schemas](#foreign-key-dependency-ordering-across-schemas)
-		- [API - Functions](#api---functions)
-			- [`generateStringValue`](#generatestringvalue)
-			- [`generateIntegerValue`](#generateintegervalue)
-			- [`generateNumberValue`](#generatenumbervalue)
-			- [`generateBooleanValue`](#generatebooleanvalue)
-			- [`generateRecord`](#generaterecord)
-			- [`generateSchemaRecords`](#generateschemarecords)
-			- [`generateDictionaryRecords`](#generatedictionaryrecords)
-			- [`generateSchemaFile`](#generateschemafile)
-			- [`generateDictionaryFiles`](#generatedictionaryfiles)
-		- [API - Types](#api---types)
-			- [`FieldGenerator`](#fieldgenerator)
-			- [`FieldGeneratorOptions`](#fieldgeneratoroptions)
-			- [`FieldGeneratorResult`](#fieldgeneratorresult)
-			- [`ForeignKeyPool`](#foreignkeypool)
-			- [`RecordGeneratorOptions`](#recordgeneratoroptions)
-			- [`SchemaGeneratorOptions`](#schemageneratoroptions)
-			- [`DictionaryGeneratorOptions`](#dictionarygeneratoroptions)
-			- [`DictionaryRecord`](#dictionaryrecord)
-			- [`DataFileFormat`](#datafileformat)
-			- [`GenerateFileError`](#generatefileerror)
+  - [Usage](#usage)
+    - [Generating records in memory](#generating-records-in-memory)
+    - [Writing generated data to files](#writing-generated-data-to-files)
+  - [API Documentation](#api-documentation)
+    - [Table of Contents](#table-of-contents)
+  - [Generator Behaviour](#generator-behaviour)
+    - [Seeded generation](#seeded-generation)
+    - [Field Generation](#field-generation)
+      - [Conditional restrictions](#conditional-restrictions)
+      - [Empty fields](#empty-fields)
+      - [Generator failures](#generator-failures)
+      - [Reference tags in restrictions](#reference-tags-in-restrictions)
+    - [Record Generation](#record-generation)
+      - [Field dependency ordering](#field-dependency-ordering)
+      - [Foreign key constraints](#foreign-key-constraints)
+    - [Schema and Dictionary Generation](#schema-and-dictionary-generation)
+      - [Unique field constraints](#unique-field-constraints)
+      - [Unique key constraints](#unique-key-constraints)
+      - [Foreign key dependency ordering across schemas](#foreign-key-dependency-ordering-across-schemas)
+    - [API - Functions](#api---functions)
+      - [`generateStringValue`](#generatestringvalue)
+      - [`generateIntegerValue`](#generateintegervalue)
+      - [`generateNumberValue`](#generatenumbervalue)
+      - [`generateBooleanValue`](#generatebooleanvalue)
+      - [`generateRecord`](#generaterecord)
+      - [`generateSchemaRecords`](#generateschemarecords)
+      - [`generateDictionaryRecords`](#generatedictionaryrecords)
+      - [`generateSchemaFile`](#generateschemafile)
+      - [`generateDictionaryFiles`](#generatedictionaryfiles)
+    - [API - Types](#api---types)
+      - [`FieldGenerator`](#fieldgenerator)
+      - [`FieldGeneratorOptions`](#fieldgeneratoroptions)
+      - [`GeneratedField`](#generatedfield)
+      - [`ForeignKeyPool`](#foreignkeypool)
+      - [`GeneratedRecord`](#generatedrecord)
+      - [`RecordGeneratorOptions`](#recordgeneratoroptions)
+      - [`SchemaGeneratorOptions`](#schemageneratoroptions)
+      - [`DictionaryGeneratorOptions`](#dictionarygeneratoroptions)
+      - [`DictionaryRecord`](#dictionaryrecord)
+      - [`GenerationReport`](#generationreport)
+      - [`DataFileFormat`](#datafileformat)
+      - [`GenerateFileError`](#generatefileerror)
 
 ---
 
@@ -160,19 +162,14 @@ The empty check is seeded alongside the value draw, so the same seed always prod
 
 #### Generator failures
 
-Dictionaries can specify restrictions that are contradictory, making it impossible to generate a valid value. In these cases the generator returns a failure result rather than throwing. The returned object contains:
+Dictionaries can specify restrictions that are contradictory, making it impossible to generate a valid value. In these cases the generator always returns a value (best-effort, may not satisfy all restrictions) along with a non-empty `conflicts` list describing which restrictions could not be reconciled. Callers can check `result.conflicts.length > 0` to detect this condition.
 
-- A fallback value (best-effort, may not satisfy all restrictions).
-- A list of conflicts describing which restrictions could not be reconciled.
-
-Restriction combinations that can produce a failure:
+Restriction combinations that can produce conflicts:
 
 - **Multiple `codeList` restrictions with no common values** - the intersection of two or more code lists is empty.
 - **Multiple `range` restrictions that do not overlap** - the merged lower bound exceeds the merged upper bound, or both bounds are equal and at least one is exclusive.
 - **`codeList` and `range` together with no intersection** - none of the code list values fall within the specified range.
 - **`codeList` and `regex` together with no intersection** - none of the code list values match the specified regex pattern.
-
-Callers should check `result.success` before using the value in a context that requires a valid record.
 
 #### Reference tags in restrictions
 
@@ -196,7 +193,7 @@ When generating child records, pass a `ForeignKeyPool` to `generateRecord` so th
 
 ```ts
 const pool: ForeignKeyPool = new Map([['donor', [{ id: 'D001' }, { id: 'D002' }, { id: 'D003' }]]]);
-const childRecord = generateRecord(sampleSchema, { seed: 42, foreignKeyPool: pool });
+const { record: childRecord } = generateRecord(sampleSchema, { seed: 42, foreignKeyPool: pool });
 // childRecord.donor_id will be one of 'D001', 'D002', or 'D003'
 ```
 
@@ -214,7 +211,7 @@ If the field's value space is exhausted (e.g. a `codeList` with five entries and
 
 #### Unique key constraints
 
-When a schema declares `restrictions.uniqueKey`, `generateSchemaRecords` tracks the composite key tuple for every record and retries generation (up to 10 times) when a collision is detected. Retry seeds are derived deterministically from the record seed and the retry count, so retries do not affect the seed sequence for non-colliding records.
+When a schema declares `restrictions.uniqueKey`, `generateSchemaRecords` tracks the composite key tuple for every record and retries generation (up to 20 times by default, configurable via `uniqueKeyRetries`) when a collision is detected. Retry seeds are derived deterministically from the record seed and the retry count, so retries do not affect the seed sequence for non-colliding records.
 
 `initialUniqueValues` can be used to pre-populate both trackers (for `unique` fields and `uniqueKey` tuples) when appending to an existing dataset, so the generator avoids colliding with already-written values.
 
@@ -248,7 +245,7 @@ The generator reads the field's restrictions (including conditional branches, re
 | `field`   | `SchemaStringField`                | The field definition to generate a value for.       |
 | `options` | `FieldGeneratorOptions` (optional) | Seed, record context, array length, and empty rate. |
 
-**Returns:** `FieldGeneratorResult` - success wrapping `string | string[] | undefined`, or failure with conflict details.
+**Returns:** `GeneratedField` - always contains a `value` (`string | string[] | undefined`); `conflicts` is empty when all restrictions were satisfied, or lists restriction pairs that could not be reconciled.
 
 ---
 
@@ -271,7 +268,7 @@ Generates a value for a `SchemaIntegerField`. Returns a single `number` (integer
 | `field`   | `SchemaIntegerField`               | The field definition to generate a value for.       |
 | `options` | `FieldGeneratorOptions` (optional) | Seed, record context, array length, and empty rate. |
 
-**Returns:** `FieldGeneratorResult` - success wrapping `number | number[] | undefined`, or failure with conflict details.
+**Returns:** `GeneratedField` - always contains a `value` (`number | number[] | undefined`); `conflicts` is empty when all restrictions were satisfied, or lists restriction pairs that could not be reconciled.
 
 ---
 
@@ -296,7 +293,7 @@ Behaviour mirrors `generateIntegerValue`. The difference is that when no `codeLi
 | `field`   | `SchemaNumberField`                | The field definition to generate a value for.       |
 | `options` | `FieldGeneratorOptions` (optional) | Seed, record context, array length, and empty rate. |
 
-**Returns:** `FieldGeneratorResult` - success wrapping `number | number[] | undefined`, or failure with conflict details.
+**Returns:** `GeneratedField` - always contains a `value` (`number | number[] | undefined`); `conflicts` is empty when all restrictions were satisfied, or lists restriction pairs that could not be reconciled.
 
 ---
 
@@ -306,7 +303,7 @@ Generates a value for a `SchemaBooleanField`. Returns a single `boolean` or `und
 
 Returns `true` or `false` at random. If the field is not `required` and the empty check fires (see `emptyRate`), returns `undefined` instead. If `field.isArray` is `true`, returns an array. Length is controlled by `options.arrayLength` (default 1–3).
 
-`required: true` combined with `empty: true` across the active restrictions is a conflict and produces a failure result, though a value is still generated.
+`required: true` combined with `empty: true` across the active restrictions is a conflict; the returned `conflicts` array will contain an entry for this pair, though a value is still generated.
 
 **Parameters**
 
@@ -315,7 +312,7 @@ Returns `true` or `false` at random. If the field is not `required` and the empt
 | `field`   | `SchemaBooleanField`               | The field definition to generate a value for.       |
 | `options` | `FieldGeneratorOptions` (optional) | Seed, record context, array length, and empty rate. |
 
-**Returns:** `FieldGeneratorResult` - success wrapping `boolean | boolean[] | undefined`, or failure if `required` and `empty` conflict.
+**Returns:** `GeneratedField` - always contains a `value` (`boolean | boolean[] | undefined`); `conflicts` is non-empty if `required` and `empty` conflict.
 
 ---
 
@@ -336,24 +333,24 @@ If `seed` is provided, the same seed and schema always produce the same `DataRec
 | `schema`  | `Schema`                              | The schema to generate a record for. |
 | `options` | `RecordGeneratorOptions` _(optional)_ | Generation options - see type below. |
 
-**Returns:** `DataRecord` - a record with a value (or `undefined`) for every field in the schema.
+**Returns:** `GeneratedRecord` - contains the generated `record` and a `fieldErrorCount` indicating how many fields could not satisfy all their restrictions (0 when all fields generated cleanly).
 
 ---
 
 #### `generateSchemaRecords`
 
-A synchronous generator that lazily yields `DataRecord` values for a given `Schema`. Records are produced one at a time - none are buffered in memory.
+A synchronous generator that lazily yields `GeneratedRecord` values for a given `Schema`. Records are produced one at a time - none are buffered in memory.
 
-Enforces `unique` field constraints by excluding already-seen values from each field generator. Enforces `uniqueKey` constraints by retrying generation (up to 10 times) with a deterministically derived seed when a composite key tuple collides.
+Enforces `unique` field constraints by excluding already-seen values from each field generator. Enforces `uniqueKey` constraints by retrying generation (up to 20 times by default, configurable via `uniqueKeyRetries`) with a deterministically derived seed when a composite key tuple collides.
 
 **Parameters**
 
-| Parameter | Type                                  | Description                                              |
-| --------- | ------------------------------------- | -------------------------------------------------------- |
-| `schema`  | `Schema`                              | The schema to generate records for.                      |
+| Parameter | Type                                  | Description                                                       |
+| --------- | ------------------------------------- | ----------------------------------------------------------------- |
+| `schema`  | `Schema`                              | The schema to generate records for.                               |
 | `options` | `SchemaGeneratorOptions` _(optional)_ | Count, seed, foreign key pool, empty rate, initial unique values. |
 
-**Returns:** `Generator<DataRecord>` - yields one record per iteration.
+**Returns:** `Generator<GeneratedRecord>` - yields one `GeneratedRecord` per iteration.
 
 ---
 
@@ -389,7 +386,7 @@ Fails before writing if the output directory does not exist or if the output fil
 | `format`    | `DataFileFormat`                      | Column delimiter format: `'tsv'` or `'csv'`.                  |
 | `options`   | `SchemaGeneratorOptions` _(optional)_ | Count, seed, empty rate, and uniqueness options.              |
 
-**Returns:** `Promise<Result<void, GenerateFileError>>` - resolves to a success result on completion, or a failure with `DIRECTORY_NOT_FOUND` or `FILE_ALREADY_EXISTS`.
+**Returns:** `Promise<Result<GenerationReport, GenerateFileError>>` - on success, `.data` is a `GenerationReport` summarising records written per schema; on failure, `.data.error` is `DIRECTORY_NOT_FOUND` or `FILE_ALREADY_EXISTS`.
 
 ---
 
@@ -408,7 +405,7 @@ All expected output file paths are checked before any writing begins. If any fil
 | `format`     | `DataFileFormat`             | Column delimiter format: `'tsv'` or `'csv'`.               |
 | `options`    | `DictionaryGeneratorOptions` | Counts per schema, seed, and empty rate - see type below.  |
 
-**Returns:** `Promise<Result<void, GenerateFileError>>` - resolves to a success result on completion, or a failure with `DIRECTORY_NOT_FOUND` or `FILE_ALREADY_EXISTS`.
+**Returns:** `Promise<Result<GenerationReport, GenerateFileError>>` - on success, `.data` is a `GenerationReport` summarising records written per schema; on failure, `.data.error` is `DIRECTORY_NOT_FOUND` or `FILE_ALREADY_EXISTS`.
 
 ---
 
@@ -419,10 +416,7 @@ All expected output file paths are checked before any writing begins. If any fil
 Function type for a field value generator.
 
 ```ts
-type FieldGenerator<TField extends SchemaField> = (
-	field: TField,
-	options?: FieldGeneratorOptions,
-) => FieldGeneratorResult;
+type FieldGenerator<TField extends SchemaField> = (field: TField, options?: FieldGeneratorOptions) => GeneratedField;
 ```
 
 | Type parameter | Description                                                |
@@ -455,29 +449,23 @@ type FieldGeneratorOptions = {
 
 ---
 
-#### `FieldGeneratorResult`
+#### `GeneratedField`
 
 Return type of all field generator functions.
 
 ```ts
-type FieldGeneratorResult = Result<DataRecordValue, FieldGeneratorFailureData>;
-```
-
-On success, `.data` holds the generated `DataRecordValue` (which may be `undefined` when the empty check fires). On failure, `.data` contains a `FieldGeneratorFailureData` object:
-
-```ts
-type FieldGeneratorFailureData = {
-	value: DataRecordValue;
+type GeneratedField<TValue extends DataRecordValue = DataRecordValue> = {
+	value: TValue;
 	conflicts: RestrictionConflict[];
 };
 ```
 
+`value` is always present and may be `undefined` when the empty check fires. `conflicts` is empty when all restrictions were satisfied; when non-empty, `value` was produced from the non-conflicting subset of restrictions and may not satisfy all of them.
+
 | Property    | Type                    | Description                                                              |
 | ----------- | ----------------------- | ------------------------------------------------------------------------ |
-| `value`     | `DataRecordValue`       | Best-effort fallback value; may not satisfy all restrictions.            |
+| `value`     | `DataRecordValue`       | Generated value, or best-effort fallback when restrictions conflict.     |
 | `conflicts` | `RestrictionConflict[]` | List of restriction pairs that could not be reconciled during reduction. |
-
-Check `result.success` to narrow the type before accessing `.data`.
 
 ---
 
@@ -501,6 +489,24 @@ When a parent schema name has no entry in the map, fields referencing that schem
 
 ---
 
+#### `GeneratedRecord`
+
+Return type of `generateRecord`.
+
+```ts
+type GeneratedRecord = {
+	record: DataRecord;
+	fieldErrorCount: number;
+};
+```
+
+| Property          | Type         | Description                                                                                                                       |
+| ----------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `record`          | `DataRecord` | The generated record with a value (or `undefined`) for every field in the schema.                                                 |
+| `fieldErrorCount` | `number`     | Count of fields that could not satisfy all their restrictions and used best-effort values. `0` when all fields generated cleanly. |
+
+---
+
 #### `RecordGeneratorOptions`
 
 Options accepted by `generateRecord`.
@@ -519,7 +525,7 @@ type RecordGeneratorOptions = {
 | ----------------- | -------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `overrides`       | `DataRecord`                           | `undefined` | Field values to use directly, bypassing generation. Keys not in `schema.fields` are ignored. Takes priority over `foreignKeyPool` values.                           |
 | `seed`            | `number`                               | `undefined` | RNG seed for deterministic output. When omitted, output is non-deterministic.                                                                                       |
-| `foreignKeyPool`  | `ForeignKeyPool`                       | `undefined` | Pool of available parent rows for foreign key constrained fields. See `ForeignKeyPool` for the expected structure.                                                           |
+| `foreignKeyPool`  | `ForeignKeyPool`                       | `undefined` | Pool of available parent rows for foreign key constrained fields. See `ForeignKeyPool` for the expected structure.                                                  |
 | `emptyRate`       | `number`                               | `0.25`      | Probability (0–1) that any non-required field is left empty (`undefined`). Passed through to each field generator unchanged. See `FieldGeneratorOptions.emptyRate`. |
 | `fieldExclusions` | `Record<string, Set<DataRecordValue>>` | `undefined` | Per-field sets of values the generator must not produce. Used internally by `generateSchemaRecords` to enforce `unique` constraints.                                |
 
@@ -535,6 +541,7 @@ type SchemaGeneratorOptions = {
 	seed?: number;
 	foreignKeyPool?: ForeignKeyPool;
 	emptyRate?: number;
+	uniqueKeyRetries?: number;
 	initialUniqueValues?: {
 		fields?: Record<string, DataRecordValue[]>;
 		keys?: string[];
@@ -542,13 +549,14 @@ type SchemaGeneratorOptions = {
 };
 ```
 
-| Property              | Type                 | Default      | Description                                                                                                                                                                                                                                  |
-| --------------------- | -------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `count`               | `number`             | _(required)_ | Number of records to generate.                                                                                                                                                                                                               |
-| `seed`                | `number`             | `undefined`  | RNG seed for deterministic output.                                                                                                                                                                                                           |
-| `foreignKeyPool`      | `ForeignKeyPool`     | `undefined`  | Pool of available parent rows for foreign key constrained fields.                                                                                                                                                                                     |
-| `emptyRate`           | `number`             | `0.25`       | Probability (0–1) that any non-required field is left empty.                                                                                                                                                                                 |
-| `initialUniqueValues` | `{ fields?, keys? }` | `undefined`  | Pre-populates uniqueness trackers to avoid collisions with records already written elsewhere. `fields` maps field names to pre-seen values; `keys` is an array of pre-seen serialized `uniqueKey` tuples (`JSON.stringify(keyFieldValues)`). |
+| Property              | Type                 | Default      | Description                                                                                                                                                                                                                                                                                                                                         |
+| --------------------- | -------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `count`               | `number`             | _(required)_ | Number of records to generate.                                                                                                                                                                                                                                                                                                                      |
+| `seed`                | `number`             | `undefined`  | RNG seed for deterministic output.                                                                                                                                                                                                                                                                                                                  |
+| `foreignKeyPool`      | `ForeignKeyPool`     | `undefined`  | Pool of available parent rows for foreign key constrained fields.                                                                                                                                                                                                                                                                                   |
+| `emptyRate`           | `number`             | `0.25`       | Probability (0–1) that any non-required field is left empty.                                                                                                                                                                                                                                                                                        |
+| `uniqueKeyRetries`    | `number`             | `20`         | Maximum number of retries when a generated `uniqueKey` tuple collides with an already-seen tuple.                                                                                                                                                                                                                                                   |
+| `initialUniqueValues` | `{ fields?, keys? }` | `undefined`  | Pre-populates uniqueness trackers to avoid collisions with records already written elsewhere. `fields` maps field names to pre-seen values; `keys` is an array of pre-seen serialized `uniqueKey` tuples. Each tuple must be serialized using `JSON.stringify(sortedEntries)` where `sortedEntries` is the key field entries sorted alphabetically. |
 
 ---
 
@@ -561,14 +569,16 @@ type DictionaryGeneratorOptions = {
 	counts: Record<string, number>;
 	seed?: number;
 	emptyRate?: number;
+	uniqueKeyRetries?: number;
 };
 ```
 
-| Property    | Type                     | Default      | Description                                                                                        |
-| ----------- | ------------------------ | ------------ | -------------------------------------------------------------------------------------------------- |
-| `counts`    | `Record<string, number>` | _(required)_ | Maps schema name to the number of records to generate. Schemas with count 0 or absent are skipped. |
-| `seed`      | `number`                 | `undefined`  | RNG seed for deterministic output across all generated schemas.                                    |
-| `emptyRate` | `number`                 | `0.25`       | Probability (0–1) that any non-required field is left empty.                                       |
+| Property           | Type                     | Default      | Description                                                                                        |
+| ------------------ | ------------------------ | ------------ | -------------------------------------------------------------------------------------------------- |
+| `counts`           | `Record<string, number>` | _(required)_ | Maps schema name to the number of records to generate. Schemas with count 0 or absent are skipped. |
+| `seed`             | `number`                 | `undefined`  | RNG seed for deterministic output across all generated schemas.                                    |
+| `emptyRate`        | `number`                 | `0.25`       | Probability (0–1) that any non-required field is left empty.                                       |
+| `uniqueKeyRetries` | `number`                 | `20`         | Maximum number of retries when a generated `uniqueKey` tuple collides. Passed to each schema.      |
 
 ---
 
@@ -587,6 +597,30 @@ type DictionaryRecord = {
 | ------------ | ------------ | ----------------------------------------------------- |
 | `schemaName` | `string`     | The name of the schema this record was generated for. |
 | `record`     | `DataRecord` | The generated record.                                 |
+
+---
+
+#### `GenerationReport`
+
+Success value returned by `generateSchemaFile` and `generateDictionaryFiles`.
+
+```ts
+type GenerationReport = {
+	schemas: SchemaGenerationReport[];
+};
+
+type SchemaGenerationReport = {
+	schemaName: string;
+	recordCount: number;
+	errorRecordCount: number;
+};
+```
+
+| Property (SchemaGenerationReport) | Type     | Description                                                                     |
+| --------------------------------- | -------- | ------------------------------------------------------------------------------- |
+| `schemaName`                      | `string` | The name of the schema.                                                         |
+| `recordCount`                     | `number` | Total number of records written for this schema.                                |
+| `errorRecordCount`                | `number` | Number of records that contained at least one field with restriction conflicts. |
 
 ---
 

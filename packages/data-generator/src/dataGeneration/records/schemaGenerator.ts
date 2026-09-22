@@ -19,12 +19,24 @@
 
 import type { DataRecord, DataRecordValue, Schema } from '@overture-stack/lectern-dictionary';
 import { knuthHash } from '../../common/hash';
-import { type ForeignKeyPool, generateRecord } from './recordGenerator';
+import { type ForeignKeyPool, type GeneratedRecord, generateRecord } from './recordGenerator';
 
 type UniqueFieldTracker = Map<string, Set<DataRecordValue>>;
 
-const serializeKeyTuple = (schema: Schema, record: DataRecord): string =>
-	JSON.stringify((schema.restrictions?.uniqueKey ?? []).map((fieldName) => record[fieldName]));
+const normalizeKeyValue = (value: DataRecordValue): DataRecordValue =>
+	typeof value === 'string' ? value.trim() || undefined : value;
+
+// Mirrors the validator's hashDataRecord: filter undefined, sort by key, stringify.
+// String values are trimmed first so the generator sees the same key the validator will see.
+const serializeKeyTuple = (schema: Schema, record: DataRecord): string => {
+	const normalized = Object.fromEntries(
+		(schema.restrictions?.uniqueKey ?? [])
+			.map((fieldName): [string, DataRecordValue] => [fieldName, normalizeKeyValue(record[fieldName])])
+			.filter(([, value]) => value !== undefined)
+			.sort(([keyA], [keyB]) => (keyA < keyB ? -1 : 1)),
+	);
+	return JSON.stringify(Object.entries(normalized));
+};
 
 /**
  * Options for `generateSchemaRecords`.
@@ -41,13 +53,14 @@ export type SchemaGeneratorOptions = {
 	seed?: number;
 	foreignKeyPool?: ForeignKeyPool;
 	emptyRate?: number;
+	uniqueKeyRetries?: number;
 	initialUniqueValues?: {
 		fields?: Record<string, DataRecordValue[]>;
 		keys?: string[];
 	};
 };
 
-const MAX_UNIQUE_KEY_RETRIES = 10;
+const DEFAULT_UNIQUE_KEY_RETRIES = 20;
 
 // Each (recordSeed, retryCount) pair produces a distinct seed independent of the main sequence.
 // XOR with a large odd constant multiple of retryCount before hashing so each retry count maps to
@@ -56,14 +69,17 @@ const deriveRetrySeed = (recordSeed: number, retryCount: number): number =>
 	knuthHash((recordSeed ^ (retryCount * 2246822519)) >>> 0);
 
 /**
- * Synchronous generator that yields `options.count` `DataRecord` values for `schema`.
+ * Synchronous generator that yields a `GeneratedRecord` for each of `options.count` records.
+ * `fieldErrorCount` is `0` when all fields generated cleanly, or the count of fields that used
+ * best-effort fallback values due to restriction conflicts.
  *
  * Enforces `unique` field constraints by excluding already-seen values from each field generator.
- * Enforces `uniqueKey` constraints by retrying generation (up to 10 times) when a composite key
- * tuple collides. After exhausting retries the record is yielded as-is.
+ * Enforces `uniqueKey` constraints by retrying generation when a composite key tuple collides.
+ * After exhausting retries the record is yielded as-is.
  */
-export function* generateSchemaRecords(schema: Schema, options?: SchemaGeneratorOptions): Generator<DataRecord> {
-	const { count = 0, seed, foreignKeyPool, emptyRate, initialUniqueValues } = options ?? {};
+export function* generateSchemaRecords(schema: Schema, options?: SchemaGeneratorOptions): Generator<GeneratedRecord> {
+	const { count = 0, seed, foreignKeyPool, emptyRate, uniqueKeyRetries, initialUniqueValues } = options ?? {};
+	const maxUniqueKeyRetries = uniqueKeyRetries ?? DEFAULT_UNIQUE_KEY_RETRIES;
 
 	const uniqueFields = schema.fields.filter((field) => field.unique === true);
 	const uniqueKeyFields = schema.restrictions?.uniqueKey ?? [];
@@ -84,14 +100,24 @@ export function* generateSchemaRecords(schema: Schema, options?: SchemaGenerator
 		}
 
 		const recordSeed = seed !== undefined ? seed + recordIndex + 1 : undefined;
-		let record = generateRecord(schema, { seed: recordSeed, foreignKeyPool, emptyRate, fieldExclusions });
+		let generated = generateRecord(schema, { seed: recordSeed, foreignKeyPool, emptyRate, fieldExclusions });
+		let record = generated.record;
 
 		if (uniqueKeyFields.length > 0) {
 			let retryCount = 0;
-			while (uniqueKeyTracker.has(serializeKeyTuple(schema, record)) && retryCount < MAX_UNIQUE_KEY_RETRIES) {
+			while (uniqueKeyTracker.has(serializeKeyTuple(schema, record)) && retryCount < maxUniqueKeyRetries) {
 				retryCount++;
 				const retrySeed = recordSeed !== undefined ? deriveRetrySeed(recordSeed, retryCount) : undefined;
-				record = generateRecord(schema, { seed: retrySeed, foreignKeyPool, emptyRate, fieldExclusions });
+				// If the collision is due to all uniqueKey fields being empty, force emptyRate=0 so
+				// retries cannot produce the same all-undefined key tuple again.
+				const retryEmptyRate = serializeKeyTuple(schema, record) === '[]' ? 0 : emptyRate;
+				generated = generateRecord(schema, {
+					seed: retrySeed,
+					foreignKeyPool,
+					emptyRate: retryEmptyRate,
+					fieldExclusions,
+				});
+				record = generated.record;
 			}
 			uniqueKeyTracker.add(serializeKeyTuple(schema, record));
 		}
@@ -100,6 +126,6 @@ export function* generateSchemaRecords(schema: Schema, options?: SchemaGenerator
 			seenValues.add(record[fieldName]);
 		}
 
-		yield record;
+		yield generated;
 	}
 }

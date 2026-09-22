@@ -18,7 +18,7 @@
  */
 
 import type { DataRecord, Dictionary, Schema } from '@overture-stack/lectern-dictionary';
-import { type ForeignKeyPool } from '../records/recordGenerator';
+import { type ForeignKeyPool, type GeneratedRecord } from '../records/recordGenerator';
 import { generateSchemaRecords } from '../records/schemaGenerator';
 
 /** Maps schema name to the number of records to generate. Schemas absent from this map or with count 0 are skipped. */
@@ -29,6 +29,7 @@ export type DictionaryGeneratorOptions = {
 	counts: DictionarySchemaCount;
 	seed?: number;
 	emptyRate?: number;
+	uniqueKeyRetries?: number;
 };
 
 /** A single record yielded by `generateDictionaryRecords`, tagged with its originating schema name. */
@@ -37,10 +38,12 @@ export type DictionaryRecord = {
 	record: DataRecord;
 };
 
-// Builds a tier-ordered list of schema names using Kahn's algorithm on FK edges.
-// Child schemas depend on parent schemas (FK target must be generated first).
-// Schemas not in `includedNames` are excluded from the graph entirely.
-const resolveSchemaGenerationOrder = (schemas: Schema[], includedNames: Set<string>): string[][] => {
+/**
+ * Builds a tier-ordered list of schema names using Kahn's topological sort on FK edges.
+ * Parent schemas (FK targets) appear in earlier tiers than child schemas that reference them.
+ * Schemas not present in `includedNames` are excluded from the graph entirely.
+ */
+export const resolveSchemaGenerationOrder = (schemas: Schema[], includedNames: Set<string>): string[][] => {
 	const included = schemas.filter((schema) => includedNames.has(schema.name));
 
 	const inDegree = new Map<string, number>(included.map((schema) => [schema.name, 0]));
@@ -87,8 +90,11 @@ const resolveSchemaGenerationOrder = (schemas: Schema[], includedNames: Set<stri
 	return order;
 };
 
-// Projects each record down to only the foreign fields referenced by child schemas pointing at `parentSchemaName`.
-const extractFkPool = (parentSchemaName: string, records: DataRecord[], childSchemas: Schema[]): DataRecord[] => {
+/**
+ * Returns the set of field names on `parentSchemaName` that are referenced as the `foreign` side
+ * of a FK mapping in any of `childSchemas`.
+ */
+export const extractFkFieldNames = (parentSchemaName: string, childSchemas: Schema[]): Set<string> => {
 	const foreignFieldNames = new Set<string>();
 	for (const childSchema of childSchemas) {
 		for (const fkRule of childSchema.restrictions?.foreignKey ?? []) {
@@ -99,19 +105,24 @@ const extractFkPool = (parentSchemaName: string, records: DataRecord[], childSch
 			}
 		}
 	}
+	return foreignFieldNames;
+};
 
-	return records.map((record) => {
-		const projected: DataRecord = {};
-		for (const fieldName of foreignFieldNames) {
-			if (Object.hasOwn(record, fieldName)) {
-				projected[fieldName] = record[fieldName];
-			}
-			// If the field is absent from the record (e.g. generated as undefined and not set),
-			// it is omitted from the pool entry. Child records that draw from this pool will find
-			// no value for that mapping and fall back to unconstrained generation for that field.
+/** Returns a new record containing only the fields whose names are in `fkFieldNames`. */
+export const projectRecordToFkPool = (record: DataRecord, fkFieldNames: Set<string>): DataRecord => {
+	const projected: DataRecord = {};
+	for (const fieldName of fkFieldNames) {
+		if (Object.hasOwn(record, fieldName)) {
+			projected[fieldName] = record[fieldName];
 		}
-		return projected;
-	});
+	}
+	return projected;
+};
+
+// Projects each record down to only the foreign fields referenced by child schemas pointing at `parentSchemaName`.
+const extractFkPool = (parentSchemaName: string, records: DataRecord[], childSchemas: Schema[]): DataRecord[] => {
+	const fkFieldNames = extractFkFieldNames(parentSchemaName, childSchemas);
+	return records.map((record) => projectRecordToFkPool(record, fkFieldNames));
 };
 
 /**
@@ -126,7 +137,7 @@ export function* generateDictionaryRecords(
 	dictionary: Dictionary,
 	options: DictionaryGeneratorOptions,
 ): Generator<DictionaryRecord> {
-	const { counts, seed, emptyRate } = options;
+	const { counts, seed, emptyRate, uniqueKeyRetries } = options;
 
 	const includedNames = new Set(
 		Object.entries(counts)
@@ -172,11 +183,17 @@ export function* generateDictionaryRecords(
 			const count = counts[schemaName] ?? 0;
 			const schemaIndex = schemaGenerationIndex.get(schemaName) ?? 0;
 			const schemaSeed = seed !== undefined ? seed + schemaIndex : undefined;
-			const schemaGenerator = generateSchemaRecords(schema, { count, seed: schemaSeed, foreignKeyPool, emptyRate });
+			const schemaGenerator = generateSchemaRecords(schema, {
+				count,
+				seed: schemaSeed,
+				foreignKeyPool,
+				emptyRate,
+				uniqueKeyRetries,
+			});
 
 			if (schemasWithDependents.has(schemaName)) {
 				// Collect fully into the FK pool before yielding, so child schemas can reference these records.
-				const records = [...schemaGenerator];
+				const records = [...schemaGenerator].map((generated: GeneratedRecord) => generated.record);
 				const poolEntry = extractFkPool(schemaName, records, dictionary.schemas);
 				foreignKeyPool.set(schemaName, poolEntry);
 				for (const record of records) {
@@ -184,8 +201,8 @@ export function* generateDictionaryRecords(
 				}
 			} else {
 				// No children depend on this schema — stream records out directly without collecting.
-				for (const record of schemaGenerator) {
-					yield { schemaName, record };
+				for (const generated of schemaGenerator) {
+					yield { schemaName, record: generated.record };
 				}
 			}
 		}
