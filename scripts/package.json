@@ -3,14 +3,19 @@
 	"private": true,
 	"description": "Scripts for managing the Lectern monorepo.",
 	"scripts": {
+		"build": "tsc && tsc -p tsconfig.worker.json",
 		"generate": "pnpm run generate:meta && pnpm run generate:samples",
-		"generate:meta": "node -r ts-node/register ./src/generateMetaSchema.ts",
-		"generate:samples": "node -r ts-node/register ./src/generateSampleDictionaries.ts"
+		"generate:meta": "node -r ts-node/register ./src/generate/generateMetaSchema.ts",
+		"generate:samples": "node -r ts-node/register ./src/generate/generateSampleDictionaries.ts",
+		"reproduce:validation-memory": "pnpm run build && node -r ts-node/register ./src/performance/reproduceValidationMemory.ts",
+		"reproduce:validation-memory-4gb": "pnpm run build && WORKER_HEAP_LIMIT_MB=4096 node -r ts-node/register ./src/performance/reproduceValidationMemory.ts"
 	},
 	"keywords": [],
 	"license": "AGPL-3.0",
 	"dependencies": {
+		"@overture-stack/lectern-data-generator": "workspace:^",
 		"@overture-stack/lectern-dictionary": "workspace:^",
+		"@overture-stack/lectern-validation": "workspace:^",
 		"zod": "^3.23.8",
 		"zod-to-json-schema": "^3.23.2"
 	}

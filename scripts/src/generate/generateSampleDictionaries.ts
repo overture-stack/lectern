@@ -1,14 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import { replaceReferences } from '@overture-stack/lectern-dictionary';
-import { assertValidDictionary } from './sampleDictionaries/assertValidDictionary';
-import { dictionaryCancerGenomics } from './sampleDictionaries/dictionaryCancerGenomics';
-import { dictionaryMultiRelationship } from './sampleDictionaries/dictionaryMultiRelationship';
-import { dictionarySimple } from './sampleDictionaries/dictionarySimple';
-import { dictionaryWideConditional } from './sampleDictionaries/dictionaryWideConditional';
-import { dictionaryWideUniqueKey } from './sampleDictionaries/dictionaryWideUniqueKey';
+import { assertValidDictionary } from '../sampleDictionaries/assertValidDictionary';
+import { dictionaryCancerGenomics } from '../sampleDictionaries/dictionaryCancerGenomics';
+import { dictionaryMultiRelationship } from '../sampleDictionaries/dictionaryMultiRelationship';
+import { dictionarySimple } from '../sampleDictionaries/dictionarySimple';
+import { dictionaryWideConditional } from '../sampleDictionaries/dictionaryWideConditional';
+import { dictionaryWideUniqueKey } from '../sampleDictionaries/dictionaryWideUniqueKey';
 
-const OUTPUT_DIR = path.resolve(__dirname, '../../samples/dictionary');
+const OUTPUT_DIR = path.resolve(__dirname, '../../../samples/dictionary');
 
 const dictionaries = [
 	dictionarySimple,

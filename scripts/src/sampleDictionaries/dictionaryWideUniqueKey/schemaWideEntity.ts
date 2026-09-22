@@ -2,7 +2,7 @@ import { Schema } from '@overture-stack/lectern-dictionary';
 import { assertSchema } from '../assertSchema';
 
 export const schemaWideEntity = {
-	name: 'wide-entity',
+	name: 'wide-unique-key',
 	description: '28 fields across all four value types. The id field is in a uniqueKey. No other restrictions.',
 	fields: [
 		{ name: 'id', valueType: 'string' },

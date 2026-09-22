@@ -1,0 +1,12 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"noEmit": false,
+		"outDir": "dist"
+	},
+	"include": [
+		"./src/performance/reproduceValidationMemoryConstants.ts",
+		"./src/performance/reproduceValidationMemoryWorker.ts",
+		"./src/sampleDictionaries/**/*.ts"
+	]
+}

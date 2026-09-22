@@ -60,3 +60,4 @@ Multi-relationship validation becomes extremely slow beyond the 270k test.
 | 3    | multi-relationship | 270,000   | 11.1         | 65.0             | 292.4              | 14.934   | 0.0553    | 298,682   | OK     |
 | 3    | multi-relationship | 1,350,000 | 11.1         | 237.7            | 832.7              | 531.647  | 0.3938    | 1,410,798 | OK     |
 | 3    | multi-relationship | 2,700,000 | 11.1         | 424.5            | 1503.4             | 1990.531 | 0.7372    | 2,661,849 | OK     |
+| 3    | multi-relationship | 6,750,000 | 11.1         | 1026.3           | 3175.0             | 8807.992 | 1.3049    | 5,510,185 | OK     |
