@@ -35,6 +35,30 @@ Could not completely parse this data set within a 4 GB Heap.
 
 ## Original Implementation
 
+This is the 512 MB heap size test:
+
+| Case | Dictionary         | Records   | Startup (MB) | After Parse (MB) | Peak Validate (MB) | Time (s) | ms/record | Errors  | Status |
+| ---- | ------------------ | --------- | ------------ | ---------------- | ------------------ | -------- | --------- | ------- | ------ |
+| 1    | simple             | 100       | 11.2         | 9.1              | 9.4                | 0.000    | 0.0000    | 0       | OK     |
+| 1    | simple             | 1,000     | 11.2         | 11.2             | 11.0               | 0.002    | 0.0020    | 0       | OK     |
+| 1    | simple             | 10,000    | 11.2         | 14.6             | 11.4               | 0.007    | 0.0007    | 0       | OK     |
+| 1    | simple             | 50,000    | 11.2         | 18.9             | 24.6               | 0.020    | 0.0004    | 0       | OK     |
+| 1    | simple             | 100,000   | 11.2         | 24.6             | 22.0               | 0.035    | 0.0003    | 0       | OK     |
+| 1    | simple             | 250,000   | 11.2         | 40.8             | 57.7               | 0.076    | 0.0003    | 0       | OK     |
+| 1    | simple             | 500,000   | 11.2         | 72.6             | 192.3              | 0.146    | 0.0003    | 0       | OK     |
+| 1    | simple             | 1,000,000 | 11.2         | 128.5            | 251.6              | 0.288    | 0.0003    | 0       | OK     |
+| 2    | wide-unique-key    | 100       | 11.2         | 10.7             | 9.7                | 0.002    | 0.0200    | 0       | OK     |
+| 2    | wide-unique-key    | 1,000     | 11.2         | 15.6             | 16.2               | 0.010    | 0.0100    | 0       | OK     |
+| 2    | wide-unique-key    | 10,000    | 11.2         | 52.0             | 33.7               | 0.056    | 0.0056    | 0       | OK     |
+| 2    | wide-unique-key    | 50,000    | 11.2         | 111.7            | 246.2              | 0.276    | 0.0055    | 0       | OK     |
+| 2    | wide-unique-key    | 100,000   | 11.2         | 201.8            | 358.2              | 0.520    | 0.0052    | 0       | OK     |
+| 2    | wide-unique-key    | 250,000   | 11.2         | -                | -                  | -        | -         | -       | OOM    |
+| 3    | multi-relationship | 2,700     | 11.2         | 11.9             | 11.0               | 0.020    | 0.0074    | 3,147   | OK     |
+| 3    | multi-relationship | 27,000    | 11.2         | 19.1             | 129.6              | 0.487    | 0.0180    | 30,789  | OK     |
+| 3    | multi-relationship | 270,000   | 11.2         | 59.1             | 301.1              | 37.753   | 0.1398    | 298,682 | OK     |
+| 3    | multi-relationship | 50,000    | 11.2         | -                | -                  | -        | -         | -       | OOM    |
+
+This is the 4GB heap size test:
 Multi-relationship validation becomes extremely slow beyond the 270k test.
 
 | Case | Dictionary         | Records   | Startup (MB) | After Parse (MB) | Peak Validate (MB) | Time (s) | ms/record | Errors    | Status |
