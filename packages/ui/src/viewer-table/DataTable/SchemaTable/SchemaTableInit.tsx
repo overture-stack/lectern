@@ -93,7 +93,7 @@ export const getSchemaBaseColumns = (schema: Schema, customColumns?: CustomColum
 		cell: (restrictions: CellContext<SchemaField, SchemaFieldRestrictions>) => {
 			const schemaField: SchemaField = restrictions.row.original;
 			const fieldLevelRestrictions = schemaField.restrictions;
-			const schemaLevelRestrictions = schema.restrictions;
+			const schemaLevelRestrictions = schema.restrictions ?? {};
 
 			return renderAllowedValuesColumn(fieldLevelRestrictions, schemaLevelRestrictions, schemaField, schema);
 		},
