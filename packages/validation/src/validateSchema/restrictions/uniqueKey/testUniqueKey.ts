@@ -45,7 +45,7 @@ import { getUniqueKeyValues } from './getUniqueKeyValues';
 export const testUniqueKey = (
 	record: DataRecord,
 	uniqueKeyRule: string[],
-	uniqueKeyMap: Map<string, number[]>,
+	uniqueKeyMap: Map<string, string[]>,
 ): TestResult<SchemaValidationRecordErrorUniqueKey> => {
 	// Build unique key for this record, based on the fields listed in the rule
 	const uniqueKeyValues = getUniqueKeyValues(record, uniqueKeyRule);

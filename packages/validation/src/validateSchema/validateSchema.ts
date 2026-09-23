@@ -21,10 +21,14 @@ import type { DataRecord, Schema } from '@overture-stack/lectern-dictionary';
 import { TypeUtils } from '@overture-stack/lectern-dictionary';
 import { invalid, valid, type TestResult } from '../types';
 import { validateRecord } from '../validateRecord';
-import { generateDataSetHashMap } from './restrictions/generateDataSetHashMap';
+import { generateDataSetHashMap, type RecordIdGenerator } from './restrictions/generateDataSetHashMap';
 import { testUniqueFieldRestriction } from './restrictions/uniqueField/testUniqueFieldRestriction';
 import { testUniqueKey } from './restrictions/uniqueKey/testUniqueKey';
 import type { SchemaValidationError, SchemaValidationRecordErrorDetails } from './SchemaValidationError';
+
+export type ValidateSchemaOptions = {
+	recordId?: RecordIdGenerator;
+};
 
 /**
  * Validate a data set using a Lectern Schema. The data to validate is an array of DataRecords that contains all
@@ -38,36 +42,39 @@ import type { SchemaValidationError, SchemaValidationRecordErrorDetails } from '
  *
  * @param records
  * @param schema
+ * @param options.recordId Optional function to derive a string ID for each record, used in `matchingRecords` on
+ *   errors. Defaults to the record's array index as a string.
  * @returns
  */
-export const validateSchema = (records: Array<DataRecord>, schema: Schema): TestResult<SchemaValidationError[]> => {
-	// Setup to improve performance of Schema validations that compare a record to every record in the data set.
-	// We build maps of uniqueKey and unique field values so that they can be used while testing these restrictions for each record
+export const validateSchema = (
+	records: Array<DataRecord>,
+	schema: Schema,
+	options?: ValidateSchemaOptions,
+): TestResult<SchemaValidationError[]> => {
 	const uniqueKeyRule = schema.restrictions?.uniqueKey;
 	const uniqueKeyMap =
-		uniqueKeyRule && uniqueKeyRule.length > 0 ? generateDataSetHashMap(records, uniqueKeyRule) : undefined;
+		uniqueKeyRule && uniqueKeyRule.length > 0
+			? generateDataSetHashMap(records, uniqueKeyRule, options?.recordId)
+			: undefined;
 
-	const uniqueFieldMaps = new Map<string, Map<string, number[]>>();
+	const uniqueFieldMaps = new Map<string, Map<string, string[]>>();
 	schema.fields.forEach((field) => {
 		if (field.unique) {
-			uniqueFieldMaps.set(field.name, generateDataSetHashMap(records, [field.name]));
+			uniqueFieldMaps.set(field.name, generateDataSetHashMap(records, [field.name], options?.recordId));
 		}
 	});
 
-	// Test each record, apply the schema restrictions to
 	const schemaValidationErrors = records
-		.map<SchemaValidationError | undefined>((record, recordIndex) => {
-			// recordErrors is output collection of errors for this record
+		.map<SchemaValidationError | undefined>((record, index) => {
+			const recordId = options?.recordId?.(record, index) ?? String(index);
 			const recordErrors: SchemaValidationRecordErrorDetails[] = [];
 
-			// UniqueKey Test
 			const uniqueKeyResult =
 				uniqueKeyMap && uniqueKeyRule ? testUniqueKey(record, uniqueKeyRule, uniqueKeyMap) : valid();
 			if (!uniqueKeyResult.valid) {
 				recordErrors.push(uniqueKeyResult.details);
 			}
 
-			// Unique Field Restriction Tests
 			uniqueFieldMaps.forEach((hashMap, fieldName) => {
 				const uniqueFieldResult = testUniqueFieldRestriction(record[fieldName], fieldName, hashMap);
 				if (!uniqueFieldResult.valid) {
@@ -75,12 +82,11 @@ export const validateSchema = (records: Array<DataRecord>, schema: Schema): Test
 				}
 			});
 
-			// Data Record validation
 			const recordValidationResult = validateRecord(record, schema);
 			if (!recordValidationResult.valid) {
 				recordErrors.push(...recordValidationResult.details);
 			}
-			return recordErrors.length ? { recordIndex, recordErrors } : undefined;
+			return recordErrors.length ? { recordIndex: recordId, recordErrors } : undefined;
 		})
 		.filter(TypeUtils.isDefined);
 	return schemaValidationErrors.length ? invalid(schemaValidationErrors) : valid();

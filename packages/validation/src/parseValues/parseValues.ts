@@ -243,7 +243,7 @@ export function parseSchemaValues(records: UnprocessedDataRecord[], schema: Sche
 		output.push(conversionResult.data.record);
 		if (!conversionResult.success) {
 			errors.push({
-				recordIndex,
+				recordIndex: String(recordIndex),
 				recordErrors: conversionResult.data.errors,
 			});
 		}

@@ -78,15 +78,15 @@ describe('Schema - generateDataSetHashMap', () => {
 		const hashA = hashDataRecord(getUniqueKeyValues(duplicateA, uniqueKeyRule));
 		const recordA = result.get(hashA);
 		expect(recordA?.length).equal(3);
-		expect(recordA).contain(0);
-		expect(recordA).contain(1);
-		expect(recordA).contain(2);
+		expect(recordA).contain('0');
+		expect(recordA).contain('1');
+		expect(recordA).contain('2');
 
 		const hashB = hashDataRecord(getUniqueKeyValues(duplicateB, uniqueKeyRule));
 		const recordB = result.get(hashB);
 		expect(recordB?.length).equal(2);
-		expect(recordB).contain(3);
-		expect(recordB).contain(4);
+		expect(recordB).contain('3');
+		expect(recordB).contain('4');
 	});
 	it('Works with a single key', () => {
 		// single key in uniqueKeyRule
@@ -110,14 +110,14 @@ describe('Schema - generateDataSetHashMap', () => {
 		const hashA = hashDataRecord(getUniqueKeyValues(duplicateA, uniqueKeyRule));
 		const recordA = result.get(hashA);
 		expect(recordA?.length).equal(3);
-		expect(recordA).contain(0);
-		expect(recordA).contain(1);
-		expect(recordA).contain(2);
+		expect(recordA).contain('0');
+		expect(recordA).contain('1');
+		expect(recordA).contain('2');
 
 		const hashB = hashDataRecord(getUniqueKeyValues(duplicateB, uniqueKeyRule));
 		const recordB = result.get(hashB);
 		expect(recordB?.length).equal(2);
-		expect(recordB).contain(3);
-		expect(recordB).contain(4);
+		expect(recordB).contain('3');
+		expect(recordB).contain('4');
 	});
 });

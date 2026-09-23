@@ -126,7 +126,7 @@ describe('Schema - validateSchema', () => {
 				assert(result.valid === false);
 				expect(result.details.length).equal(5);
 
-				const failedIndices = [2, 3, 6, 7, 8];
+				const failedIndices = ['2', '3', '6', '7', '8'];
 				const allIndicesListed = failedIndices.every(
 					(index) =>
 						result.details.find((error) => error.recordIndex === index)?.recordErrors[0]?.reason ===
@@ -202,12 +202,12 @@ describe('Schema - validateSchema', () => {
 			);
 
 			expect(result.details[0].recordErrors[0].uniqueKey).deep.equal({ ...repeatedRecord });
-			expect(result.details[0].recordErrors[0].matchingRecords).include(0);
-			expect(result.details[0].recordErrors[0].matchingRecords).include(1);
+			expect(result.details[0].recordErrors[0].matchingRecords).include('0');
+			expect(result.details[0].recordErrors[0].matchingRecords).include('1');
 
 			expect(result.details[1].recordErrors[0].uniqueKey).deep.equal({ ...repeatedRecord });
-			expect(result.details[1].recordErrors[0].matchingRecords).include(0);
-			expect(result.details[1].recordErrors[0].matchingRecords).include(1);
+			expect(result.details[1].recordErrors[0].matchingRecords).include('0');
+			expect(result.details[1].recordErrors[0].matchingRecords).include('1');
 		});
 		it('Invalid for repeated key including an undefined', () => {
 			const records: DataRecord[] = [
@@ -305,7 +305,7 @@ describe('Schema - validateSchema', () => {
 			expect(
 				result.details[0]?.recordIndex,
 				'Invalid record needs to indicate the correct position in the array.',
-			).equal(1);
+			).equal('1');
 			expect(
 				result.details[0]?.recordErrors[0]?.reason,
 				'Invalid record needs to indicate it failed by restriction.',
@@ -325,7 +325,7 @@ describe('Schema - validateSchema', () => {
 			expect(
 				result.details[0]?.recordIndex,
 				'Invalid record needs to indicate the correct position in the array.',
-			).equal(2);
+			).equal('2');
 			expect(
 				result.details[0]?.recordErrors[0]?.reason,
 				'Invalid record needs to indicate it failed by invalid value type.',
@@ -361,16 +361,16 @@ describe('Schema - validateSchema', () => {
 			expect(unrecognizedFieldRecord).not.undefined;
 			assert(unrecognizedFieldRecord !== undefined);
 
-			expect(missingValueRecord.recordIndex, 'Invalid record should report correct index in records array.').equal(1);
+			expect(missingValueRecord.recordIndex, 'Invalid record should report correct index in records array.').equal('1');
 			expect(missingValueRecord.recordErrors.length, 'Invalid record should only have a single error.').equal(1);
 
 			expect(invalidValueTypeRecord.recordIndex, 'Invalid record should report correct index in records array.').equal(
-				2,
+				'2',
 			);
 			expect(invalidValueTypeRecord.recordErrors.length, 'Invalid record should only have a single error.').equal(1);
 
 			expect(unrecognizedFieldRecord.recordIndex, 'Invalid record should report correct index in records array.').equal(
-				3,
+				'3',
 			);
 			expect(unrecognizedFieldRecord.recordErrors.length, 'Invalid record should only have a single error.').equal(1);
 		});

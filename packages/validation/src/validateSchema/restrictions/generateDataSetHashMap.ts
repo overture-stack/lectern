@@ -22,40 +22,48 @@ import { hashDataRecord } from '../../utils/hashDataRecord';
 import { getUniqueKeyValues } from './uniqueKey/getUniqueKeyValues';
 
 /**
- * The key in this Map is a unique hash made of select fields from a record. This is generated using `hashDataRecord()`
- * The value in this Map is an array of numbers, where each number represents the position of a record in a data set (data sets will be `DataRecord[]` with all records from the same schema).
- *
- * This is a named alias over a Map<string, number>;
+ * The key in this Map is a unique hash made of select fields from a record, generated using `hashDataRecord()`.
+ * The value is an array of string record IDs — all records that share the same values for the hashed fields.
  */
-export type DataSetHashMap = Map<string, number[]>;
+export type DataSetHashMap = Map<string, string[]>;
+
+/**
+ * A function that produces a string identifier for a record at a given index. Used to populate
+ * `DataSetHashMap` values so that callers can map hash collisions back to specific records.
+ *
+ * The default when no generator is provided is `String(index)`, which preserves the previous
+ * behaviour of using array position as the identifier.
+ */
+export type RecordIdGenerator = (record: DataRecord, index: number) => string;
+
+const defaultRecordId: RecordIdGenerator = (_record, index) => String(index);
 
 /**
  * Provides a DataSetHashMap for a provided data set. For every record in the data set this will generate a string
- * based on the values of specific fields, then an entry will added to the Map using this string as the key, with the
- * value an array of numbers representing the array index position of all records that share the same values for the
- * specified fields.
+ * based on the values of specific fields, then an entry will be added to the Map using this string as the key, with the
+ * value an array of string IDs representing all records that share the same values for the specified fields.
  *
  * This means that for a data set where each record generates a unique hash, every entry in the Map will be an array
- * with a single number (the index of the record with that hash). When two or more records have the same hash, the
- * Map's value for that hash will be an array with the index of all records with that hash.
+ * with a single ID. When two or more records have the same hash, the Map's value for that hash will be an array
+ * with the IDs of all records with that hash.
  * @param records
  * @param fieldsToHash
+ * @param recordId Optional function to derive a string ID for each record. Defaults to the record's array index.
  * @returns
  */
-export const generateDataSetHashMap = (records: DataRecord[], fieldsToHash: string[]): DataSetHashMap => {
-	const output = new Map<string, number[]>();
+export const generateDataSetHashMap = (
+	records: DataRecord[],
+	fieldsToHash: string[],
+	recordId: RecordIdGenerator = defaultRecordId,
+): DataSetHashMap => {
+	const output = new Map<string, string[]>();
 
 	records.forEach((record, index) => {
-		// generate hash for this record
 		const uniqueKeyValues = getUniqueKeyValues(record, fieldsToHash);
-
 		const hash = hashDataRecord(uniqueKeyValues);
 
-		// check if this hash has an existing value, otherwise create a new array
-		const indexList = output.get(hash) || [];
-		const updatedIndexList = indexList.concat(index);
-
-		output.set(hash, updatedIndexList);
+		const idList = output.get(hash) ?? [];
+		output.set(hash, [...idList, recordId(record, index)]);
 	});
 
 	return output;
