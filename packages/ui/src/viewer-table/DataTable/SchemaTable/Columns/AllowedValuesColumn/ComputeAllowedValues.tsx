@@ -269,7 +269,7 @@ const handleForeignKeys = (
 	}
 
 	return (
-		<Fragment>
+		<div css={css`display: flex; flex-direction: column; gap: 4px;`}>
 			{filteredForeignKeys.map(({ foreignKey, mapping }) => {
 				const otherMappings = foreignKey.mappings.filter((foreignKeyMapping) => foreignKeyMapping.local !== currentFieldName);
 				return (
@@ -286,7 +286,7 @@ const handleForeignKeys = (
 					</span>
 				);
 			})}
-		</Fragment>
+		</div>
 	);
 };
 
