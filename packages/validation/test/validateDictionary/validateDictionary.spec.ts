@@ -82,7 +82,7 @@ describe('Dictionary - validateDictionary', () => {
 			expect(result.details.length, 'Only one schema found invalid.').equal(1);
 			expect(result.details[0]?.schemaName, 'Correctly names schema with error.').equal(schemaName);
 			expect(result.details[0]?.reason).equal('INVALID_RECORDS');
-			expect((result.details[0] as DictionaryValidationErrorInvalidRecords).invalidRecords[0]?.recordIndex).equal(0);
+			expect((result.details[0] as DictionaryValidationErrorInvalidRecords).invalidRecords[0]?.recordIndex).equal('0');
 			expect(
 				(result.details[0] as DictionaryValidationErrorInvalidRecords).invalidRecords[0]?.recordErrors.length,
 				'Only one error found for field.',
@@ -114,13 +114,13 @@ describe('Dictionary - validateDictionary', () => {
 			).equal(2);
 			expect(
 				(result.details[0] as DictionaryValidationErrorInvalidRecords).invalidRecords.some(
-					(invalidRecord) => invalidRecord.recordIndex === 0,
+					(invalidRecord) => invalidRecord.recordIndex === '0',
 				),
 				'Record 0 should be reported as invalid',
 			).true;
 			expect(
 				(result.details[0] as DictionaryValidationErrorInvalidRecords).invalidRecords.some(
-					(invalidRecord) => invalidRecord.recordIndex === 2,
+					(invalidRecord) => invalidRecord.recordIndex === '2',
 				),
 				'Record 2 should be reported as invalid',
 			).true;
@@ -256,7 +256,7 @@ describe('Dictionary - validateDictionary', () => {
 			expect(result.details[0]?.reason).equal('INVALID_RECORDS');
 			assert(result.details[0]?.reason === 'INVALID_RECORDS');
 			expect(result.details[0].invalidRecords.length, 'Only 1 invalid record').equal(1);
-			expect(result.details[0].invalidRecords[0]?.recordIndex).equal(0);
+			expect(result.details[0].invalidRecords[0]?.recordIndex).equal('0');
 			expect(result.details[0].invalidRecords[0]?.recordErrors.length, 'Only 1 error on this record').equal(1);
 			expect(result.details[0].invalidRecords[0]?.recordErrors[0]?.reason).equal('INVALID_BY_FOREIGNKEY');
 			assert(result.details[0].invalidRecords[0]?.recordErrors[0]?.reason === 'INVALID_BY_FOREIGNKEY');
@@ -317,9 +317,9 @@ describe('Dictionary - validateDictionary', () => {
 			expect(result.details[0].invalidRecords.length, 'Expect 3 records to fail the foreign key restriction').equal(3);
 
 			// Index 0 has no errors
-			expect(result.details[0].invalidRecords.find((invalidRecord) => invalidRecord.recordIndex === 0)).undefined;
+			expect(result.details[0].invalidRecords.find((invalidRecord) => invalidRecord.recordIndex === '0')).undefined;
 
-			const errorIndex1 = result.details[0].invalidRecords.find((invalidRecord) => invalidRecord.recordIndex === 1);
+			const errorIndex1 = result.details[0].invalidRecords.find((invalidRecord) => invalidRecord.recordIndex === '1');
 			expect(errorIndex1).not.undefined;
 			assert(errorIndex1 !== undefined);
 			expect(errorIndex1.recordErrors.length).equal(1);
@@ -330,7 +330,7 @@ describe('Dictionary - validateDictionary', () => {
 			expect(errorIndex1.recordErrors[0].fieldName).equal('string-field');
 			expect(errorIndex1.recordErrors[0].fieldValue).equal('lkjh');
 
-			const errorIndex2 = result.details[0].invalidRecords.find((invalidRecord) => invalidRecord.recordIndex === 2);
+			const errorIndex2 = result.details[0].invalidRecords.find((invalidRecord) => invalidRecord.recordIndex === '2');
 			expect(errorIndex2).not.undefined;
 			assert(errorIndex2 !== undefined);
 			expect(errorIndex2.recordErrors.length).equal(2);
@@ -351,7 +351,7 @@ describe('Dictionary - validateDictionary', () => {
 				'Expect one foreign key error vs single-string schema',
 			).not.undefined;
 
-			const errorIndex3 = result.details[0].invalidRecords.find((invalidRecord) => invalidRecord.recordIndex === 3);
+			const errorIndex3 = result.details[0].invalidRecords.find((invalidRecord) => invalidRecord.recordIndex === '3');
 			expect(errorIndex3).not.undefined;
 			assert(errorIndex3 !== undefined);
 			expect(errorIndex3.recordErrors.length).equal(1);
@@ -375,7 +375,7 @@ describe('Dictionary - validateDictionary', () => {
 			expect(result.details[0]?.reason).equal('INVALID_RECORDS');
 			assert(result.details[0]?.reason === 'INVALID_RECORDS');
 			expect(result.details[0].invalidRecords.length, 'Only 1 invalid record').equal(1);
-			expect(result.details[0].invalidRecords[0]?.recordIndex).equal(0);
+			expect(result.details[0].invalidRecords[0]?.recordIndex).equal('0');
 			expect(result.details[0].invalidRecords[0]?.recordErrors.length, 'Expect 2 errors on this record').equal(2);
 
 			const valueTypeError = result.details[0].invalidRecords[0]?.recordErrors.find(

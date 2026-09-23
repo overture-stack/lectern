@@ -98,19 +98,19 @@ describe('Parse Values - parseSchemaValues', () => {
 		assert(result.success === false);
 		expect(result.data.errors.length).equal(3);
 
-		const firstError = result.data.errors.find((error) => error.recordIndex === 1);
+		const firstError = result.data.errors.find((error) => error.recordIndex === '1');
 		expect(firstError).not.undefined;
 		assert(firstError !== undefined);
 		expect(firstError.recordErrors.length).equal(1);
 		expect(firstError.recordErrors[0]?.fieldName).equal('any-number');
 
-		const secondError = result.data.errors.find((error) => error.recordIndex === 2);
+		const secondError = result.data.errors.find((error) => error.recordIndex === '2');
 		expect(secondError).not.undefined;
 		assert(secondError !== undefined);
 		expect(secondError.recordErrors.length).equal(1);
 		expect(secondError.recordErrors[0]?.fieldName).equal('any-integer');
 
-		const thirdError = result.data.errors.find((error) => error.recordIndex === 3);
+		const thirdError = result.data.errors.find((error) => error.recordIndex === '3');
 		expect(thirdError).not.undefined;
 		assert(thirdError !== undefined);
 		expect(thirdError.recordErrors.length).equal(1);

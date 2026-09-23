@@ -19,7 +19,9 @@
 
 import { DataRecord, Dictionary, TypeUtils } from '@overture-stack/lectern-dictionary';
 import { invalid, valid, type TestResult } from '../types';
-import { validateSchema, type SchemaRecordError } from '../validateSchema';
+import { type RecordIdGenerator } from '../validateSchema/restrictions/generateDataSetHashMap';
+import { validateSchema, type ValidateSchemaOptions } from '../validateSchema';
+import { type SchemaRecordError } from '../validateSchema';
 import { collectSchemaReferenceData } from './collectSchemaReferenceData';
 import type {
 	DictionaryValidationError,
@@ -28,6 +30,10 @@ import type {
 } from './DictionaryValidationError';
 import { testForeignKeyRestriction } from './testForeignKeyRestriction';
 import { testUnrecognizedSchema } from './testUnrecognizedSchema';
+
+export type ValidateDictionaryOptions = {
+	recordId?: RecordIdGenerator;
+};
 
 const mergeSchemaRecordValidationErrors = <T>(
 	first: Array<SchemaRecordError<T>>,
@@ -49,15 +55,15 @@ const mergeSchemaRecordValidationErrors = <T>(
  *
  * @param data
  * @param dictionary
+ * @param options.recordId Optional function to derive a string ID for each record, used in `matchingRecords` on
+ *   errors. Defaults to the record's array index as a string.
  * @returns
  */
 export const validateDictionary = (
 	data: Record<string, DataRecord[]>,
 	dictionary: Dictionary,
+	options?: ValidateDictionaryOptions,
 ): TestResult<DictionaryValidationError[]> => {
-	// check all schemas are recognized
-	// this map.filter.map loop would have performance concerns except that the expected use case will always have small list of schemas
-	// If needed, we can collect this into a function that performs a single reduce.
 	const unrecognizedSchemaErrors = Object.keys(data)
 		.map((schemaName) => testUnrecognizedSchema(schemaName, dictionary))
 		.filter((result) => !result.valid)
@@ -65,15 +71,18 @@ export const validateDictionary = (
 
 	const foreignSchemaReferenceData = collectSchemaReferenceData(data, dictionary);
 
+	const schemaOptions: ValidateSchemaOptions = { recordId: options?.recordId };
+
 	const recognizedSchemaErrors: DictionaryValidationError[] = dictionary.schemas
 		.map<DictionaryValidationError | undefined>((schema) => {
 			const records = data[schema.name] || [];
-			const schemaValidationResult = validateSchema(records, schema);
+			const schemaValidationResult = validateSchema(records, schema, schemaOptions);
 
 			const foreignKeyRestriction = schema.restrictions?.foreignKey;
 			const foreignKeyErrors: SchemaRecordError<DictionaryValidationErrorRecordForeignKey>[] = foreignKeyRestriction
 				? records
-						.map((record, recordIndex) => {
+						.map((record, index) => {
+							const recordId = options?.recordId?.(record, index) ?? String(index);
 							const foreignKeyTestResult = testForeignKeyRestriction(
 								record,
 								foreignKeyRestriction,
@@ -83,7 +92,7 @@ export const validateDictionary = (
 								return undefined;
 							}
 							return {
-								recordIndex,
+								recordIndex: recordId,
 								recordErrors: foreignKeyTestResult.details,
 							};
 						})

@@ -34,7 +34,7 @@ import type { SchemaValidationRecordErrorUnique } from '../../SchemaValidationEr
 export const testUniqueFieldRestriction = (
 	fieldValue: DataRecordValue,
 	fieldName: string,
-	uniqueKeyMap: Map<string, number[]>,
+	uniqueKeyMap: Map<string, string[]>,
 ): TestResult<SchemaValidationRecordErrorUnique> => {
 	// Only apply unique field restriction when a value is provided
 	if (fieldValue === undefined || (Array.isArray(fieldValue) && fieldValue.length === 0)) {

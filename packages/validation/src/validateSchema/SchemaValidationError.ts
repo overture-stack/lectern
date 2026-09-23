@@ -23,12 +23,12 @@ import type { RecordValidationError, FieldDetails } from '../validateRecord';
 export type SchemaValidationRecordErrorUniqueKey = {
 	reason: 'INVALID_BY_UNIQUE_KEY';
 	uniqueKey: DataRecord;
-	matchingRecords: number[];
+	matchingRecords: string[];
 };
 
 export type SchemaValidationRecordErrorUnique = FieldDetails & {
 	reason: 'INVALID_BY_UNIQUE';
-	matchingRecords: number[];
+	matchingRecords: string[];
 };
 
 export type SchemaValidationRecordErrorDetails =
@@ -37,7 +37,7 @@ export type SchemaValidationRecordErrorDetails =
 	| SchemaValidationRecordErrorUniqueKey;
 
 export type SchemaRecordError<ErrorDetails> = {
-	recordIndex: number;
+	recordIndex: string;
 	recordErrors: ErrorDetails[];
 };
 
