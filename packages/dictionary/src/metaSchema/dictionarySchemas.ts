@@ -306,7 +306,7 @@ export const Schema = zod
 	});
 export type Schema = zod.infer<typeof Schema>;
 
-export type SchemaRestrictions = Schema['restrictions'];
+export type SchemaRestrictions = NonNullable<Schema['restrictions']>;
 
 /* ********** *
  * Dictionary *

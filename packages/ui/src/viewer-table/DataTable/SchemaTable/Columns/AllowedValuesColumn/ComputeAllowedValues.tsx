@@ -58,6 +58,7 @@ export type AllowedValuesBaseDisplayItem = {
 	range?: RestrictionItem | ReactNode;
 	codeListWithCountRestrictions?: RestrictionItem;
 	entityRelationships?: ReactNode;
+	uniqueKey?: ReactNode;
 	unique?: RestrictionItem;
 };
 
@@ -242,125 +243,78 @@ const handleCodeList = (codeList: MatchRuleCodeList | string): RestrictionItem =
 };
 
 /**
- * Processes unique key and foreign key relationships for entity relationship constraints.
- * Handles complex scenarios including compound keys, multiple schema references, and unique constraints.
+ * Renders the foreign key constraint description for a field.
+ * Renders one description per foreign key restriction the field participates in.
+ * For compound foreign keys, notes the other local fields involved in the joint constraint.
  *
- * @param restrictions {Schema['restrictions']} - Schema-level restrictions containing uniqueKey and foreignKey definitions
- * @param currentSchemaField {SchemaField} - The field being processed for relationship constraints
- * Process:
- * 1. Extracts unique keys and foreign keys from schema restrictions
- * 2. Finds foreign key mappings that reference the current field
- * 3. Determines constraint type in priority order:
- *    - Multiple schema references (field references multiple schemas)
- *    - Compound foreign keys (multi-field relationship)
- *    - Basic unique foreign key (single field, unique reference)
- *    - Non-unique foreign key (single field, multiple references allowed)
- *    - Compound unique key (field must be unique in combination with others)
- * 4. Returns appropriate descriptive text with schema and field references
+ * @param foreignKeys - The foreignKey restrictions from the schema
+ * @param currentFieldName - The name of the field being rendered
  */
-const handleKeys = (restrictions: SchemaRestrictions, currentSchemaField: SchemaField): ReactNode => {
-	const uniqueKeys = restrictions?.uniqueKey;
-	const foreignKeys = restrictions?.foreignKey;
-	const found = foreignKeys?.flatMap((foreignKey) =>
+const handleForeignKeys = (
+	foreignKeys: SchemaRestrictions['foreignKey'],
+	currentFieldName: string,
+): ReactNode => {
+	if (!foreignKeys) {
+		return undefined;
+	}
+
+	const filteredForeignKeys = foreignKeys.flatMap((foreignKey) =>
 		foreignKey.mappings
-			.filter((mapping) => mapping.local === currentSchemaField.name)
+			.filter((mapping) => mapping.local === currentFieldName)
 			.map((mapping) => ({ foreignKey, mapping })),
 	);
 
-	const relevantForeignKeys = found?.map((item) => item.foreignKey);
+	if (filteredForeignKeys.length === 0) {
+		return undefined;
+	}
 
-	const isBasicUniqueKey =
-		Array.isArray(uniqueKeys) && uniqueKeys.length === 1 && uniqueKeys[0] === currentSchemaField.name;
-
-	const isCompoundUniqueKey =
-		Array.isArray(uniqueKeys) && uniqueKeys.length > 1 && uniqueKeys.includes(currentSchemaField.name);
-
-	const compoundForeignKey = foreignKeys?.find(
-		(foreignKey) =>
-			foreignKey.mappings.length > 1 &&
-			foreignKey.mappings.some((mapping) => mapping.local === currentSchemaField.name),
+	return (
+		<Fragment>
+			{filteredForeignKeys.map(({ foreignKey, mapping }) => {
+				const otherMappings = foreignKey.mappings.filter((foreignKeyMapping) => foreignKeyMapping.local !== currentFieldName);
+				return (
+					<span key={foreignKey.schema}>
+						Must reference an existing <FieldBlock>{mapping.foreign}</FieldBlock> in the{' '}
+						<b>{foreignKey.schema}</b> schema.
+						{otherMappings.length > 0 && (
+							<> The matched record must also match:{' '}
+								{otherMappings.map((foreignKeyMapping) => (
+									<FieldBlock key={foreignKeyMapping.local}>{foreignKeyMapping.local}</FieldBlock>
+								))}
+							.</>
+						)}
+					</span>
+				);
+			})}
+		</Fragment>
 	);
+};
 
-	const multipleSchemaReferences =
-		found && found.length > 1 ?
-			{
-				field: currentSchemaField.name,
-				associatedSchemas: relevantForeignKeys?.map((item) => item.schema),
-			}
-		:	undefined;
+/**
+ * Renders the unique key constraint description for a field.
+ *
+ * Cases handled:
+ * - Field is the sole unique key for the schema (basic unique key)
+ * - Field is part of a compound unique key (must be unique in combination with other fields)
+ *
+ * @param uniqueKeys - The uniqueKey restriction from the schema
+ * @param currentFieldName - The name of the field being rendered
+ */
+const handleUniqueKey = (uniqueKeys: SchemaRestrictions['uniqueKey'], currentFieldName: string): ReactNode => {
+	if (!Array.isArray(uniqueKeys) || !uniqueKeys.includes(currentFieldName)) {
+		return undefined;
+	}
 
-	const associatedSchemas = multipleSchemaReferences?.associatedSchemas;
-	const associatedField = multipleSchemaReferences?.field;
+	if (uniqueKeys.length === 1) {
+		return <span>This field is the unique identifier for each record.</span>;
+	}
 
-	const computeRestrictions = [
-		{
-			condition: multipleSchemaReferences !== undefined,
-			content: (
-				<span>
-					Must reference an existing <FieldBlock>{associatedField}</FieldBlock> within the{' '}
-					<b>
-						{associatedSchemas && associatedSchemas.length > 1 ?
-							associatedSchemas.slice(0, -1).join(', ') + ' and ' + associatedSchemas.slice(-1)
-						:	associatedSchemas?.[0]}
-					</b>{' '}
-					schemas.
-				</span>
-			),
-		},
-		{
-			condition: compoundForeignKey !== undefined,
-			content: (
-				<span>
-					Must reference an existing combination of:{' '}
-					<span
-						css={css`
-							display: inline-flex;
-							gap: 2px;
-						`}
-					>
-						{compoundForeignKey?.mappings.map((mapping) => (
-							<FieldBlock key={mapping.local}>{mapping.local}</FieldBlock>
-						))}
-					</span>{' '}
-					as defined in the <b>{compoundForeignKey?.schema}</b> schema.
-				</span>
-			),
-		},
-		{
-			condition: isBasicUniqueKey && relevantForeignKeys && relevantForeignKeys.length === 1,
-			content: (
-				<span>
-					Must reference an existing: <FieldBlock>{currentSchemaField.name}</FieldBlock> as defined in the{' '}
-					<b>{relevantForeignKeys?.[0]?.schema}</b> schema. Each record can only reference one{' '}
-					<b>{relevantForeignKeys?.[0]?.schema}</b>.
-				</span>
-			),
-		},
-		{
-			condition: !isBasicUniqueKey && relevantForeignKeys && relevantForeignKeys.length === 1,
-			content: (
-				<span>
-					Must reference an existing: <FieldBlock>{currentSchemaField.name}</FieldBlock> as defined in the{' '}
-					<b>{relevantForeignKeys?.[0]?.schema}</b> schema. Multiple records can reference the same{' '}
-					<b>{relevantForeignKeys?.[0]?.schema}</b>.
-				</span>
-			),
-		},
-		{
-			condition: isCompoundUniqueKey,
-			content: (
-				<span>
-					Must be unique in combination with:{' '}
-					{uniqueKeys
-						?.filter((key) => key !== currentSchemaField.name)
-						.map((key) => <FieldBlock key={key}>{key}</FieldBlock>)}
-				</span>
-			),
-		},
-	];
-
-	const computedRestrictionItem = computeRestrictions.find((item) => item.condition);
-	return computedRestrictionItem?.content;
+	return (
+		<span>
+			Must be unique in combination with:{' '}
+			{uniqueKeys.filter((key) => key !== currentFieldName).map((key) => <FieldBlock key={key}>{key}</FieldBlock>)}
+		</span>
+	);
 };
 
 /**
@@ -392,9 +346,16 @@ export const computeAllowedValuesColumn = (
 	const allowedValuesBaseDisplayItem: AllowedValuesBaseDisplayItem = {};
 
 	if (schemaLevelRestrictions?.foreignKey !== undefined || schemaLevelRestrictions?.uniqueKey !== undefined) {
-		const entityRelationships = handleKeys(schemaLevelRestrictions, currentSchemaField);
-		if (entityRelationships) {
-			allowedValuesBaseDisplayItem.entityRelationships = entityRelationships;
+		const foreignKeyNode = handleForeignKeys(schemaLevelRestrictions.foreignKey, currentSchemaField.name);
+		const uniqueKeyNode = handleUniqueKey(schemaLevelRestrictions.uniqueKey, currentSchemaField.name);
+
+		if (foreignKeyNode !== undefined) {
+			allowedValuesBaseDisplayItem.entityRelationships = foreignKeyNode;
+		}
+		if (uniqueKeyNode !== undefined) {
+			allowedValuesBaseDisplayItem.uniqueKey = uniqueKeyNode;
+		}
+		if (foreignKeyNode !== undefined || uniqueKeyNode !== undefined) {
 			return allowedValuesBaseDisplayItem;
 		}
 	}
