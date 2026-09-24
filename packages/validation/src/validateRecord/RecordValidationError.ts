@@ -23,18 +23,42 @@ import type {
 	FieldValidationErrorValueType,
 } from '../validateField/FieldValidationError';
 
+/**
+ * The name and submitted value of a field involved in a validation error.
+ */
 export type FieldDetails = {
 	fieldName: string;
 	fieldValue: DataRecordValue;
 };
 
+/**
+ * Record-level validation error for a field value that does not match the field's declared
+ * `valueType` or `isArray`. Includes the field name and submitted value alongside the type mismatch details.
+ */
 export type RecordValidationErrorInvalidValue = FieldDetails & FieldValidationErrorValueType;
+
+/**
+ * Record-level validation error for a field value that violates one or more restriction rules.
+ * Includes the field name and submitted value alongside the restriction failure details.
+ */
 export type RecordValidationErrorRestrictions = FieldDetails & FieldValidationErrorRestrictions;
+
+/**
+ * Error for a field name present in the record that is not defined in the schema.
+ */
 export type RecordValidationErrorUnrecognizedField = FieldDetails & {
 	reason: 'UNRECOGNIZED_FIELD';
 };
 
+/**
+ * A record-level validation error. Narrow on `reason` to access the specific error properties.
+ */
 export type RecordValidationError =
 	| RecordValidationErrorInvalidValue
 	| RecordValidationErrorRestrictions
 	| RecordValidationErrorUnrecognizedField;
+
+/**
+ * All `reason` values for a `RecordValidationError`.
+ */
+export type RecordValidationErrorReason = RecordValidationError['reason'];
