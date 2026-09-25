@@ -79,8 +79,9 @@ export const validateDictionary = (
 			const schemaValidationResult = validateSchema(records, schema, schemaOptions);
 
 			const foreignKeyRestriction = schema.restrictions?.foreignKey;
-			const foreignKeyErrors: SchemaRecordError<DictionaryValidationErrorRecordForeignKey>[] = foreignKeyRestriction
-				? records
+			const foreignKeyErrors: SchemaRecordError<DictionaryValidationErrorRecordForeignKey>[] =
+				foreignKeyRestriction ?
+					records
 						.map((record, index) => {
 							const recordId = options?.recordId?.(record, index) ?? String(index);
 							const foreignKeyTestResult = testForeignKeyRestriction(
@@ -97,15 +98,15 @@ export const validateDictionary = (
 							};
 						})
 						.filter(TypeUtils.isDefined)
-				: [];
+				:	[];
 			const combinedErrors = mergeSchemaRecordValidationErrors<DictionaryValidationRecordErrorDetails>(
 				schemaValidationResult.valid ? [] : schemaValidationResult.details,
 				foreignKeyErrors,
 			);
 
-			return combinedErrors.length
-				? { reason: 'INVALID_RECORDS', schemaName: schema.name, invalidRecords: combinedErrors }
-				: undefined;
+			return combinedErrors.length ?
+					{ reason: 'INVALID_RECORDS', schemaName: schema.name, invalidRecords: combinedErrors }
+				:	undefined;
 		})
 		.filter(TypeUtils.isDefined);
 

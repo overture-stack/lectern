@@ -53,9 +53,9 @@ export const validateSchema = (
 ): TestResult<SchemaValidationError[]> => {
 	const uniqueKeyRule = schema.restrictions?.uniqueKey;
 	const uniqueKeyMap =
-		uniqueKeyRule && uniqueKeyRule.length > 0
-			? generateDataSetHashMap(records, uniqueKeyRule, options?.recordId)
-			: undefined;
+		uniqueKeyRule && uniqueKeyRule.length > 0 ?
+			generateDataSetHashMap(records, uniqueKeyRule, options?.recordId)
+		:	undefined;
 
 	const uniqueFieldMaps = new Map<string, Map<string, string[]>>();
 	schema.fields.forEach((field) => {

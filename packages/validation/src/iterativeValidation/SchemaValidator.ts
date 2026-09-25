@@ -56,11 +56,13 @@ export type SchemaValidatorReport = {
 };
 
 /**
- * SchemaValidator combines per-record validation with cross-record constraint checking for a single schema.
+ * Validates records for a single schema, enforcing field-level rules and uniqueness constraints
+ * across all submitted records.
  *
- * Per-record errors (field type errors, restriction failures, unrecognized fields) are returned
- * directly from `submit()`. Cross-record violations (`unique`, `uniqueKey`) are tracked in a lightweight
- * internal index and exposed via `report()` and `errors()`.
+ * Records are submitted one at a time or in batches via `submit()`. Field-level errors are
+ * returned immediately from each `submit()` call. Uniqueness violations — which require data
+ * from multiple records — are evaluated after all records have been submitted, via `report()`
+ * and `errors()`.
  *
  * Lifecycle: `new SchemaValidator(schema)` -> `submit()` -> `report()` / `errors()`
  *

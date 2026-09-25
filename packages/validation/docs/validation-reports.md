@@ -1,22 +1,25 @@
 # Validation Reports
 
 ## Restriction Levels
+
 Restrictions apply to multiple different levels, differentiated by what data is needed to check their rules.
 
-
 #### Dictionary
+
 Considers all records for all schemas of the dictionary.
 
 - foreignKey
 - schemaNames (look at schemas provided in a data set, flag any that have an invalid name)
 
 #### Schema
+
 Considers all records for a given schema.
 
 - unique
 - uniqueKey
 
 #### Record
+
 Considers all fields within a single data record.
 
 - fieldName
@@ -25,7 +28,9 @@ Considers all fields within a single data record.
 Note: It is at this level that conditional restrictions are calculated.
 
 #### Field
+
 Considers only the value of the given field
+
 - codeList
 - range
 - required

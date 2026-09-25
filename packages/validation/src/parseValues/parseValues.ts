@@ -74,11 +74,11 @@ const convertInteger = (value: string): Result<number> => {
 };
 const convertBoolean = (value: string): Result<boolean> => {
 	const formatted = value.toLowerCase();
-	return formatted === 'true'
-		? success(true)
-		: formatted === 'false'
-			? success(false)
-			: failure('Not a valid boolean.');
+	return (
+		formatted === 'true' ? success(true)
+		: formatted === 'false' ? success(false)
+		: failure('Not a valid boolean.')
+	);
 };
 const fieldConverters = {
 	boolean: convertBoolean,
@@ -249,9 +249,9 @@ export function parseSchemaValues(records: UnprocessedDataRecord[], schema: Sche
 		}
 	});
 
-	return errors.length
-		? failWith(`Errors were found while parsing schema data.`, { records: output, errors })
-		: success({ records: output });
+	return errors.length ?
+			failWith(`Errors were found while parsing schema data.`, { records: output, errors })
+		:	success({ records: output });
 }
 
 /**

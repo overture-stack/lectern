@@ -4,12 +4,12 @@
 
 ## Supporting Documents
 
-| Document | Purpose | Status |
-|---|---|---|
-| [Benchmark Report](./benchmark-report.md) | Reproduction and measurement of the problem | |
-| [API Reference Draft](./api-reference.md) | Draft TypeScript type and function signatures | |
-| [Error Type Migration Guide](./error-migration-guide.md) | Before/after for existing error consumers | |
-| [Dependency Impact Map](./dependency-impact.md) | Affected packages and external consumers | |
+| Document                                                 | Purpose                                       | Status |
+| -------------------------------------------------------- | --------------------------------------------- | ------ |
+| [Benchmark Report](./benchmark-report.md)                | Reproduction and measurement of the problem   |        |
+| [API Reference Draft](./api-reference.md)                | Draft TypeScript type and function signatures |        |
+| [Error Type Migration Guide](./error-migration-guide.md) | Before/after for existing error consumers     |        |
+| [Dependency Impact Map](./dependency-impact.md)          | Affected packages and external consumers      |        |
 
 ---
 
@@ -88,8 +88,8 @@ const crossRecordValidator = createCrossRecordValidator(schema);
 // success: record was accepted and added to the index
 // failure DUPLICATE_ID: the id was already seen - record is ignored
 // failure LOCKED: errors() generator is active - record is ignored. No records are accepted until generator is exhausted
-const result = crossRecordValidator.submit({ id, data });         // single record
-const result = crossRecordValidator.submit(entries);              // Array<{ id: string; data: DataRecord }>
+const result = crossRecordValidator.submit({ id, data }); // single record
+const result = crossRecordValidator.submit(entries); // Array<{ id: string; data: DataRecord }>
 
 const report = crossRecordValidator.report();
 // TestResult<{
@@ -104,7 +104,7 @@ const report = crossRecordValidator.report();
 // Calling errors() locks the validator - submit() returns failure LOCKED until the generator is exhausted.
 const errorGenerator = crossRecordValidator.errors();
 for (const error of errorGenerator) {
-  handleError(error); // CrossRecordValidationError
+	handleError(error); // CrossRecordValidationError
 }
 // generator exhausted - validator is now unlocked, submit() accepts records again
 ```
@@ -123,8 +123,8 @@ const crossSchemaValidator = createCrossSchemaValidator(dictionary);
 // failure DUPLICATE_ID: the id was already seen for this schema - record is ignored
 // failure UNKNOWN_SCHEMA: schemaName is not in the dictionary - record is ignored
 // failure LOCKED: errors() generator is active - record is ignored. No records are accepted until generator is exhausted
-const result = crossSchemaValidator.submit(schemaName, { id, data });   // single record
-const result = crossSchemaValidator.submit(schemaName, entries);        // Array<{ id: string; data: DataRecord }>
+const result = crossSchemaValidator.submit(schemaName, { id, data }); // single record
+const result = crossSchemaValidator.submit(schemaName, entries); // Array<{ id: string; data: DataRecord }>
 
 const report = crossSchemaValidator.report();
 // TestResult<{
@@ -138,7 +138,7 @@ const report = crossSchemaValidator.report();
 // Calling errors() locks the validator - submit() returns failure LOCKED until the generator is exhausted.
 const errorGenerator = crossSchemaValidator.errors();
 for (const error of errorGenerator) {
-  handleError(error); // CrossSchemaValidationError
+	handleError(error); // CrossSchemaValidationError
 }
 // generator exhausted - validator is now unlocked, submit() accepts records again
 ```
@@ -158,12 +158,12 @@ const schemaValidator = createSchemaValidator(schema);
 // success: record(s) accepted and validated - data is an array of per-record errors (empty if all records are valid)
 // failure DUPLICATE_ID: a submitted id was already seen - no records from this call are processed
 // failure LOCKED: errors() generator is active - record is ignored. No records are accepted until generator is exhausted
-const result = schemaValidator.submit({ id, data });   // single record
-const result = schemaValidator.submit(entries);        // Array<{ id: string; data: DataRecord }>
+const result = schemaValidator.submit({ id, data }); // single record
+const result = schemaValidator.submit(entries); // Array<{ id: string; data: DataRecord }>
 if (result.success) {
-  for (const { id, errors } of result.data) {
-    handleErrors(id, errors); // errors: RecordValidationError[]
-  }
+	for (const { id, errors } of result.data) {
+		handleErrors(id, errors); // errors: RecordValidationError[]
+	}
 }
 
 // report() returns summary counts only - counts are maintained as running totals.
@@ -183,7 +183,7 @@ const report = schemaValidator.report();
 // Calling errors() locks the validator - submit() returns failure LOCKED until the generator is exhausted.
 const errorGenerator = schemaValidator.errors();
 for (const error of errorGenerator) {
-  handleError(error); // CrossRecordValidationError
+	handleError(error); // CrossRecordValidationError
 }
 // generator exhausted - validator is now unlocked, submit() accepts records again
 ```
@@ -202,12 +202,12 @@ const dictionaryValidator = createDictionaryValidator(dictionary);
 // failure DUPLICATE_ID: a submitted id was already seen for this schema - no records from this call are processed
 // failure UNKNOWN_SCHEMA: schemaName is not in the dictionary - no records from this call are processed
 // failure LOCKED: errors() generator is active - record is ignored. No records are accepted until generator is exhausted
-const result = dictionaryValidator.submit(schemaName, { id, data });   // single record
-const result = dictionaryValidator.submit(schemaName, entries);        // Array<{ id: string; data: DataRecord }>
+const result = dictionaryValidator.submit(schemaName, { id, data }); // single record
+const result = dictionaryValidator.submit(schemaName, entries); // Array<{ id: string; data: DataRecord }>
 if (result.success) {
-  for (const { id, errors } of result.data) {
-    handleErrors(id, errors); // errors: RecordValidationError[]
-  }
+	for (const { id, errors } of result.data) {
+		handleErrors(id, errors); // errors: RecordValidationError[]
+	}
 }
 
 // report() returns summary counts only - counts are maintained as running totals.
@@ -231,7 +231,7 @@ const report = dictionaryValidator.report();
 // Calling errors() locks the validator - submit() returns failure LOCKED until the generator is exhausted.
 const errorGenerator = dictionaryValidator.errors();
 for (const error of errorGenerator) {
-  handleError(error); // CrossRecordValidationError | CrossSchemaValidationError
+	handleError(error); // CrossRecordValidationError | CrossSchemaValidationError
 }
 // generator exhausted - validator is now unlocked, submit() accepts records again
 ```
@@ -274,14 +274,17 @@ If the same `id` is submitted more than once, `submit()` returns `failure` with 
 ### 4.4 Data Flow
 
 On each `submit(record)` call to `SchemaValidator`:
+
 1. `validateRecord(record, schema)` runs immediately. Any errors are returned in the `Result` data and never stored. The running `recordErrorCount` is incremented.
 2. The record's relevant field values are hashed and inserted into the internal `DataSetHashMap`. The record itself is then discarded.
 
 On `report()`:
+
 1. The completed `DataSetHashMap` is walked to count violations per field (for `unique`) and total violations (for `uniqueKey`). No error objects are constructed.
 2. A `TestResult` is returned: `valid()` when `recordErrorCount` is 0 and all constraint counts are 0; `invalid({ details })` with the full count breakdown otherwise.
 
 On `errors()`:
+
 1. The validator transitions to the **locked** state.
 2. The `DataSetHashMap` is walked; for each violation, a detailed error object is constructed and yielded. Error objects are not stored - each is yielded and then eligible for garbage collection once the caller advances the generator.
 3. When the generator is exhausted, the validator transitions back to **open**.
@@ -296,7 +299,7 @@ On `errors()`:
 
 ### Option A: In-Memory Representation Optimization
 
-**Description:** 
+**Description:**
 Reduce per-record overhead by storing records in a more compact structure. For example, we could use a column-oriented storage in typed arrays, or interning repeated strings (field names stored once instead of per-record).
 
 **Why rejected:**
@@ -316,10 +319,10 @@ This is an approach that a submission service like Lyric would be interested in,
 
 ## 6. Risks and Open Questions
 
-| # | Risk / Question | Owner | Resolution |
-|---|---|---|---|
-| 1 | **FK testing requires re-examining submitted records at `report()` time.** `testForeignKeyRestriction` tests a record against a reference map. But records and reference data arrive interleaved during streaming - a record in schema B may arrive before all schema A records have been submitted, so the reference map is incomplete at submission time. FK violations can only be tested once the full reference map is built (i.e. at `report()`). This means either: (a) the `CrossSchemaValidator` holds a copy of every submitted record to replay them at `report()` time, reintroducing memory pressure proportional to record count; or (b) the caller is required to submit records in dependency order (all foreign schema records before all referencing schema records), allowing FK testing at submit time. Option (b) shifts burden to the caller and makes the API fragile. Option (a) is correct but undermines the memory goal for FK-heavy workloads. A third option: store only the FK-relevant field values per record (not the full record), which reduces overhead to the size of the referenced fields only. | | |
-| 2 | **`matchingRecords` field semantics in streaming unique errors.** Resolved in section 4.3: `matchingRecords` becomes `string[]` of caller-supplied record IDs. Breaking change to public types; see Error Type Migration Guide. | | Resolved |
+| #   | Risk / Question                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Owner | Resolution |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ---------- |
+| 1   | **FK testing requires re-examining submitted records at `report()` time.** `testForeignKeyRestriction` tests a record against a reference map. But records and reference data arrive interleaved during streaming - a record in schema B may arrive before all schema A records have been submitted, so the reference map is incomplete at submission time. FK violations can only be tested once the full reference map is built (i.e. at `report()`). This means either: (a) the `CrossSchemaValidator` holds a copy of every submitted record to replay them at `report()` time, reintroducing memory pressure proportional to record count; or (b) the caller is required to submit records in dependency order (all foreign schema records before all referencing schema records), allowing FK testing at submit time. Option (b) shifts burden to the caller and makes the API fragile. Option (a) is correct but undermines the memory goal for FK-heavy workloads. A third option: store only the FK-relevant field values per record (not the full record), which reduces overhead to the size of the referenced fields only. |       |            |
+| 2   | **`matchingRecords` field semantics in streaming unique errors.** Resolved in section 4.3: `matchingRecords` becomes `string[]` of caller-supplied record IDs. Breaking change to public types; see Error Type Migration Guide.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |       | Resolved   |
 
 ---
 

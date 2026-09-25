@@ -17,25 +17,20 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export {
-	CrossRecordValidator,
-	type CrossRecordErrorCounts,
-	type CrossRecordReport,
-	type CrossRecordValidationError,
-	type UniqueFieldViolationCount,
-} from './CrossRecordValidator';
-export { SchemaValidator, type SchemaValidatorReport } from './SchemaValidator';
-export {
-	CrossSchemaValidator,
-	type CrossSchemaReport,
-	type CrossSchemaValidationError,
-	type CrossSchemaViolationCounts,
-	type ForeignKeyViolationCount,
-} from './CrossSchemaValidator';
-export {
-	DictionaryValidator,
-	type DictionarySchemaValidationCounts,
-	type DictionaryValidatorError,
-	type DictionaryValidatorReport,
-} from './DictionaryValidator';
-export type { SubmittedRecordId, ValidatorRecordEntry } from './submissionTypes';
+/**
+ * Asserts that `condition` is truthy. Throws an `Error` with the provided `message` if not.
+ *
+ * Use this to enforce invariants that must hold by construction. The TypeScript compiler
+ * narrows the type of the checked value after this call, eliminating the need for
+ * non-null assertions or redundant null checks at call sites.
+ *
+ * @example
+ * const value = map.get(key);
+ * assert(value, `Expected map to contain key "${key}".`);
+ * value.doSomething(); // value is now known to be defined
+ */
+export function assert(condition: unknown, message: string): asserts condition {
+	if (!condition) {
+		throw new Error(message);
+	}
+}

@@ -17,7 +17,16 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { TypeUtils, failWith, success, type DataRecord, type DataRecordValue, type Result, type Schema } from '@overture-stack/lectern-dictionary';
+import { assert } from '../utils/assert';
+import {
+	TypeUtils,
+	failWith,
+	success,
+	type DataRecord,
+	type DataRecordValue,
+	type Result,
+	type Schema,
+} from '@overture-stack/lectern-dictionary';
 import { hashDataRecord } from '../utils/hashDataRecord';
 import { type DataSetHashMap } from '../validateSchema/restrictions/generateDataSetHashMap';
 import { testUniqueFieldRestriction } from '../validateSchema/restrictions/uniqueField/testUniqueFieldRestriction';
@@ -165,7 +174,10 @@ export class CrossRecordValidator {
 		}
 	}
 
-	private processEntry(id: string, data: Record<string, DataRecordValue>): Result<void, { error: 'DUPLICATE_ID' | 'LOCKED' }> {
+	private processEntry(
+		id: string,
+		data: Record<string, DataRecordValue>,
+	): Result<void, { error: 'DUPLICATE_ID' | 'LOCKED' }> {
 		if (this.activeGeneratorCount > 0) {
 			return failWith<{ error: 'LOCKED' }>(`Cannot submit records while the errors() generator is running.`, {
 				error: 'LOCKED',
@@ -190,13 +202,15 @@ export class CrossRecordValidator {
 
 			const hash = hashDataRecord({ [fieldName]: value });
 			const fieldHashMap = this.uniqueFieldIndex.get(fieldName);
-			if (fieldHashMap) {
-				const existing = fieldHashMap.get(hash);
-				if (existing) {
-					existing.push(id);
-				} else {
-					fieldHashMap.set(hash, [id]);
-				}
+			assert(
+				fieldHashMap,
+				`Unexpected error: invariant violation in CrossRecordValidator.processEntry(). No hash map exists for field "${fieldName}", which was expected to be populated at construction time.`,
+			);
+			const existing = fieldHashMap.get(hash);
+			if (existing) {
+				existing.push(id);
+			} else {
+				fieldHashMap.set(hash, [id]);
 			}
 		}
 

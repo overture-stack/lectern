@@ -60,14 +60,14 @@ export const testForeignKeyRestriction = (
 					?.get(foreignKeyMapping.foreign)
 					?.has(localValue);
 
-				return hasForeignReference
-					? undefined
-					: {
+				return hasForeignReference ? undefined : (
+						{
 							reason: 'INVALID_BY_FOREIGNKEY',
 							fieldName: foreignKeyMapping.local,
 							foreignSchema: { fieldName: foreignKeyMapping.foreign, schemaName: restriction.schema },
 							fieldValue: localValue,
-						};
+						}
+					);
 			})
 			.filter(TypeUtils.isDefined);
 		return foreignKeyErrors;
