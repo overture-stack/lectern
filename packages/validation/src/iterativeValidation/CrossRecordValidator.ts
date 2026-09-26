@@ -28,10 +28,7 @@ import {
 	type Schema,
 } from '@overture-stack/lectern-dictionary';
 import { hashDataRecord } from '../utils/hashDataRecord';
-import { type DataSetHashMap } from '../validateSchema/restrictions/generateDataSetHashMap';
-import { testUniqueFieldRestriction } from '../validateSchema/restrictions/uniqueField/testUniqueFieldRestriction';
 import { getUniqueKeyValues } from '../validateSchema/restrictions/uniqueKey/getUniqueKeyValues';
-import { testUniqueKey } from '../validateSchema/restrictions/uniqueKey/testUniqueKey';
 import type {
 	SchemaValidationRecordErrorUnique,
 	SchemaValidationRecordErrorUniqueKey,
@@ -87,13 +84,12 @@ export type CrossRecordReport = {
 export type CrossRecordValidationError = SchemaValidationRecordErrorUnique | SchemaValidationRecordErrorUniqueKey;
 
 /**
- * Minimal per-record snapshot stored by the CrossRecordValidator.
- * Only the field values needed for unique and uniqueKey constraint checking are retained;
- * all other field data is discarded after submission.
+ * Hash map bucket for a uniqueKey constraint.
+ * Stores the composite key values alongside the IDs of all records that share that composite key.
  */
-type RecordSnapshot = {
-	id: string;
+type UniqueKeyBucket = {
 	values: DataRecord;
+	ids: string[];
 };
 
 /**
@@ -141,33 +137,57 @@ export class CrossRecordValidator {
 	private readonly uniqueFieldNames: string[];
 	private readonly uniqueKeyRule: string[] | undefined;
 
+	/**
+	 * True when the schema has at least one unique field or a uniqueKey restriction.
+	 * When false, there is nothing to track cross-record, so all per-record state
+	 * (seenIds, hash indices) is skipped entirely to avoid O(N) memory growth.
+	 */
+	private readonly hasConstraints: boolean;
+
+	/**
+	 * Set of submitted record IDs used for duplicate detection.
+	 * Only populated when `hasConstraints` is true — schemas with no cross-record
+	 * constraints do not need duplicate tracking.
+	 */
 	private readonly seenIds: Set<string>;
-	private readonly snapshots: RecordSnapshot[];
 
 	/**
 	 * Index for unique field constraint tracking.
-	 * Structure: fieldName -> (hash of field value -> array of record IDs with that value)
+	 * Structure: fieldName -> (field value -> record IDs with that value)
+	 *
+	 * The field value is used directly as the Map key so that the value is available
+	 * for error reporting without requiring a separate snapshot.
 	 */
-	private readonly uniqueFieldIndex: Map<string, DataSetHashMap>;
+	private readonly uniqueFieldIndex: Map<string, Map<DataRecordValue, string[]>>;
 
 	/**
 	 * Index for uniqueKey constraint tracking.
-	 * Structure: hash of composite key values -> array of record IDs with that composite key
+	 * Structure: hash of composite key values -> { composite key values, record IDs with that composite key }
+	 *
+	 * The composite key values are stored in each bucket so that violation errors can be reported
+	 * with the violating key without requiring a separate per-record snapshot.
 	 */
-	private readonly uniqueKeyIndex: DataSetHashMap;
+	private readonly uniqueKeyIndex: Map<string, UniqueKeyBucket>;
 
 	private activeGeneratorCount: number;
 
+	/**
+	 * Total count of successfully submitted records. Used for `report().recordCount`
+	 * in place of `seenIds.size` so that schemas with no constraints (where seenIds
+	 * is not populated) still report accurate counts.
+	 */
+	private submittedCount: number;
+
 	constructor(schema: Schema) {
+		this.uniqueFieldNames = schema.fields.filter((field) => field.unique === true).map((field) => field.name);
+		this.uniqueKeyRule = schema.restrictions?.uniqueKey;
+		this.hasConstraints = this.uniqueFieldNames.length > 0 || this.uniqueKeyRule !== undefined;
+
 		this.seenIds = new Set();
-		this.snapshots = [];
 		this.uniqueFieldIndex = new Map();
 		this.uniqueKeyIndex = new Map();
 		this.activeGeneratorCount = 0;
-
-		this.uniqueFieldNames = schema.fields.filter((field) => field.unique === true).map((field) => field.name);
-
-		this.uniqueKeyRule = schema.restrictions?.uniqueKey;
+		this.submittedCount = 0;
 
 		for (const fieldName of this.uniqueFieldNames) {
 			this.uniqueFieldIndex.set(fieldName, new Map());
@@ -189,46 +209,43 @@ export class CrossRecordValidator {
 		}
 
 		this.seenIds.add(id);
+		this.submittedCount++;
 
-		const snapshotValues: DataRecord = {};
+		// Schemas with no cross-record constraints need no hash indexing.
+		if (!this.hasConstraints) {
+			return success(undefined);
+		}
 
 		for (const fieldName of this.uniqueFieldNames) {
 			const value = data[fieldName];
-			snapshotValues[fieldName] = value;
 
 			if (value === undefined || (Array.isArray(value) && value.length === 0)) {
 				continue;
 			}
 
-			const hash = hashDataRecord({ [fieldName]: value });
 			const fieldHashMap = this.uniqueFieldIndex.get(fieldName);
 			assert(
 				fieldHashMap,
 				`Unexpected error: invariant violation in CrossRecordValidator.processEntry(). No hash map exists for field "${fieldName}", which was expected to be populated at construction time.`,
 			);
-			const existing = fieldHashMap.get(hash);
+			const existing = fieldHashMap.get(value);
 			if (existing) {
 				existing.push(id);
 			} else {
-				fieldHashMap.set(hash, [id]);
+				fieldHashMap.set(value, [id]);
 			}
 		}
 
 		if (this.uniqueKeyRule && this.uniqueKeyRule.length > 0) {
 			const uniqueKeyValues = getUniqueKeyValues(data, this.uniqueKeyRule);
-			for (const fieldName of this.uniqueKeyRule) {
-				snapshotValues[fieldName] = data[fieldName];
-			}
 			const hash = hashDataRecord(uniqueKeyValues);
 			const existing = this.uniqueKeyIndex.get(hash);
 			if (existing) {
-				existing.push(id);
+				existing.ids.push(id);
 			} else {
-				this.uniqueKeyIndex.set(hash, [id]);
+				this.uniqueKeyIndex.set(hash, { values: uniqueKeyValues, ids: [id] });
 			}
 		}
-
-		this.snapshots.push({ id, values: snapshotValues });
 
 		return success(undefined);
 	}
@@ -259,45 +276,39 @@ export class CrossRecordValidator {
 
 	/**
 	 * Generate a report of all cross-record constraint violations detected so far.
-	 * Calls `testUniqueFieldRestriction` and `testUniqueKey` for each submitted record.
 	 *
 	 * May be called at any time. Calling `report()` does not affect the validator's state.
 	 */
 	report(): CrossRecordReport {
-		const recordCount = this.seenIds.size;
+		const recordCount = this.submittedCount;
 
-		const uniqueFieldCounts = new Map<string, number>();
-		let uniqueKeyCount = 0;
-
-		for (const { id, values } of this.snapshots) {
-			for (const [fieldName, hashMap] of this.uniqueFieldIndex) {
-				const result = testUniqueFieldRestriction(values[fieldName], fieldName, hashMap);
-				if (!result.valid && result.details.matchingRecords[0] === id) {
-					// Only count a violation once — for the first record in the collision group
-					const existing = uniqueFieldCounts.get(fieldName) ?? 0;
-					uniqueFieldCounts.set(fieldName, existing + result.details.matchingRecords.length);
+		const uniqueFieldCounts: UniqueFieldViolationCount[] = [];
+		for (const [fieldName, hashMap] of this.uniqueFieldIndex) {
+			let count = 0;
+			for (const ids of hashMap.values()) {
+				if (ids.length > 1) {
+					count += ids.length;
 				}
 			}
-
-			if (this.uniqueKeyRule && this.uniqueKeyRule.length > 0) {
-				const result = testUniqueKey(values, this.uniqueKeyRule, this.uniqueKeyIndex);
-				if (!result.valid && result.details.matchingRecords[0] === id) {
-					uniqueKeyCount += result.details.matchingRecords.length;
-				}
+			if (count > 0) {
+				uniqueFieldCounts.push({ fieldName, count });
 			}
 		}
 
-		const uniqueViolations: UniqueFieldViolationCount[] = [...uniqueFieldCounts.entries()].map(
-			([fieldName, count]) => ({ fieldName, count }),
-		);
+		let uniqueKeyCount = 0;
+		for (const { ids } of this.uniqueKeyIndex.values()) {
+			if (ids.length > 1) {
+				uniqueKeyCount += ids.length;
+			}
+		}
 
-		const isValid = uniqueViolations.length === 0 && uniqueKeyCount === 0;
+		const isValid = uniqueFieldCounts.length === 0 && uniqueKeyCount === 0;
 
 		return {
 			valid: isValid,
 			recordCount,
 			errorCounts: {
-				unique: uniqueViolations,
+				unique: uniqueFieldCounts,
 				uniqueKey: uniqueKeyCount,
 			},
 		};
@@ -305,6 +316,10 @@ export class CrossRecordValidator {
 
 	/**
 	 * Generator that yields one error object per record that violates a unique or uniqueKey constraint.
+	 * Each yielded error includes all record IDs involved in the collision group via `matchingRecords`,
+	 * so callers can see the full set of conflicting records from any single error.
+	 *
+	 * Errors are yielded in hash map iteration order, not submission order.
 	 *
 	 * Locks the validator for the duration of iteration — `submit()` will return a `LOCKED` failure
 	 * until all active generators are fully consumed or their `return()` method is called.
@@ -312,18 +327,29 @@ export class CrossRecordValidator {
 	*errors(): Generator<CrossRecordValidationError> {
 		this.activeGeneratorCount++;
 		try {
-			for (const { values } of this.snapshots) {
-				for (const [fieldName, hashMap] of this.uniqueFieldIndex) {
-					const result = testUniqueFieldRestriction(values[fieldName], fieldName, hashMap);
-					if (!result.valid) {
-						yield result.details;
+			for (const [fieldName, hashMap] of this.uniqueFieldIndex) {
+				for (const [value, ids] of hashMap.entries()) {
+					if (ids.length > 1) {
+						for (const _id of ids) {
+							yield {
+								reason: 'INVALID_BY_UNIQUE',
+								fieldName,
+								fieldValue: value,
+								matchingRecords: ids,
+							};
+						}
 					}
 				}
+			}
 
-				if (this.uniqueKeyRule && this.uniqueKeyRule.length > 0) {
-					const result = testUniqueKey(values, this.uniqueKeyRule, this.uniqueKeyIndex);
-					if (!result.valid) {
-						yield result.details;
+			for (const { values, ids } of this.uniqueKeyIndex.values()) {
+				if (ids.length > 1) {
+					for (const _id of ids) {
+						yield {
+							reason: 'INVALID_BY_UNIQUE_KEY',
+							matchingRecords: ids,
+							uniqueKey: values,
+						};
 					}
 				}
 			}

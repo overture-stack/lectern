@@ -29,6 +29,7 @@ export type DictionaryGeneratorOptions = {
 	counts: DictionarySchemaCount;
 	seed?: number;
 	emptyRate?: number;
+	errorRate?: number;
 	uniqueKeyRetries?: number;
 };
 
@@ -137,7 +138,7 @@ export function* generateDictionaryRecords(
 	dictionary: Dictionary,
 	options: DictionaryGeneratorOptions,
 ): Generator<DictionaryRecord> {
-	const { counts, seed, emptyRate, uniqueKeyRetries } = options;
+	const { counts, seed, emptyRate, errorRate, uniqueKeyRetries } = options;
 
 	const includedNames = new Set(
 		Object.entries(counts)
@@ -188,6 +189,7 @@ export function* generateDictionaryRecords(
 				seed: schemaSeed,
 				foreignKeyPool,
 				emptyRate,
+				errorRate,
 				uniqueKeyRetries,
 			});
 

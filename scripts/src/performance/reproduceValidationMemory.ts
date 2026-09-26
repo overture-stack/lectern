@@ -21,9 +21,16 @@ import { dictionaryMultiRelationship } from '../sampleDictionaries/dictionaryMul
 import { dictionarySimple } from '../sampleDictionaries/dictionarySimple';
 import { dictionaryWideUniqueKey } from '../sampleDictionaries/dictionaryWideUniqueKey';
 import type { WorkerResult } from './reproduceValidationMemoryWorker';
-import { CASE3_COUNTS, DATA_DIR, MAX_RECORD_COUNT, RECORD_COUNTS } from './reproduceValidationMemoryConstants';
+import {
+	CASE3_RECORD_COUNTS,
+	CASE3_SCHEMA_MULTIPLIERS,
+	DATA_DIR,
+	ERROR_RATE,
+	MAX_RECORD_COUNT,
+	RECORD_COUNTS,
+} from './reproduceValidationMemoryConstants';
 
-export { CASE3_COUNTS, DATA_DIR, MAX_RECORD_COUNT, RECORD_COUNTS };
+export { CASE3_RECORD_COUNTS, CASE3_SCHEMA_MULTIPLIERS, DATA_DIR, ERROR_RATE, MAX_RECORD_COUNT, RECORD_COUNTS };
 
 // ─── Data generation helpers ──────────────────────────────────────────────────
 
@@ -78,6 +85,7 @@ async function ensureSchemaFile(
 	schemaSourcePath: string,
 	outputDir: string,
 	expectedCount: number,
+	errorRate?: number,
 ): Promise<string> {
 	ensureDirectory(outputDir);
 	const filePath = path.join(outputDir, `${schema.name}.tsv`);
@@ -94,7 +102,11 @@ async function ensureSchemaFile(
 		deleteFile(filePath);
 	}
 
-	const result = await generateSchemaFile(schema, outputDir, 'tsv', { count: expectedCount, uniqueKeyRetries: 100 });
+	const result = await generateSchemaFile(schema, outputDir, 'tsv', {
+		count: expectedCount,
+		uniqueKeyRetries: 100,
+		errorRate,
+	});
 	if (!result.success) {
 		throw new Error(`Failed to generate ${filePath}: ${result.message}`);
 	}
@@ -115,6 +127,7 @@ async function ensureDictionaryFiles(
 	schemaSourcePaths: Record<string, string>,
 	outputDir: string,
 	counts: Record<string, number>,
+	errorRate?: number,
 ): Promise<void> {
 	ensureDirectory(outputDir);
 
@@ -136,7 +149,11 @@ async function ensureDictionaryFiles(
 
 	schemaNames.forEach((schemaName) => deleteFile(path.join(outputDir, `${schemaName}.tsv`)));
 
-	const result = await generateDictionaryFiles(dictionary, outputDir, 'tsv', { counts, uniqueKeyRetries: 100 });
+	const result = await generateDictionaryFiles(dictionary, outputDir, 'tsv', {
+		counts,
+		uniqueKeyRetries: 100,
+		errorRate,
+	});
 	if (!result.success) {
 		throw new Error(`Failed to generate dictionary files in ${outputDir}: ${result.message}`);
 	}
@@ -165,34 +182,60 @@ async function ensureDictionaryFiles(
 	writeSummaryFile(outputDir, summaryEntries);
 }
 
-async function ensureDataFiles(): Promise<void> {
+const CASE3_SCHEMA_SOURCE_PATHS: Record<string, string> = {
+	program: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaProgram.ts',
+	study: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaStudy.ts',
+	institution: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaInstitution.ts',
+	lab: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaLab.ts',
+	cohort: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaCohort.ts',
+	enrollment: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaEnrollment.ts',
+	observation: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaObservation.ts',
+};
+
+async function ensureAllDataFilesForVariant(errorRate?: number): Promise<void> {
+	const dirSuffix = errorRate !== undefined ? '-errors' : '';
+
+	for (const recordCount of RECORD_COUNTS) {
+		if (errorRate === undefined) {
+			await ensureSchemaFile(
+				dictionarySimple.schemas[0],
+				'scripts/src/sampleDictionaries/dictionarySimple/schemaAllTypesNoRestrictions.ts',
+				path.join(DATA_DIR, 'case1', String(recordCount)),
+				recordCount,
+			);
+		}
+		await ensureSchemaFile(
+			dictionaryWideUniqueKey.schemas[0],
+			'scripts/src/sampleDictionaries/dictionaryWideUniqueKey/schemaWideEntity.ts',
+			path.join(DATA_DIR, `case2${dirSuffix}`, String(recordCount)),
+			recordCount,
+			errorRate,
+		);
+	}
+
+	for (const recordCount of CASE3_RECORD_COUNTS) {
+		const case3Counts = Object.fromEntries(
+			Object.entries(CASE3_SCHEMA_MULTIPLIERS).map(([schemaName, multiplier]) => [
+				schemaName,
+				recordCount * multiplier,
+			]),
+		);
+		await ensureDictionaryFiles(
+			dictionaryMultiRelationship,
+			CASE3_SCHEMA_SOURCE_PATHS,
+			path.join(DATA_DIR, `case3${dirSuffix}`, String(recordCount)),
+			case3Counts,
+			errorRate,
+		);
+	}
+}
+
+export async function ensureDataFiles(): Promise<void> {
 	console.log('\n=== Data Generation ===\n');
-	await ensureSchemaFile(
-		dictionarySimple.schemas[0],
-		'scripts/src/sampleDictionaries/dictionarySimple/schemaAllTypesNoRestrictions.ts',
-		path.join(DATA_DIR, 'case1'),
-		MAX_RECORD_COUNT,
-	);
-	await ensureSchemaFile(
-		dictionaryWideUniqueKey.schemas[0],
-		'scripts/src/sampleDictionaries/dictionaryWideUniqueKey/schemaWideEntity.ts',
-		path.join(DATA_DIR, 'case2'),
-		MAX_RECORD_COUNT,
-	);
-	await ensureDictionaryFiles(
-		dictionaryMultiRelationship,
-		{
-			program: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaProgram.ts',
-			study: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaStudy.ts',
-			institution: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaInstitution.ts',
-			lab: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaLab.ts',
-			cohort: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaCohort.ts',
-			enrollment: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaEnrollment.ts',
-			observation: 'scripts/src/sampleDictionaries/dictionaryMultiRelationship/schemaObservation.ts',
-		},
-		path.join(DATA_DIR, 'case3'),
-		CASE3_COUNTS,
-	);
+	console.log('--- Clean datasets ---\n');
+	await ensureAllDataFilesForVariant();
+	console.log('\n--- Error datasets (10% error rate) ---\n');
+	await ensureAllDataFilesForVariant(ERROR_RATE);
 }
 
 // ─── Validation orchestration ─────────────────────────────────────────────────
@@ -218,16 +261,18 @@ function getProcessRssMB(pid: number): number | undefined {
 const TABLE_COLUMNS = [
 	'Case',
 	'Dictionary',
+	'Err Rate',
 	'Records',
+	'Total Rec',
 	'Startup (MB)',
-	'After Parse (MB)',
-	'Peak Validate (MB)',
+	'Peak Heap (MB)',
+	'Peak RSS (MB)',
 	'Time (s)',
 	'ms/record',
 	'Errors',
 	'Status',
 ];
-const COLUMN_WIDTHS = [6, 20, 10, 13, 16, 20, 10, 11, 10, 8];
+const COLUMN_WIDTHS = [6, 20, 8, 10, 10, 13, 14, 13, 10, 11, 10, 8];
 
 function formatRow(values: string[]): string {
 	return '| ' + values.map((value, index) => value.padEnd(COLUMN_WIDTHS[index])).join(' | ') + ' |';
@@ -239,16 +284,19 @@ function printTableHeader(): void {
 	console.log('| ' + COLUMN_WIDTHS.map((width) => '-'.repeat(width)).join(' | ') + ' |');
 }
 
-function printResultRow(result: WorkerResult, startupHeapMB: number, peakValidationMB: number): void {
+function printResultRow(result: WorkerResult, startupHeapMB: number, peakRssMB: number, withErrors: boolean): void {
+	const errorRateLabel = withErrors ? '10%' : '0%';
 	const values =
 		result.status === 'OK' ?
 			[
 				result.caseLabel,
 				result.caseName,
+				errorRateLabel,
+				result.inputCount.toLocaleString(),
 				result.recordCount.toLocaleString(),
 				startupHeapMB.toFixed(1),
-				result.heapAfterParseMB.toFixed(1),
-				Math.max(peakValidationMB, result.heapAfterValidationMB).toFixed(1),
+				result.peakHeapMB.toFixed(1),
+				peakRssMB.toFixed(1),
 				(result.elapsedMs / 1000).toFixed(3),
 				result.msPerRecord.toFixed(4),
 				result.errorCount.toLocaleString(),
@@ -257,7 +305,9 @@ function printResultRow(result: WorkerResult, startupHeapMB: number, peakValidat
 		:	[
 				result.caseLabel,
 				result.caseName,
-				result.recordCount.toLocaleString(),
+				errorRateLabel,
+				result.inputCount.toLocaleString(),
+				'-',
 				startupHeapMB.toFixed(1),
 				'-',
 				'-',
@@ -291,25 +341,33 @@ process.on('SIGTERM', () => {
 	process.exit(143);
 });
 
-type WorkerRun = { result: WorkerResult; startupHeapMB: number; peakValidationMB: number };
+type WorkerRun = { result: WorkerResult; startupHeapMB: number; peakRssMB: number; withErrors: boolean };
 
-async function runWorker(caseNumber: number, recordCount: number): Promise<WorkerRun> {
+async function runWorker(caseNumber: number, recordCount: number, withErrors: boolean): Promise<WorkerRun> {
 	ensureDirectory(LOG_DIR);
-	const logPath = path.join(LOG_DIR, `case${caseNumber}-${recordCount}.log`);
-	const logLines: string[] = [`case=${caseNumber} records=${recordCount} heap-limit=${WORKER_HEAP_LIMIT_MB}MB`];
+	const errorsSuffix = withErrors ? '-errors' : '';
+	const logPath = path.join(LOG_DIR, `case${caseNumber}-${recordCount}${errorsSuffix}.log`);
+	const logLines: string[] = [
+		`case=${caseNumber} records=${recordCount} errors=${withErrors} heap-limit=${WORKER_HEAP_LIMIT_MB}MB`,
+	];
 
-	const child = spawn(
-		process.execPath,
-		[`--max-old-space-size=${WORKER_HEAP_LIMIT_MB}`, WORKER_PATH, String(caseNumber), String(recordCount)],
-		{ cwd: path.dirname(WORKER_PATH) },
-	);
+	const workerArgs = [
+		`--max-old-space-size=${WORKER_HEAP_LIMIT_MB}`,
+		WORKER_PATH,
+		String(caseNumber),
+		String(recordCount),
+	];
+	if (withErrors) {
+		workerArgs.push('errors');
+	}
+	const child = spawn(process.execPath, workerArgs, { cwd: path.dirname(WORKER_PATH) });
 	currentChild = child;
 
 	// Poll the worker's RSS from the orchestrator while validation runs. Validation is
 	// synchronous in the worker — its event loop is blocked — so polling cannot happen
 	// inside the worker process itself. The worker writes "validate_start" to stderr when
 	// parsing is done and validation is about to begin; we only track peak from that point.
-	let peakValidationMB = 0;
+	let peakRssMB = 0;
 	let trackingValidation = false;
 	const childPid = child.pid;
 	const rssPoller =
@@ -319,8 +377,8 @@ async function runWorker(caseNumber: number, recordCount: number): Promise<Worke
 					return;
 				}
 				const rssMB = getProcessRssMB(childPid);
-				if (rssMB !== undefined && rssMB > peakValidationMB) {
-					peakValidationMB = rssMB;
+				if (rssMB !== undefined && rssMB > peakRssMB) {
+					peakRssMB = rssMB;
 				}
 			}, 50)
 		:	undefined;
@@ -365,9 +423,10 @@ async function runWorker(caseNumber: number, recordCount: number): Promise<Worke
 		logLines.push('result: OOM');
 		fs.writeFileSync(logPath, logLines.join('\n') + '\n');
 		return {
-			result: { status: 'OOM', caseLabel: String(caseNumber), caseName, recordCount },
+			result: { status: 'OOM', caseLabel: String(caseNumber), caseName, inputCount: recordCount, recordCount },
 			startupHeapMB,
-			peakValidationMB,
+			peakRssMB,
+			withErrors,
 		};
 	}
 
@@ -376,14 +435,15 @@ async function runWorker(caseNumber: number, recordCount: number): Promise<Worke
 		const result = JSON.parse(lastLine) as WorkerResult;
 		logLines.push(`result: ${result.status}`);
 		fs.writeFileSync(logPath, logLines.join('\n') + '\n');
-		return { result, startupHeapMB, peakValidationMB };
+		return { result, startupHeapMB, peakRssMB, withErrors };
 	} catch {
 		logLines.push(`failed to parse result JSON from last stdout line: ${JSON.stringify(lastLine)}`);
 		fs.writeFileSync(logPath, logLines.join('\n') + '\n');
 		return {
-			result: { status: 'OOM', caseLabel: String(caseNumber), caseName, recordCount },
+			result: { status: 'OOM', caseLabel: String(caseNumber), caseName, inputCount: recordCount, recordCount },
 			startupHeapMB,
-			peakValidationMB,
+			peakRssMB,
+			withErrors,
 		};
 	}
 }
@@ -391,10 +451,28 @@ async function runWorker(caseNumber: number, recordCount: number): Promise<Worke
 async function runValidationCases(): Promise<void> {
 	printTableHeader();
 
-	for (const caseNumber of [1, 2, 3]) {
+	for (const caseNumber of [1, 2]) {
 		for (const recordCount of RECORD_COUNTS) {
-			const { result, startupHeapMB, peakValidationMB } = await runWorker(caseNumber, recordCount);
-			printResultRow(result, startupHeapMB, peakValidationMB);
+			const { result, startupHeapMB, peakRssMB } = await runWorker(caseNumber, recordCount, false);
+			printResultRow(result, startupHeapMB, peakRssMB, false);
+			if (result.status === 'OOM') {
+				break;
+			}
+		}
+	}
+
+	for (const recordCount of RECORD_COUNTS) {
+		const { result, startupHeapMB, peakRssMB } = await runWorker(2, recordCount, true);
+		printResultRow(result, startupHeapMB, peakRssMB, true);
+		if (result.status === 'OOM') {
+			break;
+		}
+	}
+
+	for (const withErrors of [false, true]) {
+		for (const recordCount of CASE3_RECORD_COUNTS) {
+			const { result, startupHeapMB, peakRssMB } = await runWorker(3, recordCount, withErrors);
+			printResultRow(result, startupHeapMB, peakRssMB, withErrors);
 			if (result.status === 'OOM') {
 				break;
 			}
@@ -411,7 +489,9 @@ async function main(): Promise<void> {
 	await runValidationCases();
 }
 
-main().catch((error) => {
-	console.error(error);
-	process.exit(1);
-});
+if (require.main === module) {
+	main().catch((error) => {
+		console.error(error);
+		process.exit(1);
+	});
+}

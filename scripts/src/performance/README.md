@@ -25,4 +25,3 @@ This test demonstrates that the in memory validation utility will fail when hand
 The most glaring issue is that the tsv after being parsed uses memory about 8x its file size. This means a submitter may compile a reasonably size tsv that has no way of fitting into application memory.
 
 Our end goal is to be able to parse more data than can even fit into application memory (bounded by unique and FK index sizes).
-

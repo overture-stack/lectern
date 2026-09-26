@@ -53,6 +53,7 @@ export type SchemaGeneratorOptions = {
 	seed?: number;
 	foreignKeyPool?: ForeignKeyPool;
 	emptyRate?: number;
+	errorRate?: number;
 	uniqueKeyRetries?: number;
 	initialUniqueValues?: {
 		fields?: Record<string, DataRecordValue[]>;
@@ -68,6 +69,10 @@ const DEFAULT_UNIQUE_KEY_RETRIES = 20;
 const deriveRetrySeed = (recordSeed: number, retryCount: number): number =>
 	knuthHash((recordSeed ^ (retryCount * 2246822519)) >>> 0);
 
+// XOR mask for the uniqueKey violation decision, distinct from the field-level error decision
+// mask used in generateRecord so that the two decisions are statistically independent.
+const UNIQUE_KEY_VIOLATION_MASK = 0x517cc1b7;
+
 /**
  * Synchronous generator that yields a `GeneratedRecord` for each of `options.count` records.
  * `fieldErrorCount` is `0` when all fields generated cleanly, or the count of fields that used
@@ -76,9 +81,23 @@ const deriveRetrySeed = (recordSeed: number, retryCount: number): number =>
  * Enforces `unique` field constraints by excluding already-seen values from each field generator.
  * Enforces `uniqueKey` constraints by retrying generation when a composite key tuple collides.
  * After exhausting retries the record is yielded as-is.
+ *
+ * When `errorRate` is set and the schema has `uniqueKey` restrictions, some records are generated
+ * as deliberate uniqueKey violations: their uniqueKey field values are overwritten with those from
+ * a previously generated clean record, producing a duplicate key. This decision is made
+ * independently from the field-level `errorRate` applied inside `generateRecord`, using a
+ * separate seed mask so the two error mechanisms are statistically independent.
  */
 export function* generateSchemaRecords(schema: Schema, options?: SchemaGeneratorOptions): Generator<GeneratedRecord> {
-	const { count = 0, seed, foreignKeyPool, emptyRate, uniqueKeyRetries, initialUniqueValues } = options ?? {};
+	const {
+		count = 0,
+		seed,
+		foreignKeyPool,
+		emptyRate,
+		errorRate,
+		uniqueKeyRetries,
+		initialUniqueValues,
+	} = options ?? {};
 	const maxUniqueKeyRetries = uniqueKeyRetries ?? DEFAULT_UNIQUE_KEY_RETRIES;
 
 	const uniqueFields = schema.fields.filter((field) => field.unique === true);
@@ -93,6 +112,10 @@ export function* generateSchemaRecords(schema: Schema, options?: SchemaGenerator
 
 	const uniqueKeyTracker = new Set<string>(initialUniqueValues?.keys ?? []);
 
+	// Pool of uniqueKey field values from previously generated clean records.
+	// Used to supply duplicate key values when generating uniqueKey violation error records.
+	const uniqueKeyPool: DataRecord[] = [];
+
 	for (let recordIndex = 0; recordIndex < count; recordIndex++) {
 		const fieldExclusions: Record<string, Set<DataRecordValue>> = {};
 		for (const [fieldName, seenValues] of uniqueFieldTracker) {
@@ -100,8 +123,51 @@ export function* generateSchemaRecords(schema: Schema, options?: SchemaGenerator
 		}
 
 		const recordSeed = seed !== undefined ? seed + recordIndex + 1 : undefined;
-		let generated = generateRecord(schema, { seed: recordSeed, foreignKeyPool, emptyRate, fieldExclusions });
+
+		// When errorRate is active and the schema has uniqueKey restrictions, independently
+		// decide whether this record should be a uniqueKey violation. Uses a different seed
+		// mask from the field-level error decision in generateRecord.
+		const violationHash =
+			recordSeed !== undefined ? knuthHash((recordSeed ^ UNIQUE_KEY_VIOLATION_MASK) >>> 0) : undefined;
+		const shouldViolateUniqueKey =
+			uniqueKeyFields.length > 0 &&
+			uniqueKeyPool.length > 0 &&
+			errorRate !== undefined &&
+			errorRate > 0 &&
+			(violationHash !== undefined ? violationHash / 4294967296 < errorRate : Math.random() < errorRate);
+
+		// For uniqueKey violation records, skip the field-level errorRate so the duplicate key
+		// is the sole error. For all other records, pass errorRate through to generateRecord.
+		let generated = generateRecord(schema, {
+			seed: recordSeed,
+			foreignKeyPool,
+			emptyRate,
+			errorRate: shouldViolateUniqueKey ? undefined : errorRate,
+			fieldExclusions,
+		});
 		let record = generated.record;
+
+		if (shouldViolateUniqueKey) {
+			// Overwrite uniqueKey fields with values from a previously generated clean record.
+			const poolIndex =
+				violationHash !== undefined ?
+					violationHash % uniqueKeyPool.length
+				:	Math.floor(Math.random() * uniqueKeyPool.length);
+			const poolEntry = uniqueKeyPool[poolIndex];
+			if (poolEntry !== undefined) {
+				for (const fieldName of uniqueKeyFields) {
+					record[fieldName] = poolEntry[fieldName];
+				}
+			}
+
+			for (const [fieldName, seenValues] of uniqueFieldTracker) {
+				seenValues.add(record[fieldName]);
+			}
+
+			// Don't add to uniqueKeyTracker or uniqueKeyPool — this is a deliberate duplicate.
+			yield { record, fieldErrorCount: generated.fieldErrorCount + 1 };
+			continue;
+		}
 
 		if (uniqueKeyFields.length > 0) {
 			let retryCount = 0;
@@ -120,6 +186,9 @@ export function* generateSchemaRecords(schema: Schema, options?: SchemaGenerator
 				record = generated.record;
 			}
 			uniqueKeyTracker.add(serializeKeyTuple(schema, record));
+
+			// Add this clean record's uniqueKey field values to the pool for future violations.
+			uniqueKeyPool.push(Object.fromEntries(uniqueKeyFields.map((fieldName) => [fieldName, record[fieldName]])));
 		}
 
 		for (const [fieldName, seenValues] of uniqueFieldTracker) {

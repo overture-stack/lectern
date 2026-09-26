@@ -13,15 +13,15 @@ import { parseRecordValues, validateDictionary, validateSchema } from '@overture
 import { dictionaryMultiRelationship } from '../sampleDictionaries/dictionaryMultiRelationship';
 import { dictionarySimple } from '../sampleDictionaries/dictionarySimple';
 import { dictionaryWideUniqueKey } from '../sampleDictionaries/dictionaryWideUniqueKey';
-import { CASE3_COUNTS, DATA_DIR, MAX_RECORD_COUNT } from './reproduceValidationMemoryConstants';
+import { CASE3_SCHEMA_MULTIPLIERS, DATA_DIR } from './reproduceValidationMemoryConstants';
 
 export type WorkerResultOk = {
 	status: 'OK';
 	caseLabel: string;
 	caseName: string;
+	inputCount: number;
 	recordCount: number;
-	heapAfterParseMB: number;
-	heapAfterValidationMB: number;
+	peakHeapMB: number;
 	elapsedMs: number;
 	msPerRecord: number;
 	errorCount: number;
@@ -31,6 +31,7 @@ export type WorkerResultFailed = {
 	status: 'OOM' | 'PARSE_ERROR';
 	caseLabel: string;
 	caseName: string;
+	inputCount: number;
 	recordCount: number;
 };
 
@@ -42,13 +43,11 @@ function getHeapMemoryMB(): number {
 	return Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 10) / 10;
 }
 
-function* streamTsvLines(filePath: string, lineLimit?: number): Generator<UnprocessedDataRecord> {
+function* streamTsvLines(filePath: string): Generator<UnprocessedDataRecord> {
 	const fd = fs.openSync(filePath, 'r');
 	const buffer = new Uint8Array(65536);
 	let remainder = '';
 	let headers: string[] | undefined;
-	let linesYielded = 0;
-	const limit = lineLimit ?? Infinity;
 
 	try {
 		let bytesRead: number;
@@ -63,20 +62,16 @@ function* streamTsvLines(filePath: string, lineLimit?: number): Generator<Unproc
 					headers = part.split('\t');
 					continue;
 				}
-				if (linesYielded >= limit) {
-					return;
-				}
 				const values = part.split('\t');
 				const record: UnprocessedDataRecord = {};
 				headers.forEach((header, index) => {
 					record[header] = values[index] ?? '';
 				});
 				yield record;
-				linesYielded++;
 			}
-		} while (bytesRead > 0 && linesYielded < limit);
+		} while (bytesRead > 0);
 
-		if (remainder.length > 0 && linesYielded < limit && headers !== undefined) {
+		if (remainder.length > 0 && headers !== undefined) {
 			const values = remainder.split('\t');
 			const record: UnprocessedDataRecord = {};
 			headers.forEach((header, index) => {
@@ -91,11 +86,11 @@ function* streamTsvLines(filePath: string, lineLimit?: number): Generator<Unproc
 
 type ParseSchemaStreamResult = { success: true; records: DataRecord[] } | { success: false };
 
-function readAndParseSchema(filePath: string, schema: Schema, lineLimit?: number): ParseSchemaStreamResult {
+function readAndParseSchema(filePath: string, schema: Schema): ParseSchemaStreamResult {
 	const records: DataRecord[] = [];
 	let hasParseError = false;
 
-	for (const rawRecord of streamTsvLines(filePath, lineLimit)) {
+	for (const rawRecord of streamTsvLines(filePath)) {
 		const result = parseRecordValues(rawRecord, schema);
 		records.push(result.data.record);
 		if (!result.success) {
@@ -108,15 +103,16 @@ function readAndParseSchema(filePath: string, schema: Schema, lineLimit?: number
 
 // ─── Case runners ─────────────────────────────────────────────────────────────
 
-function runCase1(recordCount: number): WorkerResult {
+function runCase1(recordCount: number, withErrors: boolean): WorkerResult {
 	const schema = dictionarySimple.schemas[0];
-	const filePath = path.join(DATA_DIR, 'case1', `${schema.name}.tsv`);
+	const dataDir = withErrors ? 'case1-errors' : 'case1';
+	const filePath = path.join(DATA_DIR, dataDir, String(recordCount), `${schema.name}.tsv`);
 
-	const parseResult = readAndParseSchema(filePath, schema, recordCount);
+	const parseResult = readAndParseSchema(filePath, schema);
 	const heapAfterParse = getHeapMemoryMB();
 
 	if (!parseResult.success) {
-		return { status: 'PARSE_ERROR', caseLabel: '1', caseName: 'simple', recordCount };
+		return { status: 'PARSE_ERROR', caseLabel: '1', caseName: 'simple', inputCount: recordCount, recordCount };
 	}
 
 	process.stderr.write('validate_start\n');
@@ -132,24 +128,25 @@ function runCase1(recordCount: number): WorkerResult {
 		status: 'OK',
 		caseLabel: '1',
 		caseName: 'simple',
+		inputCount: recordCount,
 		recordCount,
-		heapAfterParseMB: heapAfterParse,
-		heapAfterValidationMB: heapAfterValidation,
+		peakHeapMB: Math.max(heapAfterParse, heapAfterValidation),
 		elapsedMs,
 		msPerRecord: elapsedMs / recordCount,
 		errorCount,
 	};
 }
 
-function runCase2(recordCount: number): WorkerResult {
+function runCase2(recordCount: number, withErrors: boolean): WorkerResult {
 	const schema = dictionaryWideUniqueKey.schemas[0];
-	const filePath = path.join(DATA_DIR, 'case2', `${schema.name}.tsv`);
+	const dataDir = withErrors ? 'case2-errors' : 'case2';
+	const filePath = path.join(DATA_DIR, dataDir, String(recordCount), `${schema.name}.tsv`);
 
-	const parseResult = readAndParseSchema(filePath, schema, recordCount);
+	const parseResult = readAndParseSchema(filePath, schema);
 	const heapAfterParse = getHeapMemoryMB();
 
 	if (!parseResult.success) {
-		return { status: 'PARSE_ERROR', caseLabel: '2', caseName: 'wide-unique-key', recordCount };
+		return { status: 'PARSE_ERROR', caseLabel: '2', caseName: 'wide-unique-key', inputCount: recordCount, recordCount };
 	}
 
 	process.stderr.write('validate_start\n');
@@ -165,41 +162,49 @@ function runCase2(recordCount: number): WorkerResult {
 		status: 'OK',
 		caseLabel: '2',
 		caseName: 'wide-unique-key',
+		inputCount: recordCount,
 		recordCount,
-		heapAfterParseMB: heapAfterParse,
-		heapAfterValidationMB: heapAfterValidation,
+		peakHeapMB: Math.max(heapAfterParse, heapAfterValidation),
 		elapsedMs,
 		msPerRecord: elapsedMs / recordCount,
 		errorCount,
 	};
 }
 
-function runCase3(recordCount: number): WorkerResult {
-	const schemaNames = Object.keys(CASE3_COUNTS) as (keyof typeof CASE3_COUNTS)[];
-	const case3Dir = path.join(DATA_DIR, 'case3');
-
-	const scaleFactor = recordCount / MAX_RECORD_COUNT;
-	const scaledCounts = Object.fromEntries(
-		schemaNames.map((schemaName) => [schemaName, Math.round(CASE3_COUNTS[schemaName] * scaleFactor)]),
-	);
+function runCase3(recordCount: number, withErrors: boolean): WorkerResult {
+	const schemaNames = Object.keys(CASE3_SCHEMA_MULTIPLIERS);
+	const dataDir = withErrors ? 'case3-errors' : 'case3';
+	const case3Dir = path.join(DATA_DIR, dataDir, String(recordCount));
 
 	const typedData: Record<string, DataRecord[]> = {};
 	for (const schemaName of schemaNames) {
 		const schema = dictionaryMultiRelationship.schemas.find((s) => s.name === schemaName);
 		if (schema === undefined) {
-			return { status: 'PARSE_ERROR', caseLabel: '3', caseName: 'multi-relationship', recordCount };
+			return {
+				status: 'PARSE_ERROR',
+				caseLabel: '3',
+				caseName: 'multi-relationship',
+				inputCount: recordCount,
+				recordCount,
+			};
 		}
 		const filePath = path.join(case3Dir, `${schemaName}.tsv`);
-		const parseResult = readAndParseSchema(filePath, schema, scaledCounts[schemaName]);
+		const parseResult = readAndParseSchema(filePath, schema);
 		if (!parseResult.success) {
-			return { status: 'PARSE_ERROR', caseLabel: '3', caseName: 'multi-relationship', recordCount };
+			return {
+				status: 'PARSE_ERROR',
+				caseLabel: '3',
+				caseName: 'multi-relationship',
+				inputCount: recordCount,
+				recordCount,
+			};
 		}
 		typedData[schemaName] = parseResult.records;
 	}
 
 	const heapAfterParse = getHeapMemoryMB();
 
-	const totalRecords = Object.values(scaledCounts).reduce((sum, count) => sum + count, 0);
+	const totalRecords = Object.values(typedData).reduce((sum, records) => sum + records.length, 0);
 	process.stderr.write('validate_start\n');
 	const startTime = Date.now();
 	const validationResult = validateDictionary(typedData, dictionaryMultiRelationship);
@@ -218,9 +223,9 @@ function runCase3(recordCount: number): WorkerResult {
 		status: 'OK',
 		caseLabel: '3',
 		caseName: 'multi-relationship',
+		inputCount: recordCount,
 		recordCount: totalRecords,
-		heapAfterParseMB: heapAfterParse,
-		heapAfterValidationMB: heapAfterValidation,
+		peakHeapMB: Math.max(heapAfterParse, heapAfterValidation),
 		elapsedMs,
 		msPerRecord: elapsedMs / totalRecords,
 		errorCount,
@@ -229,22 +234,23 @@ function runCase3(recordCount: number): WorkerResult {
 
 // ─── Entry point ──────────────────────────────────────────────────────────────
 
-const [, , caseArg, countArg] = process.argv;
+const [, , caseArg, countArg, variantArg] = process.argv;
 const caseNumber = Number(caseArg);
 const recordCount = Number(countArg);
+const withErrors = variantArg === 'errors';
 
 if (![1, 2, 3].includes(caseNumber) || isNaN(recordCount)) {
-	console.error(`Usage: worker <case> <recordCount>  (case must be 1, 2, or 3)`);
+	console.error(`Usage: worker <case> <recordCount> [errors]  (case must be 1, 2, or 3)`);
 	process.exit(1);
 }
 
 process.stderr.write(`startup heap=${getHeapMemoryMB()}MB\n`);
 
-const runners: Record<number, (count: number) => WorkerResult> = {
+const runners: Record<number, (count: number, withErrors: boolean) => WorkerResult> = {
 	1: runCase1,
 	2: runCase2,
 	3: runCase3,
 };
 
-const result = runners[caseNumber](recordCount);
+const result = runners[caseNumber](recordCount, withErrors);
 process.stdout.write(JSON.stringify(result) + '\n');

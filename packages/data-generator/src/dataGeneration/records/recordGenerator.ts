@@ -20,6 +20,7 @@
 import type { DataRecord, DataRecordValue, Schema, SchemaField } from '@overture-stack/lectern-dictionary';
 import { knuthHash } from '../../common/hash';
 import {
+	type GeneratedField,
 	generateBooleanValue,
 	generateIntegerValue,
 	generateNumberValue,
@@ -61,16 +62,27 @@ export type ForeignKeyPool = Map<string, DataRecord[]>;
  * that field. Passed through to each field generator as `excludeValues`; see
  * `FieldGeneratorOptions.excludeValues`. Used by the schema generator to enforce `unique`
  * constraints across records.
+ *
+ * `errorRate` is the probability (0–1) that this record is deliberately generated with one field
+ * set to an invalid value. When triggered, one field is selected (preferring fields with active
+ * restrictions) and re-generated with `invalidate: true`; see `FieldGeneratorOptions.invalidate`.
+ * Defaults to `0` (no error records).
  */
 export type RecordGeneratorOptions = {
 	overrides?: DataRecord;
 	seed?: number;
 	foreignKeyPool?: ForeignKeyPool;
 	emptyRate?: number;
+	errorRate?: number;
 	fieldExclusions?: Record<string, Set<DataRecordValue>>;
 };
 
 const seededIndexInRange = (seed: number, length: number): number => knuthHash(seed) % length;
+
+// XOR mask used to derive the error-record decision hash from the record seed.
+// Using a prime constant ensures the decision hash occupies a different bit-space than per-field seeds
+// (which are derived as seed + fieldIndex + 1) so the two never collide for small field counts.
+const ERROR_DECISION_MASK = 0x9e3779b9;
 
 /**
  * Resolves FK-derived field values from `foreignKeyPool` for all FK rules on `schema`.
@@ -149,7 +161,7 @@ export type GeneratedRecord = {
  * `fieldErrorCount > 0` when any field could not satisfy its restrictions — the record is always present.
  */
 export const generateRecord = (schema: Schema, options?: RecordGeneratorOptions): GeneratedRecord => {
-	const { seed, overrides = {}, foreignKeyPool, emptyRate, fieldExclusions } = options ?? {};
+	const { seed, overrides = {}, foreignKeyPool, emptyRate, errorRate, fieldExclusions } = options ?? {};
 	const record: DataRecord = {};
 	let fieldErrorCount = 0;
 
@@ -198,6 +210,52 @@ export const generateRecord = (schema: Schema, options?: RecordGeneratorOptions)
 				fieldErrorCount++;
 			}
 			record[fieldName] = generated.value;
+		}
+	}
+
+	if (errorRate !== undefined && errorRate > 0 && schema.fields.length > 0) {
+		const isErrorRecord =
+			seed !== undefined ?
+				knuthHash((seed ^ ERROR_DECISION_MASK) >>> 0) / 4294967296 < errorRate
+			:	Math.random() < errorRate;
+
+		if (isErrorRecord) {
+			// Prefer fields that have some restrictions (more likely to have a violatable constraint).
+			// Fall back to all fields if none have restrictions defined.
+			const fieldsWithRestrictions = schema.fields.filter((field) => field.restrictions !== undefined);
+			const targetPool = fieldsWithRestrictions.length > 0 ? fieldsWithRestrictions : schema.fields;
+			const targetIndex =
+				seed !== undefined ?
+					knuthHash((seed ^ ~ERROR_DECISION_MASK) >>> 0) % targetPool.length
+				:	Math.floor(Math.random() * targetPool.length);
+			const targetField = targetPool[targetIndex];
+
+			if (targetField !== undefined) {
+				const definitionIndex = fieldIndexByName.get(targetField.name) ?? 0;
+				const targetSeed = seed !== undefined ? seed + definitionIndex + 1 : undefined;
+				const invalidOptions = { seed: targetSeed, record, invalidate: true };
+
+				let invalidGenerated: GeneratedField<DataRecordValue> | undefined;
+				switch (targetField.valueType) {
+					case 'boolean':
+						invalidGenerated = generateBooleanValue(targetField, invalidOptions);
+						break;
+					case 'integer':
+						invalidGenerated = generateIntegerValue(targetField, invalidOptions);
+						break;
+					case 'number':
+						invalidGenerated = generateNumberValue(targetField, invalidOptions);
+						break;
+					case 'string':
+						invalidGenerated = generateStringValue(targetField, invalidOptions);
+						break;
+				}
+
+				if (invalidGenerated !== undefined) {
+					record[targetField.name] = invalidGenerated.value;
+					fieldErrorCount++;
+				}
+			}
 		}
 	}
 

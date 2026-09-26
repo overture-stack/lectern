@@ -79,6 +79,12 @@ export type GeneratedField<TValue extends DataRecordValue = DataRecordValue> = {
  * the underlying `fast-check` arbitrary is filtered with `fc.filter` to reject excluded values
  * before sampling. If the arbitrary cannot find a non-excluded value within its retry limit, a
  * best-effort fallback value is returned (same failure path as a restriction conflict).
+ *
+ * `invalidate` requests that the generator deliberately produce a value that violates one of the
+ * field's active restrictions rather than satisfying them. Restriction priority: `required` (returns
+ * `undefined`) > `codeList` (returns a value absent from the list) > `range` (returns an
+ * out-of-range value) > `regex` (returns a non-matching string) > fallback `undefined`.
+ * When set, `emptyRate` is ignored so that the invalidation always takes effect.
  */
 export type FieldGeneratorOptions = {
 	seed?: number;
@@ -86,6 +92,7 @@ export type FieldGeneratorOptions = {
 	arrayLength?: number | RestrictionRange;
 	emptyRate?: number;
 	excludeValues?: Set<DataRecordValue>;
+	invalidate?: boolean;
 };
 
 /**
@@ -321,17 +328,23 @@ export const generateBooleanValue: FieldGenerator<SchemaBooleanField> = (
 	field,
 	options = {},
 ): GeneratedField<DataRecordValue> => {
-	const { seed = randomSeed(), record = {}, arrayLength, emptyRate, excludeValues } = options;
+	const { seed = randomSeed(), record = {}, arrayLength, emptyRate, excludeValues, invalidate } = options;
 	const collected = collectRestrictions(field.restrictions, record);
 	const required = reduceRequired(collected.required);
 	const empty = reduceEmpty(collected.empty);
 
 	const resolvedEmptyRate = Math.min(1, Math.max(0, emptyRate ?? DEFAULT_EMPTY_RATE));
-	if (!required && shouldGenerateEmpty(seed, resolvedEmptyRate)) {
+	if (!required && !invalidate && shouldGenerateEmpty(seed, resolvedEmptyRate)) {
 		return { value: undefined, conflicts: [] };
 	}
 
 	const requiredEmptyConflict = buildRequiredEmptyConflict(required, empty);
+
+	if (invalidate) {
+		// Boolean fields have no codeList, range, or regex restrictions; the only violatable
+		// restriction is 'required'. Returning undefined makes a required boolean field invalid.
+		return { value: undefined, conflicts: [] };
+	}
 
 	// Generates one value for a scalar field or one element of an array field; called by wrapArrayIfNeeded.
 	const generateSingle = (elementSeed: number): GeneratedField<boolean> => {
@@ -373,13 +386,13 @@ const generateNumericValue = (
 	options: FieldGeneratorOptions,
 	fromRange: (range: RestrictionRange | undefined, seed: number) => number,
 ): GeneratedField<DataRecordValue> => {
-	const { seed = randomSeed(), record = {}, arrayLength, emptyRate, excludeValues } = options;
+	const { seed = randomSeed(), record = {}, arrayLength, emptyRate, excludeValues, invalidate } = options;
 	const collected = collectRestrictions(field.restrictions, record);
 	const required = reduceRequired(collected.required);
 	const empty = reduceEmpty(collected.empty);
 
 	const resolvedEmptyRate = Math.min(1, Math.max(0, emptyRate ?? DEFAULT_EMPTY_RATE));
-	if (!required && shouldGenerateEmpty(seed, resolvedEmptyRate)) {
+	if (!required && !invalidate && shouldGenerateEmpty(seed, resolvedEmptyRate)) {
 		return { value: undefined, conflicts: [] };
 	}
 	// Filter each code list to only numeric values. We expect it to only contain reference tags and numbers, so this will clear unused reference tags.
@@ -394,6 +407,31 @@ const generateNumericValue = (
 	const requiredEmptyConflict = buildRequiredEmptyConflict(required, empty);
 	const conflicts =
 		requiredEmptyConflict !== undefined ? [...constraintConflicts, requiredEmptyConflict] : constraintConflicts;
+
+	if (invalidate) {
+		if (required) {
+			return { value: undefined, conflicts: [] };
+		}
+		if (codeList !== undefined && codeList.length > 0) {
+			const codeListSet = new Set(codeList);
+			const invalidValue = sampleFCGenerator(
+				fc.integer({ min: -1_000_000, max: 1_000_000 }).filter((n) => !codeListSet.has(n)),
+				seed,
+			);
+			return { value: invalidValue, conflicts: [] };
+		}
+		if (fallbackRange !== undefined) {
+			const lowerBound = fallbackRange.min ?? fallbackRange.exclusiveMin;
+			if (lowerBound !== undefined) {
+				return { value: fromRange({ max: lowerBound - 1 }, seed), conflicts: [] };
+			}
+			const upperBound = fallbackRange.max ?? fallbackRange.exclusiveMax;
+			if (upperBound !== undefined) {
+				return { value: fromRange({ min: upperBound + 1 }, seed), conflicts: [] };
+			}
+		}
+		return { value: undefined, conflicts: [] };
+	}
 
 	// Generates one value for a scalar field or one element of an array field; called by wrapArrayIfNeeded.
 	const generateSingle = (elementSeed: number): GeneratedField<number> => {
@@ -469,13 +507,13 @@ export const generateStringValue: FieldGenerator<SchemaStringField> = (
 	field,
 	options = {},
 ): GeneratedField<DataRecordValue> => {
-	const { seed = randomSeed(), record = {}, arrayLength, emptyRate, excludeValues } = options;
+	const { seed = randomSeed(), record = {}, arrayLength, emptyRate, excludeValues, invalidate } = options;
 	const collected = collectRestrictions(field.restrictions, record);
 	const required = reduceRequired(collected.required);
 	const empty = reduceEmpty(collected.empty);
 
 	const resolvedEmptyRate = Math.min(1, Math.max(0, emptyRate ?? DEFAULT_EMPTY_RATE));
-	if (!required && shouldGenerateEmpty(seed, resolvedEmptyRate)) {
+	if (!required && !invalidate && shouldGenerateEmpty(seed, resolvedEmptyRate)) {
 		return { value: undefined, conflicts: [] };
 	}
 	// Filter string lists to only include string values, and remove reference tags. We only expect string values but the types are permissive to support numeric code lists, this filters out that edge case.
@@ -492,6 +530,32 @@ export const generateStringValue: FieldGenerator<SchemaStringField> = (
 	const requiredEmptyConflict = buildRequiredEmptyConflict(required, empty);
 	const conflicts =
 		requiredEmptyConflict !== undefined ? [...constraintConflicts, requiredEmptyConflict] : constraintConflicts;
+
+	if (invalidate) {
+		if (required) {
+			return { value: undefined, conflicts: [] };
+		}
+		if (codeList !== undefined && codeList.length > 0) {
+			const codeListSet = new Set(codeList);
+			const invalidValue = sampleFCGenerator(
+				fc
+					.string({ minLength: 1, maxLength: 20 })
+					.map((s) => s.trim())
+					.filter((s) => s.length > 0 && !codeListSet.has(s)),
+				seed,
+			);
+			return { value: invalidValue, conflicts: [] };
+		}
+		if (regexPattern !== undefined) {
+			const re = new RegExp(regexPattern);
+			const invalidValue = sampleFCGenerator(
+				fc.string({ minLength: 1, maxLength: 20 }).filter((s) => !re.test(s)),
+				seed,
+			);
+			return { value: invalidValue, conflicts: [] };
+		}
+		return { value: undefined, conflicts: [] };
+	}
 
 	// Generates one value for a scalar field or one element of an array field; called by wrapArrayIfNeeded.
 	const generateSingle = (elementSeed: number): GeneratedField<string> => {

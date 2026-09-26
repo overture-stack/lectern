@@ -141,7 +141,7 @@ export const generateDictionaryFiles = async (
 		return directoryCheck;
 	}
 
-	const { counts, seed, emptyRate, uniqueKeyRetries } = options;
+	const { counts, seed, emptyRate, errorRate, uniqueKeyRetries } = options;
 
 	const includedNames = new Set(
 		Object.entries(counts)
@@ -215,6 +215,7 @@ export const generateDictionaryFiles = async (
 					seed: schemaSeed,
 					foreignKeyPool,
 					emptyRate,
+					errorRate,
 					uniqueKeyRetries,
 				});
 

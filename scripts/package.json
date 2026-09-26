@@ -8,7 +8,9 @@
 		"generate:meta": "node -r ts-node/register ./src/generate/generateMetaSchema.ts",
 		"generate:samples": "node -r ts-node/register ./src/generate/generateSampleDictionaries.ts",
 		"reproduce:validation-memory": "pnpm run build && node -r ts-node/register ./src/performance/reproduceValidationMemory.ts",
-		"reproduce:validation-memory-4gb": "pnpm run build && WORKER_HEAP_LIMIT_MB=4096 node -r ts-node/register ./src/performance/reproduceValidationMemory.ts"
+		"reproduce:validation-memory-4gb": "pnpm run build && WORKER_HEAP_LIMIT_MB=4096 node -r ts-node/register ./src/performance/reproduceValidationMemory.ts",
+		"validate:iterative": "pnpm run build && node -r ts-node/register ./src/performance/validateIterative.ts",
+		"validate:iterative-4gb": "pnpm run build && WORKER_HEAP_LIMIT_MB=4096 node -r ts-node/register ./src/performance/validateIterative.ts"
 	},
 	"keywords": [],
 	"license": "AGPL-3.0",

@@ -5,7 +5,6 @@ export const schemaWideEntity = {
 	name: 'wide-unique-key',
 	description: '28 fields across all four value types. The id field is in a uniqueKey. No other restrictions.',
 	fields: [
-		{ name: 'id', valueType: 'string' },
 		{ name: 'name', valueType: 'string' },
 		{ name: 'label', valueType: 'string' },
 		{ name: 'code', valueType: 'string' },
@@ -35,7 +34,7 @@ export const schemaWideEntity = {
 		{ name: 'is_published', valueType: 'boolean' },
 	],
 	restrictions: {
-		uniqueKey: ['id'],
+		uniqueKey: ['code', 'category'],
 	},
 } as const satisfies Schema;
 
