@@ -95,13 +95,19 @@ export type ActiveFilterBarProps = {
 	filterCategories?: FilterCategory[];
 };
 
+/**
+ * Shows each active filter selection as a removable "<category>: <value>" pill.
+ * @param {ActiveFilterBarProps} props
+ * @param {FilterCategory[]} filterCategories - Pills use the matching category's `label`; without one,
+ * the name is derived from the `filterProperty` path (`meta.category` shows "Category").
+ */
 const ActiveFilterBar = ({ filterCategories }: ActiveFilterBarProps) => {
 	const theme = useThemeContext();
 	const { filterSelections, toggleFilter, resetFilters } = useDictionaryStateContext();
 	const { Cancel } = theme.icons;
 
-	// Prefer the label the integrator declared for the filter, so the pill matches the dropdown and schema tags
 	const formatCategory = (category: string) => {
+		// Use the configured label so pills match the dropdown and schema tags
 		const declared = filterCategories?.find((filterCategory) => filterCategory.filterProperty === category)?.label;
 		if (declared) {
 			return declared;
