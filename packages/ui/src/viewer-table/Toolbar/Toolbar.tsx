@@ -124,7 +124,7 @@ const Toolbar = ({ onSelect, setIsCollapsed, isCollapsed, filterCategories, colu
 					<DictionaryDownloadButton fileType="tsv" />
 				</div>
 			</div>
-			<ActiveFilterBar />
+			<ActiveFilterBar filterCategories={filterCategories} />
 		</div>
 	);
 };

@@ -1,6 +1,6 @@
 # Viewer Setup
 
-This guide covers embedding the Lectern Viewer in a React application: installing the package, pointing it at a dictionary source, and configuring filters, columns, and theming. For what the resulting views show a reader, see the [Viewer overview](./index.md); for the complete export listing, see the [Reference](./02-reference.md).
+This guide covers embedding the Lectern Viewer in a React application: installing the package, pointing it at a dictionary source, and configuring filters, columns, and theming. For what the resulting views show a reader, see the [Viewer overview](./index.md); for the complete export listing, see the [Reference](./02-reference.md); for two complete configurations on real dictionaries, see the [Examples](./03-examples.md).
 
 ## Run Storybook
 
@@ -29,7 +29,8 @@ For the full walkthrough, covering adding themes to the selector, wiring the dec
 ## Prerequisites
 
 - **React 19.** The package declares `react` and `react-dom` `^19.1.0`.
-- **A dictionary source.** Either a running [Lectern server](../02-Setup.md), a dictionary JSON file served over HTTP, or dictionary objects already in your application.
+- **A bundler.** The package targets browser applications built with a bundler such as [Vite](https://vite.dev/) or webpack.
+- **A dictionary source.** Either a running [Lectern server](../02-Setup.md), a dictionary JSON file served over HTTP, or dictionary objects already in your application. A Lectern server is not needed to try the viewer; see [Check the install](#check-the-install).
 
 ## Install
 
@@ -40,6 +41,42 @@ npm install @overture-stack/lectern-ui
 :::warning Released version lags `main`
 The published `1.0.0` release predates the [custom columns](#add-custom-columns) feature, which exists only on `main`. Everything else on this page is in `1.0.0`. The [Reference](./02-reference.md#release-status) tracks which exports are released and which are not.
 :::
+
+:::warning Blank page with `1.0.0`
+`1.0.0` accepts any `d3-dag` `1.x`. This branch pins `d3-dag` to `1.1.0`, matching the lockfile. If an installation of `1.0.0` renders a blank page with `TypeError: ... Script is not a constructor`, pin the same dependency from your application's `package.json` and reinstall:
+
+```json
+"overrides": { "d3-dag": "1.1.0" }
+```
+
+With pnpm, put the same entry under `pnpm.overrides`; with Yarn, under `resolutions`.
+:::
+
+## Check the install
+
+The quickest check needs no server: download a dictionary JSON, such as one exported from a Lectern server or a fixture from the repository's [`packages/ui/stories/fixtures`](https://github.com/overture-stack/lectern/tree/main/packages/ui/stories/fixtures), and pass it to `DictionaryStaticDataProvider`:
+
+```tsx
+import {
+	DictionaryStaticDataProvider,
+	DictionaryTableStateProvider,
+	DictionaryTableViewer,
+	type StaticDictionaryProviderProps,
+} from '@overture-stack/lectern-ui';
+import dictionary from './dictionary.json';
+
+const dictionaries = [dictionary] as StaticDictionaryProviderProps['staticDictionaries'];
+
+const DictionaryPage = () => (
+	<DictionaryStaticDataProvider staticDictionaries={dictionaries}>
+		<DictionaryTableStateProvider>
+			<DictionaryTableViewer />
+		</DictionaryTableStateProvider>
+	</DictionaryStaticDataProvider>
+);
+```
+
+If the schemas render as tables, the package is installed correctly. Swap in a [different data source](#choose-a-data-source) when you are ready to read from a server or a hosted file.
 
 ## Render a dictionary
 

@@ -106,3 +106,4 @@ The two entry points produce different views:
 
 - **[Setup](./01-setup.md):** install the package, point it at a dictionary source, and configure filters, columns, and theming.
 - **[Reference](./02-reference.md):** every exported component, provider, hook, and configuration type.
+- **[Examples](./03-examples.md):** the viewer on the PCGL and ICGC-ARGO dictionaries, with their configuration and JSON.

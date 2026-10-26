@@ -18,7 +18,7 @@ The package has two entry points:
 | `@overture-stack/lectern-ui/dictionary-table` | The table view's internals: `SchemaTable`, `Toolbar`, the individual toolbar buttons, and the loading skeletons. |
 
 :::note
-Import `SchemaTable` and `Toolbar` from the `/dictionary-table` entry point. The root entry point currently re-exports both names from the same default binding as `DictionaryTable`, so all three resolve to the composed page rather than the individual components.
+In `1.0.0`, import `SchemaTable` and `Toolbar` from the `/dictionary-table` entry point. The `1.0.0` root entry point re-exports both names from the same default binding as `DictionaryTable`, so all three resolve to the composed page rather than the individual components. This branch fixes the root exports so both entry points expose the individual components; publication of that fix is pending.
 :::
 
 ## Composed views
@@ -197,5 +197,6 @@ The published release is `1.0.0`. These exports exist only on `main`:
 | `MetaValueRenderer` | Default custom-column cell renderer |
 | `getByDotPath` | Dot-path resolution utility |
 | `customColumns` prop on `DictionaryTable` and `DictionaryTableViewer` | Custom columns, and the toolbar's Columns dropdown |
+| `SchemaTable`, `Toolbar` at the root entry point | The individual components; in `1.0.0` both names resolve to `DictionaryTable` |
 
 Everything else on this page is in `1.0.0`, including the entity relationship diagram, metadata filters, the active-filter bar, and URL-hash deep links.
