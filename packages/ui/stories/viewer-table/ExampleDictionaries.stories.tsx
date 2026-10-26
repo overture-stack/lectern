@@ -30,7 +30,7 @@ import PcglDictionary from '../fixtures/pcgl.json';
 import themeDecorator from '../themeDecorator';
 
 /*
- * Header text as shown in the Dictionary Viewer manuscript. Only the name and description
+ * PCGL header text as shown in the Dictionary Viewer manuscript. Only the name and description
  * displayed above the toolbar change; schemas and fields are rendered as stored.
  */
 const pcgl = {
@@ -39,7 +39,6 @@ const pcgl = {
 	description:
 		'Clinical data dictionary for the Pan-Canadian Genome Library (PCGL). Defines 17 interrelated schemas and their fields, code lists, and validation rules for harmonized clinical and molecular data: participant registration, sociodemographics and demographics, diagnoses, treatments (medication, radiation, procedures), follow-up, phenotypes, measurements, comorbidities, exposures, specimens, samples, and sequencing experiments with their read groups.',
 };
-const argo = { ...ArgoDictionary, description: ArgoDictionary.description.replace(/\s*—\s*/g, ': ') };
 
 const meta = {
 	component: DictionaryTableViewer,
@@ -78,7 +77,7 @@ export const Pcgl: Story = {
  * `meta.category`.
  */
 export const Argo: Story = {
-	decorators: [withDictionaryContext([argo] as DictionaryTestData)],
+	decorators: [withDictionaryContext([ArgoDictionary] as DictionaryTestData)],
 	args: {
 		filterDropdowns: [{ label: 'Clinical domain', filterProperty: 'meta.category' }],
 		customColumns: [{ columnHeader: 'ARGO tier', metaPath: 'meta.tier' }],

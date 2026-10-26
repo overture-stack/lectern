@@ -1,7 +1,7 @@
 {
   "name": "ICGC-ARGO Data Dictionary",
   "version": "1.32",
-  "description": "Clinical data dictionary for the International Cancer Genome Consortium (ICGC) Accelerating Research in Genomic Oncology (ARGO) program. Defines 15 interrelated schemas and their fields, code lists, and validation rules for harmonized cancer clinical data — donor and sample registration, specimens, primary diagnoses, treatments (chemotherapy, radiation, hormone therapy, immunotherapy, surgery), follow-ups, biomarkers, comorbidities, exposures, and family history.",
+  "description": "Clinical data dictionary for the International Cancer Genome Consortium (ICGC) Accelerating Research in Genomic Oncology (ARGO) program. Defines 15 interrelated schemas and their fields, code lists, and validation rules for harmonized cancer clinical data: donor and sample registration, specimens, primary diagnoses, treatments (chemotherapy, radiation, hormone therapy, immunotherapy, surgery), follow-ups, biomarkers, comorbidities, exposures, and family history.",
   "schemas": [
     {
       "name": "sample_registration",

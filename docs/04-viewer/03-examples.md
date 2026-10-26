@@ -1,6 +1,6 @@
 # Viewer Examples
 
-The same viewer components rendering two data dictionaries: the Pan-Canadian Genome Library (PCGL) dictionary and the ICGC-ARGO dictionary. Both of these are the examples shown in the Dictionary Viewer manuscript (pending publication).
+The same [Lectern Viewer](./index.md) components rendering two [Lectern data dictionaries](../03-dictionaryReference.md): the Pan-Canadian Genome Library (PCGL) dictionary and the ICGC-ARGO dictionary. Both of these are the examples shown in the Dictionary Viewer manuscript (pending publication). To embed the viewer in your own application, see [Setup](./01-setup.md); for the components and props used below, see the [Reference](./02-reference.md).
 
 Both can be seen within [Storybook](./01-setup.md#run-storybook) under **Viewer - Table / Example Dictionaries**.
 
@@ -320,7 +320,7 @@ The [full file](https://github.com/overture-stack/lectern/blob/main/packages/ui/
 {
 	"name": "ICGC-ARGO Data Dictionary",
 	"version": "1.32",
-	"description": "Clinical data dictionary for the International Cancer Genome Consortium (ICGC) Accelerating Research in Genomic Oncology (ARGO) program. Defines 15 interrelated schemas and their fields, code lists, and validation rules for harmonized cancer clinical data — donor and sample registration, specimens, primary diagnoses, treatments (chemotherapy, radiation, hormone therapy, immunotherapy, surgery), follow-ups, biomarkers, comorbidities, exposures, and family history.",
+	"description": "Clinical data dictionary for the International Cancer Genome Consortium (ICGC) Accelerating Research in Genomic Oncology (ARGO) program. Defines 15 interrelated schemas and their fields, code lists, and validation rules for harmonized cancer clinical data: donor and sample registration, specimens, primary diagnoses, treatments (chemotherapy, radiation, hormone therapy, immunotherapy, surgery), follow-ups, biomarkers, comorbidities, exposures, and family history.",
 	"schemas": [
 		{
 			"name": "treatment",
