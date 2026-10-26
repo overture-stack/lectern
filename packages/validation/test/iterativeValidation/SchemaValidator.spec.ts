@@ -115,8 +115,17 @@ describe('SchemaValidator', () => {
 			expect(result.data.find((entry) => entry.id === 'valid3')?.valid).to.be.true;
 		});
 
+		it('accepts a repeated id by default and treats it as a separate submission', () => {
+			const validator = new SchemaValidator(schemaUniqueString);
+			assertSuccess(validator.submit({ id: 'r1', data: { 'unique-string': 'alpha' } }));
+			assertSuccess(validator.submit({ id: 'r1', data: { 'unique-string': 'alpha' } }));
+
+			const report = validator.report();
+			expect(report.valid).to.be.false;
+		});
+
 		it('returns DUPLICATE_ID failure when the same id is submitted twice', () => {
-			const validator = new SchemaValidator(schemaSingleString);
+			const validator = new SchemaValidator(schemaSingleString, { rejectDuplicates: true });
 			validator.submit({ id: 'r1', data: { 'any-string': 'alpha' } });
 			const result = validator.submit({ id: 'r1', data: { 'any-string': 'alpha' } });
 			assertFailure(result);
@@ -222,8 +231,8 @@ describe('SchemaValidator', () => {
 			}
 		});
 
-		it('duplicate submissions do not increment recordCount', () => {
-			const validator = new SchemaValidator(schemaSingleStringRequired);
+		it('rejected duplicate submissions do not increment recordCount', () => {
+			const validator = new SchemaValidator(schemaSingleStringRequired, { rejectDuplicates: true });
 			validator.submit({ id: 'r1', data: {} }); // invalid — gives us access to report details
 			validator.submit({ id: 'r1', data: {} }); // duplicate — should not be counted
 

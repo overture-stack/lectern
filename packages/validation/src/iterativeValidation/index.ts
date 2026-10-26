@@ -38,4 +38,4 @@ export {
 	type DictionaryValidatorError,
 	type DictionaryValidatorReport,
 } from './DictionaryValidator';
-export type { SubmittedRecordId, ValidatorRecordEntry } from './submissionTypes';
+export type { SubmittedRecordId, ValidatorOptions, ValidatorRecordEntry } from './submissionTypes';

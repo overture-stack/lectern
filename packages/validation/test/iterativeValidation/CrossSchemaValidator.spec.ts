@@ -80,8 +80,14 @@ describe('CrossSchemaValidator', () => {
 			expect(report.valid).to.be.true;
 		});
 
-		it('returns DUPLICATE_ID failure when the same id is submitted twice to the same schema', () => {
+		it('accepts a repeated id by default', () => {
 			const validator = new CrossSchemaValidator(dictionaryForeignKeySimple);
+			assertSuccess(validator.submit(PARENT_SCHEMA, { id: 'p1', data: { [PARENT_FIELD]: 'alpha' } }));
+			assertSuccess(validator.submit(PARENT_SCHEMA, { id: 'p1', data: { [PARENT_FIELD]: 'beta' } }));
+		});
+
+		it('returns DUPLICATE_ID failure when the same id is submitted twice to the same schema', () => {
+			const validator = new CrossSchemaValidator(dictionaryForeignKeySimple, { rejectDuplicates: true });
 			validator.submit(PARENT_SCHEMA, { id: 'p1', data: { [PARENT_FIELD]: 'alpha' } });
 			const result = validator.submit(PARENT_SCHEMA, { id: 'p1', data: { [PARENT_FIELD]: 'beta' } });
 			assertFailure(result);
@@ -97,7 +103,7 @@ describe('CrossSchemaValidator', () => {
 		});
 
 		it('returns DUPLICATE_ID for a batch where two entries share the same id', () => {
-			const validator = new CrossSchemaValidator(dictionaryForeignKeySimple);
+			const validator = new CrossSchemaValidator(dictionaryForeignKeySimple, { rejectDuplicates: true });
 			const result = validator.submit(PARENT_SCHEMA, [
 				{ id: 'p1', data: { [PARENT_FIELD]: 'alpha' } },
 				{ id: 'p1', data: { [PARENT_FIELD]: 'beta' } },

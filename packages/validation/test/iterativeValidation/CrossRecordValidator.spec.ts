@@ -68,8 +68,18 @@ describe('CrossRecordValidator', () => {
 			assertSuccess(result2);
 		});
 
-		it('returns DUPLICATE_ID failure when the same id is submitted twice with identical data', () => {
+		it('accepts a repeated id by default and treats it as a separate submission', () => {
 			const validator = new CrossRecordValidator(schemaUniqueString);
+			assertSuccess(validator.submit({ id: 'r1', data: { 'unique-string': 'alpha' } }));
+			assertSuccess(validator.submit({ id: 'r1', data: { 'unique-string': 'alpha' } }));
+
+			const report = validator.report();
+			expect(report.recordCount).to.equal(2);
+			expect(report.valid).to.be.false;
+		});
+
+		it('returns DUPLICATE_ID failure when the same id is submitted twice with identical data', () => {
+			const validator = new CrossRecordValidator(schemaUniqueString, { rejectDuplicates: true });
 			validator.submit({ id: 'r1', data: { 'unique-string': 'alpha' } });
 			const result = validator.submit({ id: 'r1', data: { 'unique-string': 'alpha' } });
 			assertFailure(result);
@@ -77,7 +87,7 @@ describe('CrossRecordValidator', () => {
 		});
 
 		it('returns DUPLICATE_ID failure when the same id is submitted twice with different data', () => {
-			const validator = new CrossRecordValidator(schemaUniqueString);
+			const validator = new CrossRecordValidator(schemaUniqueString, { rejectDuplicates: true });
 			validator.submit({ id: 'r1', data: { 'unique-string': 'alpha' } });
 			const result = validator.submit({ id: 'r1', data: { 'unique-string': 'beta' } });
 			assertFailure(result);
@@ -85,7 +95,7 @@ describe('CrossRecordValidator', () => {
 		});
 
 		it('duplicate is counted once in the index when submitted twice with identical data', () => {
-			const validator = new CrossRecordValidator(schemaUniqueString);
+			const validator = new CrossRecordValidator(schemaUniqueString, { rejectDuplicates: true });
 			validator.submit({ id: 'r1', data: { 'unique-string': 'alpha' } });
 			validator.submit({ id: 'r1', data: { 'unique-string': 'alpha' } });
 
@@ -94,7 +104,7 @@ describe('CrossRecordValidator', () => {
 		});
 
 		it('returns DUPLICATE_ID failure for a batch where two entries share the same id', () => {
-			const validator = new CrossRecordValidator(schemaUniqueString);
+			const validator = new CrossRecordValidator(schemaUniqueString, { rejectDuplicates: true });
 			const result = validator.submit([
 				{ id: 'r1', data: { 'unique-string': 'alpha' } },
 				{ id: 'r1', data: { 'unique-string': 'beta' } },

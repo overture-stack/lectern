@@ -34,3 +34,24 @@ export type ValidatorRecordEntry = {
 	id: SubmittedRecordId;
 	data: DataRecord;
 };
+
+/**
+ * Construction options shared by all iterative validators.
+ */
+export type ValidatorOptions = {
+	/**
+	 * When `true`, `submit()` returns a `DUPLICATE_ID` failure for any record whose ID was already
+	 * submitted, and the duplicate record is not processed.
+	 *
+	 * Rejecting duplicates has a memory cost: every submitted ID is retained for the lifetime of the
+	 * validator so that later submissions can be checked against it. For large datasets this set
+	 * grows with the number of records submitted.
+	 *
+	 * When `false`, IDs are not retained and duplicate IDs are accepted. Each duplicate is treated as
+	 * a separate submission, so a record submitted twice will conflict with itself and be reported
+	 * as violating any `unique` or `uniqueKey` constraint on its schema.
+	 *
+	 * Defaults to `false`.
+	 */
+	rejectDuplicates?: boolean;
+};

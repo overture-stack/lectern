@@ -33,7 +33,7 @@ import type {
 	SchemaValidationRecordErrorUnique,
 	SchemaValidationRecordErrorUniqueKey,
 } from '../validateSchema/SchemaValidationError';
-import type { ValidatorRecordEntry } from './submissionTypes';
+import type { ValidatorOptions, ValidatorRecordEntry } from './submissionTypes';
 
 /**
  * Count of records violating a unique field constraint for a specific field.
@@ -112,8 +112,10 @@ type UniqueKeyBucket = {
  * - Records may be submitted at any time; `report()` may also be called at any time.
  * - Calling `report()` does not reset the validator; subsequent submissions will be reflected
  *   in later calls to `report()`.
- * - Submitting the same ID twice returns a `DUPLICATE_ID` failure. Only the first submission
- *   for a given ID is stored.
+ * - By default, duplicate IDs are accepted and each is treated as a separate submission, so a
+ *   repeated record is reported as violating its own `unique` and `uniqueKey` constraints.
+ *   Pass `{ rejectDuplicates: true }` to instead return a `DUPLICATE_ID` failure for repeated
+ *   IDs, at the memory cost of retaining every submitted ID.
  * - While the `errors()` generator is running, `submit()` returns a `LOCKED` failure.
  *
  * @example
@@ -146,10 +148,10 @@ export class CrossRecordValidator {
 
 	/**
 	 * Set of submitted record IDs used for duplicate detection.
-	 * Only populated when `hasConstraints` is true — schemas with no cross-record
-	 * constraints do not need duplicate tracking.
+	 * Only allocated when the `rejectDuplicates` option is true; otherwise `undefined` and
+	 * duplicate IDs are processed as separate submissions.
 	 */
-	private readonly seenIds: Set<string>;
+	private readonly seenIds: Set<string> | undefined;
 
 	/**
 	 * Index for unique field constraint tracking.
@@ -178,12 +180,11 @@ export class CrossRecordValidator {
 	 */
 	private submittedCount: number;
 
-	constructor(schema: Schema) {
+	constructor(schema: Schema, options?: ValidatorOptions) {
 		this.uniqueFieldNames = schema.fields.filter((field) => field.unique === true).map((field) => field.name);
 		this.uniqueKeyRule = schema.restrictions?.uniqueKey;
 		this.hasConstraints = this.uniqueFieldNames.length > 0 || this.uniqueKeyRule !== undefined;
-
-		this.seenIds = new Set();
+		this.seenIds = options?.rejectDuplicates === true ? new Set() : undefined;
 		this.uniqueFieldIndex = new Map();
 		this.uniqueKeyIndex = new Map();
 		this.activeGeneratorCount = 0;
@@ -204,11 +205,12 @@ export class CrossRecordValidator {
 			});
 		}
 
-		if (this.seenIds.has(id)) {
-			return failWith<{ error: 'DUPLICATE_ID' }>(`${id} has already been submitted.`, { error: 'DUPLICATE_ID' });
+		if (this.seenIds !== undefined) {
+			if (this.seenIds.has(id)) {
+				return failWith<{ error: 'DUPLICATE_ID' }>(`${id} has already been submitted.`, { error: 'DUPLICATE_ID' });
+			}
+			this.seenIds.add(id);
 		}
-
-		this.seenIds.add(id);
 		this.submittedCount++;
 
 		// Schemas with no cross-record constraints need no hash indexing.
@@ -253,7 +255,8 @@ export class CrossRecordValidator {
 	/**
 	 * Submit one or more records for cross-record constraint tracking.
 	 *
-	 * Returns a `DUPLICATE_ID` failure if any submitted ID has already been submitted.
+	 * Returns a `DUPLICATE_ID` failure if `rejectDuplicates` is enabled and any submitted ID has
+	 * already been submitted.
 	 * Returns a `LOCKED` failure if the `errors()` generator is currently running.
 	 * In batch submission, if any entry fails the call immediately returns the failure and
 	 * no further entries in that batch are processed.

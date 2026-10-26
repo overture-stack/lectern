@@ -267,9 +267,12 @@ Per-record errors returned from `submit()` include the `id` so the caller can co
 
 #### Deduplication on Repeated ID
 
-If the same `id` is submitted more than once, `submit()` returns `failure` with `reason: 'DUPLICATE_ID'` and the record is not processed. This prevents a record from conflicting with itself in a `unique` violation check.
+Duplicate ID handling is controlled by the `rejectDuplicates` constructor option (default `false`).
 
-**The caller is responsible for ID uniqueness.** If two genuinely different records are submitted with the same ID, only the first is validated. This contract must be documented clearly for consumers.
+- `rejectDuplicates: false` (default): IDs are not retained. A repeated ID is treated as a separate submission, so a record submitted twice conflicts with itself and is reported as violating any `unique` or `uniqueKey` constraint on its schema.
+- `rejectDuplicates: true`: every submitted ID is retained so that repeats can be detected. `submit()` returns `failure` with `error: 'DUPLICATE_ID'` and the duplicate record is not processed. This costs memory that grows with the number of submitted records.
+
+**The caller is responsible for ID uniqueness.** With `rejectDuplicates: true`, if two genuinely different records are submitted with the same ID, only the first is validated.
 
 ### 4.4 Data Flow
 

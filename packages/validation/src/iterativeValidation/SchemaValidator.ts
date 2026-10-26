@@ -26,7 +26,7 @@ import {
 	type CrossRecordErrorCounts,
 	type CrossRecordValidationError,
 } from './CrossRecordValidator';
-import type { SubmittedRecordId, ValidatorRecordEntry } from './submissionTypes';
+import type { SubmittedRecordId, ValidatorOptions, ValidatorRecordEntry } from './submissionTypes';
 
 /**
  * Per-record errors returned from `submit()` for a record that failed field or record-level validation.
@@ -68,6 +68,10 @@ export type SchemaValidatorReport = {
  *
  * - `submit()` returns `success` with any per-record errors found, or `failure` if the record
  *   was rejected (duplicate ID or locked state).
+ * - By default, duplicate IDs are accepted and each is treated as a separate submission, so a
+ *   repeated record is reported as violating its own `unique` and `uniqueKey` constraints.
+ *   Pass `{ rejectDuplicates: true }` to instead return a `DUPLICATE_ID` failure for repeated
+ *   IDs, at the memory cost of retaining every submitted ID.
  * - `report()` returns aggregate counts only; it never blocks.
  * - `errors()` yields detailed cross-record violation objects one at a time and locks `submit()`
  *   for the duration of iteration.
@@ -99,9 +103,9 @@ export class SchemaValidator {
 	private recordCount: number;
 	private recordErrorCount: number;
 
-	constructor(schema: Schema) {
+	constructor(schema: Schema, options?: ValidatorOptions) {
 		this.schema = schema;
-		this.crossRecordValidator = new CrossRecordValidator(schema);
+		this.crossRecordValidator = new CrossRecordValidator(schema, options);
 		this.recordCount = 0;
 		this.recordErrorCount = 0;
 	}
@@ -132,7 +136,8 @@ export class SchemaValidator {
 	 * are added to the cross-record index. Per-record errors are returned in the success data
 	 * and never stored internally.
 	 *
-	 * - Returns `failure` with `DUPLICATE_ID` if any submitted ID was already seen.
+	 * - Returns `failure` with `DUPLICATE_ID` if `rejectDuplicates` is enabled and any submitted ID
+	 *   was already seen.
 	 * - Returns `failure` with `LOCKED` if the `errors()` generator is currently active.
 	 * - In batch submission, if any entry fails the call immediately returns the failure and
 	 * no further entries in that batch are processed.

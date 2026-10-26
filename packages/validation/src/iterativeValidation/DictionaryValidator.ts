@@ -17,17 +17,39 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { failWith, success, type Dictionary, type Result } from '@overture-stack/lectern-dictionary';
-import { assert } from '../utils/assert';
-import { invalid, valid, type TestResult } from '../types';
-import type { CrossRecordValidationError, UniqueFieldViolationCount } from './CrossRecordValidator';
 import {
-	CrossSchemaValidator,
-	type CrossSchemaValidationError,
-	type ForeignKeyViolationCount,
-} from './CrossSchemaValidator';
-import { SchemaValidator, type SchemaValidatorRecordTestResult } from './SchemaValidator';
-import type { ValidatorRecordEntry } from './submissionTypes';
+	TypeUtils,
+	failWith,
+	success,
+	type DataRecord,
+	type DataRecordValue,
+	type Dictionary,
+	type ForeignKeyRestriction,
+	type Result,
+	type Schema,
+} from '@overture-stack/lectern-dictionary';
+import { assert } from '../utils/assert';
+import { hashDataRecord } from '../utils/hashDataRecord';
+import { invalid, valid, type TestResult } from '../types';
+import { validateRecord } from '../validateRecord/validateRecord';
+import type { RecordValidationError } from '../validateRecord/RecordValidationError';
+import type { SchemaDataReference } from '../validateDictionary/collectSchemaReferenceData';
+import { testForeignKeyRestriction } from '../validateDictionary/testForeignKeyRestriction';
+import { getUniqueKeyValues } from '../validateSchema/restrictions/uniqueKey/getUniqueKeyValues';
+import type {
+	SchemaValidationRecordErrorUnique,
+	SchemaValidationRecordErrorUniqueKey,
+} from '../validateSchema/SchemaValidationError';
+import type { CrossRecordValidationError, UniqueFieldViolationCount } from './CrossRecordValidator';
+import type { CrossSchemaValidationError, ForeignKeyViolationCount } from './CrossSchemaValidator';
+import type { ValidatorOptions, ValidatorRecordEntry } from './submissionTypes';
+
+/**
+ * Per-record test result returned from `submit()`.
+ */
+export type SchemaValidatorRecordTestResult = {
+	id: string;
+} & TestResult<RecordValidationError[]>;
 
 /**
  * Aggregated error counts for a single schema within the dictionary.
@@ -74,11 +96,39 @@ export type DictionaryValidatorReport = {
 export type DictionaryValidatorError = CrossRecordValidationError | CrossSchemaValidationError;
 
 /**
+ * Pre-computed configuration for a single schema describing which fields need to be
+ * captured in the snapshot for deferred validation. Computed once at construction time.
+ */
+type SchemaSnapshotConfig = {
+	schema: Schema;
+	snapshotFields: Set<string>;
+	uniqueFields: string[];
+	uniqueKeyFields: string[];
+	childForeignKeyRules: ForeignKeyRestriction[];
+};
+
+/**
  * Internal running counters maintained per schema.
  */
 type SchemaRunningCounters = {
 	recordCount: number;
 	recordErrorCount: number;
+};
+
+/**
+ * The deferred-validation fields retained for one submitted record.
+ */
+type RecordSnapshot = {
+	id: string;
+	fields: DataRecord;
+};
+
+/**
+ * Hash map bucket for a uniqueKey constraint, used during deferred validation.
+ */
+type UniqueKeyBucket = {
+	values: DataRecord;
+	ids: string[];
 };
 
 /**
@@ -90,10 +140,18 @@ type SchemaRunningCounters = {
  * and foreignKey violations — which require data from multiple records — are evaluated
  * after all records have been submitted, via `report()` and `errors()`.
  *
+ * Internally, each submitted record is stored as a minimal snapshot containing only the
+ * fields needed for deferred validation (unique, uniqueKey, and foreignKey fields). All
+ * cross-record and cross-schema indices are built lazily at `report()`/`errors()` time,
+ * one schema at a time, to minimize peak memory usage.
+ *
  * Lifecycle: `new DictionaryValidator(dictionary)` -> `submit(schemaName, entry)` -> `report()` / `errors()`
  *
  * - Returns `failure` with `UNKNOWN_SCHEMA` if `schemaName` is not in the dictionary.
- * - Returns `failure` with `DUPLICATE_ID` if the same `id` is submitted twice for the same schema.
+ * - Returns `failure` with `DUPLICATE_ID` if `rejectDuplicates` is enabled and the same `id` is
+ *   submitted twice for the same schema. Rejecting duplicates retains every submitted ID in memory.
+ * - By default, duplicate IDs are accepted and each is treated as a separate submission, so a
+ *   repeated record is reported as violating its own `unique` and `uniqueKey` constraints.
  * - Returns `failure` with `LOCKED` while the `errors()` generator is active.
  * - ID uniqueness is per-schema: the same `id` may be used for records in different schemas.
  *
@@ -121,21 +179,123 @@ type SchemaRunningCounters = {
  * }
  */
 export class DictionaryValidator {
-	private readonly schemaValidators: Map<string, SchemaValidator>;
-	private readonly crossSchemaValidator: CrossSchemaValidator;
+	/**
+	 * Pre-computed per-schema configuration describing which fields to snapshot.
+	 */
+	private readonly schemaConfigs: Map<string, SchemaSnapshotConfig>;
+
+	/**
+	 * Per-schema record snapshots. Key is schema name, value is one snapshot per submitted record
+	 * containing only the deferred-validation fields for that record. Schemas with no
+	 * deferred-validation fields have an empty list.
+	 *
+	 * Snapshots are stored in submission order and are not keyed by ID, so records submitted with
+	 * a repeated ID are each retained as separate entries.
+	 */
+	private readonly snapshots: Map<string, RecordSnapshot[]>;
+
+	/**
+	 * Keys: schema names (all schemas in the dictionary).
+	 * Values: the set of record IDs already submitted for that schema, used for duplicate detection.
+	 * Only allocated when the `rejectDuplicates` option is true; otherwise `undefined` and
+	 * duplicate IDs are processed as separate submissions.
+	 */
+	private readonly seenIds: Map<string, Set<string>> | undefined;
+
+	/**
+	 * Per-schema running counters for record and error counts.
+	 */
 	private readonly perSchemaCounts: Map<string, SchemaRunningCounters>;
+
+	/**
+	 * Maps parent schema names to the set of child schemas that reference them via FK,
+	 * along with the FK restrictions for each child. Used at report/errors time to
+	 * process FK validation one parent at a time.
+	 */
+	private readonly parentToChildren: Map<string, { childSchema: string; restrictions: ForeignKeyRestriction[] }[]>;
+
+	/**
+	 * Set of parent schema field names referenced by FK rules, keyed by parent schema name.
+	 * Used to build parentRefs at report/errors time.
+	 */
+	private readonly parentRefFields: Map<string, Set<string>>;
+
 	private unknownSchemaCount: number;
 	private activeGeneratorCount: number;
 
-	constructor(dictionary: Dictionary) {
+	constructor(dictionary: Dictionary, options?: ValidatorOptions) {
+		this.seenIds = options?.rejectDuplicates === true ? new Map() : undefined;
 		this.unknownSchemaCount = 0;
 		this.activeGeneratorCount = 0;
-		this.schemaValidators = new Map();
+		this.schemaConfigs = new Map();
+		this.snapshots = new Map();
 		this.perSchemaCounts = new Map();
-		this.crossSchemaValidator = new CrossSchemaValidator(dictionary);
+		this.parentToChildren = new Map();
+		this.parentRefFields = new Map();
 
+		// First pass: collect which fields each parent schema needs to snapshot for FK references.
+		// This must happen before building per-schema configs because a parent schema's snapshot
+		// fields include the foreign fields referenced by child schemas' FK rules.
 		for (const schema of dictionary.schemas) {
-			this.schemaValidators.set(schema.name, new SchemaValidator(schema));
+			const fkRestrictions = schema.restrictions?.foreignKey;
+			if (!fkRestrictions || fkRestrictions.length === 0) {
+				continue;
+			}
+			for (const restriction of fkRestrictions) {
+				// Track parent → children mapping
+				let children = this.parentToChildren.get(restriction.schema);
+				if (!children) {
+					children = [];
+					this.parentToChildren.set(restriction.schema, children);
+				}
+				children.push({ childSchema: schema.name, restrictions: fkRestrictions });
+
+				// Track which foreign fields this parent needs to snapshot
+				let refFields = this.parentRefFields.get(restriction.schema);
+				if (!refFields) {
+					refFields = new Set();
+					this.parentRefFields.set(restriction.schema, refFields);
+				}
+				for (const mapping of restriction.mappings) {
+					refFields.add(mapping.foreign);
+				}
+			}
+		}
+
+		// Second pass: build per-schema snapshot config.
+		for (const schema of dictionary.schemas) {
+			const uniqueFields = schema.fields.filter((field) => field.unique === true).map((field) => field.name);
+			const uniqueKeyFields = schema.restrictions?.uniqueKey ?? [];
+			const childForeignKeyRules = schema.restrictions?.foreignKey ?? [];
+
+			// FK local fields this schema needs to snapshot (for child FK checking)
+			const fkLocalFields: string[] = [];
+			for (const restriction of childForeignKeyRules) {
+				for (const mapping of restriction.mappings) {
+					fkLocalFields.push(mapping.local);
+				}
+			}
+
+			// FK foreign fields this schema needs to snapshot (as a parent)
+			const fkForeignFields = this.parentRefFields.get(schema.name);
+
+			// Union of all deferred-validation fields
+			const snapshotFields = new Set<string>([...uniqueFields, ...uniqueKeyFields, ...fkLocalFields]);
+			if (fkForeignFields) {
+				for (const field of fkForeignFields) {
+					snapshotFields.add(field);
+				}
+			}
+
+			this.schemaConfigs.set(schema.name, {
+				schema,
+				snapshotFields,
+				uniqueFields,
+				uniqueKeyFields,
+				childForeignKeyRules,
+			});
+			this.snapshots.set(schema.name, []);
+			this.seenIds?.set(schema.name, new Set());
 			this.perSchemaCounts.set(schema.name, { recordCount: 0, recordErrorCount: 0 });
 		}
 	}
@@ -143,13 +303,14 @@ export class DictionaryValidator {
 	/**
 	 * Submit one or more records for a named schema.
 	 *
-	 * Each record is immediately validated against the schema and its field values are
-	 * added to the cross-record and cross-schema indices. Per-record errors are returned
-	 * in the success data and never stored internally.
+	 * Each record is immediately validated against the schema's field-level and record-level
+	 * rules. Only the fields needed for deferred validation (unique, uniqueKey, foreignKey)
+	 * are stored; the full record is not retained.
 	 *
 	 * - Returns `failure` with `UNKNOWN_SCHEMA` if `schemaName` is not in the dictionary.
 	 *   The unknown schema submission is counted in `report()`.
-	 * - Returns `failure` with `DUPLICATE_ID` if any submitted ID was already seen for this schema.
+	 * - Returns `failure` with `DUPLICATE_ID` if `rejectDuplicates` is enabled and any submitted ID
+	 *   was already seen for this schema.
 	 * - Returns `failure` with `LOCKED` if the `errors()` generator is currently active.
 	 * - In batch submission, if any entry fails the call immediately returns the failure and
 	 *   no further entries in that batch are processed.
@@ -164,60 +325,77 @@ export class DictionaryValidator {
 			});
 		}
 
-		const schemaValidator = this.schemaValidators.get(schemaName);
-		if (!schemaValidator) {
+		const config = this.schemaConfigs.get(schemaName);
+		if (!config) {
 			this.unknownSchemaCount++;
 			return failWith<{ error: 'UNKNOWN_SCHEMA' }>(`${schemaName} is not a known schema in this dictionary.`, {
 				error: 'UNKNOWN_SCHEMA',
 			});
 		}
 
-		const schemaResult = schemaValidator.submit(entry);
-		if (!schemaResult.success) {
-			// Failed to submit to schema validator, DUPLICATE_ID or LOCKED
-			return schemaResult;
-		}
+		const schemaSnapshots = this.snapshots.get(schemaName);
+		assert(
+			schemaSnapshots,
+			`Unexpected error: invariant violation in DictionaryValidator.submit(). No snapshot map exists for schema "${schemaName}", which was expected to be populated at construction time.`,
+		);
 
 		const counters = this.perSchemaCounts.get(schemaName);
 		assert(
 			counters,
 			`Unexpected error: invariant violation in DictionaryValidator.submit(). No running counters exist for schema "${schemaName}", which was expected to be populated at construction time.`,
 		);
-		for (const recordResult of schemaResult.data) {
+
+		const schemaSeenIds = this.seenIds?.get(schemaName);
+
+		const entries = TypeUtils.asArray(entry);
+		const results: SchemaValidatorRecordTestResult[] = [];
+
+		for (const { id, data } of entries) {
+			if (schemaSeenIds !== undefined) {
+				if (schemaSeenIds.has(id)) {
+					return failWith<{ error: 'DUPLICATE_ID' }>(`${id} has already been submitted for schema ${schemaName}.`, {
+						error: 'DUPLICATE_ID',
+					});
+				}
+				schemaSeenIds.add(id);
+			}
+
+			// Immediate field-level and record-level validation
+			const validationResult = validateRecord(data, config.schema);
 			counters.recordCount++;
-			if (!recordResult.valid) {
+			if (!validationResult.valid) {
 				counters.recordErrorCount++;
+			}
+			results.push({ id, ...validationResult });
+
+			// Store snapshot with only deferred-validation fields
+			if (config.snapshotFields.size > 0) {
+				const snapshotRecord: DataRecord = {};
+				for (const fieldName of config.snapshotFields) {
+					snapshotRecord[fieldName] = data[fieldName];
+				}
+				schemaSnapshots.push({ id, fields: snapshotRecord });
 			}
 		}
 
-		// Submit the same entries to the cross-schema validator for FK tracking.
-		// This always succeeds because the schemaValidator already accepted the IDs
-		// (duplicate and locked checks have already passed above).
-		this.crossSchemaValidator.submit(schemaName, entry);
-
-		return success(schemaResult.data);
+		return success(results);
 	}
 
 	/**
 	 * Generate a report of all validation results seen so far.
 	 *
-	 * Returns `valid()` when all submitted records pass all constraints and no submissions
-	 * used an unrecognized schema name. Returns `invalid({ details })` with per-schema
-	 * aggregate counts otherwise.
+	 * Cross-record (unique, uniqueKey) and cross-schema (foreignKey) violations are
+	 * computed lazily from the stored snapshots. Indices are built and discarded one
+	 * schema at a time to minimize peak memory usage.
 	 *
 	 * May be called at any time. Calling `report()` does not affect the validator's state.
 	 */
 	report(): TestResult<DictionaryValidatorReport> {
 		let isValid = this.unknownSchemaCount === 0;
-
-		const crossSchemaReport = this.crossSchemaValidator.report();
-		if (!crossSchemaReport.valid) {
-			isValid = false;
-		}
-
 		const schemaCounts: Record<string, DictionarySchemaValidationCounts> = {};
 
-		for (const [schemaName, schemaValidator] of this.schemaValidators) {
+		// Cross-record validation: unique + uniqueKey, one schema at a time
+		for (const [schemaName, config] of this.schemaConfigs) {
 			const counters = this.perSchemaCounts.get(schemaName);
 			const recordCount = counters?.recordCount ?? 0;
 			const recordErrorCount = counters?.recordErrorCount ?? 0;
@@ -226,29 +404,74 @@ export class DictionaryValidator {
 				isValid = false;
 			}
 
-			const schemaReport = schemaValidator.report();
-			let unique: UniqueFieldViolationCount[] = [];
-			let uniqueKey = 0;
+			const schemaSnapshots = this.snapshots.get(schemaName);
+			const { unique, uniqueKey } = this.computeCrossRecordCounts(config, schemaSnapshots);
 
-			if (!schemaReport.valid) {
+			if (unique.length > 0 || uniqueKey > 0) {
 				isValid = false;
-				unique = schemaReport.details.crossRecordErrorCounts.unique;
-				uniqueKey = schemaReport.details.crossRecordErrorCounts.uniqueKey;
 			}
 
-			let foreignKey: ForeignKeyViolationCount[] = [];
-			if (!crossSchemaReport.valid) {
-				const fkEntry = crossSchemaReport.details.foreignKey.find((entry) => entry.schemaName === schemaName);
-				if (fkEntry) {
-					foreignKey = fkEntry.counts;
-				}
-			}
-
+			// FK violations will be filled in during the parent-by-parent pass below
 			schemaCounts[schemaName] = {
 				recordCount,
 				recordErrorCount,
-				errorCounts: { unique, uniqueKey, foreignKey },
+				errorCounts: { unique, uniqueKey, foreignKey: [] },
 			};
+		}
+
+		// Cross-schema validation: FK, one parent at a time
+		for (const [parentSchemaName, children] of this.parentToChildren) {
+			const parentSnapshots = this.snapshots.get(parentSchemaName);
+			const parentRefFields = this.parentRefFields.get(parentSchemaName);
+			if (!parentSnapshots || !parentRefFields) {
+				continue;
+			}
+
+			// Build parentRefs for this one parent
+			const parentRefs = this.buildParentRefs(parentSnapshots, parentRefFields);
+			const foreignSchemaReferenceData = new Map<string, SchemaDataReference>();
+			foreignSchemaReferenceData.set(parentSchemaName, parentRefs);
+
+			// Test all children against this parent
+			for (const { childSchema, restrictions } of children) {
+				const childSnapshots = this.snapshots.get(childSchema);
+				if (!childSnapshots) {
+					continue;
+				}
+
+				// Only test FK rules that reference this specific parent
+				const parentRestrictions = restrictions.filter((restriction) => restriction.schema === parentSchemaName);
+
+				const violationCounts = new Map<string, ForeignKeyViolationCount>();
+				for (const { fields } of childSnapshots) {
+					const result = testForeignKeyRestriction(fields, parentRestrictions, foreignSchemaReferenceData);
+					if (!result.valid) {
+						for (const error of result.details) {
+							const mappingKey = `${error.fieldName}:${error.foreignSchema.schemaName}:${error.foreignSchema.fieldName}`;
+							const existing = violationCounts.get(mappingKey);
+							if (existing) {
+								existing.count++;
+							} else {
+								violationCounts.set(mappingKey, {
+									localField: error.fieldName,
+									foreignSchema: error.foreignSchema.schemaName,
+									foreignField: error.foreignSchema.fieldName,
+									count: 1,
+								});
+							}
+						}
+					}
+				}
+
+				if (violationCounts.size > 0) {
+					isValid = false;
+					const childCounts = schemaCounts[childSchema];
+					if (childCounts) {
+						childCounts.errorCounts.foreignKey.push(...violationCounts.values());
+					}
+				}
+			}
+			// parentRefs for this parent is now eligible for GC
 		}
 
 		if (isValid) {
@@ -260,9 +483,12 @@ export class DictionaryValidator {
 	/**
 	 * Generator that yields one error object per cross-record or cross-schema violation.
 	 *
-	 * Yields cross-record (`unique`, `uniqueKey`) violations from each schema's
-	 * `CrossRecordValidator` in sequence, then cross-schema (`foreignKey`) violations
-	 * from the shared `CrossSchemaValidator`.
+	 * Yields cross-record (`unique`, `uniqueKey`) violations from each schema in sequence,
+	 * then cross-schema (`foreignKey`) violations parent-by-parent.
+	 *
+	 * Errors are not grouped by record. The same record ID may appear in multiple yielded
+	 * errors (once for unique, once for uniqueKey, once for FK). There is no guarantee of
+	 * ordering between unique, uniqueKey, and foreignKey violations.
 	 *
 	 * Locks `submit()` for the duration of iteration — `submit()` will return a `LOCKED`
 	 * failure until all active generators are fully consumed or their `return()` method is called.
@@ -270,12 +496,188 @@ export class DictionaryValidator {
 	*errors(): Generator<DictionaryValidatorError> {
 		this.activeGeneratorCount++;
 		try {
-			for (const schemaValidator of this.schemaValidators.values()) {
-				yield* schemaValidator.errors();
+			// Cross-record errors: unique + uniqueKey, one schema at a time
+			for (const [schemaName, config] of this.schemaConfigs) {
+				const schemaSnapshots = this.snapshots.get(schemaName);
+				if (!schemaSnapshots) {
+					continue;
+				}
+				yield* this.generateCrossRecordErrors(config, schemaSnapshots);
 			}
-			yield* this.crossSchemaValidator.errors();
+
+			// Cross-schema errors: FK, one parent at a time
+			for (const [parentSchemaName, children] of this.parentToChildren) {
+				const parentSnapshots = this.snapshots.get(parentSchemaName);
+				const parentRefFields = this.parentRefFields.get(parentSchemaName);
+				if (!parentSnapshots || !parentRefFields) {
+					continue;
+				}
+
+				const parentRefs = this.buildParentRefs(parentSnapshots, parentRefFields);
+				const foreignSchemaReferenceData = new Map<string, SchemaDataReference>();
+				foreignSchemaReferenceData.set(parentSchemaName, parentRefs);
+
+				for (const { childSchema, restrictions } of children) {
+					const childSnapshots = this.snapshots.get(childSchema);
+					if (!childSnapshots) {
+						continue;
+					}
+
+					const parentRestrictions = restrictions.filter((restriction) => restriction.schema === parentSchemaName);
+
+					for (const { id: recordId, fields } of childSnapshots) {
+						const result = testForeignKeyRestriction(fields, parentRestrictions, foreignSchemaReferenceData);
+						if (!result.valid) {
+							for (const error of result.details) {
+								yield { id: recordId, schemaName: childSchema, ...error };
+							}
+						}
+					}
+				}
+			}
 		} finally {
 			this.activeGeneratorCount--;
 		}
+	}
+
+	/**
+	 * Compute cross-record violation counts for a single schema from its snapshots.
+	 * Builds unique field and uniqueKey indices, evaluates, and discards.
+	 */
+	private computeCrossRecordCounts(
+		config: SchemaSnapshotConfig,
+		schemaSnapshots: RecordSnapshot[] | undefined,
+	): { unique: UniqueFieldViolationCount[]; uniqueKey: number } {
+		if (!schemaSnapshots || schemaSnapshots.length === 0) {
+			return { unique: [], uniqueKey: 0 };
+		}
+
+		// Unique field violations
+		const uniqueFieldCounts: UniqueFieldViolationCount[] = [];
+		for (const fieldName of config.uniqueFields) {
+			const valueIndex = new Map<DataRecordValue, number>();
+			for (const { fields } of schemaSnapshots) {
+				const value = fields[fieldName];
+				if (value === undefined || (Array.isArray(value) && value.length === 0)) {
+					continue;
+				}
+				valueIndex.set(value, (valueIndex.get(value) ?? 0) + 1);
+			}
+			let count = 0;
+			for (const occurrences of valueIndex.values()) {
+				if (occurrences > 1) {
+					count += occurrences;
+				}
+			}
+			if (count > 0) {
+				uniqueFieldCounts.push({ fieldName, count });
+			}
+		}
+
+		// UniqueKey violations
+		let uniqueKeyCount = 0;
+		if (config.uniqueKeyFields.length > 0) {
+			const keyIndex = new Map<string, number>();
+			for (const { fields } of schemaSnapshots) {
+				const keyValues = getUniqueKeyValues(fields, config.uniqueKeyFields);
+				const hash = hashDataRecord(keyValues);
+				keyIndex.set(hash, (keyIndex.get(hash) ?? 0) + 1);
+			}
+			for (const occurrences of keyIndex.values()) {
+				if (occurrences > 1) {
+					uniqueKeyCount += occurrences;
+				}
+			}
+		}
+
+		return { unique: uniqueFieldCounts, uniqueKey: uniqueKeyCount };
+	}
+
+	/**
+	 * Generator that yields cross-record errors (unique + uniqueKey) for a single schema.
+	 * Builds indices from snapshots, yields violations, then discards indices.
+	 */
+	private *generateCrossRecordErrors(
+		config: SchemaSnapshotConfig,
+		schemaSnapshots: RecordSnapshot[],
+	): Generator<CrossRecordValidationError> {
+		if (schemaSnapshots.length === 0) {
+			return;
+		}
+
+		// Unique field errors
+		for (const fieldName of config.uniqueFields) {
+			const valueIndex = new Map<DataRecordValue, string[]>();
+			for (const { id: recordId, fields } of schemaSnapshots) {
+				const value = fields[fieldName];
+				if (value === undefined || (Array.isArray(value) && value.length === 0)) {
+					continue;
+				}
+				const existing = valueIndex.get(value);
+				if (existing) {
+					existing.push(recordId);
+				} else {
+					valueIndex.set(value, [recordId]);
+				}
+			}
+			for (const [value, ids] of valueIndex) {
+				if (ids.length > 1) {
+					for (const _id of ids) {
+						yield {
+							reason: 'INVALID_BY_UNIQUE' as const,
+							fieldName,
+							fieldValue: value,
+							matchingRecords: ids,
+						};
+					}
+				}
+			}
+		}
+
+		// UniqueKey errors
+		if (config.uniqueKeyFields.length > 0) {
+			const keyIndex = new Map<string, UniqueKeyBucket>();
+			for (const { id: recordId, fields } of schemaSnapshots) {
+				const keyValues = getUniqueKeyValues(fields, config.uniqueKeyFields);
+				const hash = hashDataRecord(keyValues);
+				const existing = keyIndex.get(hash);
+				if (existing) {
+					existing.ids.push(recordId);
+				} else {
+					keyIndex.set(hash, { values: keyValues, ids: [recordId] });
+				}
+			}
+			for (const { values, ids } of keyIndex.values()) {
+				if (ids.length > 1) {
+					for (const _id of ids) {
+						yield {
+							reason: 'INVALID_BY_UNIQUE_KEY' as const,
+							matchingRecords: ids,
+							uniqueKey: values,
+						};
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Build a SchemaDataReference (field → Set<value>) from a single parent schema's
+	 * snapshots. Only the fields named in `refFields` are collected.
+	 */
+	private buildParentRefs(parentSnapshots: RecordSnapshot[], refFields: Set<string>): SchemaDataReference {
+		const parentRefs: SchemaDataReference = new Map();
+		for (const fieldName of refFields) {
+			parentRefs.set(fieldName, new Set());
+		}
+		for (const { fields } of parentSnapshots) {
+			for (const [fieldName, valueSet] of parentRefs) {
+				const value = fields[fieldName];
+				if (value !== undefined) {
+					valueSet.add(value);
+				}
+			}
+		}
+		return parentRefs;
 	}
 }

@@ -31,7 +31,7 @@ import { assert } from '../utils/assert';
 import type { SchemaDataReference } from '../validateDictionary/collectSchemaReferenceData';
 import type { DictionaryValidationErrorRecordForeignKey } from '../validateDictionary/DictionaryValidationError';
 import { testForeignKeyRestriction } from '../validateDictionary/testForeignKeyRestriction';
-import type { ValidatorRecordEntry } from './submissionTypes';
+import type { ValidatorOptions, ValidatorRecordEntry } from './submissionTypes';
 
 /**
  * Count of records violating a specific foreignKey mapping.
@@ -97,7 +97,9 @@ type ChildSnapshot = {
  * Lifecycle: `new CrossSchemaValidator(dictionary)` -> `submit(schemaName, entry)` -> `report()` / `errors()`
  *
  * - Returns `failure` with `UNKNOWN_SCHEMA` if `schemaName` is not in the dictionary.
- * - Returns `failure` with `DUPLICATE_ID` if the same `id` is submitted twice for the same schema.
+ * - Returns `failure` with `DUPLICATE_ID` if `rejectDuplicates` is enabled and the same `id` is
+ *   submitted twice for the same schema. Rejecting duplicates retains every submitted ID in memory.
+ *   By default duplicates are accepted and each is treated as a separate submission.
  * - Returns `failure` with `LOCKED` while the `errors()` generator is active.
  * - ID uniqueness is per-schema: the same `id` may be submitted to different schemas.
  */
@@ -129,21 +131,25 @@ export class CrossSchemaValidator {
 	/**
 	 * Keys: schema names (all schemas in the dictionary).
 	 * Values: the set of record IDs already submitted for that schema, used for duplicate detection.
+	 * Only allocated when the `rejectDuplicates` option is true; otherwise `undefined` and
+	 * duplicate IDs are processed as separate submissions.
 	 */
-	private readonly seenIds: Map<string, Set<string>>;
+	private readonly seenIds: Map<string, Set<string>> | undefined;
 
 	private activeGeneratorCount: number;
 
-	constructor(dictionary: Dictionary) {
+	constructor(dictionary: Dictionary, options?: ValidatorOptions) {
 		this.activeGeneratorCount = 0;
 		this.knownSchemaNames = new Set(dictionary.schemas.map((schema) => schema.name));
 		this.childForeignKeyRules = new Map();
 		this.parentRefs = new Map();
 		this.childSnapshots = new Map();
-		this.seenIds = new Map();
+		this.seenIds = options?.rejectDuplicates === true ? new Map() : undefined;
 
-		for (const schema of dictionary.schemas) {
-			this.seenIds.set(schema.name, new Set());
+		if (this.seenIds !== undefined) {
+			for (const schema of dictionary.schemas) {
+				this.seenIds.set(schema.name, new Set());
+			}
 		}
 
 		for (const schema of dictionary.schemas) {
@@ -188,18 +194,19 @@ export class CrossSchemaValidator {
 		}
 
 		// Reject duplicate IDs — each record must be submitted exactly once per schema.
-		const schemaSeenIds = this.seenIds.get(schemaName);
-		assert(
-			schemaSeenIds,
-			`Unexpected error: invariant violation in CrossSchemaValidator.processEntry(). No set of seen-IDs exists for schema "${schemaName}", which was expected to be populated at construction time.`,
-		);
-
-		if (schemaSeenIds.has(id)) {
-			return failWith<{ error: 'DUPLICATE_ID' }>(`${id} has already been submitted for schema ${schemaName}.`, {
-				error: 'DUPLICATE_ID',
-			});
+		if (this.seenIds !== undefined) {
+			const schemaSeenIds = this.seenIds.get(schemaName);
+			assert(
+				schemaSeenIds,
+				`Unexpected error: invariant violation in CrossSchemaValidator.processEntry(). No set of seen-IDs exists for schema "${schemaName}", which was expected to be populated at construction time.`,
+			);
+			if (schemaSeenIds.has(id)) {
+				return failWith<{ error: 'DUPLICATE_ID' }>(`${id} has already been submitted for schema ${schemaName}.`, {
+					error: 'DUPLICATE_ID',
+				});
+			}
+			schemaSeenIds.add(id);
 		}
-		schemaSeenIds.add(id);
 
 		// If this schema is referenced as a parent by any FK rule, accumulate its field values
 		// into parentRefs so child records can look them up during report()/errors().
@@ -244,7 +251,8 @@ export class CrossSchemaValidator {
 	 * reference set. For child schemas, only the local FK field values are stored.
 	 *
 	 * - Returns `failure` with `UNKNOWN_SCHEMA` if `schemaName` is not in the dictionary.
-	 * - Returns `failure` with `DUPLICATE_ID` if any submitted `id` was already seen for this schema.
+	 * - Returns `failure` with `DUPLICATE_ID` if `rejectDuplicates` is enabled and any submitted `id`
+	 *   was already seen for this schema.
 	 * - Returns `failure` with `LOCKED` if the `errors()` generator is currently active.
 	 * - In batch submission, if any entry fails the call immediately returns the failure and
 	 *   no further entries in that batch are processed.

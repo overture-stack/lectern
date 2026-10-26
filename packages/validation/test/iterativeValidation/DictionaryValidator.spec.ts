@@ -109,8 +109,21 @@ describe('DictionaryValidator', () => {
 			expect(result.data.error).to.equal('UNKNOWN_SCHEMA');
 		});
 
+		it('accepts a repeated id by default and treats it as a separate submission', () => {
+			const validator = new DictionaryValidator(dictionaryUniqueParentWithFkChild);
+			assertSuccess(validator.submit(UNIQUE_PARENT, { id: 'p1', data: { 'parent-id': 'dup' } }));
+			assertSuccess(validator.submit(UNIQUE_PARENT, { id: 'p1', data: { 'parent-id': 'dup' } }));
+
+			const report = validator.report();
+			expect(report.valid).to.be.false;
+			if (!report.valid) {
+				expect(report.details.schemaCounts[UNIQUE_PARENT]?.recordCount).to.equal(2);
+				expect(report.details.schemaCounts[UNIQUE_PARENT]?.errorCounts.unique[0]?.count).to.equal(2);
+			}
+		});
+
 		it('returns DUPLICATE_ID failure when the same id is submitted twice to the same schema', () => {
-			const validator = new DictionaryValidator(dictionaryForeignKeySimple);
+			const validator = new DictionaryValidator(dictionaryForeignKeySimple, { rejectDuplicates: true });
 			validator.submit(FK_PARENT, { id: 'p1', data: { [FK_PARENT_FIELD]: 'alpha' } });
 			const result = validator.submit(FK_PARENT, { id: 'p1', data: { [FK_PARENT_FIELD]: 'beta' } });
 			assertFailure(result);
@@ -171,8 +184,8 @@ describe('DictionaryValidator', () => {
 			}
 		});
 
-		it('duplicate submissions do not increment recordCount', () => {
-			const validator = new DictionaryValidator(dictionaryUniqueParentWithFkChild);
+		it('rejected duplicate submissions do not increment recordCount', () => {
+			const validator = new DictionaryValidator(dictionaryUniqueParentWithFkChild, { rejectDuplicates: true });
 			// Submit with a missing required field so we can access report details
 			validator.submit(FK_CHILD_2, { id: 'c1', data: {} }); // invalid — forces report to be invalid
 			validator.submit(FK_CHILD_2, { id: 'c1', data: {} }); // duplicate — should not be counted
