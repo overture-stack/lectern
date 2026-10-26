@@ -1,14 +1,12 @@
 # Lectern Viewer
 
-The Lectern Viewer is a React component library for displaying Lectern data dictionaries. It turns a dictionary's JSON schema into readable, interactive views so researchers and data submitters can understand data requirements before they submit.
+The Lectern Viewer is a React component library for viewing Lectern data dictionaries. It takes a dictionary's JSON schema and turns it into a readable, interactive view so that researchers and data submitters can see what the data requirements are before they submit.
 
 The library is published as [`@overture-stack/lectern-ui`](https://www.npmjs.com/package/@overture-stack/lectern-ui) and can be embedded in any data platform. It reads [Lectern dictionary schemas](../03-dictionaryReference.md) and renders them as a scrollable, per-schema table view, with an entity relationship diagram available alongside it.
 
-:::warning Development status
-The Lectern Viewer is an early-stage component library and is not yet production-ready. Expect breaking changes to component appearance, behaviour, and interfaces before a stable release.
+:::note
+This page describes what the Viewer shows a reader. To embed it in a platform, see [Setup](./01-setup.md); for the full component and prop listing, see the [Reference](./02-reference.md). Screenshots on this page show the PCGL clinical dictionary; its configuration and JSON are on the [Examples](./03-examples.md) page.
 :::
-
-This page describes what the Viewer shows a reader. To embed it in a platform, see [Setup](./01-setup.md); for the full component and prop listing, see the [Reference](./02-reference.md).
 
 ## Where the Viewer fits
 
@@ -16,8 +14,6 @@ The Viewer is the presentation layer of the submission workflow. It is typically
 
 - **[Lectern Server](../01-overview.md):** the REST API that stores, versions, and serves the dictionary schemas the Viewer renders, and that generates the submission templates the Viewer offers for download.
 - **[Lyric](https://docs.overture.bio/develop/Lyric/overview):** Overture's tabular data submission service, which validates submissions against those same Lectern schemas.
-
-The Viewer is being developed initially for the [Pan-Canadian Genome Library (PCGL)](https://genomelibrary.ca/), which will use it to communicate data requirements to researchers. That implementation is intended as a reference for how other platforms integrate the components.
 
 ## The dictionary table view
 
@@ -29,11 +25,11 @@ The dictionary table view is the Viewer's main surface. It renders a dictionary 
 
 Every schema table has four base columns:
 
-| Column | Contents |
-| --- | --- |
-| **Fields** | Field name, description, and any `meta.examples` values. |
-| **Attribute** | Whether the field is `Required`, `Optional`, or `Required When` (conditionally required). Unique-key and foreign-key fields are marked with a key icon. |
-| **Data Type** | The field's `valueType` (`String`, `Integer`, `Number`, or `Boolean`), or `Array` for fields that accept multiple values. |
+| Column             | Contents                                                                                                                                                         |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Fields**         | Field name, description, and any `meta.examples` values.                                                                                                         |
+| **Attribute**      | Whether the field is `Required`, `Optional`, or `Required When` (conditionally required). Unique-key and foreign-key fields are marked with a key icon.          |
+| **Data Type**      | The field's `valueType` (`String`, `Integer`, `Number`, or `Boolean`), or `Array` for fields that accept multiple values.                                        |
 | **Allowed Values** | Value restrictions such as code lists, ranges, and regular expressions, including those inherited from the schema, and unique-key and foreign-key relationships. |
 
 Long descriptions, example lists, and allowed-value lists are truncated with a "Show more" control rather than stretching the row.
@@ -57,15 +53,15 @@ Conditional validation rules (if-then-else dependencies between fields) are show
 
 The toolbar sits below the dictionary header and controls the view:
 
-| Control | Behaviour |
-| --- | --- |
-| **Table of Contents** | Jumps to a schema by name. |
-| **Diagram View** | Opens the [entity relationship diagram](#the-diagram-view). |
-| **Collapse All / Expand All** | Collapses or expands every schema section. |
-| **Show Required / By Required** | Toggles between showing every field and showing only required and conditionally required fields. |
-| **Filters** | Filters whole schemas by dictionary metadata. Only appears when [metadata filters](./01-setup.md#add-metadata-filters) are configured. |
-| **Columns** | Shows and hides [custom columns](./01-setup.md#add-custom-columns). Only appears when custom columns are configured. |
-| **Submission Templates** | Downloads a zip of submission templates for the selected dictionary version. |
+| Control                         | Behaviour                                                                                                                              |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Table of Contents**           | Jumps to a schema by name.                                                                                                             |
+| **Diagram View**                | Opens the [entity relationship diagram](#the-diagram-view).                                                                            |
+| **Collapse All / Expand All**   | Collapses or expands every schema section.                                                                                             |
+| **Show Required / By Required** | Toggles between showing every field and showing only required and conditionally required fields.                                       |
+| **Filters**                     | Filters whole schemas by dictionary metadata. Only appears when [metadata filters](./01-setup.md#add-metadata-filters) are configured. |
+| **Columns**                     | Shows and hides [custom columns](./01-setup.md#add-custom-columns). Only appears when custom columns are configured.                   |
+| **Submission Templates**        | Downloads a zip of submission templates for the selected dictionary version.                                                           |
 
 Two toolbar behaviours are worth calling out:
 

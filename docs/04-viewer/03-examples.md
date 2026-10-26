@@ -1,8 +1,8 @@
 # Viewer Examples
 
-The same viewer components rendering two real clinical data dictionaries: the Pan-Canadian Genome Library (PCGL) dictionary with no extra configuration, and the ICGC-ARGO dictionary with a custom column and a metadata filter added through props. These are the examples shown in the Dictionary Viewer manuscript.
+The same viewer components rendering two data dictionaries: the Pan-Canadian Genome Library (PCGL) dictionary and the ICGC-ARGO dictionary. Both of these are the examples shown in the Dictionary Viewer manuscript (pending publication).
 
-Both run in [Storybook](./01-setup.md#run-storybook) under **Viewer - Table / Example Dictionaries**. The stories replace the dictionary name and description shown in the header with the text used in the manuscript; everything below the header is rendered from the dictionary files as stored, and the JSON on this page shows the stored values.
+Both can be seen within [Storybook](./01-setup.md#run-storybook) under **Viewer - Table / Example Dictionaries**.
 
 ## PCGL clinical dictionary
 
@@ -293,7 +293,7 @@ The [full file](https://github.com/overture-stack/lectern/blob/main/packages/ui/
 
 ## ICGC-ARGO data dictionary
 
-[`argo.json`](https://github.com/overture-stack/lectern/blob/main/packages/ui/stories/fixtures/argo.json) is a Lectern-format conversion of [ICGC-ARGO dictionary](https://github.com/icgc-argo/argo-dictionary) release 1.32: 15 schemas and 245 fields. For this example, schema-level `meta.category` values, example values, simplified conditional restrictions, and foreign-key declarations were added; ARGO's JavaScript validation scripts have no Lectern equivalent and are not included.
+[`argo.json`](https://github.com/overture-stack/lectern/blob/main/packages/ui/stories/fixtures/argo.json) is a Lectern-format conversion of [ICGC-ARGO dictionary](https://github.com/icgc-argo/argo-dictionary) release 1.32: 15 schemas and 245 fields.
 
 The example declares one [custom column](./01-setup.md#add-custom-columns) and one [metadata filter](./01-setup.md#add-metadata-filters):
 

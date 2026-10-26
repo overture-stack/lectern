@@ -1,10 +1,10 @@
 # Viewer Setup
 
-This guide covers embedding the Lectern Viewer in a React application: installing the package, pointing it at a dictionary source, and configuring filters, columns, and theming. For what the resulting views show a reader, see the [Viewer overview](./index.md); for the complete export listing, see the [Reference](./02-reference.md); for two complete configurations on real dictionaries, see the [Examples](./03-examples.md).
+This guide covers installing the package, pointing it at a dictionary source, and configuring filters, columns, and theming.
 
 ## Run Storybook
 
-The library is developed with [Storybook](https://storybook.js.org/), which renders each component in isolation. It is the fastest way to see what the library offers before wiring anything into an application, and every component has stories covering its states, including loading, error, and empty-dictionary cases.
+The library is developed with [Storybook](https://storybook.js.org/), which renders each component in isolation. It is the fastest way to see what the library offers before wiring anything into an application. Each component has stories covering its states, including loading, error, and empty-dictionary cases.
 
 1. Clone the [Lectern repository](https://github.com/overture-stack/lectern) and install dependencies from the repository root:
 
@@ -37,20 +37,6 @@ For the full walkthrough, covering adding themes to the selector, wiring the dec
 ```sh
 npm install @overture-stack/lectern-ui
 ```
-
-:::warning Released version lags `main`
-The published `1.0.0` release predates the [custom columns](#add-custom-columns) feature, which exists only on `main`. Everything else on this page is in `1.0.0`. The [Reference](./02-reference.md#release-status) tracks which exports are released and which are not.
-:::
-
-:::warning Blank page with `1.0.0`
-`1.0.0` accepts any `d3-dag` `1.x`. This branch pins `d3-dag` to `1.1.0`, matching the lockfile. If an installation of `1.0.0` renders a blank page with `TypeError: ... Script is not a constructor`, pin the same dependency from your application's `package.json` and reinstall:
-
-```json
-"overrides": { "d3-dag": "1.1.0" }
-```
-
-With pnpm, put the same entry under `pnpm.overrides`; with Yarn, under `resolutions`.
-:::
 
 ## Check the install
 
@@ -85,22 +71,20 @@ If the schemas render as tables, the package is installed correctly. Swap in a [
 ```tsx
 import { DictionaryTable } from '@overture-stack/lectern-ui';
 
-const DictionaryPage = () => (
-	<DictionaryTable lecternUrl="http://localhost:3000" dictionaryName="example-dictionary" />
-);
+const DictionaryPage = () => <DictionaryTable lecternUrl="http://localhost:3000" dictionaryName="example-dictionary" />;
 ```
 
 `DictionaryTable` fetches every version of the named dictionary and renders the newest one, with the others available from the version switcher.
 
 ## Choose a data source
 
-`DictionaryTable` reads from a Lectern server. To read from somewhere else, compose the pieces yourself: a data provider, the view-state provider, and `DictionaryTableViewer`.
+`DictionaryTable` reads from a Lectern server. To read from somewhere else, compose the pieces yourself: a [data provider](./02-reference.md#data-providers), the view-state provider, and `DictionaryTableViewer`.
 
-| Provider | Reads from | Props |
-| --- | --- | --- |
-| `LecternDataProvider` | A Lectern server. Fetches every version of the named dictionary. | `lecternUrl`, `dictionaryName` |
-| `HostedDictionaryDataProvider` | A single dictionary JSON file served over HTTP. Validated against the Lectern meta-schema on fetch. | `hostedUrl` |
-| `DictionaryStaticDataProvider` | Dictionary objects already in memory. No network request. | `staticDictionaries` |
+| Provider                       | Reads from                                                                                          | Props                          |
+| ------------------------------ | --------------------------------------------------------------------------------------------------- | ------------------------------ |
+| `LecternDataProvider`          | A Lectern server. Fetches every version of the named dictionary.                                    | `lecternUrl`, `dictionaryName` |
+| `HostedDictionaryDataProvider` | A single dictionary JSON file served over HTTP. Validated against the Lectern meta-schema on fetch. | `hostedUrl`                    |
+| `DictionaryStaticDataProvider` | Dictionary objects already in memory. No network request.                                           | `staticDictionaries`           |
 
 ```tsx
 import {
@@ -118,7 +102,7 @@ const HostedDictionaryPage = () => (
 );
 ```
 
-The split is deliberate: the data provider owns fetching, validation, and error state, while `DictionaryTableStateProvider` owns which version is selected and which filters are active. Both expose their state through hooks, `useLecternData` and `useDictionaryTableState`, so a platform can build its own chrome around the table.
+The split is deliberate: the data provider owns fetching, validation, and error state, while `DictionaryTableStateProvider` owns which version is selected and which filters are active. Both expose their state through hooks, [`useLecternData`](./02-reference.md#uselecterndata) and [`useDictionaryTableState`](./02-reference.md#usedictionarytablestate), so a platform can build its own chrome around the table.
 
 :::note
 The **Submission Templates** button reads from a Lectern server and is hidden for the hosted and static providers. `HostedDictionaryDataProvider` also validates the fetched JSON and surfaces a parse failure as an error, so a malformed dictionary reports the problem rather than rendering an empty table.
@@ -179,7 +163,7 @@ const FhirBadge = ({ value }: CustomColumnComponentProps) =>
 const columns = [{ columnHeader: 'FHIR', metaPath: 'meta.mappings.FHIR', columnComponent: FhirBadge }];
 ```
 
-See [`CustomColumnConfig`](./02-reference.md#customcolumnconfig) for the full type. This feature is on `main` and not in the published `1.0.0`.
+See [`CustomColumnConfig`](./02-reference.md#customcolumnconfig) for the full type.
 
 ## Apply a theme
 
@@ -197,4 +181,4 @@ const ThemedDictionaryPage = () => (
 );
 ```
 
-Components read the active theme with the `useThemeContext` hook, which is exported so integrators can build their own components against the same theme.
+Components read the active theme with the `useThemeContext` hook, which is exported so integrators can build their own components against the same theme. See [Theming](./02-reference.md#theming) for every theme export and the groups a theme can override.
