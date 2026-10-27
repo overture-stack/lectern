@@ -2,6 +2,7 @@
 	"name": "prod_pcgl_schema",
 	"description": "Base clinical schema that incorporates all PCGL base entities",
 	"version": "1.1",
+	"_meta_conventions": "URL-valued meta properties: 'mappings.FHIRSpec' links to the HL7 FHIR R4 resource definition for fields with an existing FHIR mapping; 'ontologyRef' links to the ontology term browser (MONDO or HPO) for fields whose examples reference ontology codes.",
 	"schemas": [
 		{
 			"name": "participant",
@@ -17,7 +18,8 @@
 							"Phenopacket": "individual.id",
 							"BeaconV2": "individual.id",
 							"ARGO": "submitter_participant_id",
-							"MOH": "submitter_participant_id"
+							"MOH": "submitter_participant_id",
+							"FHIRSpec": "https://hl7.org/fhir/R4/patient.html"
 						},
 						"examples": ["90234", "BLD_donor_89", "AML-90"]
 					},
@@ -48,7 +50,8 @@
 				{
 					"meta": {
 						"displayName": "disease_specific_modifier",
-						"examples": ["MONDO:0000001"]
+						"examples": ["MONDO:0000001"],
+						"ontologyRef": "https://www.ebi.ac.uk/ols4/ontologies/mondo"
 					},
 					"name": "disease_specific_modifier",
 					"description": "If the permission is DUO:0000007 (disease specific research), then MONDO codes must be provided to specify which disease(s) apply.",
@@ -903,7 +906,8 @@
 							"FHIR": "condition.onset",
 							"Phenopacket": "disease.onset",
 							"ARGO": "age_at_diagnosis",
-							"MOH": "age_at_diagnosis"
+							"MOH": "age_at_diagnosis",
+							"FHIRSpec": "https://hl7.org/fhir/R4/condition-definitions.html#Condition.onset_x_"
 						}
 					},
 					"name": "age_at_diagnosis",
@@ -919,11 +923,13 @@
 							"Phenopacket": "disease.term",
 							"ARGO": "disease_code",
 							"MOH": "disease_code",
-							"CQDG": "disease_code"
+							"CQDG": "disease_code",
+							"FHIRSpec": "https://hl7.org/fhir/R4/condition.html"
 						},
 						"required": [
 							"Provide code in Compact URI (CURIE) pattern. ICD-10 code: refer to https://icd.who.int/browse10/2019/en MONDO code: refer to https://www.ebi.ac.uk/ols/ontologies/mondo"
 						],
+						"ontologyRef": "https://www.ebi.ac.uk/ols4/ontologies/mondo",
 						"examples": ["MONDO:0000001", "icd10:C34"]
 					},
 					"name": "disease_code",
@@ -1268,7 +1274,8 @@
 							"mCODE.STU3": "Specimen.collection.bodySite",
 							"FHIR": "Specimen.collection.bodySite",
 							"ARGO": "procedure_body_site_code",
-							"MOH": "procedure_body_site_code"
+							"MOH": "procedure_body_site_code",
+							"FHIRSpec": "https://hl7.org/fhir/R4/specimen-definitions.html#Specimen.collection.bodySite"
 						},
 						"required": [
 							"Refer to the International Classification of Diseases for Oncology, 3rd Edition (WHO ICD-O-3) manual for guidelines at https://apps.who.int/iris/handle/10665/42344"
@@ -1651,7 +1658,8 @@
 						"displayName": "phenotype_code",
 						"required": [
 							"Provide code in Compact URI (CURIE) pattern.  HPO URL: https://hpo.jax.org/app/browse/term/HP:<code>"
-						]
+						],
+						"ontologyRef": "https://hpo.jax.org/browse/term"
 					},
 					"name": "phenotype_code",
 					"description": "Use standardized HPO (Human Phenotype Ontology) codes to represent the phenotype.",
@@ -1756,6 +1764,7 @@
 						"required": [
 							"Provide code in Compact URI (CURIE) pattern. ICD-10 code: refer to https://icd.who.int/browse10/2019/en MONDO code: refer to https://www.ebi.ac.uk/ols/ontologies/mondo"
 						],
+						"ontologyRef": "https://www.ebi.ac.uk/ols4/ontologies/mondo",
 						"examples": ["MONDO:0000001", "icd10:C34"]
 					},
 					"name": "comorbidity_code",
@@ -1966,7 +1975,8 @@
 							"Phenopacket": "biosample.id",
 							"BeaconV2": "biosample.id",
 							"ARGO": "submitter_specimen_id",
-							"MOH": "submitter_specimen_id"
+							"MOH": "submitter_specimen_id",
+							"FHIRSpec": "https://hl7.org/fhir/R4/specimen.html"
 						},
 						"examples": ["LAML_PO", "00445", "THY_099-tumour"]
 					},
@@ -2016,7 +2026,8 @@
 							"mCODE.STU3": "Specimen.collection.bodySite",
 							"FHIR": "Specimen.collection.bodySite",
 							"ARGO": "specimen_anatomic_location_code",
-							"MOH": "specimen_anatomic_location_code"
+							"MOH": "specimen_anatomic_location_code",
+							"FHIRSpec": "https://hl7.org/fhir/R4/specimen-definitions.html#Specimen.collection.bodySite"
 						},
 						"required": [
 							"Refer to the International Classification of Diseases for Oncology, 3rd Edition (WHO ICD-O-3) manual for guidelines at https://apps.who.int/iris/handle/10665/42344."

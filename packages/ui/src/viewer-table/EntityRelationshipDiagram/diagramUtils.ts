@@ -136,12 +136,17 @@ export function getLayoutedElements(
 		const layout = sugiyama().nodeSize((dagNode: GraphNode<StratifyDatum, undefined>): [number, number] => {
 			const schema = schemaByName.get(dagNode.data.id);
 			const height = schema ? estimateNodeHeight(schema) : HEADER_HEIGHT;
-			return [NODE_WIDTH + GAP_X, height + GAP_Y];
+			return [height + GAP_Y, NODE_WIDTH + GAP_X];
 		});
 		layout(dag);
 
 		for (const dagNode of dag.nodes()) {
-			positionMap.set(dagNode.data.id, { x: dagNode.x, y: dagNode.y });
+			const schema = schemaByName.get(dagNode.data.id);
+			const nodeHeight = schema ? estimateNodeHeight(schema) : HEADER_HEIGHT;
+			positionMap.set(dagNode.data.id, {
+				x: dagNode.y - NODE_WIDTH / 2,
+				y: dagNode.x - nodeHeight / 2,
+			});
 		}
 	}
 

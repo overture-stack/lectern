@@ -89,6 +89,8 @@ docker run --name lectern-mongo \
    MONGO_DB=lectern
    MONGO_USER=
    MONGO_PASS=
+   # Optional: full connection string; when set it overrides MONGO_HOST/MONGO_PORT/MONGO_DB above
+   # MONGO_URL=mongodb://localhost:27017/lectern
 
    # Authentication (disabled by default)
    AUTH_ENABLED=false
@@ -121,6 +123,7 @@ docker run --name lectern-mongo \
    - `MONGO_DB`: Database name (default: lectern)
    - `MONGO_USER`: Database username (optional)
    - `MONGO_PASS`: Database password (optional)
+   - `MONGO_URL`: Full MongoDB connection string; when set, it takes precedence over and overrides `MONGO_HOST`/`MONGO_PORT`/`MONGO_DB` (optional)
 
    **Authentication (Optional)**
 
@@ -191,7 +194,7 @@ Access the interactive API documentation at:
 - Verify API endpoints are responding correctly
 
 :::info Need Help?
-If you encounter any issues or have questions about our API, please don't hesitate to reach out through our relevant [**community support channels**](https://docs.overture.bio/community/support).
+If you encounter any issues or have questions about our API, please don't hesitate to reach out through our [**support page**](https://docs.overture.bio/community/support) or our [**discussion forum**](https://github.com/overture-stack/docs/discussions?discussions_q=).
 :::
 
 ## Advanced Configuration

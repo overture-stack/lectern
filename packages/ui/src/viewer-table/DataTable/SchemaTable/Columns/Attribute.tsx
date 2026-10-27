@@ -46,19 +46,6 @@ const containerStyle = (theme: Theme) => css`
 	${theme.typography.paragraphSmallBold}
 `;
 
-const diagramLinkStyle = (theme: Theme) => css`
-	${theme.typography.paragraphSmallBold}
-	padding: 0;
-	background: none;
-	border: none;
-	color: ${theme.colors.black};
-	text-decoration: underline;
-	cursor: pointer;
-	&:hover {
-		color: ${theme.colors.secondary};
-	}
-`;
-
 const hoverGroupStyle = (theme: Theme) => css`
 	display: flex;
 	flex-direction: column;
@@ -68,6 +55,24 @@ const hoverGroupStyle = (theme: Theme) => css`
 		stroke: ${theme.colors.secondary};
 	}
 	&:has(button:hover) button {
+		color: ${theme.colors.secondary};
+	}
+`;
+
+const foreignKeyGroupStyle = (theme: Theme) => css`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	padding: 0;
+	background: none;
+	border: none;
+	cursor: pointer;
+	${theme.typography.paragraphSmallBold}
+	&:hover svg {
+		stroke: ${theme.colors.secondary};
+	}
+	&:hover span {
 		color: ${theme.colors.secondary};
 	}
 `;
@@ -121,20 +126,18 @@ export const renderAttributesColumn = (
 					)}
 				</>
 			: isForeignKey ?
-				<div css={hoverGroupStyle(theme)}>
-					<Key width={18} height={18} />
-					<button
-						css={diagramLinkStyle(theme)}
-						onClick={() => {
+				<button
+					css={foreignKeyGroupStyle(theme)}
+					onClick={() => {
 						if (!schema || !currentSchemaField) {
 							return;
 						}
 						openFocusedDiagram({ schemaName: schema.name, fieldName: currentSchemaField.name });
 					}}
-					>
-						{isRequired ? 'Required' : 'Optional'}
-					</button>
-				</div>
+				>
+					<Key width={18} height={18} />
+					<span css={css`text-decoration: underline;`}>{isRequired ? 'Required' : 'Optional'}</span>
+				</button>
 			:	<>
 					{isUniqueKey && <Key width={18} height={18} />}
 					<div>{isRequired ? 'Required' : 'Optional'}</div>

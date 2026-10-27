@@ -1,4 +1,10 @@
 packages:
-  - 'apps/*'
-  - 'packages/*'
-  - 'scripts'
+  - "apps/*"
+  - "packages/*"
+  - "scripts"
+allowBuilds:
+  "@parcel/watcher": true
+  "@scarf/scarf": false
+  es5-ext: false
+  esbuild: true
+  nx: true
