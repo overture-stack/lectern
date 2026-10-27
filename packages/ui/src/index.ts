@@ -30,11 +30,11 @@ export {
 	DictionaryTableViewer,
 
 	// Schema Table
-	default as SchemaTable,
+	SchemaTable,
 	type SchemaTableProps,
 
 	// Toolbar
-	default as Toolbar,
+	Toolbar,
 	type ToolbarProps,
 
 	// & individual parts for integrators to build their own

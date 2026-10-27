@@ -20,6 +20,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
+import { type FilterCategory } from '../../common/Dropdown/index';
 import { useDictionaryStateContext } from '../../dictionary-controller/DictionaryDataContext';
 import { pillStyle } from '../../theme/emotion/index';
 import { type Theme, useThemeContext } from '../../theme/index';
@@ -90,12 +91,27 @@ const resetStyles = (theme: Theme) => css`
 	white-space: nowrap;
 `;
 
-const ActiveFilterBar = () => {
+export type ActiveFilterBarProps = {
+	filterCategories?: FilterCategory[];
+};
+
+/**
+ * Shows each active filter selection as a removable "<category>: <value>" pill.
+ * @param {ActiveFilterBarProps} props
+ * @param {FilterCategory[]} filterCategories - Pills use the matching category's `label`; without one,
+ * the name is derived from the `filterProperty` path (`meta.category` shows "Category").
+ */
+const ActiveFilterBar = ({ filterCategories }: ActiveFilterBarProps) => {
 	const theme = useThemeContext();
 	const { filterSelections, toggleFilter, resetFilters } = useDictionaryStateContext();
 	const { Cancel } = theme.icons;
 
 	const formatCategory = (category: string) => {
+		// Use the configured label so pills match the dropdown and schema tags
+		const declared = filterCategories?.find((filterCategory) => filterCategory.filterProperty === category)?.label;
+		if (declared) {
+			return declared;
+		}
 		const label = category.split('.')[1] ?? category;
 		return label.charAt(0).toUpperCase() + label.slice(1);
 	};
