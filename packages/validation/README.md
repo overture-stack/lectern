@@ -2,14 +2,14 @@
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 [<img hspace="5" src="https://img.shields.io/badge/chat--with--developers-overture--slack-blue?style=for-the-badge">](http://slack.overture.bio)
-[<img hspace="5" src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge">](https://github.com/overture-stack/lectern/blob/develop/LICENSE)
+[<img hspace="5" src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge">](https://github.com/overture-stack/lectern/blob/main/LICENSE)
 
 
 > **Note**
 >
 > This may not be the module you are looking to import.
 > 
-> This is a sub-module used as a dependency by both the [Lectern Client](https://www.npmjs.com/package/@overture-stack/lectern-client) and [Lectern Server](https://github.com/overture-stack/lectern/blob/develop/apps/server/README.md). 
+> This is a sub-module used as a dependency by both the [Lectern Client](https://www.npmjs.com/package/@overture-stack/lectern-client) and [Lectern Server](https://github.com/overture-stack/lectern/blob/main/apps/server/README.md). 
 >
 > If you are building an application that will interact with a Lectern Server over HTTP, or wants to validate data using a Lectern Dictionary, you likely want to import the [Lectern Client](https://www.npmjs.com/package/@overture-stack/lectern-client).
 
@@ -21,9 +21,9 @@ Parsing data involves reading string values for fields defined in a Lectern Sche
 There are four separate parsing functions exported, mapping to different collections of data to be processed together:
 
 - `parseFieldValue`: Parse a string value for an individual field.
-- `parseRecordValues`: Parse all fields in an [UnprocessedDataRecord](https://github.com/overture-stack/lectern/blob/develop/docs/important-concepts.md#datarecord-and-unprocesseddatarecord) based on a schema definition. Applies `parseFieldValue` to each field.
-- `parseSchemaValues`: Parse all records in a collection belonging to an individual [schema](https://github.com/overture-stack/lectern/blob/develop/docs/important-concepts.md#schema). Applies `parseRecordValues` to each record.
-- `parseDictionaryValues`: Parse all records for multiple schemas in a [dictionary](https://github.com/overture-stack/lectern/blob/develop/docs/important-concepts.md#dictionary). Applies `parseSchemaValues` to each array of records provided.
+- `parseRecordValues`: Parse all fields in an [UnprocessedDataRecord](https://github.com/overture-stack/lectern/blob/main/pendingDocs/glossary.md#datarecord-and-unprocesseddatarecord) based on a schema definition. Applies `parseFieldValue` to each field.
+- `parseSchemaValues`: Parse all records in a collection belonging to an individual [schema](https://github.com/overture-stack/lectern/blob/main/pendingDocs/glossary.md#schema). Applies `parseRecordValues` to each record.
+- `parseDictionaryValues`: Parse all records for multiple schemas in a [dictionary](https://github.com/overture-stack/lectern/blob/main/pendingDocs/glossary.md#dictionary). Applies `parseSchemaValues` to each array of records provided.
 
 Each parsing function will return a Result object that indicates if the parsing completed successfully. When parsing completes without any errors the response will include the parsed data with all fields converted to the correct type.
 
@@ -40,5 +40,5 @@ There are four main validation functions, provided to validate data at the field
 - `validateSchema`: Validate a collection of records from a single schema, testing all `unique` and `uniqueKey` requirements for that schema and then applying `validateRecord` to all records.
 - `validateDictionary`: Validates multiple collections of records each belonging to schemas from a dictionary.  This checks that each schema specified is a member of the given dictionary, and tests `foreignKey` restrictions on each schema, in addition to applying `validateSchema` to each colleciton.
 
-All validation functions return a [`TestResult`](https://github.com/overture-stack/lectern/blob/develop/docs/important-concepts.md#testresult) object that will indicate if the validation passed or failed. If the validation is successful then this result will simply indicate that the data is valid. If there were any errors then the response will include a error information.
+All validation functions return a [`TestResult`](https://github.com/overture-stack/lectern/blob/main/pendingDocs/glossary.md#testresult) object that will indicate if the validation passed or failed. If the validation is successful then this result will simply indicate that the data is valid. If there were any errors then the response will include a error information.
 

@@ -22,3 +22,4 @@ dist
 *.code-workspace
 
 *.tsbuildinfo
+.DS_Store
