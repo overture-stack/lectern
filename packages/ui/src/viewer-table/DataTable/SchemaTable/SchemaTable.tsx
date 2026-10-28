@@ -19,21 +19,32 @@
 
 import { Schema } from '@overture-stack/lectern-dictionary';
 
+import type { CustomColumnConfig } from '../../customColumnTypes.js';
 import Table from '../Table';
 
 import { getSchemaBaseColumns } from './SchemaTableInit';
 
 export type SchemaTableProps = {
 	schema: Schema;
+	highlightedFieldName?: string | null;
+	customColumns?: CustomColumnConfig[];
 };
 
 /**
  * Schema table component that displays dictionary schema fields in a table format.
  * @param {Schema} schema - Dictionary schema containing fields and restrictions
+ * @param {string | null} highlightedFieldName - Name of field to highlight (for anchor navigation)
  * @returns {JSX.Element} Table displaying schema fields with columns for Fields, Attribute, Data Type, and Allowed Values
  */
-const SchemaTable = ({ schema }: SchemaTableProps) => {
-	return <Table data={schema.fields} columns={getSchemaBaseColumns(schema)} />;
+const SchemaTable = ({ schema, highlightedFieldName, customColumns }: SchemaTableProps) => {
+	return (
+		<Table
+			data={schema.fields}
+			columns={getSchemaBaseColumns(schema, customColumns)}
+			schemaName={schema.name}
+			highlightedFieldName={highlightedFieldName}
+		/>
+	);
 };
 
 export default SchemaTable;

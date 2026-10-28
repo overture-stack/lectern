@@ -29,6 +29,13 @@ const meta = {
 	title: 'Viewer Table/Conditional Modal/ConditionalBlock',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'Renders a block of conditional restriction statements showing field conditions and their resulting restrictions.',
+			},
+		},
+	},
 } satisfies Meta<typeof ConditionalBlock>;
 
 export default meta;

@@ -3,9 +3,8 @@ packages:
   - 'packages/*'
   - 'scripts'
 allowBuilds:
-  '@parcel/watcher': false
+  '@parcel/watcher': true
   '@scarf/scarf': false
   es5-ext: false
-  esbuild: false
-  husky: false
+  esbuild: true
   nx: true

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -125,6 +125,37 @@ export const withErrorState = (): Decorator => {
 	);
 };
 
+const schemaMetaMap: Record<string, { submitter: string; domain: string }> = {
+	participant: { submitter: 'Clinician', domain: 'Health' },
+	sociodemographic: { submitter: 'Clinician', domain: 'Health' },
+	demographic: { submitter: 'Clinician', domain: 'Health' },
+	diagnosis: { submitter: 'Clinician', domain: 'Clinical' },
+	treatment: { submitter: 'Clinician', domain: 'Clinical' },
+	follow_up: { submitter: 'Clinician', domain: 'Clinical' },
+	procedure: { submitter: 'Clinician', domain: 'Clinical' },
+	medication: { submitter: 'Laboratory', domain: 'Health' },
+	radiation: { submitter: 'Laboratory', domain: 'Health' },
+	measurement: { submitter: 'Laboratory', domain: 'Clinical' },
+	phenotype: { submitter: 'Researcher', domain: 'Clinical' },
+	comorbidity: { submitter: 'Researcher', domain: 'Clinical' },
+	exposure: { submitter: 'Researcher', domain: 'Clinical' },
+	specimen: { submitter: 'Laboratory', domain: 'Health' },
+	sample: { submitter: 'Laboratory', domain: 'Clinical' },
+	experiment: { submitter: 'Researcher', domain: 'Clinical' },
+	read_group: { submitter: 'Researcher', domain: 'Clinical' },
+};
+
+const filterDictionaryData: DictionaryTestData = [
+	{
+		...DictionarySample,
+		schemas: DictionarySample.schemas.map((schema) => ({
+			...schema,
+			meta: schemaMetaMap[schema.name] ?? {},
+		})),
+	} as DictionaryServerUnion,
+];
+
 export const withMultipleDictionaries = withDictionaryContext(multipleDictionaryData);
 export const withSingleDictionary = withDictionaryContext(singleDictionaryData);
 export const withEmptyDictionaries = withDictionaryContext(emptyDictionaryData);
+export const withFilterDictionary = withDictionaryContext(filterDictionaryData);

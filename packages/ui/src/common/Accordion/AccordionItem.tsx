@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -22,10 +22,10 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import type { RefObject } from 'react';
-import { MouseEvent, useEffect, useRef } from 'react';
+import { MouseEvent, useRef } from 'react';
 
 import { useClipboard } from '../../hooks/useClipboard';
+import { pillStyle } from '../../theme/emotion/index';
 import { type Theme, useThemeContext } from '../../theme/index';
 import DictionaryDownloadButton from '../../viewer-table/Toolbar/DictionaryDownloadButton';
 import ReadMoreText from '../ReadMoreText';
@@ -43,12 +43,12 @@ export type AccordionItemProps = {
 const accordionItemStyle = (theme: Theme) => css`
 	list-style: none;
 	width: 100%;
-	border-radius: 8px;
 	margin-bottom: 1px;
 	overflow: hidden;
 	background-color: ${theme.colors.white};
 	box-shadow: 0px 4px 4px 0px ${theme.shadow.accordion};
 	border: 0.25px solid ${theme.colors.black};
+	scroll-margin-top: 100px;
 	&:hover {
 		box-shadow: 0px 4px 4px 0px ${theme.shadow.accordion};
 	}
@@ -58,7 +58,7 @@ const accordionItemStyle = (theme: Theme) => css`
 const accordionItemTitleStyle = css`
 	display: flex;
 	align-items: flex-start;
-	padding: 24px 30px;
+	padding: 24px 30px 32px;
 	transition: all 0.2s ease;
 	width: 100%;
 	box-sizing: border-box;
@@ -82,7 +82,6 @@ const accordionItemButtonStyle = css`
 const contentColumnStyle = css`
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
 `;
 
 const titleStyle = (theme: Theme) => css`
@@ -90,6 +89,7 @@ const titleStyle = (theme: Theme) => css`
 	text-align: left;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
+	cursor: pointer;
 `;
 
 const chevronStyle = (isOpen: boolean) => css`
@@ -97,25 +97,31 @@ const chevronStyle = (isOpen: boolean) => css`
 	transition: transform 0.2s ease;
 `;
 
-const titleRowStyle = css`
+const titleRowStyle = (theme: Theme) => css`
 	display: flex;
-	gap: 2px;
+	gap: 4px;
 	align-items: center;
-	margin-bottom: 10px;
+
+	&:hover [data-anchor-button] {
+		opacity: 1;
+	}
+	&:hover [data-title-link] {
+		color: ${theme.colors.secondary};
+		text-decoration-thickness: 2px;
+		text-underline-offset: 4px;
+	}
 `;
 
-const hashIconStyle = (theme: Theme) => css`
+const hashIconStyle = css`
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	opacity: 0;
-	transition: opacity 0.2s ease;
+	padding-block: 0px;
+	padding-inline: 0px;
 	background: transparent;
 	border: none;
 	cursor: pointer;
-	svg {
-		border-bottom: 2px solid ${theme.colors.secondary};
-	}
-	&:hover {
-		opacity: 1;
-	}
 `;
 
 const descriptionWrapperStyle = (theme: Theme) => css`
@@ -131,12 +137,11 @@ const accordionCollapseStyle = (isOpen: boolean) => css`
 `;
 
 const accordionItemContentStyle = css`
-	padding: 0px 30px 30px 30px;
+	padding: 0px 0px 30px;
+	border: none;
 `;
 
 const contentInnerContainerStyle = (theme: Theme) => css`
-	border-left: 2px solid ${theme.colors.grey_3};
-	padding-left: 30px;
 	${theme.typography?.data};
 `;
 
@@ -147,30 +152,33 @@ const downloadButtonContainerStyle = css`
 	margin-left: auto;
 `;
 
-const handleInitialHashCheck = (
-	windowLocationHash: string,
-	openState: AccordionOpenState,
-	indexString: string,
-	accordionRef: RefObject<HTMLLIElement | null>,
-) => {
-	if (window.location.hash === windowLocationHash) {
-		openState.toggle();
-		accordionRef.current?.id === indexString ?
-			accordionRef.current.scrollIntoView({ block: 'center', behavior: 'smooth' })
-		:	null;
-	}
-};
+const tagPillContainerStyle = css`
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 6px;
+`;
+
+const tagLabelStyle = (theme: Theme) => css`
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	${theme.typography.data};
+	color: ${theme.colors.black};
+`;
 
 const hashOnClick = (
-	event: MouseEvent<HTMLButtonElement>,
+	event: MouseEvent<HTMLButtonElement | HTMLSpanElement>,
 	windowLocationHash: string,
-	setClipboardContents: (currentSchema: string) => void,
+	setClipboardContents: (contents: string) => void,
 ) => {
 	event.stopPropagation();
 	event.preventDefault();
-	setClipboardContents(
-		`${window.location.origin}${window.location.pathname}${window.location.search}${windowLocationHash}`,
-	);
+	const newUrl = `${window.location.pathname}${window.location.search}${windowLocationHash}`;
+	window.history.pushState(null, '', newUrl);
+	window.dispatchEvent(new HashChangeEvent('hashchange'));
+	setClipboardContents(`${window.location.origin}${newUrl}`);
 };
 
 const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) => {
@@ -178,43 +186,60 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 	const theme: Theme = useThemeContext();
 	const { setClipboardContents } = useClipboard();
 
-	const { description, title, content, schemaName } = accordionData;
-	const { ChevronDown, Hash } = theme.icons;
+	const { description, title, content, schemaName, tags } = accordionData;
+	const { ChevronDown, Hash, Tags } = theme.icons;
 
-	const indexString = index.toString();
-	const windowLocationHash = `#${index}`;
-
-	useEffect(() => {
-		setTimeout(() => {
-			handleInitialHashCheck(windowLocationHash, openState, indexString, accordionRef);
-		}, 100);
-	}, []);
+	const anchorId = schemaName || index.toString();
+	const windowLocationHash = `#${anchorId}`;
 
 	return (
-		<li ref={accordionRef} css={accordionItemStyle(theme)} id={indexString}>
+		<li ref={accordionRef} css={accordionItemStyle(theme)} id={anchorId}>
 			<div onClick={openState.toggle} role="button" css={accordionItemTitleStyle}>
 				<div css={chevronColumnStyle}>
 					<button css={accordionItemButtonStyle}>
-						<ChevronDown fill={theme.colors.black} width={16} height={16} style={chevronStyle(openState.isOpen)} />
+						<ChevronDown fill={theme.colors.black} width={20} height={20} style={chevronStyle(openState.isOpen)} />
 					</button>
 				</div>
 				<div css={contentColumnStyle}>
-					<div css={titleRowStyle}>
-						<span css={titleStyle(theme)}>{title}</span>
+					<div css={titleRowStyle(theme)}>
+						<span
+							data-title-link
+							css={titleStyle(theme)}
+							onClick={(event) => hashOnClick(event, windowLocationHash, setClipboardContents)}
+							style={{ cursor: 'pointer' }}
+						>
+							{title}
+						</span>
 						<button
 							type="button"
-							css={hashIconStyle(theme)}
+							data-anchor-button
+							css={hashIconStyle}
 							onClick={(event) => hashOnClick(event, windowLocationHash, setClipboardContents)}
 						>
-							<Hash width={20} height={20} fill={theme.colors.secondary} />
+							<Hash width={24} height={24} fill={theme.colors.secondary} />
 						</button>
 					</div>
-					<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle(theme)}>
-						{description}
-					</ReadMoreText>
+					<div onClick={(e) => e.stopPropagation()}>
+						<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle(theme)}>
+							{description}
+						</ReadMoreText>
+					</div>
+					{tags && tags.length > 0 && (
+						<div css={tagPillContainerStyle}>
+							<span css={tagLabelStyle(theme)}>
+								<Tags width={16} height={16} fill={theme.colors.black} />
+								Tags
+							</span>
+							{tags.map((pill, index) => (
+								<span key={`${pill.label}-${pill.value}-${index}`} css={pillStyle(theme)}>
+									{pill.label}: {pill.value}
+								</span>
+							))}
+						</div>
+					)}
 				</div>
 				{schemaName && (
-					<div css={downloadButtonContainerStyle}>
+					<div css={downloadButtonContainerStyle} onClick={(e) => e.stopPropagation()}>
 						<DictionaryDownloadButton fileType="tsv" iconOnly={true} schemaName={schemaName} />
 					</div>
 				)}

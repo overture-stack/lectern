@@ -1,0 +1,61 @@
+{
+	"name": "cyclical_dictionary",
+	"version": "1.0",
+	"description": "Three schemas forming a cyclical FK reference: node_a -> node_b -> node_c -> node_a",
+	"schemas": [
+		{
+			"name": "node_a",
+			"description": "References node_c, completing the cycle",
+			"fields": [
+				{ "name": "a_id", "valueType": "string", "unique": true },
+				{ "name": "c_id", "valueType": "string" },
+				{ "name": "label", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["a_id"],
+				"foreignKey": [
+					{
+						"schema": "node_c",
+						"mappings": [{ "local": "c_id", "foreign": "c_id" }]
+					}
+				]
+			}
+		},
+		{
+			"name": "node_b",
+			"description": "References node_a",
+			"fields": [
+				{ "name": "b_id", "valueType": "string", "unique": true },
+				{ "name": "a_id", "valueType": "string" },
+				{ "name": "label", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["b_id"],
+				"foreignKey": [
+					{
+						"schema": "node_a",
+						"mappings": [{ "local": "a_id", "foreign": "a_id" }]
+					}
+				]
+			}
+		},
+		{
+			"name": "node_c",
+			"description": "References node_b",
+			"fields": [
+				{ "name": "c_id", "valueType": "string", "unique": true },
+				{ "name": "b_id", "valueType": "string" },
+				{ "name": "label", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["c_id"],
+				"foreignKey": [
+					{
+						"schema": "node_b",
+						"mappings": [{ "local": "b_id", "foreign": "b_id" }]
+					}
+				]
+			}
+		}
+	]
+}

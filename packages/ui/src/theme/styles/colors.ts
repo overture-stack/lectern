@@ -45,6 +45,7 @@ const accent = {
 	accent_light: '#4f85ae',
 	accent_dark: '#003055',
 	accent_1: '#e5edf3',
+	accent_2: '#d4dce2',
 };
 
 // light blues

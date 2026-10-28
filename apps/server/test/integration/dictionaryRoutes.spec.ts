@@ -60,7 +60,7 @@ const testConfig: AppConfig = {
 		return process.env.OPENAPI_PATH || '/api-docs';
 	},
 
-	corsAllowedOrigins(): string[] {
+	corsAllowedOrigins(): string[] | string {
 		return CORS_ALLOWED_DOMAINS;
 	},
 

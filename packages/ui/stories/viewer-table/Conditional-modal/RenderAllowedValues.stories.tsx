@@ -33,6 +33,13 @@ const meta = {
 	title: 'Viewer Table/Conditional Modal/Render Allowed Values',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'Displays the allowed values for a field restriction as a formatted list.',
+			},
+		},
+	},
 } satisfies Meta<typeof SimpleRestrictionAllowedValues>;
 
 export default meta;

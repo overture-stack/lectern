@@ -30,7 +30,7 @@ describe('Test injection of config into Express App', () => {
 			openApiPath(): string {
 				return '/test-path';
 			},
-			corsAllowedOrigins(): string[] {
+			corsAllowedOrigins(): string[] | string {
 				return [];
 			},
 			mongoHost(): string {

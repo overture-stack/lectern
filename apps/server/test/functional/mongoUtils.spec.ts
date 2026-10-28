@@ -30,7 +30,7 @@ describe('Test mongo URI construction', () => {
 			openApiPath(): string {
 				throw new Error('Not Implemented');
 			},
-			corsAllowedOrigins(): string[] {
+			corsAllowedOrigins(): string[] | string {
 				return [];
 			},
 			mongoHost(): string {

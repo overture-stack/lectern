@@ -39,7 +39,7 @@ const meta = {
 		docs: {
 			description: {
 				component:
-					'The Toolbar provides controls for dictionary navigation, version switching, filtering, and data export functionality.',
+					'The Toolbar provides controls for dictionary navigation, filtering, and data export functionality.',
 			},
 		},
 	},

@@ -29,6 +29,13 @@ const meta = {
 	title: 'Viewer Table/Conditional Modal/If Statement',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'Renders an if/then conditional restriction, showing the conditions that must be met and the resulting field restrictions.',
+			},
+		},
+	},
 } satisfies Meta<typeof IfStatement>;
 
 export default meta;

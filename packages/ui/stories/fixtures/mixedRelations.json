@@ -1,0 +1,83 @@
+{
+	"name": "mixed_relations_dictionary",
+	"version": "1.0",
+	"description": "Five schemas with a mix of chain, fan-in, and isolated relationships",
+	"schemas": [
+		{
+			"name": "participant",
+			"description": "Study participants",
+			"fields": [
+				{ "name": "participant_id", "valueType": "string", "unique": true },
+				{ "name": "age", "valueType": "integer" },
+				{ "name": "sex", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["participant_id"]
+			}
+		},
+		{
+			"name": "specimen",
+			"description": "Biological specimens from participants",
+			"fields": [
+				{ "name": "specimen_id", "valueType": "string", "unique": true },
+				{ "name": "participant_id", "valueType": "string" },
+				{ "name": "tissue_type", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["specimen_id"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [{ "local": "participant_id", "foreign": "participant_id" }]
+					}
+				]
+			}
+		},
+		{
+			"name": "experiment",
+			"description": "Sequencing experiments",
+			"fields": [
+				{ "name": "experiment_id", "valueType": "string", "unique": true },
+				{ "name": "experiment_type", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["experiment_id"]
+			}
+		},
+		{
+			"name": "sample",
+			"description": "Samples linking a specimen to an experiment",
+			"fields": [
+				{ "name": "sample_id", "valueType": "string", "unique": true },
+				{ "name": "specimen_id", "valueType": "string" },
+				{ "name": "experiment_id", "valueType": "string" },
+				{ "name": "sample_type", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["sample_id"],
+				"foreignKey": [
+					{
+						"schema": "specimen",
+						"mappings": [{ "local": "specimen_id", "foreign": "specimen_id" }]
+					},
+					{
+						"schema": "experiment",
+						"mappings": [{ "local": "experiment_id", "foreign": "experiment_id" }]
+					}
+				]
+			}
+		},
+		{
+			"name": "audit_log",
+			"description": "Standalone audit records — no FK relationships",
+			"fields": [
+				{ "name": "log_id", "valueType": "string", "unique": true },
+				{ "name": "action", "valueType": "string" },
+				{ "name": "timestamp", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["log_id"]
+			}
+		}
+	]
+}

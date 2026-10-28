@@ -1,0 +1,32 @@
+{
+	"name": "invalid_uniquekey_reference",
+	"version": "1.0.0",
+	"description": "FK references a field that exists on the target schema but is not declared as a uniqueKey",
+	"schemas": [
+		{
+			"name": "participant",
+			"description": "Participant schema where participant_id is NOT declared as a uniqueKey",
+			"fields": [
+				{ "name": "participant_id", "valueType": "string" },
+				{ "name": "age", "valueType": "integer" }
+			]
+		},
+		{
+			"name": "sample",
+			"description": "Sample with FK pointing to participant_id which has no uniqueKey declaration",
+			"fields": [
+				{ "name": "sample_id", "valueType": "string", "unique": true },
+				{ "name": "participant_id", "valueType": "string" }
+			],
+			"restrictions": {
+				"uniqueKey": ["sample_id"],
+				"foreignKey": [
+					{
+						"schema": "participant",
+						"mappings": [{ "local": "participant_id", "foreign": "participant_id" }]
+					}
+				]
+			}
+		}
+	]
+}

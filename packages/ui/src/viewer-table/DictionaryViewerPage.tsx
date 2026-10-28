@@ -20,22 +20,26 @@
 
 import { DictionaryLecternDataProvider, DictionaryStateProvider } from '../dictionary-controller/DictionaryDataContext';
 
+import type { CustomColumnConfig } from './customColumnTypes.js';
+import type { FilterDropdown } from './DictionaryTableViewer';
 import DictionaryTableViewer from './DictionaryTableViewer';
 
 export type DictionaryTableProps = {
 	lecternUrl: string;
 	dictionaryName: string;
+	filterDropdowns?: FilterDropdown[];
+	customColumns?: CustomColumnConfig[];
 };
 
 /**
  * DictionaryViewerPage component.
  * @param {DictionaryTableProps} props
  */
-const DictionaryViewerPage = ({ lecternUrl, dictionaryName }: DictionaryTableProps) => {
+const DictionaryViewerPage = ({ lecternUrl, dictionaryName, filterDropdowns, customColumns }: DictionaryTableProps) => {
 	return (
 		<DictionaryLecternDataProvider lecternUrl={lecternUrl} dictionaryName={dictionaryName}>
 			<DictionaryStateProvider>
-				<DictionaryTableViewer />
+				<DictionaryTableViewer filterDropdowns={filterDropdowns} customColumns={customColumns} />
 			</DictionaryStateProvider>
 		</DictionaryLecternDataProvider>
 	);

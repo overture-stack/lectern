@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -37,10 +37,16 @@ export type CodeListContainerProps = {
 
 const handleRegularExpression = (restrictions: SchemaFieldRestrictions) => {
 	if (restrictions && 'regex' in restrictions && restrictions.regex !== undefined) {
+		const regularExpressions = Array.isArray(restrictions.regex) ? restrictions.regex : [restrictions.regex];
 		return (
 			<Fragment>
-				match the {Array.isArray(restrictions.regex) ? 'patterns' : 'pattern'}{' '}
-				{Array.isArray(restrictions.regex) ? restrictions.regex.join(', ') : restrictions.regex}
+				<p>match the {regularExpressions.length > 1 ? 'patterns' : 'pattern'} </p>
+				{regularExpressions.map((expression, index) => (
+					<Fragment key={index}>
+						<FieldBlock>{expression}</FieldBlock>
+						{index < regularExpressions.length - 1 && ', '}
+					</Fragment>
+				))}
 			</Fragment>
 		);
 	}

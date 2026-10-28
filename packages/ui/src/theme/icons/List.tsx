@@ -31,22 +31,17 @@ const List = ({ fill, width, height, style }: IconProps) => {
 			xmlns="http://www.w3.org/2000/svg"
 			width={width || 24}
 			height={height || 24}
-			viewBox="0 0 24 24"
+			viewBox="0 0 16 16"
 			fill={fill || 'none'}
 			stroke="currentColor"
-			strokeWidth="2"
+			strokeWidth="1"
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			css={css`
 				${style}
 			`}
 		>
-			<path d="M3 12h.01" />
-			<path d="M3 18h.01" />
-			<path d="M3 6h.01" />
-			<path d="M8 12h13" />
-			<path d="M8 18h13" />
-			<path d="M8 6h13" />
+			<path d="M1 4H11M1 8H11M1 12H11M14.5 4H14.51M14.5 8H14.51M14.5 12H14.51" />
 		</svg>
 	);
 };

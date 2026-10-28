@@ -33,6 +33,13 @@ const meta = {
 	title: 'Viewer - Table/Toolbar/CollapseAllButton',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withMultipleDictionaries],
+	parameters: {
+		docs: {
+			description: {
+				component: 'A toolbar button that collapses all open accordion sections.',
+			},
+		},
+	},
 } satisfies Meta<typeof CollapseAllButton>;
 
 export default meta;

@@ -32,10 +32,11 @@ Optional components like descriptions, metadata, and references which can also b
 
 | Property      | Type     | Required | Description                            | Example                                   |
 | ------------- | -------- | -------- | -------------------------------------- | ----------------------------------------- |
-| `name`        | `string` | ✓        | Display name of the dictionary         | `"clinical_data_dictionary"`              |
+| `name`        | `string` | ✓        | Name of the dictionary                 | `"clinical_data_dictionary"`              |
 | `version`     | `string` | ✓        | Semantic version (major.minor.patch)   | `"1.2.0"`                                 |
 | `schemas`     | `Array`  | ✓        | List of schema definitions (minimum 1) | See [Schema Structure](#schema-structure) |
 | `description` | `string` | ✗        | A human-readable description           | `"Clinical trial data schemas"`           |
+| `displayName` | `string` | ✗        | Display name of the dictionary         | `"Clinical Data Dictionary"`              |
 | `meta`        | `object` | ✗        | Any custom defined metadata fields     | `{"author": "Clinical Data Team"}`        |
 | `references`  | `object` | ✗        | Reusable reference values              | See [References](#references)             |
 
@@ -75,13 +76,13 @@ At the schema-level descriptions and metadata can also be optionally added.
 
 #### Schema Properties
 
-| Property      | Type     | Required | Description                                                        |
-| ------------- | -------- | -------- | ------------------------------------------------------------------ |
-| `name`        | `string` | ✓        | The schema identifier (no spaces or dots)                          |
-| `displayName` | `string` | ✗        | A human-readable name for UI display. Can contain periods.         |
-| `fields`      | `Array`  | ✓        | List of field definitions, see [Field Structure](#field-structure) |
-| `description` | `string` | ✗        | A human-readable description                                       |
-| `meta`        | `object` | ✗        | Any custom defined metadata fields                                 |
+| Property      | Type     | Required | Description                                                                                  |
+| ------------- | -------- | -------- | -------------------------------------------------------------------------------------------- |
+| `name`        | `string` | ✓        | The schema identifier. Typically a short name with no spaces. Cannot contain `.` characters. |
+| `displayName` | `string` | ✗        | A human-readable name for UI display. No format restrictions.                                |
+| `fields`      | `Array`  | ✓        | List of field definitions, see [Field Structure](#field-structure)                           |
+| `description` | `string` | ✗        | A human-readable description                                                                 |
+| `meta`        | `object` | ✗        | Any custom defined metadata fields                                                           |
 
 ## Field Structure
 
@@ -140,44 +141,45 @@ The allowed values for `valueType` include:
 
 At the field-level the following properties can also be included:
 
-| Property       | Type           | Required | Default | Description                                                                                              |
-| -------------- | -------------- | -------- | ------- | -------------------------------------------------------------------------------------------------------- |
-| `name`         | `string`       | ✓        | -       | Field identifier (used as a column header)                                                               |
-| `displayName`  | `string`       | ✗        | -       | A human-readable name for UI display. Can contain periods.                                               |
-| `description`  | `string`       | ✗        | `""`    | Human-readable description                                                                               |
-| `valueType`    | `string`       | ✓        | -       | Data type: `string`, `integer`, `number`, `boolean`                                                      |
-| `isArray`      | `boolean`      | ✗        | `false` | Whether field accepts multiple values                                                                    |
-| `delimiter`    | `string`       | ✗        | `","`   | Separator for array values                                                                               |
-| `unique`       | `boolean`      | ✗        | `false` | Whether values must be unique across records                                                             |
-| `restrictions` | `object/array` | ✗        | `{}`    | Where the validation rules/logic for the field is defined, see [Field Restrictions](#field-restrictions) |
-| `meta`         | `object`       | ✗        | `{}`    | Any custom defined metadata fields                                                                       |
+| Property       | Type           | Required | Default | Description                                                                                                       |
+| -------------- | -------------- | -------- | ------- | ----------------------------------------------------------------------------------------------------------------- |
+| `name`         | `string`       | ✓        | -       | Field identifier (used as a column header). Typically a short name with no spaces. Cannot contain `.` characters. |
+| `displayName`  | `string`       | ✗        | -       | A human-readable name for UI display. Can contain periods.                                                        |
+| `description`  | `string`       | ✗        | `""`    | Human-readable description                                                                                        |
+| `valueType`    | `string`       | ✓        | -       | Data type: `string`, `integer`, `number`, `boolean`                                                               |
+| `isArray`      | `boolean`      | ✗        | `false` | Whether field accepts multiple values                                                                             |
+| `delimiter`    | `string`       | ✗        | `","`   | Separator for array values                                                                                        |
+| `unique`       | `boolean`      | ✗        | `false` | Whether values must be unique across records                                                                      |
+| `restrictions` | `object/array` | ✗        | `{}`    | Where the validation rules/logic for the field is defined, see [Field Restrictions](#field-restrictions)          |
+| `meta`         | `object`       | ✗        | `{}`    | Any custom defined metadata fields                                                                                |
 
 ### Display Name Example
 
 The `displayName` property allows for more user-friendly names in UIs while maintaining technical compatibility with the restricted `name` property:
 
-````json
+```json
 {
-  "name": "patient_schema",
-  "displayName": "Patient Information",
-  "fields": [
-    {
-      "name": "patient_id",
-      "displayName": "Patient ID Number",
-      "valueType": "string"
-    },
-    {
-      "name": "dob",
-      "displayName": "Date of Birth",
-      "valueType": "string"
-    },
-    {
-      "name": "disease_stage",
-      "displayName": "Disease Stage (I-IV)",
-      "valueType": "string"
-    }
-  ]
+	"name": "patient_schema",
+	"displayName": "Patient Information",
+	"fields": [
+		{
+			"name": "patient_id",
+			"displayName": "Patient ID Number",
+			"valueType": "string"
+		},
+		{
+			"name": "dob",
+			"displayName": "Date of Birth",
+			"valueType": "string"
+		},
+		{
+			"name": "disease_stage",
+			"displayName": "Disease Stage (I-IV)",
+			"valueType": "string"
+		}
+	]
 }
+```
 
 ## Field Restrictions
 
@@ -185,17 +187,17 @@ Field restrictions define the rules that field values must satisfy to be conside
 
 ```json
 {
-  "name": "patient_age",
-  "valueType": "integer",
-  "restrictions": {
-    "required": true,
-    "range": {
-      "min": 0,
-      "max": 150
-    }
-  }
+	"name": "patient_age",
+	"valueType": "integer",
+	"restrictions": {
+		"required": true,
+		"range": {
+			"min": 0,
+			"max": 150
+		}
+	}
 }
-````
+```
 
 :::note What this means:
 Age must be provided and must be between 0-150 years old.
@@ -205,6 +207,20 @@ Each restrictions object can contain:
 
 - **Standard Restrictions** (detailed in the sections below)
 - **Conditional restrictions** that apply validation logic based on specific [`conditions`](#conditions)
+
+Which standard restrictions are available depends on the field's `valueType`:
+
+| Restriction | `string` | `integer` | `number` | `boolean` |
+| ----------- | -------- | --------- | -------- | --------- |
+| `required`  | ✓        | ✓         | ✓        | ✓         |
+| `empty`     | ✓        | ✓         | ✓        | ✓         |
+| `codeList`  | ✓        | ✓         | ✓        | ✗         |
+| `range`     | ✗        | ✓         | ✓        | ✗         |
+| `regex`     | ✓        | ✗         | ✗        | ✗         |
+
+:::warning
+This table is the complete set. Any other property inside a `restrictions` object, or a restriction used with a `valueType` it does not apply to, is rejected when the dictionary itself is validated.
+:::
 
 ### `required`
 
@@ -217,6 +233,25 @@ Ensures a field has a value.
 	"restrictions": { "required": true }
 }
 ```
+
+For an array field, `required: true` means the array must contain at least one value:
+
+```json showLineNumbers {4,5}
+{
+	"name": "medications",
+	"valueType": "string",
+	"isArray": true,
+	"restrictions": { "required": true }
+}
+```
+
+:::note **What this means:**
+The medications array must contain at least one entry. An empty array is rejected, and so is an array holding an empty value such as `["aspirin", ""]`.
+:::
+
+:::info Array lengths
+`required` is the only way to constrain how many elements an array holds, so an upper bound on array length cannot be expressed. A `count` rule does exist, but only as [match criteria](#match-criteria) inside a [conditional restriction](#conditions), where it tests the length of another field's array to decide whether a restriction applies.
+:::
 
 ### `codeList`
 
@@ -304,27 +339,6 @@ For human readability we recommend using the `description` property and creating
 Email address must be provided and follow standard email format with a username, @ symbol, domain name, and valid extension. The examples show acceptable formats while the pattern description explains what characters are allowed.
 :::
 
-### `count`
-
-Count is an **array specific** condition that controls the number of elements allowed in array fields.
-
-```json showLineNumbers {4,6}
-{
-	"name": "medications",
-	"valueType": "string",
-	"isArray": true,
-	"restrictions": {
-		"count": { "min": 1, "max": 10 }
-	}
-}
-```
-
-Uses the same boundary options as `range`: `min`, `max`, `exclusiveMin`, `exclusiveMax`.
-
-:::note **What this means:**
-The medications array must contain between 1 and 10 medication entries. Empty arrays or arrays with more than 10 items will be rejected.
-:::
-
 ### `empty`
 
 Requires a field to have no value.
@@ -392,7 +406,7 @@ Think of conditional restrictions as "if-then-else" logic for your data validati
 }
 ```
 
-**Match Criteria**
+#### Match Criteria
 
 The `match` object defines what you're looking for:
 
@@ -412,9 +426,14 @@ The `match` object defines what you're looking for:
 // Field has any value
 { "match": { "exists": true } }
 
-// Array length
+// Array length, as a boundary
 { "match": { "count": { "min": 1 } } }
+
+// Array length, exact
+{ "match": { "count": 3 } }
 ```
+
+The `count` criteria takes either a range object using the same boundary options as [`range`](#range) (`min`, `max`, `exclusiveMin`, `exclusiveMax`), or a plain number for an exact length. It only matches array fields.
 
 #### Simple Example
 
@@ -989,5 +1008,5 @@ The `references` section is a **dictionary-level** property that allows you to d
 ```
 
 :::info **Need Help?**
-If you encounter any issues or have questions, please don't hesitate to reach out through our relevant [**community support channels**](https://docs.overture.bio/community/support).
+If you encounter any issues or have questions, please don't hesitate to reach out through our [**support page**](https://docs.overture.bio/community/support) or our [**discussion forum**](https://github.com/overture-stack/docs/discussions?discussions_q=).
 :::

@@ -30,6 +30,13 @@ const meta = {
 	title: 'Common/FieldBlock',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'A styled container for rendering field content within schema tables.',
+			},
+		},
+	},
 } satisfies Meta<typeof FieldBlock>;
 
 export default meta;

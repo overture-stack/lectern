@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2025 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2026 The Ontario Institute for Cancer Research. All rights reserved
  *
  *  This program and the accompanying materials are made available under the terms of
  *  the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -35,8 +35,10 @@ export interface ButtonProps {
 	className?: string;
 	isLoading?: boolean;
 	icon?: ReactNode;
+	size?: number;
 	width?: string;
 	iconOnly?: boolean;
+	tooltipText?: string;
 }
 
 const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: SerializedStyles) => css`
@@ -47,12 +49,11 @@ const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: Se
 	gap: 11px;
 	width: ${width || 'auto'};
 	min-width: fit-content;
-	padding: 8px 16px;
+	padding: 2px 12px;
 	background-color: ${theme.colors.background_light};
 	color: ${theme.colors.accent_dark};
 	border: 2px solid ${theme.colors.border_button};
 	border-radius: 9px;
-	height: 42px;
 	box-sizing: border-box;
 	cursor: pointer;
 	position: relative;
@@ -61,6 +62,10 @@ const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: Se
 	&:hover {
 		background-color: ${theme.colors.accent_1};
 	}
+	&:hover > [data-tooltip] {
+		opacity: 1;
+		visibility: visible;
+	}
 	&:disabled {
 		cursor: not-allowed;
 		opacity: 0.7;
@@ -68,7 +73,15 @@ const getButtonContainerStyles = (theme: any, width?: string, styleOverride?: Se
 	${styleOverride}
 `;
 
-const getContentStyles = (theme: Theme, shouldShowLoading: boolean) => css`
+const getContentStyles = ({
+	theme,
+	size,
+	shouldShowLoading,
+}: {
+	theme: Theme;
+	size: number;
+	shouldShowLoading: boolean;
+}) => css`
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -77,6 +90,7 @@ const getContentStyles = (theme: Theme, shouldShowLoading: boolean) => css`
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	font-size: ${size}px;
 	visibility: ${shouldShowLoading ? 'hidden' : 'visible'};
 `;
 
@@ -93,6 +107,38 @@ const getIconStyles = () => css`
 	align-items: center;
 `;
 
+const getTooltipStyles = (theme: Theme) => css`
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	margin-bottom: 8px;
+	padding: 6px 10px;
+	background-color: ${theme.colors.accent_dark};
+	color: ${theme.colors.white};
+	${theme.typography.data};
+	font-size: 12px;
+	border-radius: 4px;
+	white-space: nowrap;
+	opacity: 0;
+	visibility: hidden;
+	z-index: 10;
+	transition:
+		opacity 0.2s ease,
+		visibility 0.2s ease;
+	pointer-events: none;
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		border: 6px solid transparent;
+		border-top-color: ${theme.colors.accent_dark};
+	}
+`;
+
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 	(
 		{
@@ -104,8 +150,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 			isLoading: controlledLoading,
 			icon,
 			width,
+			size = 16,
 			iconOnly = false,
 			styleOverride,
+			tooltipText,
 		}: ButtonProps,
 		ref,
 	) => {
@@ -127,9 +175,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 				className={className}
 				css={getButtonContainerStyles(theme, width, styleOverride)}
 			>
+				{tooltipText && (
+					<span data-tooltip css={getTooltipStyles(theme)}>
+						{tooltipText}
+					</span>
+				)}
 				{icon && !shouldShowLoading && <span css={getIconStyles()}>{icon}</span>}
 				{/* If iconOnly is true, we don't show the children */}
-				{!iconOnly && <span css={getContentStyles(theme, shouldShowLoading)}>{children}</span>}
+				{!iconOnly && <span css={getContentStyles({ theme, size, shouldShowLoading })}>{children}</span>}
 				<span css={getSpinnerStyles(shouldShowLoading)}>
 					<Spinner fill={theme.colors.black} height={20} width={20} />
 				</span>

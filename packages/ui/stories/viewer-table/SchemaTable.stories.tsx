@@ -37,6 +37,13 @@ const meta = {
 	title: 'Viewer - Table/Schema Table',
 	tags: ['autodocs'],
 	decorators: [themeDecorator()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'Renders a single schema as a table displaying field names, types, restrictions, and descriptions.',
+			},
+		},
+	},
 } satisfies Meta<typeof SchemaTable>;
 
 export default meta;

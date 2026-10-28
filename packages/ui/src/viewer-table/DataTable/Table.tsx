@@ -32,6 +32,8 @@ import TableRow from './TableRow';
 export type GenericTableProps<R> = {
 	data: R[];
 	columns: ColumnDef<R, any>[];
+	schemaName?: string;
+	highlightedFieldName?: string | null;
 };
 
 type ScrollShadowsResult = {
@@ -50,7 +52,7 @@ const scrollWrapperStyle = css`
 
 const shadowStyle = css`
 	position: absolute;
-	top: 2%;
+	top: 1%;
 	width: 20px;
 	height: 100%;
 	pointer-events: none;
@@ -78,17 +80,20 @@ const tableContainerStyle = css`
 	max-width: 100%;
 `;
 
-const tableStyle = (theme: Theme) => css`
+const tableStyle = () => css`
 	min-width: 1200px;
 	border-collapse: collapse;
-	border: 1px solid ${theme.colors.grey_3};
 	margin-top: 8px;
 	position: relative;
 	width: 100%;
 `;
-const tableBorderStyle = (theme: Theme) => css`
-	border: 1px solid ${theme.colors.border_light};
-`;
+
+const hasNameProperty = (obj: unknown): obj is { name: string } => {
+	if (typeof obj === 'object' && obj !== null && 'name' in obj && typeof obj.name === 'string') {
+		return true;
+	}
+	return false;
+};
 
 /**
  * Hook for managing scroll shadows on horizontally scrollable tables.
@@ -148,9 +153,11 @@ export const useScrollShadows = (): ScrollShadowsResult => {
  * @template R - Row data type (can be any object type)
  * @param {R[]} data - Array of row data
  * @param {ColumnDef<R, any>[]} columns - TanStack table column definitions
+ * @param {string} schemaName - Optional schema name for field anchor IDs
+ * @param {string | null} highlightedFieldName - Optional field name to highlight
  * @returns {JSX.Element} Generic Table component
  */
-const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
+const Table = <R,>({ columns, data, schemaName, highlightedFieldName }: GenericTableProps<R>) => {
 	const theme: Theme = useThemeContext();
 	const { scrollRef, showLeftShadow, showRightShadow, firstColumnWidth } = useScrollShadows();
 
@@ -165,16 +172,20 @@ const Table = <R,>({ columns, data }: GenericTableProps<R>) => {
 			<div css={tableContainerStyle} ref={scrollRef}>
 				<div css={leftShadowStyle(firstColumnWidth, showLeftShadow ? 1 : 0, theme)} />
 				<div css={rightShadowStyle(showRightShadow ? 1 : 0, theme)} />
-				<table css={tableStyle(theme)}>
-					<thead css={tableBorderStyle(theme)}>
+				<table css={tableStyle()}>
+					<thead>
 						{table.getHeaderGroups().map((headerGroup: HeaderGroup<R>) => (
 							<TableHeader key={headerGroup.id} headerGroup={headerGroup} />
 						))}
 					</thead>
-					<tbody css={tableBorderStyle(theme)}>
-						{table.getRowModel().rows.map((row, i: number) => (
-							<TableRow key={row.id} row={row} index={i} />
-						))}
+					<tbody>
+						{table.getRowModel().rows.map((row) => {
+							const fieldName = hasNameProperty(row.original) ? row.original.name : undefined;
+							const fieldId = schemaName && fieldName ? `${schemaName}.${fieldName}` : undefined;
+							const isHighlighted = highlightedFieldName === fieldName;
+
+							return <TableRow key={row.id} row={row} fieldId={fieldId} isHighlighted={isHighlighted} />;
+						})}
 					</tbody>
 				</table>
 			</div>

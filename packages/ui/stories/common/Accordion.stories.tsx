@@ -33,6 +33,13 @@ const meta = {
 	title: 'Common/Accordion',
 	tags: ['autodocs'],
 	decorators: [themeDecorator(), withLecternUrl()],
+	parameters: {
+		docs: {
+			description: {
+				component: 'Accordion component for displaying collapsible content sections.',
+			},
+		},
+	},
 } satisfies Meta<typeof Accordion>;
 
 export default meta;
