@@ -17,6 +17,9 @@
 	},
 	"author": "Ontario Institute for Cancer Research",
 	"license": "AGPL-3.0",
+	"engines": {
+		"node": ">=22 <25"
+	},
 	"bugs": {
 		"url": "https://github.com/overture-stack/lectern/issues"
 	},
