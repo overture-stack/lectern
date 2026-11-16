@@ -173,6 +173,7 @@ The loading skeletons (`LoadingSpinnerPage`, `HeaderSkeleton`, and `ToolbarSkele
 | `dimensions` | Fixed measurements such as navbar height and the spacing the layout is built on.                                  | [`dimensions.ts`](https://github.com/overture-stack/lectern/blob/main/packages/ui/src/theme/styles/dimensions.ts) |
 | `shadow`     | Elevation presets applied to raised surfaces such as dropdown menus.                                              | [`shadow.ts`](https://github.com/overture-stack/lectern/blob/main/packages/ui/src/theme/styles/shadow.ts)         |
 | `icons`      | The built-in icon components, each overridable individually.                                                      | [`icons/`](https://github.com/overture-stack/lectern/tree/main/packages/ui/src/theme/icons)                       |
+| `components` | Component-specific styling such as border radius for accordions, buttons, dropdowns, pills, and tables.           | [`components.ts`](https://github.com/overture-stack/lectern/blob/main/packages/ui/src/theme/styles/components.ts) |
 
 ## Utilities
 

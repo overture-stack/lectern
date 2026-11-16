@@ -35,7 +35,7 @@ const listItemStyles = (theme: Theme) => css`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border-radius: 8px;
+	border-radius: ${theme.components.listItem.borderRadius}px;
 	background-color: #ececec;
 	width: fit-content;
 	max-width: none;
