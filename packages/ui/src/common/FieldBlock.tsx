@@ -36,7 +36,7 @@ const fieldBlockStyles = (theme: Theme) => css`
 	justify-content: center;
 	gap: 4px;
 	padding: 4px 8px;
-	border-radius: 4px;
+	border-radius: ${theme.components.fieldBlock.borderRadius}px;
 	background-color: ${theme.colors.background_muted};
 	border: 0.5px solid ${theme.colors.black};
 	transition: all 0.2s ease-in-out;

@@ -48,6 +48,7 @@ const accordionItemStyle = (theme: Theme) => css`
 	background-color: ${theme.colors.white};
 	box-shadow: 0px 4px 4px 0px ${theme.shadow.accordion};
 	border: 0.25px solid ${theme.colors.black};
+	border-radius: ${theme.components.accordionItem.borderRadius}px;
 	scroll-margin-top: 100px;
 	&:hover {
 		box-shadow: 0px 4px 4px 0px ${theme.shadow.accordion};

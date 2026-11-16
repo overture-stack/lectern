@@ -52,7 +52,7 @@ const getSizeStyles = (theme: Theme) => ({
 		padding: 1px 6px;
 		${theme.typography.captionBold}
 		line-height: 12px;
-		border-radius: 3px;
+		border-radius: ${theme.components.pill.borderRadiusXs}px;
 		gap: 3px;
 		width: 65px;
 		max-width: 75px;
@@ -61,7 +61,7 @@ const getSizeStyles = (theme: Theme) => ({
 		padding: 2px 8px;
 		${theme.typography.dataBold}
 		line-height: 14px;
-		border-radius: 4px;
+		border-radius: ${theme.components.pill.borderRadiusSm}px;
 		gap: 4px;
 		width: 80px;
 		max-width: 100px;
@@ -70,7 +70,7 @@ const getSizeStyles = (theme: Theme) => ({
 		padding: 4px 12px;
 		${theme.typography.bodyBold}
 		line-height: 16px;
-		border-radius: 5px;
+		border-radius: ${theme.components.pill.borderRadiusMd}px;
 		gap: 6px;
 		width: 95px;
 		max-width: 140px;
@@ -79,7 +79,7 @@ const getSizeStyles = (theme: Theme) => ({
 		padding: 6px 16px;
 		${theme.typography.bodyBold}
 		line-height: 20px;
-		border-radius: 6px;
+		border-radius: ${theme.components.pill.borderRadiusLg}px;
 		gap: 8px;
 		width: 150px;
 		max-width: 180px;

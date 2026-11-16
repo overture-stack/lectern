@@ -54,7 +54,7 @@ const dropdownButtonStyle = ({
 	background-color: ${theme.colors.background_light};
 	color: ${theme.colors.accent_dark};
 	border: 2px solid ${theme.colors.border_button};
-	border-radius: 9px;
+	border-radius: ${theme.components.dropdown.borderRadius}px;
 	box-sizing: border-box;
 	cursor: pointer;
 	transition: all 0.2s ease;
@@ -90,7 +90,7 @@ const dropdownMenuStyle = (theme: Theme) => css`
 	width: 100%;
 	background-color: ${theme.colors.background_light};
 	border: 2px solid ${theme.colors.border_button};
-	border-radius: 9px;
+	border-radius: ${theme.components.dropdown.borderRadius}px;
 	box-sizing: border-box;
 	z-index: 100;
 	max-height: 300px;

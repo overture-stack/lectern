@@ -144,7 +144,7 @@ const resetFilterButtonStyle = (theme: Theme) => css`
 	background-color: transparent;
 	color: ${theme.colors.grey_6};
 	border: 1px solid ${theme.colors.border_button};
-	border-radius: 9px;
+	border-radius: ${theme.components.button.borderRadius}px;
 	cursor: pointer;
 	transition: all 0.2s ease;
 	&:hover {
@@ -359,7 +359,7 @@ const DictionaryTableViewerContent = ({ filterDropdowns, customColumns }: Dictio
 				if (value == null) {
 					return [];
 				}
-				
+
 				const values = Array.isArray(value) ? value.map(String) : [String(value)];
 				return values.map((value) => ({ label: dropdown.label, value }));
 			});

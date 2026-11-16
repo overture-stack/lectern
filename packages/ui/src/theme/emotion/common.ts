@@ -32,7 +32,7 @@ export const pillStyle = (theme: Theme) => css`
 	font-size: 16px;
 	padding: 2px 8px;
 	border: 0.5px solid ${theme.colors.accent_dark};
-	border-radius: 20px;
+	border-radius: ${theme.components.pill.borderRadiusCommon}px;
 	background-color: rgba(255, 255, 255, 0.15);
 	color: ${theme.colors.accent_dark};
 	${theme.typography.data};
