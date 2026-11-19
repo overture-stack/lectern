@@ -26,6 +26,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DictionaryTableViewer } from '../../src/viewer-table/DictionaryTableViewer';
 
 import {
+	withAllFieldsByDefault,
 	withEmptyDictionaries,
 	withErrorState,
 	withForeverLoading,
@@ -62,6 +63,18 @@ export const Default: Story = {
 	decorators: [withMultipleDictionaries],
 };
 
+export const AllFieldsByDefault: Story = {
+	decorators: [withAllFieldsByDefault],
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Rendered with `defaultShowRequiredOnly={false}` on the state provider, so the view opens with every field shown.',
+			},
+		},
+	},
+};
+
 export const Empty: Story = {
 	decorators: [withEmptyDictionaries],
 };
@@ -93,4 +106,3 @@ export const SingleDictionary: Story = {
 export const LecternServer: Story = {
 	decorators: [withLecternUrl()],
 };
-

@@ -24,7 +24,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import AttributeFilterButton from '../../../src/viewer-table/Toolbar/AttributeFilterButton';
 
-import { withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
+import { withAllFieldsByDefault, withLoadingState, withMultipleDictionaries } from '../../dictionaryDecorator';
 import themeDecorator from '../../themeDecorator';
 
 const meta = {
@@ -47,6 +47,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const FilterOff: Story = {
+	decorators: [themeDecorator(), withAllFieldsByDefault],
+};
 
 export const Loading: Story = {
 	decorators: [themeDecorator(), withLoadingState()],

@@ -53,19 +53,19 @@ Conditional validation rules (if-then-else dependencies between fields) are show
 
 The toolbar sits below the dictionary header and controls the view:
 
-| Control                         | Behaviour                                                                                                                              |
-| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| **Table of Contents**           | Jumps to a schema by name.                                                                                                             |
-| **Diagram View**                | Opens the [entity relationship diagram](#the-diagram-view).                                                                            |
-| **Collapse All / Expand All**   | Collapses or expands every schema section.                                                                                             |
-| **Show Required / By Required** | Toggles between showing every field and showing only required and conditionally required fields.                                       |
-| **Filters**                     | Filters whole schemas by dictionary metadata. Only appears when [metadata filters](./01-setup.md#add-metadata-filters) are configured. |
-| **Columns**                     | Shows and hides [custom columns](./01-setup.md#add-custom-columns). Only appears when custom columns are configured.                   |
-| **Submission Templates**        | Downloads a zip of submission templates for the selected dictionary version.                                                           |
+| Control                                    | Behaviour                                                                                                                               |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **Table of Contents**                      | Jumps to a schema by name.                                                                                                              |
+| **Diagram View**                           | Opens the [entity relationship diagram](#the-diagram-view).                                                                             |
+| **Collapse All / Expand All**              | Collapses or expands every schema section.                                                                                              |
+| **Show All Fields / Show Required Fields** | Toggles between showing every field and showing only required and conditionally required fields. The label names what clicking will do. |
+| **Filters**                                | Filters whole schemas by dictionary metadata. Only appears when [metadata filters](./01-setup.md#add-metadata-filters) are configured.  |
+| **Columns**                                | Shows and hides [custom columns](./01-setup.md#add-custom-columns). Only appears when custom columns are configured.                    |
+| **Submission Templates**                   | Downloads a zip of submission templates for the selected dictionary version.                                                            |
 
 Two toolbar behaviours are worth calling out:
 
-- **The view opens filtered to required fields.** The attribute filter starts active, so the first thing a reader sees is the minimum set of fields they must supply. Toggling it off reveals optional fields as well.
+- **The view opens filtered to required fields.** By default the attribute filter starts active, so the first thing a reader sees is the minimum set of fields they must supply, and the button reads **Show All Fields**. While fields are hidden, each affected schema's header shows a count such as "Showing 39 of 57 fields". Toggling the filter off reveals optional fields as well. A platform can open the view with every field shown instead; see [`DictionaryTableStateProvider`](./02-reference.md#dictionarytablestateprovider).
 - **Submission Templates requires a Lectern server.** The button fetches from Lectern's `/dictionaries/template/download` endpoint and only renders when the Viewer is reading from a Lectern server. It downloads TSV templates by default; CSV is also supported.
 
 ### Dictionary header and version switching

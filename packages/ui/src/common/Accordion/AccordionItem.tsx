@@ -124,6 +124,12 @@ const hashIconStyle = css`
 	cursor: pointer;
 `;
 
+const subtitleStyle = (theme: Theme) => css`
+	${theme.typography.data};
+	color: ${theme.colors.grey_6};
+	margin-bottom: 4px;
+`;
+
 const descriptionWrapperStyle = (theme: Theme) => css`
 	${theme.typography.body};
 	color: ${theme.colors.black};
@@ -186,7 +192,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 	const theme: Theme = useThemeContext();
 	const { setClipboardContents } = useClipboard();
 
-	const { description, title, content, schemaName, tags } = accordionData;
+	const { description, title, subtitle, content, schemaName, tags } = accordionData;
 	const { ChevronDown, Hash, Tags } = theme.icons;
 
 	const anchorId = schemaName || index.toString();
@@ -219,6 +225,7 @@ const AccordionItem = ({ index, accordionData, openState }: AccordionItemProps) 
 							<Hash width={24} height={24} fill={theme.colors.secondary} />
 						</button>
 					</div>
+					{subtitle && <div css={subtitleStyle(theme)}>{subtitle}</div>}
 					<div onClick={(e) => e.stopPropagation()}>
 						<ReadMoreText maxLines={MAX_LINES_BEFORE_EXPAND} wrapperStyle={descriptionWrapperStyle(theme)}>
 							{description}
