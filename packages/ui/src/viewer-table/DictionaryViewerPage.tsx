@@ -29,16 +29,24 @@ export type DictionaryTableProps = {
 	dictionaryName: string;
 	filterDropdowns?: FilterDropdown[];
 	customColumns?: CustomColumnConfig[];
+	/** Whether the view opens showing only required and conditionally required fields. Defaults to `true`. */
+	defaultShowRequiredOnly?: boolean;
 };
 
 /**
  * DictionaryViewerPage component.
  * @param {DictionaryTableProps} props
  */
-const DictionaryViewerPage = ({ lecternUrl, dictionaryName, filterDropdowns, customColumns }: DictionaryTableProps) => {
+const DictionaryViewerPage = ({
+	lecternUrl,
+	dictionaryName,
+	filterDropdowns,
+	customColumns,
+	defaultShowRequiredOnly,
+}: DictionaryTableProps) => {
 	return (
 		<DictionaryLecternDataProvider lecternUrl={lecternUrl} dictionaryName={dictionaryName}>
-			<DictionaryStateProvider>
+			<DictionaryStateProvider defaultShowRequiredOnly={defaultShowRequiredOnly}>
 				<DictionaryTableViewer filterDropdowns={filterDropdowns} customColumns={customColumns} />
 			</DictionaryStateProvider>
 		</DictionaryLecternDataProvider>

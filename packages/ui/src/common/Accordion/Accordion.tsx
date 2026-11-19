@@ -33,6 +33,8 @@ export type TagPill = {
 
 export type AccordionData = {
 	title: string;
+	/** Short secondary line rendered beneath the title, e.g. a field count. */
+	subtitle?: string;
 	description?: string;
 	content: ReactNode;
 	schemaName?: string;

@@ -41,7 +41,7 @@ const AttributeFilterButton = () => {
 			onClick={handleClick}
 			disabled={loading || errors.length > 0}
 		>
-			{isRequired ? 'By Required' : 'Show Required'}
+			{isRequired ? 'Show All Fields' : 'Show Required Fields'}
 		</Button>
 	);
 };

@@ -176,13 +176,19 @@ export const DictionaryLecternDataProvider = ({
 	return <DictionaryDataContext.Provider value={value}>{children}</DictionaryDataContext.Provider>;
 };
 
+/** Props for {@link DictionaryStateProvider}. */
 export type DictionaryStateProviderProps = {
 	children: ReactNode;
+	/**
+	 * Whether the view opens showing only required and conditionally required fields. Defaults to `true`.
+	 * Only read on mount; afterwards the toolbar's attribute filter button controls the filter.
+	 */
+	defaultShowRequiredOnly?: boolean;
 };
 
-export const DictionaryStateProvider = ({ children }: DictionaryStateProviderProps) => {
+export const DictionaryStateProvider = ({ children, defaultShowRequiredOnly = true }: DictionaryStateProviderProps) => {
 	const [currentDictionaryIndex, setCurrentDictionaryIndex] = useState(0);
-	const [filters, setFilters] = useState<FilterOptions[]>(['Required']);
+	const [filters, setFilters] = useState<FilterOptions[]>(defaultShowRequiredOnly ? ['Required'] : []);
 	const [filterSelections, setFilterSelections] = useState<FilterSelections>({});
 
 	const dictionaryData = useDictionaryDataContext();

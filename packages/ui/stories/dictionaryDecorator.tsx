@@ -26,6 +26,7 @@ import {
 	DictionaryDataContext,
 	DictionaryLecternDataProvider,
 	DictionaryStateProvider,
+	type DictionaryStateProviderProps,
 	DictionaryStaticDataProvider,
 } from '../src/dictionary-controller/DictionaryDataContext';
 
@@ -60,10 +61,13 @@ export const multipleDictionaryData: DictionaryTestData = [
 
 export const emptyDictionaryData: DictionaryTestData = [];
 
-export const withDictionaryContext = (dictionaries: DictionaryTestData = multipleDictionaryData): Decorator => {
+export const withDictionaryContext = (
+	dictionaries: DictionaryTestData = multipleDictionaryData,
+	{ defaultShowRequiredOnly }: Pick<DictionaryStateProviderProps, 'defaultShowRequiredOnly'> = {},
+): Decorator => {
 	return (Story) => (
 		<DictionaryStaticDataProvider staticDictionaries={dictionaries}>
-			<DictionaryStateProvider>
+			<DictionaryStateProvider defaultShowRequiredOnly={defaultShowRequiredOnly}>
 				<Story />
 			</DictionaryStateProvider>
 		</DictionaryStaticDataProvider>
@@ -159,3 +163,4 @@ export const withMultipleDictionaries = withDictionaryContext(multipleDictionary
 export const withSingleDictionary = withDictionaryContext(singleDictionaryData);
 export const withEmptyDictionaries = withDictionaryContext(emptyDictionaryData);
 export const withFilterDictionary = withDictionaryContext(filterDictionaryData);
+export const withAllFieldsByDefault = withDictionaryContext(multipleDictionaryData, { defaultShowRequiredOnly: false });
