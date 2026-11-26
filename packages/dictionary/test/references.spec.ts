@@ -18,6 +18,7 @@
  */
 
 import { expect } from 'chai';
+import { cloneDeep } from 'lodash';
 import { replaceReferences } from '../src/references';
 
 import assert from 'assert';
@@ -86,6 +87,21 @@ describe('Replace References', () => {
 	it('Replaces reference tag value in meta nested properties', () => {
 		const replacedDictionary = replaceReferences(nestedMetaReferencesInput);
 		expect(replacedDictionary).to.deep.eq(nestedMetaReferencesOutput);
+	});
+	it('Does not modify the input dictionary', () => {
+		const inputs = [
+			simpleReferencesInput,
+			referencesWithinReferencesInput,
+			nestedMetaReferencesInput,
+			codeListReferencesInput,
+			regexReferencesInput,
+			restrictionsArrayWithReferencesInput,
+		];
+		inputs.forEach((input) => {
+			const original = cloneDeep(input);
+			replaceReferences(input);
+			expect(input).to.deep.eq(original);
+		});
 	});
 	describe('String Restrictions', () => {
 		it('CodeList with references are replaced', () => {
