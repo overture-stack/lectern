@@ -4,6 +4,7 @@ import icons from './styles/icons';
 import shadow from './styles/shadow';
 import dimensions from './styles/dimensions';
 import type { RecursivePartial } from '../utils/RecursivePartial';
+import components from './styles/components';
 
 const defaultTheme = {
 	colors,
@@ -11,6 +12,7 @@ const defaultTheme = {
 	typography,
 	shadow,
 	dimensions,
+	components,
 };
 
 export default defaultTheme;
