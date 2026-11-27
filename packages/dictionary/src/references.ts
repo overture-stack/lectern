@@ -344,7 +344,7 @@ export const replaceReferences = (dictionary: Dictionary): Dictionary => {
 	const discovered = createDiscoveredMap();
 	const visited = createVisitedSet();
 
-	clone.schemas = dictionary.schemas.map((schema) =>
+	clone.schemas = clone.schemas.map((schema) =>
 		internalReplaceSchemaReferences(schema, references, discovered, visited),
 	);
 
