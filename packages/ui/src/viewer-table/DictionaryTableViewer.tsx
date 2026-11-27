@@ -195,6 +195,9 @@ const getFilteredSchema = (schema: Schema, filters: string[], activeFilters: Act
 	return schema;
 };
 
+const getFieldCountText = (shownCount: number, totalCount: number): string | undefined =>
+	shownCount < totalCount ? `Showing ${shownCount} of ${totalCount} fields` : undefined;
+
 const ErrorDisplay = ({ errors, onContactClick }: { errors: string[]; onContactClick: () => void }) => {
 	const theme = useThemeContext();
 	const isErrorModalOpen = errors.length > 0;
@@ -367,6 +370,7 @@ const DictionaryTableViewerContent = ({ filterDropdowns, customColumns }: Dictio
 			return [
 				{
 					title: schema.name,
+					subtitle: getFieldCountText(filtered.fields.length, schema.fields.length),
 					description: schema.description,
 					content: (
 						<SchemaTable

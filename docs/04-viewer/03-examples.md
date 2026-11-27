@@ -22,7 +22,7 @@ No viewer configuration is needed beyond a [data source](./01-setup.md#choose-a-
 
 ![PCGL field table: the participant schema expanded below the dictionary header and toolbar, showing key, required, and conditionally required attributes, data types, and allowed values](../assets/viewer-example-pcgl-field-table.png)
 
-The `participant` schema expanded, with the required-fields filter cleared ("Show Required"). Each row is one field: the key icon marks a field with `unique: true` or listed in the schema's `uniqueKey`, "Required When" marks a conditional restriction, and the Allowed Values column renders `unique`, `regex`, and `codeList` in plain language.
+The `participant` schema expanded, with the required-fields filter cleared (the button now reads "Show Required Fields"). Each row is one field: the key icon marks a field with `unique: true` or listed in the schema's `uniqueKey`, "Required When" marks a conditional restriction, and the Allowed Values column renders `unique`, `regex`, and `codeList` in plain language.
 
 ### Conditional logic
 

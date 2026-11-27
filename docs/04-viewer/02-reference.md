@@ -21,12 +21,13 @@ The package has two entry points:
 
 The whole table view, wired to a Lectern server. Sets up `LecternDataProvider` and `DictionaryTableStateProvider` internally, so it needs no surrounding providers.
 
-| Prop              | Type                   | Required | Description                                                                            |
-| ----------------- | ---------------------- | -------- | -------------------------------------------------------------------------------------- |
-| `lecternUrl`      | `string`               | Yes      | Base URL of the Lectern server.                                                        |
-| `dictionaryName`  | `string`               | Yes      | Name of the dictionary to display. Every version is fetched; the newest renders first. |
-| `filterDropdowns` | `FilterDropdown[]`     | No       | Adds [metadata filter dropdowns](#filterdropdown) to the toolbar.                      |
-| `customColumns`   | `CustomColumnConfig[]` | No       | Adds [custom columns](#customcolumnconfig) to every schema table.                      |
+| Prop                      | Type                   | Required | Description                                                                                                                                   |
+| ------------------------- | ---------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lecternUrl`              | `string`               | Yes      | Base URL of the Lectern server.                                                                                                               |
+| `dictionaryName`          | `string`               | Yes      | Name of the dictionary to display. Every version is fetched; the newest renders first.                                                        |
+| `filterDropdowns`         | `FilterDropdown[]`     | No       | Adds [metadata filter dropdowns](#filterdropdown) to the toolbar.                                                                             |
+| `customColumns`           | `CustomColumnConfig[]` | No       | Adds [custom columns](#customcolumnconfig) to every schema table.                                                                             |
+| `defaultShowRequiredOnly` | `boolean`              | No       | Whether the view opens showing only required fields. Defaults to `true`; see [`DictionaryTableStateProvider`](#dictionarytablestateprovider). |
 
 The prop type is exported as `DictionaryTableProps`.
 
@@ -51,7 +52,12 @@ Their prop types are exported as `LecternDataProviderProps`, `UrlDictionaryProvi
 
 ### `DictionaryTableStateProvider`
 
-Holds view state (the selected version, the required-fields filter, and active metadata filter selections) and must wrap the view inside whichever data provider is used. Takes only `children`. Its prop type is exported as `DictionaryTableStateProviderProps`.
+Holds view state (the selected version, the required-fields filter, and active metadata filter selections) and must wrap the view inside whichever data provider is used. Its prop type is exported as `DictionaryTableStateProviderProps`.
+
+| Prop                      | Type        | Required | Description                                                                                                                                                        |
+| ------------------------- | ----------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `children`                | `ReactNode` | Yes      | The view, typically `DictionaryTableViewer`.                                                                                                                       |
+| `defaultShowRequiredOnly` | `boolean`   | No       | Whether the view opens showing only required and conditionally required fields. Defaults to `true`. Read on mount only; afterwards the toolbar button controls it. |
 
 Changing the selected version clears any active metadata filter selections, since a new version may not carry the same metadata values.
 
@@ -81,16 +87,16 @@ Throws when called outside `DictionaryTableStateProvider`.
 
 Returns the current view state and the setters that change it:
 
-| Field                       | Type                                                | Description                                                                                                                     |
-| --------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `selectedDictionary`        | `DictionaryServerRecord \| Dictionary \| undefined` | The version currently displayed.                                                                                                |
-| `currentDictionaryIndex`    | `number`                                            | Its index in `dictionaries`.                                                                                                    |
-| `setCurrentDictionaryIndex` | `(index: number) => void`                           | Switches version.                                                                                                               |
-| `filters`                   | `'Required'[]`                                      | Active attribute filter. Defaults to `['Required']`, so the view opens showing only required and conditionally required fields. |
-| `setFilters`                | `(filters: 'Required'[]) => void`                   | Sets the attribute filter. Pass `[]` to show every field.                                                                       |
-| `filterSelections`          | `Record<string, string[]>`                          | Selected metadata filter values, keyed by `filterProperty`.                                                                     |
-| `toggleFilter`              | `(filterProperty: string, value: string) => void`   | Adds or removes one metadata filter value.                                                                                      |
-| `resetFilters`              | `() => void`                                        | Clears all metadata filter selections.                                                                                          |
+| Field                       | Type                                                | Description                                                                                            |
+| --------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `selectedDictionary`        | `DictionaryServerRecord \| Dictionary \| undefined` | The version currently displayed.                                                                       |
+| `currentDictionaryIndex`    | `number`                                            | Its index in `dictionaries`.                                                                           |
+| `setCurrentDictionaryIndex` | `(index: number) => void`                           | Switches version.                                                                                      |
+| `filters`                   | `'Required'[]`                                      | Active attribute filter. Starts as `['Required']` (or `[]` when `defaultShowRequiredOnly` is `false`). |
+| `setFilters`                | `(filters: 'Required'[]) => void`                   | Sets the attribute filter. Pass `[]` to show every field.                                              |
+| `filterSelections`          | `Record<string, string[]>`                          | Selected metadata filter values, keyed by `filterProperty`.                                            |
+| `toggleFilter`              | `(filterProperty: string, value: string) => void`   | Adds or removes one metadata filter value.                                                             |
+| `resetFilters`              | `() => void`                                        | Clears all metadata filter selections.                                                                 |
 
 ## Configuration types
 
